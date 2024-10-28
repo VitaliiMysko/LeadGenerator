@@ -5,30 +5,39 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <div class="container">
-      <h3>Lead generator</h3>
-      <button id="getDataButton">Get&Copy</button>
-      <button id="copy">Copy</button>
+    <div class="main-container">
+      <div class="container">
+        <h3>Lead generator</h3>
+        
+        <button id="getDataButton">Get&Copy</button>
+        <button id="copy">Copy</button>
 
-      <div id="input-container">
-        <div class="draggable-input" id="firstName" draggable="true">
-          <spam>Name: </spam>
-          <input type="text" value="" />
+        <div id="input-container">
+          <div class="draggable-input" id="firstName" draggable="true">
+            <spam>Name: </spam>
+            <input type="text" value="" />
+          </div>
+          <div class="draggable-input" id="secondName" draggable="true">
+            <spam>Surname: </spam>
+            <input type="text" value="" />
+          </div>
+          <div class="draggable-input" id="jobPosition" draggable="true">
+            <spam>Job position: </spam>
+            <input type="text" value="" />
+          </div>
+          <div class="draggable-input" id="link" draggable="true">
+            <spam>Link: </spam>
+            <input type="text" value="" />
+          </div>
         </div>
-        <div class="draggable-input" id="secondName" draggable="true">
-          <spam>Surname: </spam>
-          <input type="text" value="" />
-        </div>
-        <div class="draggable-input" id="jobPosition" draggable="true">
-          <spam>Job position: </spam>
-          <input type="text" value="" />
-        </div>
-        <div class="draggable-input" id="link" draggable="true">
-          <spam>Link: </spam>
-          <input type="text" value="" />
-        </div>
+        <div id="info" class="info"></div>
       </div>
-      <div id="info" class="info"></div>
+
+      <div class="vertical-line"></div>
+
+      <div class="container">
+        <h3>Companies</h3>
+      </div>
     </div>
 
     <script src="popup.js"></script>
