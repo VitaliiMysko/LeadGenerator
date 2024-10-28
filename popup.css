@@ -8,7 +8,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* height: 100vh; */
 }
 .main-container {
   display: flex;
@@ -101,4 +100,19 @@ button:active {
   width: 2px;
   background-color: #ddd;
   align-self: stretch; /* Дозволяє лінії розтягнутися на всю висоту контейнера */
+}
+
+#radio-container {
+  width: 100%; /* Розтягує контейнер на всю доступну ширину */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Вирівнювання по лівому краю */
+}
+
+.radio-item {
+  margin-bottom: 10px;
+}
+
+.radio-item label {
+  margin-left: 5px;
 }

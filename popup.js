@@ -16,6 +16,21 @@ document.getElementById("getDataButton").addEventListener("click", () => {
             console.log("value ==! >", element.value);
           });
         }
+        
+
+
+
+        const options = [
+          { id: "option1", label: "Option 1 skjdhf khyhhsd fiuwer fds f f" },
+          { id: "option2", label: "Option 2" },
+          { id: "option3", label: "Option 3" }
+        ];
+
+        createRadioButtons("radio-container", options);
+
+
+
+
         copyToBuffer();
       }
     );
@@ -76,6 +91,42 @@ function getData() {
     console.log("link", link.trim());
     return link.trim();
   }
+}
+
+function createRadioButtons(containerId, options) {
+  const container = document.getElementById(containerId);
+
+  // Очищення контейнера перед заповненням нових елементів
+  container.innerHTML = '';
+
+  // Перебираємо кожний об'єкт у масиві options
+  options.forEach((option, index) => {
+    // Створення <div> для кожного радіо-елемента
+    const radioWrapper = document.createElement("div");
+    radioWrapper.className = "radio-item"; // клас для стилізації
+
+    // Створення елемента <input> типу radio
+    const radioInput = document.createElement("input");
+    radioInput.type = "radio";
+    radioInput.id = option.id;
+    radioInput.name = "options"; // Всі радіо-кнопки мають однакове ім'я для групування
+    radioInput.value = option.id;
+
+    // Робимо перший елемент вибраним за замовчуванням
+    if (index === 0) {
+      radioInput.checked = true;
+    }
+
+    // Створення <label> для відображення тексту
+    const radioLabel = document.createElement("label");
+    radioLabel.setAttribute("for", option.id);
+    radioLabel.textContent = option.label;
+
+    // Додавання радіо-кнопки та мітки до контейнера
+    radioWrapper.appendChild(radioInput);
+    radioWrapper.appendChild(radioLabel);
+    container.appendChild(radioWrapper);
+  });
 }
 
 //>>>>>>>>>>>>>>>>>>COPY INTO BUFFER<<<<<<<<<<<<<<<<<<
