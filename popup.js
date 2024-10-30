@@ -20,7 +20,11 @@ document.getElementById("getDataButton").addEventListener("click", () => {
         const items = [
           { id: 1, label: "Company A", info: "IT Director" },
           { id: 2, label: "Company B", info: "Head of Information Technology" },
-          { id: 3, label: "Company C", info: "Co-Founder & Chief Operating Officer" }
+          {
+            id: 3,
+            label: "Company C",
+            info: "Co-Founder & Chief Operating Officer",
+          },
         ];
 
         createRadioListButtons("radio-list-container", items);
@@ -32,6 +36,8 @@ document.getElementById("getDataButton").addEventListener("click", () => {
 });
 
 function getData() {
+  getCompanies();
+
   let data = [];
 
   const fullName = getFullName();
@@ -41,6 +47,156 @@ function getData() {
   data.push({ inputId: "link", value: getLinkedinLink() });
 
   return data;
+
+  function getCompanies() {
+    let data = [];
+
+    const companyComponents = document.querySelectorAll(
+      "._experience-entry_1irc72"
+    );
+
+    for (const companyComponent of companyComponents) {
+      // companyComponents.forEach((companyComponent) => {
+      console.log("company elevent === >", companyComponent);
+
+      let name = "";
+      let link = "";
+      let jobPosition = "";
+
+      const companyDataElement = companyComponent.children[0].children[1];
+      const linkElement = companyDataElement.querySelector("a");
+
+      if (linkElement) {
+        link = linkElement.href;
+        link = link.includes("sales/company") ? link : "";
+        console.log("company link === >", link);
+      }
+
+      let companyNameElement = companyDataElement.querySelector(
+        '[data-anonymize="company-name"]'
+      );
+
+      if (companyNameElement) {
+        name = companyNameElement.textContent.trim();
+        console.log("company name === >", name);
+      }
+
+      const jobPositionElement = companyDataElement.querySelector(
+        '[data-anonymize="job-title"]'
+      );
+
+      if (jobPositionElement) {
+        jobPosition = jobPositionElement.textContent.trim();
+
+        console.log("company jobPosition === >", jobPosition);
+
+        const actualPositionElement = companyDataElement.children[2];
+
+        console.log(
+          "company jobPosition actualPosition element === >",
+          actualPositionElement
+        );
+
+        if (actualPositionElement) {
+          const periodElement = actualPositionElement.querySelector("span");
+
+          console.log(
+            "company jobPosition period element === >",
+            periodElement
+          );
+
+          if (periodElement) {
+            const period = periodElement.textContent.trim();
+
+            console.log("company jobPosition period=== >", period);
+            console.log(
+              "company jobPosition period present=== >",
+              period.includes("Present")
+            );
+
+            if (period.includes("Present")) {
+              console.log("name &  jobPosition=== >", name, jobPosition);
+              if (name != "" && jobPosition != "") {
+                data.push({ name: name, link: link, jobPosition: jobPosition });
+                console.log("company ***OK***");
+              }
+            } else {
+              break;
+            }
+          }
+        }
+      } else {
+        const multiPositionCompanyComponent =
+          companyComponent.querySelector("ul");
+
+        if (multiPositionCompanyComponent) {
+          const positionComponents =
+            multiPositionCompanyComponent.querySelectorAll("li");
+
+          for (const positionComponent of positionComponents) {
+            // positionComponents.forEach((positionComponent) => {
+            console.log("company (multi) position el === >", positionComponent);
+
+            const jobPositionElement = positionComponent.querySelector(
+              '[data-anonymize="job-title"]'
+            );
+
+            if (jobPositionElement) {
+              jobPosition = jobPositionElement.textContent.trim();
+              console.log("company (multi) jobPosition === >", jobPosition);
+            }
+
+            const actualPositionElement =
+              positionComponent.children[1].children[1];
+
+            console.log(
+              "company (multi) jobPosition actualPosition element === >",
+              actualPositionElement
+            );
+
+            if (actualPositionElement) {
+              const periodElement = actualPositionElement.querySelector("span");
+
+              console.log(
+                "company (multi) jobPosition period element === >",
+                periodElement
+              );
+
+              if (periodElement) {
+                const period = periodElement.textContent.trim();
+
+                console.log("company (multi) jobPosition period=== >", period);
+
+                if (period.includes("Present")) {
+                  if (name !== "" && jobPosition !== "") {
+                    data.push({
+                      name: name,
+                      link: link,
+                      jobPosition: jobPosition,
+                    });
+                    console.log("company (multi) ***OK***");
+                  }
+                } else {
+                  break;
+                }
+              }
+            }
+          }
+          //});
+        }
+      }
+    }
+    //});
+
+    console.log("RES all data !!! == >: ", data);
+
+    data.forEach((el) => {
+      console.log("RES == >: ", el.name);
+      // console.log("RES name company: ", el.name);
+      // console.log("RES link company: ", el.link);
+      // console.log("RES job position: ", el.jobPosition);
+    });
+  }
 
   function getFullName() {
     const element = document.querySelector(
@@ -91,8 +247,8 @@ function createRadioListButtons(containerId, items) {
   // Контейнер для списку радіо-кнопок
   const container = document.getElementById(containerId);
 
-    // Очищення контейнера перед заповненням нових елементів
-    container.innerHTML = '';
+  // Очищення контейнера перед заповненням нових елементів
+  container.innerHTML = "";
 
   // Динамічне створення списку
   items.forEach((item, index) => {
@@ -119,13 +275,14 @@ function createRadioListButtons(containerId, items) {
 
     if (index === 0) {
       radio.checked = true;
-      document.querySelector(`#jobPosition input`).value = infoBlock.textContent;
+      document.querySelector(`#jobPosition input`).value = "";
     }
 
     // Обробка події при виборі радіо-кнопки
     radio.addEventListener("change", () => {
       if (radio.checked) {
-        document.querySelector(`#jobPosition input`).value = infoBlock.textContent;
+        document.querySelector(`#jobPosition input`).value =
+          infoBlock.textContent;
       }
     });
 
@@ -171,8 +328,6 @@ function showInfo(message, type = "success", duration = 3000) {
     info.classList.remove("show", type);
   }, duration);
 }
-
-
 
 //>>>>>>>>>>>>>>>>>>DRAGGED<<<<<<<<<<<<<<<<<<
 let dragged;
