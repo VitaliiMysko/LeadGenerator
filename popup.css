@@ -102,11 +102,10 @@ button:active {
   align-self: stretch; /* Дозволяє лінії розтягнутися на всю висоту контейнера */
 }
 
-#radio-container {
+#radio-list-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Вирівнювання по лівому краю */
 }
 
 .radio-item {
@@ -115,7 +114,7 @@ button:active {
 
 .info-block {
   padding: 5px;
-  border: 1px solid #ccc;
+  border-left:1px solid #ccc;
   background-color: #f9f9f9;
   margin-top: 5px;
 }
