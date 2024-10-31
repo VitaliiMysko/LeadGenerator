@@ -7,13 +7,15 @@ document.getElementById("getDataButton").addEventListener("click", () => {
       },
       (results) => {
         if (results && results[0]) {
-          // console.log("results ==! >", results);
           const data = results[0].result;
-          // console.log("data ==! >", data);
           data.forEach((element) => {
-            document.querySelector(`#${element.inputId} input`).value =
-              element.value;
-            console.log("value ==! >", element.value);
+            if (element.category === "generalData") {
+              populateGeneralData(element.value);
+            }
+
+            if (element.category === "comany&jobPosition") {
+              createRadioListButtons("radio-list-container", element.value);
+            }
           });
         }
         copyToBuffer();
@@ -25,33 +27,49 @@ document.getElementById("getDataButton").addEventListener("click", () => {
 function getData() {
   let data = [];
 
-  const fullName = getFullName();
-  data.push({ inputId: "firstName", value: getFirstName(fullName) });
-  data.push({ inputId: "secondName", value: getSecondName(fullName) });
-  data.push({ inputId: "jobPosition", value: getJobPosition() });
-  data.push({ inputId: "link", value: getLinkedinLink() });
+  let generalData = [];
+  let companiesAndJobPosition = [];
+
+  try {
+    generalData = getGeneralData();
+    companiesAndJobPosition = getCompaniesAndJobPosition();
+  } catch (error) {
+    console.log("Probably, something bad happened with getting data");
+    console.log(error.message);
+  }
+
+  data.push({ category: "generalData", value: generalData });
+  data.push({ category: "comany&jobPosition", value: companiesAndJobPosition });
 
   return data;
+
+  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
+  function getGeneralData() {
+    let generalData = [];
+    const fullName = getFullName();
+    generalData.push({ inputId: "firstName", value: getFirstName(fullName) });
+    generalData.push({ inputId: "secondName", value: getSecondName(fullName) });
+    generalData.push({ inputId: "jobPosition", value: getJobPosition() });
+    generalData.push({ inputId: "link", value: getLinkedinLink() });
+
+    return generalData;
+  }
 
   function getFullName() {
     const element = document.querySelector(
       'h1[data-x--lead--name][data-anonymize="person-name"]'
     );
-    // console.log(element.textContent.trim());
     return element.textContent.trim();
   }
 
   function getFirstName(fullName) {
     let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
-    // console.log("getFirstName", firstName.trim());
     return firstName.trim();
   }
 
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
-    // console.log("getSecondName == >", remainingWords);
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
-    // console.log("getSecondName", secondName.trim());
     return secondName.trim();
   }
 
@@ -71,11 +89,194 @@ function getData() {
     );
 
     let element = result.singleNodeValue;
-    console.log("link element", element);
     let link = element ? element.href : "";
-    console.log("link", link.trim());
     return link.trim();
   }
+
+  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
+  function getCompaniesAndJobPosition() {
+    let comanyjobPositionData = [];
+
+    const companyComponents = document.querySelectorAll(
+      "._experience-entry_1irc72"
+    );
+
+    let id = 0;
+
+    for (const companyComponent of companyComponents) {
+      let name = "";
+      let link = "";
+      let jobPosition = "";
+
+      const companyDataElement = companyComponent.children[0].children[1];
+
+      link = GetCompanyLink(companyDataElement);
+      name = GetCompanyName(companyDataElement);
+
+      const jobPositionElement = GetJobPositionElement(companyDataElement);
+
+      if (jobPositionElement) {
+        jobPosition = jobPositionElement.textContent.trim();
+
+        const actualPositionElement = companyDataElement.children[2];
+
+        if (IsActualJobPosition(actualPositionElement)) {
+          if (name != "" && jobPosition != "") {
+            comanyjobPositionData.push({
+              id: ++id,
+              name: name,
+              jobPosition: jobPosition,
+              link: link,
+            });
+          }
+        } else {
+          break;
+        }
+      } else {
+        const multiPositionCompanyComponent =
+          companyComponent.querySelector("ul");
+
+        if (multiPositionCompanyComponent) {
+          const positionComponents =
+            multiPositionCompanyComponent.querySelectorAll("li");
+
+          for (const positionComponent of positionComponents) {
+            const jobPositionElement = GetJobPositionElement(positionComponent);
+
+            if (jobPositionElement) {
+              jobPosition = jobPositionElement.textContent.trim();
+            }
+
+            const actualPositionElement =
+              positionComponent.children[1].children[1];
+
+            if (IsActualJobPosition(actualPositionElement)) {
+              if (name != "" && jobPosition != "") {
+                comanyjobPositionData.push({
+                  id: ++id,
+                  name: name,
+                  jobPosition: jobPosition,
+                  link: link,
+                });
+              }
+            } else {
+              break;
+            }
+          }
+        }
+      }
+    }
+    return comanyjobPositionData;
+  }
+
+  function GetCompanyLink(element) {
+    let link = "";
+
+    const linkElement = element.querySelector("a");
+
+    if (linkElement) {
+      link = linkElement.href;
+      link = link.includes("sales/company") ? link : "";
+    }
+    return link;
+  }
+
+  function GetCompanyName(element) {
+    let name = "";
+    let companyElement = element.querySelector(
+      '[data-anonymize="company-name"]'
+    );
+
+    if (companyElement) {
+      name = companyElement.textContent.trim();
+    }
+    return name;
+  }
+
+  function GetJobPositionElement(element) {
+    return element.querySelector('[data-anonymize="job-title"]');
+  }
+
+  function IsActualJobPosition(element) {
+    if (element) {
+      const periodElement = element.querySelector("span");
+
+      if (periodElement) {
+        const period = periodElement.textContent.trim();
+        return period.includes("Present");
+      }
+    }
+  }
+}
+function populateGeneralData(items) {
+  items.forEach((item) => {
+    document.querySelector(`#${item.inputId} input`).value = item.value;
+  });
+}
+
+function createRadioListButtons(containerId, items) {
+  // Контейнер для списку радіо-кнопок
+  const container = document.getElementById(containerId);
+
+  // Очищення контейнера перед заповненням нових елементів
+  container.innerHTML = "";
+  
+  // Динамічне створення списку
+  items.forEach((item, index) => {
+    // Створення елемента обгортки
+    const radioItem = document.createElement("div");
+    radioItem.classList.add("radio-item");
+
+    // Створення елемента радіо-кнопки
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "options";
+    radio.id = `radio-${item.id}`;
+    radio.value = item.id;
+
+    // Створення мітки для радіо-кнопки
+    const label = document.createElement("label");
+    label.setAttribute("for", `radio-${item.id}`);
+    // label.textContent = item.name;
+
+    if (item.link != "")
+    {
+      const link = document.createElement("a");
+      link.href = item.link;
+      link.textContent = item.name;
+
+      label.appendChild(link);
+    }else{
+      label.textContent = item.name;
+    }
+
+    // Створення додаткового блоку інформації
+    const infoBlock = document.createElement("div");
+    infoBlock.classList.add("info-block");
+    infoBlock.textContent = item.jobPosition;
+
+    if (index === 0) {
+      radio.checked = true;
+      document.querySelector(`#jobPosition input`).value =
+        infoBlock.textContent;
+    }
+
+    // Обробка події при виборі радіо-кнопки
+    radio.addEventListener("change", () => {
+      if (radio.checked) {
+        document.querySelector(`#jobPosition input`).value =
+          infoBlock.textContent;
+      }
+    });
+
+    // Додавання елементів до обгортки
+    radioItem.appendChild(radio);
+    radioItem.appendChild(label);
+    radioItem.appendChild(infoBlock);
+
+    // Додавання обгортки до контейнера
+    container.appendChild(radioItem);
+  });
 }
 
 //>>>>>>>>>>>>>>>>>>COPY INTO BUFFER<<<<<<<<<<<<<<<<<<
@@ -95,7 +296,6 @@ function copyToBuffer() {
       showInfo("Copy successful!", "success", 3000);
     })
     .catch((err) => {
-      console.error("Copied fault: ", err);
       showInfo("Copy failed!", "error", 3000);
     });
 }
