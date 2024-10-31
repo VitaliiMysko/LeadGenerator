@@ -18,7 +18,6 @@ document.getElementById("getDataButton").addEventListener("click", () => {
             }
           });
         }
-        copyToBuffer();
       }
     );
   });
