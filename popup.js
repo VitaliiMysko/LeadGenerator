@@ -51,6 +51,8 @@ function getData() {
     generalData.push({ inputId: "secondName", value: getSecondName(fullName) });
     generalData.push({ inputId: "jobPosition", value: getJobPosition() });
     generalData.push({ inputId: "link", value: getLinkedinLink() });
+    generalData.push({ inputId: "email", value: "" });
+    generalData.push({ inputId: "companyName", value: "" });
 
     return generalData;
   }
@@ -259,6 +261,8 @@ function createRadioListButtons(containerId, items) {
       radio.checked = true;
       document.querySelector(`#jobPosition input`).value =
         infoBlock.textContent;
+        document.querySelector(`#companyName input`).value =
+        item.name;
     }
 
     // Обробка події при виборі радіо-кнопки
@@ -266,6 +270,8 @@ function createRadioListButtons(containerId, items) {
       if (radio.checked) {
         document.querySelector(`#jobPosition input`).value =
           infoBlock.textContent;
+          document.querySelector(`#companyName input`).value =
+        item.name;
       }
     });
 
