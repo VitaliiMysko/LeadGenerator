@@ -42,18 +42,43 @@ function getData() {
     const element = document.querySelector(
       'h1[data-x--lead--name][data-anonymize="person-name"]'
     );
-    return element.textContent.trim();
+
+    if(element){
+      return handleFullName(element.textContent);
+    }
+
+    return "";
+  }
+
+  function handleFullName(str){
+    const exceptions = ["van", "der", "den", "de"];
+    const [textBeforeComma] = str.split(",");
+
+    return textBeforeComma
+    .trim() 
+    .split(/\s+/) // Break the line into words, given a few spaces
+    .map(word => {
+      if (exceptions.includes(word.toLowerCase())) {
+        return word.toLowerCase();
+      } else {
+        return word
+          .split("-")
+          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+          .join("-");
+      }
+    })
+    .join(" ");
   }
 
   function getFirstName(fullName) {
     let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
-    return firstName.trim();
+    return firstName;
   }
 
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
-    return secondName.trim();
+    return secondName;
   }
 
   function getJobPosition() {
