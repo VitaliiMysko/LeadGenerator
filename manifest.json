@@ -19,5 +19,11 @@
       "matches": ["<all_urls>"],
       "js": ["content.js", "handlerData.js"]
     }
-  ]
+  ],
+  "oauth2": {
+    "client_id": "703234486224-7qp2631nfrkhg629oa11dos5flc2g43i.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/cloud-translation"
+    ]
+  }
 }

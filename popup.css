@@ -62,6 +62,25 @@ button:active {
   transform: scale(0.98);
 }
 
+#jobPosition {
+  position: relative;
+}
+
+#jobPositionInput {
+  padding-right: 24px;
+  max-width: 150px; /* hard code */
+}
+
+#translateBtn {
+  position: absolute;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
 .draggable-input {
   width: 100%;
   padding-top: 5px;
