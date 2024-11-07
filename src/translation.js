@@ -2,6 +2,12 @@ document.getElementById("translateBtn").addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {
     if (response.success) {
       translateText(response.token);
+
+      document.getElementById("jobPositionInput").classList.add("updated");
+
+      setTimeout(() => {
+        document.getElementById("jobPositionInput").classList.remove("updated");
+      }, 1000);
     } else {
       console.error("Error authorization:", response.error);
     }

@@ -71,6 +71,19 @@ button:active {
   max-width: 150px; /* hard code */
 }
 
+@keyframes textChange {
+  0% {
+    color: #999;
+  }
+  100% {
+    color: #333;
+  }
+}
+
+#jobPositionInput.updated {
+  animation: textChange 1s ease;
+}
+
 #translateBtn {
   position: absolute;
   right: 0;
