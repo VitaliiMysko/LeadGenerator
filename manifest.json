@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lead generator",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Lead generator extension for getting needed data",
   "permissions": ["activeTab", "tabs", "scripting", "identity"],
   "icons": {
