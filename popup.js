@@ -3,7 +3,7 @@ document.getElementById("getDataButton").addEventListener("click", () => {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabs[0].id },
-        files: ["handlerData.js"],
+        files: ["tabs/handlerData.js"],
       },
       () => {
         chrome.tabs.sendMessage(
@@ -35,29 +35,22 @@ function populateGeneralData(items) {
 }
 
 function createRadioListButtons(containerId, items) {
-  // Контейнер для списку радіо-кнопок
   const container = document.getElementById(containerId);
 
-  // Очищення контейнера перед заповненням нових елементів
   container.innerHTML = "";
 
-  // Динамічне створення списку
   items.forEach((item, index) => {
-    // Створення елемента обгортки
     const radioItem = document.createElement("div");
     radioItem.classList.add("radio-item");
 
-    // Створення елемента радіо-кнопки
     const radio = document.createElement("input");
     radio.type = "radio";
     radio.name = "options";
     radio.id = `radio-${item.id}`;
     radio.value = item.id;
 
-    // Створення мітки для радіо-кнопки
     const label = document.createElement("label");
     label.setAttribute("for", `radio-${item.id}`);
-    // label.textContent = item.name;
 
     if (item.link != "") {
       const link = document.createElement("a");
@@ -69,7 +62,6 @@ function createRadioListButtons(containerId, items) {
       label.textContent = item.name;
     }
 
-    // Створення додаткового блоку інформації
     const infoBlock = document.createElement("div");
     infoBlock.classList.add("info-block");
     infoBlock.textContent = item.jobPosition;
@@ -81,7 +73,6 @@ function createRadioListButtons(containerId, items) {
       document.querySelector(`#companyName input`).value = item.name;
     }
 
-    // Обробка події при виборі радіо-кнопки
     radio.addEventListener("change", () => {
       if (radio.checked) {
         document.querySelector(`#jobPosition input`).value =
@@ -90,12 +81,10 @@ function createRadioListButtons(containerId, items) {
       }
     });
 
-    // Додавання елементів до обгортки
     radioItem.appendChild(radio);
     radioItem.appendChild(label);
     radioItem.appendChild(infoBlock);
 
-    // Додавання обгортки до контейнера
     container.appendChild(radioItem);
   });
 }

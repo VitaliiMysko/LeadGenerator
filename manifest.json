@@ -1,14 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Lead generator",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Lead generator extension for getting needed data",
-  "permissions": ["activeTab", "tabs", "scripting"],
+  "permissions": ["activeTab", "tabs", "scripting", "identity"],
   "icons": {
     "16": "icons/icon_16px.png"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.js"
   },
   "action": {
     "default_popup": "popup.html",
@@ -17,7 +17,11 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js", "handlerData.js"]
+      "js": ["src/content.js", "src/translation.js", "tabs/handlerData.js"]
     }
-  ]
+  ],
+  "oauth2": {
+    "client_id": "703234486224-21msoego155lmcgk9h4u7778oo4css2h.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/cloud-translation"]
+  }
 }
