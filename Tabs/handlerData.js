@@ -98,7 +98,7 @@ function getData() {
 
     let element = result.singleNodeValue;
     let link = element ? element.href : "";
-    return link.trim();
+    return link.trim().split('?')[0];
   }
 
   //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
