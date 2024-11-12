@@ -1,2 +1,2 @@
 # LeadGenerator
-Lead generator web extension for getting data from Linkedin
+Lead generator - a Chrome extension for getting data from linkedin sale navigator page
