@@ -131,7 +131,7 @@ button:active {
 .vertical-line {
   width: 2px;
   background-color: #ddd;
-  align-self: stretch; /* Дозволяє лінії розтягнутися на всю висоту контейнера */
+  align-self: stretch;
 }
 
 #radio-list-container {
@@ -149,4 +149,21 @@ button:active {
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
   margin-top: 5px;
+}
+
+a {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #0056b3;
+}
+
+a:hover {
+  color: #0056b3;
+}
+
+a:active {
+  color: #004494;
 }

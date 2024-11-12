@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const data = getData();
     sendResponse({ data });
   }
-  return true; // Потрібно для асинхронного sendResponse
+  return true;
 });
 
 function getData() {
@@ -43,31 +43,34 @@ function getData() {
       'h1[data-x--lead--name][data-anonymize="person-name"]'
     );
 
-    if(element){
+    if (element) {
       return handleFullName(element.textContent);
     }
 
     return "";
   }
 
-  function handleFullName(str){
+  function handleFullName(str) {
     const exceptions = ["van", "der", "den", "de"];
     const [textBeforeComma] = str.split(",");
 
     return textBeforeComma
-    .trim() 
-    .split(/\s+/) // Break the line into words, given a few spaces
-    .map(word => {
-      if (exceptions.includes(word.toLowerCase())) {
-        return word.toLowerCase();
-      } else {
-        return word
-          .split("-")
-          .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-          .join("-");
-      }
-    })
-    .join(" ");
+      .trim()
+      .split(/\s+/) // Break the line into words, given a few spaces
+      .map((word) => {
+        if (exceptions.includes(word.toLowerCase())) {
+          return word.toLowerCase();
+        } else {
+          return word
+            .split("-")
+            .map(
+              (part) =>
+                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            )
+            .join("-");
+        }
+      })
+      .join(" ");
   }
 
   function getFirstName(fullName) {
@@ -86,7 +89,7 @@ function getData() {
   }
 
   function getLinkedinLink() {
-    let xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath вираз
+    let xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
 
     let result = document.evaluate(
       xpath,

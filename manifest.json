@@ -2,26 +2,43 @@
   "manifest_version": 3,
   "name": "Lead generator",
   "version": "2.0",
-  "description": "Lead generator extension for getting needed data",
-  "permissions": ["activeTab", "tabs", "scripting", "identity"],
+  "description": "Lead generator - a Chrome extension for getting data from linkedin sale navigator page",
+  "permissions": ["activeTab", "scripting", "identity"],
+  "host_permissions": ["https://www.linkedin.com/sales/lead/*"],
   "icons": {
-    "16": "icons/icon_16px.png"
+    "16": "icons/logo/icon16.png",
+    "32": "icons/logo/icon32.png",
+    "48": "icons/logo/icon48.png",
+    "128": "icons/logo/icon128.png"
   },
   "background": {
-    "service_worker": "src/background.js"
+    "service_worker": "src/worker/background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Lead generation for getting needed data"
+    "default_title": "Lead generator",
+    "default_icon": {
+      "16": "icons/logo/icon16.png",
+      "32": "icons/logo/icon32.png",
+      "48": "icons/logo/icon48.png",
+      "128": "icons/logo/icon128.png"
+    }
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content.js", "src/translation.js", "tabs/handlerData.js"]
+      "js": [
+        "src/scripts/content.js",
+        "src/scripts/translation.js",
+        "src/tabs/active/handlerData.js"
+      ]
     }
   ],
   "oauth2": {
     "client_id": "703234486224-21msoego155lmcgk9h4u7778oo4css2h.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/cloud-translation"]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   }
 }
