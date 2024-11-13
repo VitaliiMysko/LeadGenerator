@@ -5,8 +5,9 @@ This extension is a straightforward tool for extracting data about individuals d
 ## Key Features
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
 - **Data Extraction**:
-  - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," "Email," and "Company Name."
-  - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications (e.g., Excel). Each data field will be copied to a separate cell in a single row for easy integration into your data sheets.
+  - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," and "Company Name."
+  The Email field is not auto-filled by the extension; instead, it is manually entered by the user if desired. No automated collection of email addresses occurs.
+  - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
 
 ## Data Fields
 
@@ -109,7 +110,7 @@ With these configurations, your extension will be ready for efficient and secure
    - All fields are editable. You can modify the values in any field to ensure accuracy before saving.
 
 4. **Saving Data to Clipboard:**
-   - Click the **Copy** button to save all field values to your clipboard. Data is formatted for easy pasting into spreadsheet software (e.g., Excel), with each field's value saved in a separate cell.
+   - Click the **Copy** button to save all field values to your clipboard. Data is formatted for easy pasting into spreadsheet software.
 
 5. **Reordering Fields (Optional):**
    - You can rearrange the input fields by dragging them up or down in the left panel. The order you set determines how data is organized when saved to the clipboard.
