@@ -51,6 +51,7 @@ function getData() {
   }
 
   function handleFullName(str) {
+    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, ''); // Removes the prefix dr/Dr before the full name
     const exceptions = ["van", "der", "den", "de"];
     const [textBeforeComma] = str.split(",");
 
