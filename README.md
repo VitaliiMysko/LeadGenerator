@@ -6,7 +6,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
 - **Data Extraction**:
   - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," and "Company Name."
-  The Email field is not auto-filled by the extension; instead, it is manually entered by the user if desired. No automated collection of email addresses occurs.
+  The Email field is not auto-filled.
   - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
 
 ## Data Fields
