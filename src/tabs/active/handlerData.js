@@ -51,7 +51,7 @@ function getData() {
   }
 
   function handleFullName(str) {
-    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, ''); // Removes the prefix dr/Dr before the full name
+    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, ""); // Removes the prefix dr/Dr before the full name
     const exceptions = ["van", "der", "den", "de"];
     const [textBeforeComma] = str.split(",");
 
@@ -102,7 +102,7 @@ function getData() {
 
     let element = result.singleNodeValue;
     let link = element ? element.href : "";
-    return link.trim().split('?')[0];
+    return link.trim().split("?")[0];
   }
 
   //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
@@ -193,6 +193,33 @@ function getData() {
     return link;
   }
 
+  function removeCompanyStatusRegex() {
+    const companyStatus = [
+      "inc",
+      "ind",
+      "corp",
+      "ltd",
+      "AB",
+      "AS",
+      "A/S",
+      "ASA",
+      "LP",
+      "Plc",
+      "S.L",
+      "AG",
+      "S.A",
+      "S.p.A",
+      "Aps",
+      "LLC",
+      "LLP",
+      "PLC",
+      "GmbH",
+      "s.r.o",
+      "spol",
+    ];
+    return new RegExp(`[\\s,]+(${companyStatus.join("|")})[.,]?$`, "i");
+  }
+
   function GetCompanyName(element) {
     let name = "";
     let companyElement = element.querySelector(
@@ -200,7 +227,8 @@ function getData() {
     );
 
     if (companyElement) {
-      name = companyElement.textContent.trim();
+      const regex = removeCompanyStatusRegex();
+      name = companyElement.textContent.trim().replace(regex, "");
     }
     return name;
   }
