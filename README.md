@@ -30,6 +30,9 @@ Each field is editable to allow manual adjustments before saving.
 
 - **Translation Service**: A translation icon next to the "Job Position" field enables translation of job titles into English. This feature uses the Google Cloud Translation API and requires the user to be signed in through their Google account to activate.
 
+## Changelog
+For a detailed list of changes in each release, please refer to the [CHANGELOG.md](./CHANGELOG.md) file.
+
 ## Installation
 
 ### Option 1: Install from the Chrome Web Store
