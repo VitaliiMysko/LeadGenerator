@@ -30,7 +30,13 @@ document.getElementById("getDataButton").addEventListener("click", () => {
 
 function populateGeneralData(items) {
   items.forEach((item) => {
-    document.querySelector(`#${item.inputId} input`).value = item.value;
+    if (item.inputId == "firstName" || item.inputId == "secondName") {
+      document.querySelector(`#${item.inputId} input`).value = transliterate(
+        item.value
+      );
+    } else {
+      document.querySelector(`#${item.inputId} input`).value = item.value;
+    }
   });
 }
 

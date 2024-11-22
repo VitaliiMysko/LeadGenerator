@@ -27,11 +27,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": [
-        "src/scripts/content.js",
-        "src/scripts/translation.js",
-        "src/tabs/active/handlerData.js"
-      ]
+      "js": ["src/scripts/content.js", "src/tabs/active/handlerData.js"]
     }
   ],
   "oauth2": {
