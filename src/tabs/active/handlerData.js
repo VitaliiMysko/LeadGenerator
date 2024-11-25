@@ -217,7 +217,7 @@ function getData() {
       "s.r.o",
       "spol",
     ];
-    return new RegExp(`[\\s,]+(${companyStatus.join("|")})[.,]?$`, "i");
+    return new RegExp(`[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`, "i");
   }
 
   function GetCompanyName(element) {
