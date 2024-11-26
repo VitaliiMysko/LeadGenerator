@@ -82,6 +82,11 @@ function getData() {
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
+    
+    if (secondName.includes("'")) {
+      secondName = secondName.replace(/'\w/g, match => match.toUpperCase());
+    }
+
     return secondName;
   }
 
