@@ -1,22 +1,31 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "getData") {
-    const data = getData();
-    sendResponse({ data });
-  }
-  return true;
-});
+if (!window.messageListenerAdded) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "getData") {
+      (async () => {
+        const data = await getData();
+        sendResponse({ data });
+      })();
+      return true;
+    }
+  });
 
-function getData() {
+  window.messageListenerAdded = true;
+}
+
+if (typeof window.gettinglinkedinProfileUrlInProgress === "undefined") {
+  window.gettinglinkedinProfileUrlInProgress = false;
+}
+
+async function getData() {
   let data = [];
   let generalData = [];
   let companiesAndJobPosition = [];
 
   try {
-    generalData = getGeneralData();
+    generalData = await getGeneralData();
     companiesAndJobPosition = getCompaniesAndJobPosition();
   } catch (error) {
-    console.log("Probably, something bad happened with getting data");
-    console.log(error.message);
+    console.error("Problems with getting data", error.message);
   }
 
   data.push({ category: "generalData", value: generalData });
@@ -25,13 +34,13 @@ function getData() {
   return data;
 
   //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
-  function getGeneralData() {
+  async function getGeneralData() {
     let generalData = [];
     const fullName = getFullName();
     generalData.push({ inputId: "firstName", value: getFirstName(fullName) });
     generalData.push({ inputId: "secondName", value: getSecondName(fullName) });
     generalData.push({ inputId: "jobPosition", value: getJobPosition() });
-    generalData.push({ inputId: "link", value: getLinkedinLink() });
+    generalData.push({ inputId: "link", value: await getlinkedinProfileUrl() });
     generalData.push({ inputId: "email", value: "" });
     generalData.push({ inputId: "companyName", value: "" });
 
@@ -82,9 +91,9 @@ function getData() {
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
-    
+
     if (secondName.includes("'")) {
-      secondName = secondName.replace(/'\w/g, match => match.toUpperCase());
+      secondName = secondName.replace(/'\w/g, (match) => match.toUpperCase());
     }
 
     return secondName;
@@ -94,20 +103,45 @@ function getData() {
     return "";
   }
 
-  function getLinkedinLink() {
-    let xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
+  async function getlinkedinProfileUrl() {
+    if (window.gettinglinkedinProfileUrlInProgress) {
+      console.error("Already processing request");
+      return "";
+    }
 
-    let result = document.evaluate(
-      xpath,
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
-    );
+    window.gettinglinkedinProfileUrlInProgress = true;
 
-    let element = result.singleNodeValue;
-    let link = element ? element.href : "";
-    return link.trim().split("?")[0];
+    try {
+      const button = document.getElementById("hue-menu-trigger-ember51");
+
+      if (!button) {
+        console.error("There is problem with exporting linkedin profile url");
+        return "";
+      }
+      button.click();
+
+      await new Promise((resolve) => setTimeout(resolve, 250));
+
+      const dropdownMenu = document.getElementById("hue-menu-ember51");
+      if (dropdownMenu) {
+        const linkProfile = dropdownMenu.querySelector("a");
+        button.click();
+
+        if (linkProfile) {
+          console.log("Profile link found", linkProfile);
+          console.log("href", linkProfile.href);
+          return linkProfile.href;
+        } else {
+          console.error("Profile link not found");
+          return "";
+        }
+      } else {
+        console.error("Dropdown menu not found");
+        return "";
+      }
+    } finally {
+      window.gettinglinkedinProfileUrlInProgress = false;
+    }
   }
 
   //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
@@ -222,7 +256,10 @@ function getData() {
       "s.r.o",
       "spol",
     ];
-    return new RegExp(`[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`, "i");
+    return new RegExp(
+      `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
+      "i"
+    );
   }
 
   function GetCompanyName(element) {
