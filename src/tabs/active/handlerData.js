@@ -12,10 +12,6 @@ if (!window.messageListenerAdded) {
   window.messageListenerAdded = true;
 }
 
-if (typeof window.gettinglinkedinProfileUrlInProgress === "undefined") {
-  window.gettinglinkedinProfileUrlInProgress = false;
-}
-
 async function getData() {
   let data = [];
   let generalData = [];
@@ -33,7 +29,6 @@ async function getData() {
 
   return data;
 
-  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
   async function getGeneralData() {
     let generalData = [];
     const fullName = getFullName();
@@ -52,15 +47,14 @@ async function getData() {
       'h1[data-x--lead--name][data-anonymize="person-name"]'
     );
 
-    if (element) {
-      return handleFullName(element.textContent);
-    }
+    if (!element) return "";
 
-    return "";
+    return handleFullName(element.textContent);
   }
 
   function handleFullName(str) {
-    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, ""); // Removes the prefix dr/Dr before the full name
+    // Removes the prefix dr/Dr before the full name
+    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, "");
     const exceptions = ["van", "der", "den", "de"];
     const [textBeforeComma] = str.split(",");
 
@@ -104,47 +98,29 @@ async function getData() {
   }
 
   async function getlinkedinProfileUrl() {
-    if (window.gettinglinkedinProfileUrlInProgress) {
-      console.error("Already processing request");
-      return "";
-    }
+    //id="hue-menu-trigger-ember51"; id="hue-menu-trigger-ember52"
+    const button = document.querySelector(
+      'button[data-x--lead-actions-bar-overflow-menu][aria-label="Open actions overflow menu"]'
+    );
 
-    window.gettinglinkedinProfileUrlInProgress = true;
+    if (!button) return "";
 
-    try {
-      const button = document.getElementById("hue-menu-trigger-ember51");
+    button.click();
 
-      if (!button) {
-        console.error("There is problem with exporting linkedin profile url");
-        return "";
-      }
-      button.click();
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      await new Promise((resolve) => setTimeout(resolve, 250));
+    let dropdownMenu =
+      document.getElementById("hue-menu-ember51") ??
+      document.getElementById("hue-menu-ember52");
 
-      const dropdownMenu = document.getElementById("hue-menu-ember51");
-      if (dropdownMenu) {
-        const linkProfile = dropdownMenu.querySelector("a");
-        button.click();
+    if (!dropdownMenu) return "";
 
-        if (linkProfile) {
-          console.log("Profile link found", linkProfile);
-          console.log("href", linkProfile.href);
-          return linkProfile.href;
-        } else {
-          console.error("Profile link not found");
-          return "";
-        }
-      } else {
-        console.error("Dropdown menu not found");
-        return "";
-      }
-    } finally {
-      window.gettinglinkedinProfileUrlInProgress = false;
-    }
+    const linkProfile = dropdownMenu.querySelector("a");
+    button.click();
+
+    return linkProfile ? linkProfile.href : "";
   }
 
-  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
   function getCompaniesAndJobPosition() {
     let comanyjobPositionData = [];
 
