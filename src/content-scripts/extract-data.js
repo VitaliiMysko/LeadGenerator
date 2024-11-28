@@ -32,12 +32,12 @@ async function getData() {
   async function getGeneralData() {
     let generalData = [];
     const fullName = getFullName();
-    generalData.push({ inputId: "firstName", value: getFirstName(fullName) });
-    generalData.push({ inputId: "secondName", value: getSecondName(fullName) });
-    generalData.push({ inputId: "jobPosition", value: getJobPosition() });
+    generalData.push({ inputId: "first-name", value: getFirstName(fullName) });
+    generalData.push({ inputId: "second-name", value: getSecondName(fullName) });
+    generalData.push({ inputId: "job-position", value: getJobPosition() });
     generalData.push({ inputId: "link", value: await getlinkedinProfileUrl() });
     generalData.push({ inputId: "email", value: "" });
-    generalData.push({ inputId: "companyName", value: "" });
+    generalData.push({ inputId: "company-name", value: "" });
 
     return generalData;
   }

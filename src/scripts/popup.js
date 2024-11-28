@@ -1,4 +1,4 @@
-document.getElementById("getDataButton").addEventListener("click", () => {
+document.getElementById("get-data-button").addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.scripting.executeScript(
       {
@@ -30,7 +30,7 @@ document.getElementById("getDataButton").addEventListener("click", () => {
 
 function populateGeneralData(items) {
   items.forEach((item) => {
-    if (item.inputId == "firstName" || item.inputId == "secondName") {
+    if (item.inputId == "first-name" || item.inputId == "second-name") {
       document.querySelector(`#${item.inputId} input`).value = transliterate(
         item.value
       );
@@ -74,16 +74,16 @@ function createRadioListButtons(containerId, items) {
 
     if (index === 0) {
       radio.checked = true;
-      document.querySelector(`#jobPosition input`).value =
+      document.querySelector(`#job-position input`).value =
         infoBlock.textContent;
-      document.querySelector(`#companyName input`).value = item.name;
+      document.querySelector(`#company-name input`).value = item.name;
     }
 
     radio.addEventListener("change", () => {
       if (radio.checked) {
-        document.querySelector(`#jobPosition input`).value =
+        document.querySelector(`#job-position input`).value =
           infoBlock.textContent;
-        document.querySelector(`#companyName input`).value = item.name;
+        document.querySelector(`#company-name input`).value = item.name;
       }
     });
 
