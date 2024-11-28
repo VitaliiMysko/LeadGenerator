@@ -3,7 +3,7 @@ document.getElementById("getDataButton").addEventListener("click", () => {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabs[0].id },
-        files: ["src/tabs/active/handlerData.js"],
+        files: ["src/content-scripts/extract-data.js"],
       },
       () => {
         chrome.tabs.sendMessage(
