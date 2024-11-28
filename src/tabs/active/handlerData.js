@@ -1,22 +1,27 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "getData") {
-    const data = getData();
-    sendResponse({ data });
-  }
-  return true;
-});
+if (!window.messageListenerAdded) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "getData") {
+      (async () => {
+        const data = await getData();
+        sendResponse({ data });
+      })();
+      return true;
+    }
+  });
 
-function getData() {
+  window.messageListenerAdded = true;
+}
+
+async function getData() {
   let data = [];
   let generalData = [];
   let companiesAndJobPosition = [];
 
   try {
-    generalData = getGeneralData();
+    generalData = await getGeneralData();
     companiesAndJobPosition = getCompaniesAndJobPosition();
   } catch (error) {
-    console.log("Probably, something bad happened with getting data");
-    console.log(error.message);
+    console.error("Problems with getting data", error.message);
   }
 
   data.push({ category: "generalData", value: generalData });
@@ -24,14 +29,13 @@ function getData() {
 
   return data;
 
-  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
-  function getGeneralData() {
+  async function getGeneralData() {
     let generalData = [];
     const fullName = getFullName();
     generalData.push({ inputId: "firstName", value: getFirstName(fullName) });
     generalData.push({ inputId: "secondName", value: getSecondName(fullName) });
     generalData.push({ inputId: "jobPosition", value: getJobPosition() });
-    generalData.push({ inputId: "link", value: getLinkedinLink() });
+    generalData.push({ inputId: "link", value: await getlinkedinProfileUrl() });
     generalData.push({ inputId: "email", value: "" });
     generalData.push({ inputId: "companyName", value: "" });
 
@@ -43,15 +47,14 @@ function getData() {
       'h1[data-x--lead--name][data-anonymize="person-name"]'
     );
 
-    if (element) {
-      return handleFullName(element.textContent);
-    }
+    if (!element) return "";
 
-    return "";
+    return handleFullName(element.textContent);
   }
 
   function handleFullName(str) {
-    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, ""); // Removes the prefix dr/Dr before the full name
+    // Removes the prefix dr/Dr before the full name
+    str = str.trim().replace(/^(|dr\.?|dr\,?)\s+(?=[A-Z])/i, "");
     const exceptions = ["van", "der", "den", "de"];
     const [textBeforeComma] = str.split(",");
 
@@ -82,9 +85,9 @@ function getData() {
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
-    
+
     if (secondName.includes("'")) {
-      secondName = secondName.replace(/'\w/g, match => match.toUpperCase());
+      secondName = secondName.replace(/'\w/g, (match) => match.toUpperCase());
     }
 
     return secondName;
@@ -94,23 +97,30 @@ function getData() {
     return "";
   }
 
-  function getLinkedinLink() {
-    let xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
-
-    let result = document.evaluate(
-      xpath,
-      document,
-      null,
-      XPathResult.FIRST_ORDERED_NODE_TYPE,
-      null
+  async function getlinkedinProfileUrl() {
+    //id="hue-menu-trigger-ember51"; id="hue-menu-trigger-ember52"
+    const button = document.querySelector(
+      'button[data-x--lead-actions-bar-overflow-menu][aria-label="Open actions overflow menu"]'
     );
 
-    let element = result.singleNodeValue;
-    let link = element ? element.href : "";
-    return link.trim().split("?")[0];
+    if (!button) return "";
+
+    button.click();
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    let dropdownMenu =
+      document.getElementById("hue-menu-ember51") ??
+      document.getElementById("hue-menu-ember52");
+
+    if (!dropdownMenu) return "";
+
+    const linkProfile = dropdownMenu.querySelector("a");
+    button.click();
+
+    return linkProfile ? linkProfile.href : "";
   }
 
-  //>>>>>>>>>>>>>>>>>>GET GENERAL_DATA<<<<<<<<<<<<<<<<<<
   function getCompaniesAndJobPosition() {
     let comanyjobPositionData = [];
 
@@ -222,7 +232,10 @@ function getData() {
       "s.r.o",
       "spol",
     ];
-    return new RegExp(`[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`, "i");
+    return new RegExp(
+      `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
+      "i"
+    );
   }
 
   function GetCompanyName(element) {
