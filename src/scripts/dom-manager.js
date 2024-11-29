@@ -1,9 +1,9 @@
 function GetJobPositionElement() {
-  return document.getElementById("job-position-input");
+  return document.getElementById("job-position");
 }
 
 function GetCompanyNameElement() {
-    return document.getElementById("company-name-input");
+    return document.getElementById("company-name");
   }
 
 function GetTranslateBtnElement() {

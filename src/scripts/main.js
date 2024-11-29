@@ -33,11 +33,11 @@ document.getElementById("get-data-button").addEventListener("click", () => {
 function populateGeneralData(items) {
   items.forEach((item) => {
     if (item.inputId == "first-name" || item.inputId == "second-name") {
-      document.querySelector(`#${item.inputId} input`).value = transliterate(
+      document.querySelector(`#${item.inputId}`).value = transliterate(
         item.value
       );
     } else {
-      document.querySelector(`#${item.inputId} input`).value = item.value;
+      document.querySelector(`#${item.inputId}`).value = item.value;
     }
   });
 }

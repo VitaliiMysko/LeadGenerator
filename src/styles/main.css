@@ -62,11 +62,11 @@ button:active {
   transform: scale(0.98);
 }
 
-#job-position {
+#job-position-block {
   position: relative;
 }
 
-#job-position-input {
+#job-position {
   padding-right: 24px;
   max-width: 150px; /* hard code */
 }
@@ -80,7 +80,7 @@ button:active {
   }
 }
 
-#job-position-input.updated {
+#job-position.updated {
   animation: textChange 1s ease;
 }
 
