@@ -1,3 +1,5 @@
+import { jobPositionElement, companyNameElement } from './dom-manager.js';
+
 document.getElementById("get-data-button").addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.scripting.executeScript(
@@ -74,16 +76,14 @@ function createRadioListButtons(containerId, items) {
 
     if (index === 0) {
       radio.checked = true;
-      document.querySelector(`#job-position input`).value =
-        infoBlock.textContent;
-      document.querySelector(`#company-name input`).value = item.name;
+      jobPositionElement.value = infoBlock.textContent;
+      companyNameElement.value = item.name;
     }
 
     radio.addEventListener("change", () => {
       if (radio.checked) {
-        document.querySelector(`#job-position input`).value =
-          infoBlock.textContent;
-        document.querySelector(`#company-name input`).value = item.name;
+        jobPositionElement.value = infoBlock.textContent;
+        companyNameElement.value = item.name;
       }
     });
 
