@@ -61,15 +61,18 @@ function getData() {
       .map((word) => {
         if (exceptions.includes(word.toLowerCase())) {
           return word.toLowerCase();
-        } else {
-          return word
-            .split("-")
-            .map(
-              (part) =>
-                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            )
-            .join("-");
         }
+
+        if (word.match(/^(Mc|Mac)([A-Z])/)) {
+          return word; // Capital letter after prefix Mc/Mac isn't changed to lowercase
+        }
+
+        return word
+          .split("-")
+          .map(
+            (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+          )
+          .join("-");
       })
       .join(" ");
   }
@@ -82,9 +85,9 @@ function getData() {
   function getSecondName(fullName) {
     let [, ...remainingWords] = fullName.split(" ");
     let secondName = remainingWords.length > 0 ? remainingWords.join(" ") : "";
-    
+
     if (secondName.includes("'")) {
-      secondName = secondName.replace(/'\w/g, match => match.toUpperCase());
+      secondName = secondName.replace(/'\w/g, (match) => match.toUpperCase());
     }
 
     return secondName;
@@ -222,7 +225,10 @@ function getData() {
       "s.r.o",
       "spol",
     ];
-    return new RegExp(`[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`, "i");
+    return new RegExp(
+      `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
+      "i"
+    );
   }
 
   function GetCompanyName(element) {
