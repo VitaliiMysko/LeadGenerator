@@ -1,6 +1,11 @@
-import { jobPositionElement, companyNameElement } from './dom-manager.js';
+import {
+  getBtnElement,
+  copyBtnElement,
+  jobPositionElement,
+  companyNameElement,
+} from "./dom-manager.js";
 
-document.getElementById("get-data-button").addEventListener("click", () => {
+getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.scripting.executeScript(
       {
@@ -49,16 +54,16 @@ function createRadioListButtons(containerId, items) {
 
   items.forEach((item, index) => {
     const radioItem = document.createElement("div");
-    radioItem.classList.add("radio-item");
+    radioItem.classList.add("radio-company");
 
     const radio = document.createElement("input");
     radio.type = "radio";
     radio.name = "options";
-    radio.id = `radio-${item.id}`;
+    radio.id = `radio-company-${item.id}`;
     radio.value = item.id;
 
     const label = document.createElement("label");
-    label.setAttribute("for", `radio-${item.id}`);
+    label.setAttribute("for", `radio-company-${item.id}`);
 
     if (item.link != "") {
       const link = document.createElement("a");
@@ -71,7 +76,7 @@ function createRadioListButtons(containerId, items) {
     }
 
     const infoBlock = document.createElement("div");
-    infoBlock.classList.add("info-block");
+    infoBlock.classList.add("extra-company-data");
     infoBlock.textContent = item.jobPosition;
 
     if (index === 0) {
@@ -96,12 +101,12 @@ function createRadioListButtons(containerId, items) {
 }
 
 //>>>>>>>>>>>>>>>>>>COPY INTO BUFFER<<<<<<<<<<<<<<<<<<
-document.getElementById("copy").addEventListener("click", function () {
+copyBtnElement.addEventListener("click", function () {
   copyToBuffer();
 });
 
 function copyToBuffer() {
-  const inputs = document.querySelectorAll("#input-container input");
+  const inputs = document.querySelectorAll("#data-container input");
   const values = Array.from(inputs)
     .map((input) => input.value)
     .join("\t");

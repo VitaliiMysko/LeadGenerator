@@ -94,7 +94,7 @@ button:active {
   padding: 0;
 }
 
-.draggable-input {
+.draggable-block {
   width: 100%;
   padding-top: 5px;
   cursor: move;
@@ -140,11 +140,11 @@ button:active {
   flex-direction: column;
 }
 
-.radio-item {
+.radio-company {
   margin: 5px 0;
 }
 
-.info-block {
+.extra-company-data {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;

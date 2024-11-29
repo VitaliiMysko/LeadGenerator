@@ -8,33 +8,36 @@
     <div class="main-container">
       <div class="container">
         <h3>Lead generator</h3>
-        <button id="get-data-button">Get</button>
-        <button id="copy">Copy</button>
-        <div id="input-container">
-          <div class="draggable-input" draggable="true">
+        <button id="get-btn">Get</button>
+        <button id="copy-btn">Copy</button>
+        <div id="data-container">
+          <div class="draggable-block" draggable="true">
             <spam>Name: </spam>
             <input type="text" id="first-name" value="" />
           </div>
-          <div class="draggable-input" draggable="true">
+          <div class="draggable-block" draggable="true">
             <spam>Surname: </spam>
             <input type="text" id="second-name" value="" />
           </div>
-          <div class="draggable-input" id="job-position-block" draggable="true">
+          <div class="draggable-block" id="job-position-block" draggable="true">
             <spam>Job position: </spam>
             <input type="text" id="job-position" value="" />
             <button id="translate-btn">
-              <img src="assets/icons/google-translate-16.png" alt="Translate icon" />
+              <img
+                src="assets/icons/google-translate-16.png"
+                alt="Translate icon"
+              />
             </button>
           </div>
-          <div class="draggable-input" draggable="true">
+          <div class="draggable-block" draggable="true">
             <spam>Link: </spam>
             <input type="text" id="link" value="" />
           </div>
-          <div class="draggable-input" draggable="true">
+          <div class="draggable-block" draggable="true">
             <spam>Email: </spam>
             <input type="email" id="email" value="" />
           </div>
-          <div class="draggable-input" draggable="true">
+          <div class="draggable-block" draggable="true">
             <spam>Company name: </spam>
             <input type="text" id="company-name" value="" />
           </div>
@@ -52,7 +55,7 @@
 
     <script type="module" src="src/scripts/main.js"></script>
     <script type="module" src="src/scripts/translation.js"></script>
-    <script src="src/scripts/drag-and-drop.js"></script>
+    <script type="module" src="src/scripts/drag-and-drop.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>
   </body>
 </html>
