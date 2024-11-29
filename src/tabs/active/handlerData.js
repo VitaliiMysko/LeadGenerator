@@ -64,15 +64,18 @@ async function getData() {
       .map((word) => {
         if (exceptions.includes(word.toLowerCase())) {
           return word.toLowerCase();
-        } else {
-          return word
-            .split("-")
-            .map(
-              (part) =>
-                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            )
-            .join("-");
         }
+
+        if (word.match(/^(Mc|Mac)([A-Z])/)) {
+          return word; // Capital letter after prefix Mc/Mac isn't changed to lowercase
+        }
+
+        return word
+          .split("-")
+          .map(
+            (part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+          )
+          .join("-");
       })
       .join(" ");
   }
