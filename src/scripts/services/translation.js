@@ -1,4 +1,4 @@
-import { translateBtnElement, jobPositionElement } from "./dom-manager.js";
+import { translateBtnElement, jobPositionElement } from "../helper/dom-helper.js";
 
 translateBtnElement.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {

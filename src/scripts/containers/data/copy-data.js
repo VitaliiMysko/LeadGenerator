@@ -1,5 +1,5 @@
-import { copyBtnElement, dataContainerElement } from "./dom-manager.js";
-import { showAlert } from "./alert.js";
+import { copyBtnElement, dataContainerElement } from "../../helper/dom-helper.js";
+import { showAlert } from "../../output/alert.js";
 
 copyBtnElement.addEventListener("click", function () {
   copyToBuffer();

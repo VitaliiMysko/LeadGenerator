@@ -1,5 +1,5 @@
-import { getBtnElement } from "./dom-manager.js";
-import { createRadioCompaniesList } from "./company-list.js";
+import { getBtnElement } from "./helper/dom-helper.js";
+import { createRadioCompaniesList } from "./containers/companies/companies-list.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

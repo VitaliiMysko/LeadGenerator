@@ -1,4 +1,4 @@
-import { alertElement } from "./dom-manager.js";
+import { alertElement } from "../helper/dom-helper.js";
 
 export function showAlert(message, type = "success", duration = 3000) {
   alertElement.textContent = message;

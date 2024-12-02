@@ -1,4 +1,4 @@
-import { dataContainerElement } from "./dom-manager.js";
+import { dataContainerElement } from "../../helper/dom-helper.js";
 
 let dragged;
 

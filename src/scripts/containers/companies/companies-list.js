@@ -2,7 +2,7 @@ import {
   jobPositionElement,
   companyNameElement,
   radioListContainerElement,
-} from "./dom-manager.js";
+} from "../../helper/dom-helper.js";
 
 export function createRadioCompaniesList(companies) {
   radioListContainerElement.innerHTML = "";
