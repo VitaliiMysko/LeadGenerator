@@ -1,4 +1,7 @@
-import { copyBtnElement, dataContainerElement } from "../../helper/dom-helper.js";
+import {
+  copyBtnElement,
+  dataContainerElement,
+} from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 
 copyBtnElement.addEventListener("click", function () {
