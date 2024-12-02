@@ -22,8 +22,8 @@ function GetDataContainerElement() {
   return document.getElementById("data-container");
 }
 
-function GetMessageElement() {
-  return document.getElementById("message");
+function GetAlertElement() {
+  return document.getElementById("alert");
 }
 
 export const jobPositionElement = GetJobPositionElement();
@@ -32,4 +32,4 @@ export const translateBtnElement = GetTranslateBtnElement();
 export const getBtnElement = GetGetBtnElement();
 export const copyBtnElement = GetCopyBtnElement();
 export const dataContainerElement = GetDataContainerElement();
-export const messageElement = GetMessageElement();
+export const alertElement = GetAlertElement();

@@ -88,7 +88,7 @@ button:active {
   padding-top: 5px;
   cursor: move;
 }
-.message {
+.alert {
   visibility: hidden;
   min-width: 250px;
   color: #fff;
@@ -103,14 +103,14 @@ button:active {
   opacity: 0.3;
   transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
 }
-.message.show {
+.alert.show {
   visibility: visible;
   opacity: 0.9;
 }
-.message.success {
+.alert.success {
   background-color: #4caf50;
 }
-.message.error {
+.alert.error {
   background-color: #f44336;
 }
 .vertical-line {

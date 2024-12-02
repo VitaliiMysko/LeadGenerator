@@ -1,5 +1,5 @@
 import { copyBtnElement, dataContainerElement } from "./dom-manager.js";
-import { showMessage } from "./message.js";
+import { showAlert } from "./alert.js";
 
 copyBtnElement.addEventListener("click", function () {
   copyToBuffer();
@@ -14,9 +14,9 @@ function copyToBuffer() {
   navigator.clipboard
     .writeText(values)
     .then(() => {
-      showMessage("Copy successful!", "success", 3000);
+      showAlert("Copy successful!", "success", 3000);
     })
     .catch((err) => {
-      showMessage("Copy failed!", "error", 3000);
+      showAlert("Copy failed!", "error", 3000);
     });
 }
