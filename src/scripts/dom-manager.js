@@ -26,6 +26,10 @@ function GetAlertElement() {
   return document.getElementById("alert");
 }
 
+function GetRadioListContainerElement() {
+  return document.getElementById("radio-list-container");
+}
+
 export const jobPositionElement = GetJobPositionElement();
 export const companyNameElement = GetCompanyNameElement();
 export const translateBtnElement = GetTranslateBtnElement();
@@ -33,3 +37,4 @@ export const getBtnElement = GetGetBtnElement();
 export const copyBtnElement = GetCopyBtnElement();
 export const dataContainerElement = GetDataContainerElement();
 export const alertElement = GetAlertElement();
+export const radioListContainerElement = GetRadioListContainerElement();

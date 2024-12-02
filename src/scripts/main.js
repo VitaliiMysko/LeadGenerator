@@ -1,8 +1,5 @@
-import {
-  getBtnElement,
-  jobPositionElement,
-  companyNameElement,
-} from "./dom-manager.js";
+import { getBtnElement } from "./dom-manager.js";
+import { createRadioCompaniesList } from "./company-list.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -23,7 +20,7 @@ getBtnElement.addEventListener("click", () => {
                   populateGeneralData(element.value);
                 }
                 if (element.category === "comany&jobPosition") {
-                  createRadioListButtons("radio-list-container", element.value);
+                  createRadioCompaniesList(element.value);
                 }
               });
             }
@@ -43,58 +40,5 @@ function populateGeneralData(items) {
     } else {
       document.querySelector(`#${item.inputId}`).value = item.value;
     }
-  });
-}
-
-function createRadioListButtons(containerId, items) {
-  const container = document.getElementById(containerId);
-
-  container.innerHTML = "";
-
-  items.forEach((item, index) => {
-    const radioItem = document.createElement("div");
-    radioItem.classList.add("radio-company");
-
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "options";
-    radio.id = `radio-company-${item.id}`;
-    radio.value = item.id;
-
-    const label = document.createElement("label");
-    label.setAttribute("for", `radio-company-${item.id}`);
-
-    if (item.link != "") {
-      const link = document.createElement("a");
-      link.href = item.link;
-      link.textContent = item.name;
-
-      label.appendChild(link);
-    } else {
-      label.textContent = item.name;
-    }
-
-    const extraCompanyData = document.createElement("div");
-    extraCompanyData.classList.add("extra-company-data");
-    extraCompanyData.textContent = item.jobPosition;
-
-    if (index === 0) {
-      radio.checked = true;
-      jobPositionElement.value = extraCompanyData.textContent;
-      companyNameElement.value = item.name;
-    }
-
-    radio.addEventListener("change", () => {
-      if (radio.checked) {
-        jobPositionElement.value = extraCompanyData.textContent;
-        companyNameElement.value = item.name;
-      }
-    });
-
-    radioItem.appendChild(radio);
-    radioItem.appendChild(label);
-    radioItem.appendChild(extraCompanyData);
-
-    container.appendChild(radioItem);
   });
 }
