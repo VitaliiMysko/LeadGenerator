@@ -22,9 +22,14 @@ function GetDataContainerElement() {
   return document.getElementById("data-container");
 }
 
+function GetMessageElement() {
+  return document.getElementById("message");
+}
+
 export const jobPositionElement = GetJobPositionElement();
 export const companyNameElement = GetCompanyNameElement();
 export const translateBtnElement = GetTranslateBtnElement();
 export const getBtnElement = GetGetBtnElement();
 export const copyBtnElement = GetCopyBtnElement();
 export const dataContainerElement = GetDataContainerElement();
+export const messageElement = GetMessageElement();

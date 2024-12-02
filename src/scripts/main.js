@@ -1,6 +1,5 @@
 import {
   getBtnElement,
-  copyBtnElement,
   jobPositionElement,
   companyNameElement,
 } from "./dom-manager.js";
@@ -75,59 +74,27 @@ function createRadioListButtons(containerId, items) {
       label.textContent = item.name;
     }
 
-    const infoBlock = document.createElement("div");
-    infoBlock.classList.add("extra-company-data");
-    infoBlock.textContent = item.jobPosition;
+    const extraCompanyData = document.createElement("div");
+    extraCompanyData.classList.add("extra-company-data");
+    extraCompanyData.textContent = item.jobPosition;
 
     if (index === 0) {
       radio.checked = true;
-      jobPositionElement.value = infoBlock.textContent;
+      jobPositionElement.value = extraCompanyData.textContent;
       companyNameElement.value = item.name;
     }
 
     radio.addEventListener("change", () => {
       if (radio.checked) {
-        jobPositionElement.value = infoBlock.textContent;
+        jobPositionElement.value = extraCompanyData.textContent;
         companyNameElement.value = item.name;
       }
     });
 
     radioItem.appendChild(radio);
     radioItem.appendChild(label);
-    radioItem.appendChild(infoBlock);
+    radioItem.appendChild(extraCompanyData);
 
     container.appendChild(radioItem);
   });
-}
-
-//>>>>>>>>>>>>>>>>>>COPY INTO BUFFER<<<<<<<<<<<<<<<<<<
-copyBtnElement.addEventListener("click", function () {
-  copyToBuffer();
-});
-
-function copyToBuffer() {
-  const inputs = document.querySelectorAll("#data-container input");
-  const values = Array.from(inputs)
-    .map((input) => input.value)
-    .join("\t");
-
-  navigator.clipboard
-    .writeText(values)
-    .then(() => {
-      showInfo("Copy successful!", "success", 3000);
-    })
-    .catch((err) => {
-      showInfo("Copy failed!", "error", 3000);
-    });
-}
-
-function showInfo(message, type = "success", duration = 3000) {
-  const info = document.getElementById("info");
-  info.textContent = message;
-
-  info.classList.add("show", type);
-
-  setTimeout(() => {
-    info.classList.remove("show", type);
-  }, duration);
 }
