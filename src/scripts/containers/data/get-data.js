@@ -6,7 +6,7 @@ getBtnElement.addEventListener("click", () => {
     chrome.scripting.executeScript(
       {
         target: { tabId: tabs[0].id },
-        files: ["src/content-scripts/extract-data.js"],
+        files: ["src/content-scripts/personal-data.js", "src/content-scripts/extract-data.js"],
       },
       () => {
         chrome.tabs.sendMessage(

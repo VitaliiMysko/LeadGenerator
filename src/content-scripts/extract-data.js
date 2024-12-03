@@ -2,6 +2,7 @@ if (!window.messageListenerAdded) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "getData") {
       (async () => {
+        console.log("getData == getData");
         const data = await getData();
         sendResponse({ data });
       })();
@@ -9,7 +10,13 @@ if (!window.messageListenerAdded) {
     }
   });
 
+  console.log("<< messageListenerAdded >>");
   window.messageListenerAdded = true;
+}
+
+if (!window.leadGenerator.personalDataDeclared) {
+  getFirstName = window.leadGenerator.personalData.getFirstName;
+  window.leadGenerator.personalDataDeclared = true;
 }
 
 async function getData() {
@@ -81,11 +88,6 @@ async function getData() {
           .join("-");
       })
       .join(" ");
-  }
-
-  function getFirstName(fullName) {
-    let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
-    return firstName;
   }
 
   function getSecondName(fullName) {
