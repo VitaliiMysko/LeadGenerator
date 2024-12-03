@@ -23,7 +23,7 @@ getBtnElement.addEventListener("click", () => {
                 if (element.category === "generalData") {
                   populateGeneralData(element.value);
                 }
-                if (element.category === "comany&jobPosition") {
+                if (element.category === "actualExperienceData") {
                   createRadioCompaniesList(element.value);
                 }
               });

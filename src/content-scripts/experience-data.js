@@ -1,25 +1,23 @@
 if (!window.leadGenerator.experienceDataInit) {
-  window.leadGenerator.experienceData = window.leadGenerator.experienceData || {};
+  window.leadGenerator.experienceData =
+    window.leadGenerator.experienceData || {};
 
   (() => {
-    const getCompaniesAndJobPosition = () => {
-      let comanyjobPositionData = [];
-
-      const companyComponents = document.querySelectorAll(
-        "._experience-entry_1irc72"
-      );
+    const getActualExperienceData = () => {
+      let actualExperienceData = [];
+      const experienceComponents = GetExperienceComponents();
 
       let id = 0;
 
-      for (const companyComponent of companyComponents) {
-        let name = "";
-        let link = "";
+      for (const experienceComponent of experienceComponents) {
+        let companyName = "";
+        let companylink = "";
         let jobPosition = "";
 
-        const companyDataElement = companyComponent.children[0].children[1];
+        const companyDataElement = experienceComponent.children[0].children[1];
 
-        link = GetCompanyLink(companyDataElement);
-        name = GetCompanyName(companyDataElement);
+        companylink = GetCompanyLink(companyDataElement);
+        companyName = GetCompanyName(companyDataElement);
 
         const jobPositionElement = GetJobPositionElement(companyDataElement);
 
@@ -29,12 +27,12 @@ if (!window.leadGenerator.experienceDataInit) {
           const actualPositionElement = companyDataElement.children[2];
 
           if (IsActualJobPosition(actualPositionElement)) {
-            if (name != "" && jobPosition != "") {
-              comanyjobPositionData.push({
+            if (companyName != "" && jobPosition != "") {
+              actualExperienceData.push({
                 id: ++id,
-                name: name,
+                companyName: companyName,
                 jobPosition: jobPosition,
-                link: link,
+                companylink: companylink,
               });
             }
           } else {
@@ -42,7 +40,7 @@ if (!window.leadGenerator.experienceDataInit) {
           }
         } else {
           const multiPositionCompanyComponent =
-            companyComponent.querySelector("ul");
+            experienceComponent.querySelector("ul");
 
           if (multiPositionCompanyComponent) {
             const positionComponents =
@@ -60,12 +58,12 @@ if (!window.leadGenerator.experienceDataInit) {
                 positionComponent.children[1].children[1];
 
               if (IsActualJobPosition(actualPositionElement)) {
-                if (name != "" && jobPosition != "") {
-                  comanyjobPositionData.push({
+                if (companyName != "" && jobPosition != "") {
+                  actualExperienceData.push({
                     id: ++id,
-                    name: name,
+                    companyName: companyName,
                     jobPosition: jobPosition,
-                    link: link,
+                    companylink: companylink,
                   });
                 }
               } else {
@@ -75,8 +73,8 @@ if (!window.leadGenerator.experienceDataInit) {
           }
         }
       }
-      return comanyjobPositionData;
-    }
+      return actualExperienceData;
+    };
 
     function GetCompanyLink(element) {
       let link = "";
@@ -122,15 +120,21 @@ if (!window.leadGenerator.experienceDataInit) {
 
     function GetCompanyName(element) {
       let name = "";
-      let companyElement = element.querySelector(
-        '[data-anonymize="company-name"]'
-      );
+      let companyElement = GetCompanyElement(element);
 
       if (companyElement) {
         const regex = removeCompanyStatusRegex();
         name = companyElement.textContent.trim().replace(regex, "");
       }
       return name;
+    }
+
+    function GetExperienceComponents() {
+      return document.querySelectorAll("._experience-entry_1irc72");
+    }
+
+    function GetCompanyElement(element) {
+      return element.querySelector('[data-anonymize="company-name"]');
     }
 
     function GetJobPositionElement(element) {
@@ -148,7 +152,8 @@ if (!window.leadGenerator.experienceDataInit) {
       }
     }
 
-    window.leadGenerator.experienceData.getCompaniesAndJobPosition = getCompaniesAndJobPosition;
+    window.leadGenerator.experienceData.getActualExperienceData =
+      getActualExperienceData;
   })();
 
   window.leadGenerator.experienceDataInit = true;

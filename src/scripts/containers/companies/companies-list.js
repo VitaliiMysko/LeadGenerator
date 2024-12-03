@@ -4,10 +4,10 @@ import {
   radioListContainerElement,
 } from "../../helper/dom-helper.js";
 
-export function createRadioCompaniesList(companies) {
+export function createRadioCompaniesList(experiences) {
   radioListContainerElement.innerHTML = "";
 
-  companies.forEach((company, index) => {
+  experiences.forEach((company, index) => {
     const radioCompanyBlock = document.createElement("div");
     radioCompanyBlock.classList.add("radio-company");
 
@@ -20,14 +20,14 @@ export function createRadioCompaniesList(companies) {
     const label = document.createElement("label");
     label.setAttribute("for", `radio-company-${company.id}`);
 
-    if (company.link != "") {
+    if (company.companylink != "") {
       const link = document.createElement("a");
-      link.href = company.link;
-      link.textContent = company.name;
+      link.href = company.companylink;
+      link.textContent = company.companyName;
 
       label.appendChild(link);
     } else {
-      label.textContent = company.name;
+      label.textContent = company.companyName;
     }
 
     const extraCompanyData = document.createElement("div");
@@ -37,13 +37,13 @@ export function createRadioCompaniesList(companies) {
     if (index === 0) {
       radioItem.checked = true;
       jobPositionElement.value = extraCompanyData.textContent;
-      companyNameElement.value = company.name;
+      companyNameElement.value = company.companyName;
     }
 
     radioItem.addEventListener("change", () => {
       if (radioItem.checked) {
         jobPositionElement.value = extraCompanyData.textContent;
-        companyNameElement.value = company.name;
+        companyNameElement.value = company.companyName;
       }
     });
 
