@@ -2,7 +2,6 @@ if (!window.messageListenerAdded) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "getData") {
       (async () => {
-        console.log("getData == getData");
         const data = await getData();
         sendResponse({ data });
       })();
@@ -19,25 +18,28 @@ if (!window.leadGenerator.personalDataDeclared) {
 }
 
 if (!window.leadGenerator.experienceDataDeclared) {
-  getActualExperienceData =
-    window.leadGenerator.experienceData.getActualExperienceData;
+  getActualExperiencesData =
+    window.leadGenerator.experienceData.getActualExperiencesData;
   window.leadGenerator.experienceDataDeclared = true;
 }
 
 async function getData() {
   let data = [];
   let personalData = [];
-  let actualExperienceData = [];
+  let actualExperiencesData = [];
 
   try {
     personalData = await getPersonalData();
-    actualExperienceData = getActualExperienceData();
+    actualExperiencesData = getActualExperiencesData();
   } catch (error) {
     console.error("Problems with getting data", error.message);
   }
 
   data.push({ category: "personalData", value: personalData });
-  data.push({ category: "actualExperienceData", value: actualExperienceData });
+  data.push({
+    category: "actualExperiencesData",
+    value: actualExperiencesData,
+  });
 
   return data;
 }

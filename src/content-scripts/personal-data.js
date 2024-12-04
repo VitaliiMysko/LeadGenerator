@@ -3,7 +3,6 @@ if (!window.leadGenerator.personalDataInit) {
 
   (async () => {
     const getPersonalData = async () => {
-      console.log("<<<<<<<<getPersonalData");
       let generalData = [];
       const fullName = getFullName();
       generalData.push({

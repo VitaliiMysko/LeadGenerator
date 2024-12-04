@@ -1,11 +1,11 @@
 import {
   jobPositionElement,
   companyNameElement,
-  radioListContainerElement,
+  experienceContainerElement,
 } from "../../helper/dom-helper.js";
 
 export function createRadioCompaniesList(experiences) {
-  radioListContainerElement.innerHTML = "";
+  experienceContainerElement.innerHTML = "";
 
   experiences.forEach((company, index) => {
     const radioCompanyBlock = document.createElement("div");
@@ -51,6 +51,6 @@ export function createRadioCompaniesList(experiences) {
     radioCompanyBlock.appendChild(label);
     radioCompanyBlock.appendChild(extraCompanyData);
 
-    radioListContainerElement.appendChild(radioCompanyBlock);
+    experienceContainerElement.appendChild(radioCompanyBlock);
   });
 }

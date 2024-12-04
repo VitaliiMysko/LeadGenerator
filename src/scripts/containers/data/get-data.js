@@ -1,5 +1,5 @@
 import { getBtnElement } from "../../helper/dom-helper.js";
-import { createRadioCompaniesList } from "../companies/companies-list.js";
+import { createRadioCompaniesList } from "../experiences/actual-experiences.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -24,7 +24,7 @@ getBtnElement.addEventListener("click", () => {
                 if (element.category === "personalData") {
                   populateGeneralData(element.value);
                 }
-                if (element.category === "actualExperienceData") {
+                if (element.category === "actualExperiencesData") {
                   createRadioCompaniesList(element.value);
                 }
               });

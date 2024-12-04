@@ -3,9 +3,8 @@ if (!window.leadGenerator.experienceDataInit) {
     window.leadGenerator.experienceData || {};
 
   (() => {
-    const getActualExperienceData = () => {
-      console.log("<<<<<<<<getActualExperienceData");
-      let actualExperienceData = [];
+    const getActualExperiencesData = () => {
+      let actualExperiencesData = [];
       const experienceComponents = GetExperienceComponents();
 
       let id = 0;
@@ -29,7 +28,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
           if (IsActualJobPosition(actualPositionElement)) {
             if (companyName != "" && jobPosition != "") {
-              actualExperienceData.push({
+              actualExperiencesData.push({
                 id: ++id,
                 companyName: companyName,
                 jobPosition: jobPosition,
@@ -60,7 +59,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
               if (IsActualJobPosition(actualPositionElement)) {
                 if (companyName != "" && jobPosition != "") {
-                  actualExperienceData.push({
+                  actualExperiencesData.push({
                     id: ++id,
                     companyName: companyName,
                     jobPosition: jobPosition,
@@ -74,7 +73,7 @@ if (!window.leadGenerator.experienceDataInit) {
           }
         }
       }
-      return actualExperienceData;
+      return actualExperiencesData;
     };
 
     function GetCompanyLink(element) {
@@ -131,8 +130,8 @@ if (!window.leadGenerator.experienceDataInit) {
       return element.querySelector('[data-anonymize="job-title"]');
     }
 
-    window.leadGenerator.experienceData.getActualExperienceData =
-      getActualExperienceData;
+    window.leadGenerator.experienceData.getActualExperiencesData =
+      getActualExperiencesData;
   })();
 
   window.leadGenerator.experienceDataInit = true;
