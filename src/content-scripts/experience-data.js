@@ -44,7 +44,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
           if (multiPositionCompanyComponent) {
             const positionComponents =
-              multiPositionCompanyComponent.querySelectorAll("li");
+              multiPositionCompanyComponent.querySelectorAll(":scope > li");
 
             for (const positionComponent of positionComponents) {
               const jobPositionElement =
