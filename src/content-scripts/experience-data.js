@@ -4,6 +4,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
   (() => {
     const getActualExperienceData = () => {
+      console.log("<<<<<<<<getActualExperienceData");
       let actualExperienceData = [];
       const experienceComponents = GetExperienceComponents();
 
@@ -107,6 +108,17 @@ if (!window.leadGenerator.experienceDataInit) {
       return name;
     }
 
+    function IsActualJobPosition(element) {
+      if (element) {
+        const periodElement = element.querySelector("span");
+
+        if (periodElement) {
+          const period = periodElement.textContent.trim();
+          return period.includes("Present");
+        }
+      }
+    }
+
     function GetExperienceComponents() {
       return document.querySelectorAll("._experience-entry_1irc72");
     }
@@ -117,17 +129,6 @@ if (!window.leadGenerator.experienceDataInit) {
 
     function GetJobPositionElement(element) {
       return element.querySelector('[data-anonymize="job-title"]');
-    }
-
-    function IsActualJobPosition(element) {
-      if (element) {
-        const periodElement = element.querySelector("span");
-
-        if (periodElement) {
-          const period = periodElement.textContent.trim();
-          return period.includes("Present");
-        }
-      }
     }
 
     window.leadGenerator.experienceData.getActualExperienceData =

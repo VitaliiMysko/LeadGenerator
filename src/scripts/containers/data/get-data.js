@@ -21,7 +21,7 @@ getBtnElement.addEventListener("click", () => {
             if (results) {
               const data = results.data;
               data.forEach((element) => {
-                if (element.category === "generalData") {
+                if (element.category === "personalData") {
                   populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
