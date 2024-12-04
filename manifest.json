@@ -6,28 +6,28 @@
   "permissions": ["activeTab", "scripting", "identity"],
   "host_permissions": ["https://www.linkedin.com/sales/lead/*"],
   "icons": {
-    "16": "icons/logo/icon16.png",
-    "32": "icons/logo/icon32.png",
-    "48": "icons/logo/icon48.png",
-    "128": "icons/logo/icon128.png"
+    "16": "assets/icons/logo-16.png",
+    "32": "assets/icons/logo-32.png",
+    "48": "assets/icons/logo-48.png",
+    "128": "assets/icons/logo-128.png"
   },
   "background": {
-    "service_worker": "src/worker/background.js"
+    "service_worker": "src/scripts/worker/background.js"
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "index.html",
     "default_title": "Lead generator",
     "default_icon": {
-      "16": "icons/logo/icon16.png",
-      "32": "icons/logo/icon32.png",
-      "48": "icons/logo/icon48.png",
-      "128": "icons/logo/icon128.png"
+      "16": "assets/icons/logo-16.png",
+      "32": "assets/icons/logo-32.png",
+      "48": "assets/icons/logo-48.png",
+      "128": "assets/icons/logo-128.png"
     }
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/scripts/content.js", "src/tabs/active/handlerData.js"]
+      "js": ["src/content-scripts/content.js"]
     }
   ],
   "oauth2": {

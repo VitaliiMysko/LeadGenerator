@@ -1,12 +1,16 @@
-document.getElementById("translateBtn").addEventListener("click", () => {
+import {
+  translateBtnElement,
+  jobPositionElement,
+} from "../helper/dom-helper.js";
+
+translateBtnElement.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {
     if (response.success) {
       translateText(response.token);
-
-      document.getElementById("jobPositionInput").classList.add("updated");
+      jobPositionElement.classList.add("updated");
 
       setTimeout(() => {
-        document.getElementById("jobPositionInput").classList.remove("updated");
+        jobPositionElement.classList.remove("updated");
       }, 1000);
     } else {
       console.error("Error authorization:", response.error);
@@ -16,7 +20,6 @@ document.getElementById("translateBtn").addEventListener("click", () => {
 
 function translateText(token) {
   const url = "https://translation.googleapis.com/language/translate/v2";
-  const jobPositionElement = document.getElementById("jobPositionInput");
 
   fetch(url, {
     method: "POST",

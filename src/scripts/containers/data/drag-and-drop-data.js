@@ -1,3 +1,5 @@
+import { dataContainerElement } from "../../helper/dom-helper.js";
+
 let dragged;
 
 document.addEventListener(
@@ -29,18 +31,19 @@ document.addEventListener(
   "drop",
   function (event) {
     event.preventDefault();
-    if (event.target.classList.contains("draggable-input")) {
+    if (event.target.classList.contains("draggable-block")) {
       if (dragged !== event.target) {
-        const container = document.getElementById("input-container");
-        const draggedIndex = Array.from(container.children).indexOf(dragged);
-        const targetIndex = Array.from(container.children).indexOf(
+        const draggedIndex = Array.from(dataContainerElement.children).indexOf(
+          dragged
+        );
+        const targetIndex = Array.from(dataContainerElement.children).indexOf(
           event.target
         );
 
         if (draggedIndex > targetIndex) {
-          container.insertBefore(dragged, event.target);
+          dataContainerElement.insertBefore(dragged, event.target);
         } else {
-          container.insertBefore(dragged, event.target.nextSibling);
+          dataContainerElement.insertBefore(dragged, event.target.nextSibling);
         }
       }
     }
