@@ -1,6 +1,3 @@
-window.leadGenerator = window.leadGenerator || {};
-console.log("<< window.LeadGenerator >>");
-
 if (!window.leadGenerator.personalDataInit) {
   window.leadGenerator.personalData = window.leadGenerator.personalData || {};
   (() => {

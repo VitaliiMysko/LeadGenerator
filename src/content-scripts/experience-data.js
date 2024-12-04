@@ -89,29 +89,7 @@ if (!window.leadGenerator.experienceDataInit) {
     }
 
     function removeCompanyStatusRegex() {
-      const companyStatus = [
-        "inc",
-        "ind",
-        "corp",
-        "ltd",
-        "AB",
-        "AS",
-        "A/S",
-        "ASA",
-        "LP",
-        "Plc",
-        "S.L",
-        "AG",
-        "S.A",
-        "S.p.A",
-        "Aps",
-        "LLC",
-        "LLP",
-        "PLC",
-        "GmbH",
-        "s.r.o",
-        "spol",
-      ];
+      const companyStatus = window.leadGenerator.content.companyStatus;
       return new RegExp(
         `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
         "i"
