@@ -30,6 +30,10 @@ function GetExperienceContainerElement() {
   return document.getElementById("experience-container");
 }
 
+function GetAppVerionElement() {
+  return document.getElementById("app-version")
+}
+
 export const jobPositionElement = GetJobPositionElement();
 export const companyNameElement = GetCompanyNameElement();
 export const translateBtnElement = GetTranslateBtnElement();
@@ -38,3 +42,4 @@ export const copyBtnElement = GetCopyBtnElement();
 export const dataContainerElement = GetDataContainerElement();
 export const alertElement = GetAlertElement();
 export const experienceContainerElement = GetExperienceContainerElement();
+export const appVerionElement = GetAppVerionElement();
