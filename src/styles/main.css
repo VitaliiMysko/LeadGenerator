@@ -56,6 +56,19 @@ button:hover {
 button:active {
   transform: scale(0.98);
 }
+a {
+  color: #0056b3;
+  text-decoration: none;
+}
+a:visited {
+  color: #0056b3;
+}
+a:hover {
+  color: #0056b3;
+}
+a:active {
+  color: #004494;
+}
 #job-position-block {
   position: relative;
 }
@@ -132,16 +145,11 @@ button:active {
   background-color: #f9f9f9;
   margin-top: 5px;
 }
-a {
-  color: #0056b3;
-  text-decoration: none;
-}
-a:visited {
-  color: #0056b3;
-}
-a:hover {
-  color: #0056b3;
-}
-a:active {
-  color: #004494;
+#version-container {
+  position: fixed;
+  top: 5px;
+  right: 10px;
+  color: #ccc;
+  font-size: 9px;
+  z-index: 1000;
 }
