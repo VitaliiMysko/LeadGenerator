@@ -81,24 +81,47 @@ if (!window.leadGenerator.personalDataInit) {
     }
 
     async function getlinkedinProfileUrl() {
+      let linkProfileUrl = getlinkedinProfileUrlThroughSaleQL();
+      if (linkProfileUrl == "") {
+        linkProfileUrl = await getlinkedinProfileUrlThroughSalesNavigatorPage();
+      }
+      return linkProfileUrl;
+    }
+
+    function getlinkedinProfileUrlThroughSaleQL() {
+      const xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
+      const result = document.evaluate(
+        xpath,
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      );
+      const linkProfileUrlElement = result.singleNodeValue;
+      const linkProfileUrl = linkProfileUrlElement
+        ? linkProfileUrlElement.href
+        : "";
+      return linkProfileUrl.trim().split("?")[0];
+    }
+
+    async function getlinkedinProfileUrlThroughSalesNavigatorPage() {
       const actionsMenuElement = getActionsMenuElement();
-
       if (!actionsMenuElement) return "";
-
       actionsMenuElement.click();
 
       await new Promise((resolve) => setTimeout(resolve, 350));
 
-      let dropdownMenu =
-        document.getElementById("hue-menu-ember51") ??
-        document.getElementById("hue-menu-ember52");
+      let linkProfileUrl = "";
+      const dropdownMenuElement = getDropdownMenuElement();
+      if (dropdownMenuElement) {
+        const linkProfileUrlElement = dropdownMenuElement.querySelector("a");
+        linkProfileUrl = linkProfileUrlElement
+          ? linkProfileUrlElement.href
+          : "";
+      }
 
-      if (!dropdownMenu) return "";
-
-      const linkProfile = dropdownMenu.querySelector("a");
       actionsMenuElement.click();
-
-      return linkProfile ? linkProfile.href : "";
+      return linkProfileUrl;
     }
 
     function getFullNameElement() {
@@ -111,6 +134,13 @@ if (!window.leadGenerator.personalDataInit) {
     function getActionsMenuElement() {
       return document.querySelector(
         'button[data-x--lead-actions-bar-overflow-menu][aria-label="Open actions overflow menu"]'
+      );
+    }
+
+    function getDropdownMenuElement() {
+      return (
+        document.getElementById("hue-menu-ember51") ??
+        document.getElementById("hue-menu-ember52")
       );
     }
 
