@@ -1,11 +1,24 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [3.0.0] - 2024-12-06
+### Added
+- Alternative profile search via LinkedIn Sales Navigator.
+- Support for Irish surname prefixes (e.g., "Mc", "Mac", "O'").
+- Version display in the extension interface.
+
+### Changed
+- Refined company name parsing by removing trailing company type details.
+- Improved display of current experience on LinkedIn profiles.
+
+### Optimized
+- Restructured and streamlined core application logic.
 
 ## [2.1.0] - 2024-11-22
 ### Added
 - Transliteration mechanism implemented for the "Name" and "Surname" fields.
 - Included a LICENSE file to ensure open-source compliance.
+- Included a CHANGELOG.md file for describing new features and possibilities
 
 ### Changed
 - Removed the "Dr" prefix from person names.

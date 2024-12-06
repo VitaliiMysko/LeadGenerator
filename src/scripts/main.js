@@ -1,6 +1,4 @@
-import {
-    appVerionElement,
-  } from "./helper/dom-helper.js";
+import { appVerionElement } from "./helper/dom-helper.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const manifest = chrome.runtime.getManifest();
