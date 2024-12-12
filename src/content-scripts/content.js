@@ -25,6 +25,7 @@ if (!window.leadGenerator.contentInit) {
       "GmbH",
       "s.r.o",
       "spol",
+      "SA",
     ];
 
     const dutchSurnames = ["van", "der", "den", "de"];
