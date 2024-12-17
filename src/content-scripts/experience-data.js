@@ -3,8 +3,8 @@ if (!window.leadGenerator.experienceDataInit) {
     window.leadGenerator.experienceData || {};
 
   (() => {
-    const getActualExperiencesData = () => {
-      let actualExperiencesData = [];
+    const getActualExperienceData = () => {
+      let actualExperienceData = [];
       const experienceComponents = GetExperienceComponents();
 
       let id = 0;
@@ -28,7 +28,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
           if (IsActualJobPosition(actualPositionElement)) {
             if (companyName != "" && jobPosition != "") {
-              actualExperiencesData.push({
+              actualExperienceData.push({
                 id: ++id,
                 companyName: companyName,
                 jobPosition: jobPosition,
@@ -59,7 +59,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
               if (IsActualJobPosition(actualPositionElement)) {
                 if (companyName != "" && jobPosition != "") {
-                  actualExperiencesData.push({
+                  actualExperienceData.push({
                     id: ++id,
                     companyName: companyName,
                     jobPosition: jobPosition,
@@ -73,7 +73,7 @@ if (!window.leadGenerator.experienceDataInit) {
           }
         }
       }
-      return actualExperiencesData;
+      return actualExperienceData;
     };
 
     function GetCompanyLink(element) {
@@ -130,8 +130,8 @@ if (!window.leadGenerator.experienceDataInit) {
       return element.querySelector('[data-anonymize="job-title"]');
     }
 
-    window.leadGenerator.experienceData.getActualExperiencesData =
-      getActualExperiencesData;
+    window.leadGenerator.experienceData.getActualExperienceData =
+      getActualExperienceData;
   })();
 
   window.leadGenerator.experienceDataInit = true;

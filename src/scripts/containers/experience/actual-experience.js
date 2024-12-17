@@ -4,10 +4,10 @@ import {
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
 
-export function createRadioCompaniesList(experiences) {
+export function createRadioCompaniesList(experience) {
   experienceContainerElement.innerHTML = "";
 
-  experiences.forEach((company, index) => {
+  experience.forEach((company, index) => {
     const radioCompanyBlock = document.createElement("div");
     radioCompanyBlock.classList.add("radio-company");
 
