@@ -33,6 +33,7 @@ if (!window.leadGenerator.personalDataInit) {
     }
 
     function handleFullName(str) {
+      str = str.replace(/^[^a-zA-Z]+/, "");
       // Removes the prefix dr/Dr/prof/Prof before the full name
       str = str.trim().replace(/^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z])/i, "");
       const [textBeforeComma] = str.split(",");
