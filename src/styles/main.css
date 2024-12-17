@@ -145,6 +145,12 @@ a:active {
   background-color: #f9f9f9;
   margin-top: 5px;
 }
+.current-company-website {
+  padding: 5px;
+  border-left: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin-top: 5px;
+}
 #version-container {
   position: fixed;
   top: 5px;
