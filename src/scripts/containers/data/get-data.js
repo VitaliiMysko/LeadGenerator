@@ -1,5 +1,6 @@
 import { getBtnElement } from "../../helper/dom-helper.js";
 import { createRadioCompaniesList } from "../experience/actual-experience.js";
+import { handlerCompanyWebsite } from "../experience/website.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -17,10 +18,10 @@ getBtnElement.addEventListener("click", () => {
         chrome.tabs.sendMessage(
           tabs[0].id,
           { action: "getData" },
-          (results) => {
+          async (results) => {
             if (results) {
               const data = results.data;
-              data.forEach((element) => {
+              data.forEach(async (element) => {
                 if (element.category === "personalData") {
                   populateGeneralData(element.value);
                 }
@@ -29,6 +30,7 @@ getBtnElement.addEventListener("click", () => {
                 }
               });
             }
+            await handlerCompanyWebsite();
           }
         );
       }

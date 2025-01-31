@@ -31,7 +31,7 @@ function GetExperienceContainerElement() {
 }
 
 function GetAppVerionElement() {
-  return document.getElementById("app-version")
+  return document.getElementById("app-version");
 }
 
 export const jobPositionElement = GetJobPositionElement();

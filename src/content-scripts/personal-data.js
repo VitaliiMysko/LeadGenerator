@@ -34,7 +34,12 @@ if (!window.leadGenerator.personalDataInit) {
 
     function handleFullName(str) {
       // Removes the prefix dr/Dr/prof/Prof before the full name
-      str = str.trim().replace(/^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z])/i, "");
+      str = str
+        .trim()
+        .replace(
+          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z])/i,
+          ""
+        );
       const [textBeforeComma] = str.split(",");
       const dutchSurnames = window.leadGenerator.content.dutchSurnames;
 
