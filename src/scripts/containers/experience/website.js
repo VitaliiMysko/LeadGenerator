@@ -1,14 +1,15 @@
+import {
+  GetRadioButtonElements,
+  GetCompanyWebsiteElements,
+} from "../../helper/dom-helper.js";
+
 export async function handlerCompanyWebsite() {
   await initCompanyWebsite();
   await addCompanyWebsiteListener();
 }
 
 async function addCompanyWebsiteListener() {
-  const radioButtons = document.querySelectorAll(
-    "#experience-container input[type='radio']"
-  );
-
-  radioButtons.forEach(async (radio) => {
+  GetRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
       await manageWebsiteBlock(radio);
     });
@@ -16,11 +17,7 @@ async function addCompanyWebsiteListener() {
 }
 
 async function initCompanyWebsite() {
-  const radioButtons = document.querySelectorAll(
-    "#experience-container input[type='radio']"
-  );
-
-  radioButtons.forEach(async (radio) => {
+  GetRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
       await manageWebsiteBlock(radio);
     }
@@ -28,9 +25,7 @@ async function initCompanyWebsite() {
 }
 
 async function manageWebsiteBlock(radio) {
-  document
-    .querySelectorAll(".current-company-website")
-    .forEach((site) => (site.style.display = "none"));
+  GetCompanyWebsiteElements().forEach((site) => (site.style.display = "none"));
 
   const parentDiv = radio.closest(".radio-company");
   const websiteBlock = parentDiv.querySelector(".current-company-website");
