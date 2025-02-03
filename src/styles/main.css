@@ -38,6 +38,12 @@ textarea:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
+input[type="radio"] {
+  margin: 0;
+  margin-right: 5px;
+  height: 11px;
+  width: 11px;
+}
 button {
   margin: 5px;
   width: 100%;
