@@ -37,6 +37,15 @@ function GetAppVerionElement() {
 export function GetRadioButtonElements() {
   return document.querySelectorAll("#experience-container input[type='radio']");
 }
+
+export function GetCompanyNameElements() {
+  return document.querySelectorAll(".current-company-name");
+}
+
+export function GetCompanyJobElements() {
+  return document.querySelectorAll(".current-company-job");
+}
+
 export function GetCompanyWebsiteElements() {
   return document.querySelectorAll(".current-company-website");
 }

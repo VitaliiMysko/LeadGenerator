@@ -1,5 +1,7 @@
 import {
   GetRadioButtonElements,
+  GetCompanyNameElements,
+  GetCompanyJobElements,
   GetCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
@@ -25,10 +27,23 @@ async function initCompanyWebsite() {
 }
 
 async function manageWebsiteBlock(radio) {
-  GetCompanyWebsiteElements().forEach((site) => (site.style.display = "none"));
+  GetCompanyNameElements().forEach((label) => label.classList.remove("active"));
+  GetCompanyJobElements().forEach((job) => job.classList.remove("active"));
+  GetCompanyWebsiteElements().forEach((website) => {
+    website.classList.remove("active");
+    website.style.display = "none";
+  });
 
   const parentDiv = radio.closest(".radio-company");
+  const companyNameLabel = parentDiv.querySelector(".current-company-name");
+  companyNameLabel.classList.add("active");
+
+  const companyJobElement = parentDiv.querySelector(".current-company-job");
+  companyJobElement.classList.add("active");
+
   const websiteBlock = parentDiv.querySelector(".current-company-website");
+  websiteBlock.classList.add("active");
+
   const companyLinkElement = parentDiv.querySelector("a");
 
   websiteBlock.style.display = "flex";
