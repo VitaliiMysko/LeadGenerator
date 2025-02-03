@@ -132,14 +132,14 @@ a:active {
   align-self: stretch;
 }
 #experience-container {
-  width: 100%;
+  width: 184px; /* hard code */
   display: flex;
   flex-direction: column;
 }
 .radio-company {
   margin: 5px 0;
 }
-.extra-company-data {
+.current-company-job {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -152,4 +152,43 @@ a:active {
   color: #ccc;
   font-size: 9px;
   z-index: 1000;
+}
+.loading::after {
+  content: "";
+  display: inline-block;
+  animation: dots 1.5s infinite;
+}
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  33% {
+    content: ".";
+  }
+  66% {
+    content: "..";
+  }
+  100% {
+    content: "...";
+  }
+}
+.current-company-website {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-left: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin-top: 5px;
+}
+.current-company-website img {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+.current-company-website a,
+.current-company-website span {
+  overflow: hidden; /* avoid overtext */
+  text-overflow: ellipsis; /* three dots at the and if text too long */
+  white-space: nowrap; /* in one line */
+  color: #888;
 }

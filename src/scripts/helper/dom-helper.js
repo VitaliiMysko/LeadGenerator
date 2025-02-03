@@ -31,7 +31,14 @@ function GetExperienceContainerElement() {
 }
 
 function GetAppVerionElement() {
-  return document.getElementById("app-version")
+  return document.getElementById("app-version");
+}
+
+export function GetRadioButtonElements() {
+  return document.querySelectorAll("#experience-container input[type='radio']");
+}
+export function GetCompanyWebsiteElements() {
+  return document.querySelectorAll(".current-company-website");
 }
 
 export const jobPositionElement = GetJobPositionElement();
