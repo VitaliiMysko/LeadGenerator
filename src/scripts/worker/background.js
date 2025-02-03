@@ -51,10 +51,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                   sender
                 ) {
                   if (response.action === "pageContent") {
-                    activeRequests[request.url] = response.data.webSite;
-                    sendResponse(response.data.webSite);
-
-                    chrome.runtime.onMessage.removeListener(responseListener);
+                    if (response.data && request.url === response.data.url) {
+                      activeRequests[request.url] = response.data.webSite;
+                      sendResponse(response.data.webSite);
+                      chrome.runtime.onMessage.removeListener(responseListener);
+                    }
                   }
                 });
               }
@@ -71,8 +72,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "closeTab" && sender.tab) {
     chrome.tabs.remove(sender.tab.id, () => {});
 
-    chrome.windows.remove(sender.tab.windowId, () => {
-      request.url = "";
-    });
+    chrome.windows.remove(sender.tab.windowId, () => {});
   }
 });

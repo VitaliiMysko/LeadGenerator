@@ -5,6 +5,7 @@
   data = {
     url: window.location.href,
     webSite: "",
+    error: "",
   };
 
   waitForElementWithTimeout(".view-website-link", 4000)
@@ -13,6 +14,7 @@
     })
     .catch((error) => {
       console.error("Error finding element:", error);
+      data.error = error.message;
     })
     .finally(() => {
       sendMessageAndCloseTab(data);
