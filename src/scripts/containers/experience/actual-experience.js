@@ -54,6 +54,7 @@ function GetCompanyRadioElement(company) {
 function GetCompanyLabelElement(company) {
   const label = document.createElement("label");
   label.setAttribute("for", `radio-company-${company.id}`);
+  label.classList.add("current-company-name");
 
   if (company.companylink != "") {
     const link = document.createElement("a");
