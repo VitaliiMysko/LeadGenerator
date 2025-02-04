@@ -69,7 +69,7 @@ async function manageWebsiteBlock(radio) {
 
   try {
     const websiteData = companyLinkElement
-      ? await getCompanyWebSite(companyLinkElement.href)
+      ? await getCompanyWebsite(companyLinkElement.href)
       : "";
 
     websiteBlock.innerHTML = "";
@@ -131,12 +131,12 @@ function getSecondLevelDomain(url) {
 
 const websiteCache = new Map();
 
-async function getCompanyWebSite(companylink) {
+async function getCompanyWebsite(companylink) {
   if (websiteCache.has(companylink)) {
     return websiteCache.get(companylink);
   }
 
-  let webSite = "";
+  let website = "";
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -145,14 +145,14 @@ async function getCompanyWebSite(companylink) {
       });
 
       if (response) {
-        webSite = response;
-        websiteCache.set(companylink, webSite);
+        website = response;
+        websiteCache.set(companylink, website);
       }
     } catch (error) {
       console.error("Error fetching website data:", error);
     }
   }
-  return webSite;
+  return website;
 }
 
 function sendMessagePromise(message) {

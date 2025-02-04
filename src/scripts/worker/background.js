@@ -52,8 +52,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 ) {
                   if (response.action === "pageContent") {
                     if (response.data && request.url === response.data.url) {
-                      activeRequests[request.url] = response.data.webSite;
-                      sendResponse(response.data.webSite);
+                      activeRequests[request.url] = response.data.website;
+                      sendResponse(response.data.website);
                       chrome.runtime.onMessage.removeListener(responseListener);
                     }
                   }

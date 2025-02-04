@@ -4,13 +4,13 @@
 
   data = {
     url: window.location.href,
-    webSite: "",
+    website: "",
     error: "",
   };
 
   waitForElementWithTimeout(".view-website-link", 4000)
     .then((element) => {
-      data.webSite = element.href || "";
+      data.website = element.href || "";
     })
     .catch((error) => {
       console.error("Error finding element:", error);
