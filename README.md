@@ -22,7 +22,7 @@ This extension is a straightforward tool for extracting data about individuals d
 Each field is editable to allow manual adjustments before saving.
 
 **Right Panel:**
-- Displays actual experience of the individual’s profile such as a list of companies, job positions and company website associated. Selecting an entry updates the "Job Position" and "Company Name" fields on the left side with the selected information.
+- Displays actual experience of the individual’s profile such as a list of companies, job positions and company website. Selecting an entry updates the "Job Position" and "Company Name" fields on the left side with the selected information.
 
 ## Additional Functionalities
 
