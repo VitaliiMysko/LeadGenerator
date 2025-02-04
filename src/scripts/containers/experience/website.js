@@ -1,8 +1,8 @@
 import {
-  GetRadioButtonElements,
-  GetCompanyNameElements,
-  GetCompanyJobElements,
-  GetCompanyWebsiteElements,
+  getRadioButtonElements,
+  getCompanyNameElements,
+  getCompanyJobElements,
+  getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
 export async function handlerCompanyWebsite() {
@@ -11,7 +11,7 @@ export async function handlerCompanyWebsite() {
 }
 
 async function addCompanyWebsiteListener() {
-  GetRadioButtonElements().forEach(async (radio) => {
+  getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
       await manageWebsiteBlock(radio);
     });
@@ -19,7 +19,7 @@ async function addCompanyWebsiteListener() {
 }
 
 async function initCompanyWebsite() {
-  GetRadioButtonElements().forEach(async (radio) => {
+  getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
       await manageWebsiteBlock(radio);
     }
@@ -27,9 +27,9 @@ async function initCompanyWebsite() {
 }
 
 async function manageWebsiteBlock(radio) {
-  GetCompanyNameElements().forEach((label) => label.classList.remove("active"));
-  GetCompanyJobElements().forEach((job) => job.classList.remove("active"));
-  GetCompanyWebsiteElements().forEach((website) => {
+  getCompanyNameElements().forEach((label) => label.classList.remove("active"));
+  getCompanyJobElements().forEach((job) => job.classList.remove("active"));
+  getCompanyWebsiteElements().forEach((website) => {
     website.classList.remove("active");
     website.style.display = "none";
   });
@@ -114,7 +114,6 @@ function getWebsiteLinkElement(websiteData) {
 
 function getSecondLevelDomain(url) {
   try {
-    // get host from URL
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
     const parts = cleanHostname.split(".");

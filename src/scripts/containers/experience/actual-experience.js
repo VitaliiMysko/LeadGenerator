@@ -8,19 +8,19 @@ export function createRadioCompaniesList(experience) {
   experienceContainerElement.innerHTML = "";
 
   experience.forEach((company, index) => {
-    const radioCompanyBlock = GetRadioCompanyBlock(company, index);
+    const radioCompanyBlock = getRadioCompanyBlock(company, index);
     experienceContainerElement.appendChild(radioCompanyBlock);
   });
 }
 
-function GetRadioCompanyBlock(company, index) {
+function getRadioCompanyBlock(company, index) {
   const radioCompanyBlock = document.createElement("div");
   radioCompanyBlock.classList.add("radio-company");
 
-  const radioItem = GetCompanyRadioElement(company);
-  const companyLabelElement = GetCompanyLabelElement(company);
-  const currentCompanyJobElement = GetCurrentCompanyJobElement(company);
-  const currentCompanyWebsiteElement = GetCurrentCompanyWebiteElement(company);
+  const radioItem = getCompanyRadioElement(company);
+  const companyLabelElement = getCompanyLabelElement(company);
+  const currentCompanyJobElement = getCurrentCompanyJobElement(company);
+  const currentCompanyWebsiteElement = getCurrentCompanyWebiteElement();
 
   if (index === 0) {
     radioItem.checked = true;
@@ -42,7 +42,7 @@ function GetRadioCompanyBlock(company, index) {
   return radioCompanyBlock;
 }
 
-function GetCompanyRadioElement(company) {
+function getCompanyRadioElement(company) {
   const radioItem = document.createElement("input");
   radioItem.type = "radio";
   radioItem.name = "options";
@@ -51,7 +51,7 @@ function GetCompanyRadioElement(company) {
   return radioItem;
 }
 
-function GetCompanyLabelElement(company) {
+function getCompanyLabelElement(company) {
   const label = document.createElement("label");
   label.setAttribute("for", `radio-company-${company.id}`);
   label.classList.add("current-company-name");
@@ -68,14 +68,14 @@ function GetCompanyLabelElement(company) {
   return label;
 }
 
-function GetCurrentCompanyJobElement(company) {
+function getCurrentCompanyJobElement(company) {
   const currentJobElement = document.createElement("div");
   currentJobElement.classList.add("current-company-job");
   currentJobElement.textContent = company.jobPosition;
   return currentJobElement;
 }
 
-function GetCurrentCompanyWebiteElement(company) {
+function getCurrentCompanyWebiteElement() {
   const currentWebSiteElement = document.createElement("div");
   currentWebSiteElement.classList.add("current-company-website");
   return currentWebSiteElement;
