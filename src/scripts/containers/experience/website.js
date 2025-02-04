@@ -1,8 +1,8 @@
 import {
-  GetRadioButtonElements,
-  GetCompanyNameElements,
-  GetCompanyJobElements,
-  GetCompanyWebsiteElements,
+  getRadioButtonElements,
+  getCompanyNameElements,
+  getCompanyJobElements,
+  getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
 export async function handlerCompanyWebsite() {
@@ -11,7 +11,7 @@ export async function handlerCompanyWebsite() {
 }
 
 async function addCompanyWebsiteListener() {
-  GetRadioButtonElements().forEach(async (radio) => {
+  getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
       await manageWebsiteBlock(radio);
     });
@@ -19,7 +19,7 @@ async function addCompanyWebsiteListener() {
 }
 
 async function initCompanyWebsite() {
-  GetRadioButtonElements().forEach(async (radio) => {
+  getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
       await manageWebsiteBlock(radio);
     }
@@ -27,21 +27,21 @@ async function initCompanyWebsite() {
 }
 
 async function manageWebsiteBlock(radio) {
-  GetCompanyNameElements().forEach((label) => label.classList.remove("active"));
-  GetCompanyJobElements().forEach((job) => job.classList.remove("active"));
-  GetCompanyWebsiteElements().forEach((website) => {
+  getCompanyNameElements().forEach((label) => label.classList.remove("active"));
+  getCompanyJobElements().forEach((job) => job.classList.remove("active"));
+  getCompanyWebsiteElements().forEach((website) => {
     website.classList.remove("active");
     website.style.display = "none";
   });
 
   const parentDiv = radio.closest(".radio-company");
-  const companyNameLabel = parentDiv.querySelector(".current-company-name");
+  const companyNameLabel = parentDiv.querySelector(".company-name");
   companyNameLabel.classList.add("active");
 
-  const companyJobElement = parentDiv.querySelector(".current-company-job");
+  const companyJobElement = parentDiv.querySelector(".company-job");
   companyJobElement.classList.add("active");
 
-  const websiteBlock = parentDiv.querySelector(".current-company-website");
+  const websiteBlock = parentDiv.querySelector(".company-website");
   websiteBlock.classList.add("active");
 
   const companyLinkElement = parentDiv.querySelector("a");
@@ -69,7 +69,7 @@ async function manageWebsiteBlock(radio) {
 
   try {
     const websiteData = companyLinkElement
-      ? await getCompanyWebSite(companyLinkElement.href)
+      ? await getCompanyWebsite(companyLinkElement.href)
       : "";
 
     websiteBlock.innerHTML = "";
@@ -114,7 +114,6 @@ function getWebsiteLinkElement(websiteData) {
 
 function getSecondLevelDomain(url) {
   try {
-    // get host from URL
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
     const parts = cleanHostname.split(".");
@@ -132,12 +131,12 @@ function getSecondLevelDomain(url) {
 
 const websiteCache = new Map();
 
-async function getCompanyWebSite(companylink) {
+async function getCompanyWebsite(companylink) {
   if (websiteCache.has(companylink)) {
     return websiteCache.get(companylink);
   }
 
-  let webSite = "";
+  let website = "";
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -146,14 +145,14 @@ async function getCompanyWebSite(companylink) {
       });
 
       if (response) {
-        webSite = response;
-        websiteCache.set(companylink, webSite);
+        website = response;
+        websiteCache.set(companylink, website);
       }
     } catch (error) {
       console.error("Error fetching website data:", error);
     }
   }
-  return webSite;
+  return website;
 }
 
 function sendMessagePromise(message) {

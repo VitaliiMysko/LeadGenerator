@@ -148,10 +148,10 @@ a:active {
 .radio-company {
   padding: 5px 0;
 }
-.current-company-name.active {
+.company-name.active {
   font-weight: 600;
 }
-.current-company-job {
+.company-job {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -184,7 +184,7 @@ a:active {
     content: "...";
   }
 }
-.current-company-website {
+.company-website {
   display: flex;
   align-items: center;
   padding: 5px;
@@ -192,18 +192,18 @@ a:active {
   background-color: #f9f9f9;
   margin-top: 5px;
 }
-.current-company-job.active,
-.current-company-website.active {
+.company-job.active,
+.company-website.active {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }
-.current-company-website img {
+.company-website img {
   width: 16px;
   height: 16px;
   margin-right: 5px;
 }
-.current-company-website a,
-.current-company-website span {
+.company-website a,
+.company-website span {
   overflow: hidden; /* avoid overtext */
   text-overflow: ellipsis; /* three dots at the and if text too long */
   white-space: nowrap; /* in one line */
