@@ -1,45 +1,61 @@
-function GetJobPositionElement() {
+function getJobPositionElement() {
   return document.getElementById("job-position");
 }
 
-function GetCompanyNameElement() {
+function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
 
-function GetTranslateBtnElement() {
+function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
 
-function GetGetBtnElement() {
+function getGetBtnElement() {
   return document.getElementById("get-btn");
 }
 
-function GetCopyBtnElement() {
+function getCopyBtnElement() {
   return document.getElementById("copy-btn");
 }
 
-function GetDataContainerElement() {
+function getDataContainerElement() {
   return document.getElementById("data-container");
 }
 
-function GetAlertElement() {
+function getAlertElement() {
   return document.getElementById("alert");
 }
 
-function GetExperienceContainerElement() {
+function getExperienceContainerElement() {
   return document.getElementById("experience-container");
 }
 
-function GetAppVerionElement() {
-  return document.getElementById("app-version")
+function getAppVerionElement() {
+  return document.getElementById("app-version");
 }
 
-export const jobPositionElement = GetJobPositionElement();
-export const companyNameElement = GetCompanyNameElement();
-export const translateBtnElement = GetTranslateBtnElement();
-export const getBtnElement = GetGetBtnElement();
-export const copyBtnElement = GetCopyBtnElement();
-export const dataContainerElement = GetDataContainerElement();
-export const alertElement = GetAlertElement();
-export const experienceContainerElement = GetExperienceContainerElement();
-export const appVerionElement = GetAppVerionElement();
+export function getRadioButtonElements() {
+  return document.querySelectorAll("#experience-container input[type='radio']");
+}
+
+export function getCompanyNameElements() {
+  return document.querySelectorAll(".company-name");
+}
+
+export function getCompanyJobElements() {
+  return document.querySelectorAll(".company-job");
+}
+
+export function getCompanyWebsiteElements() {
+  return document.querySelectorAll(".company-website");
+}
+
+export const jobPositionElement = getJobPositionElement();
+export const companyNameElement = getCompanyNameElement();
+export const translateBtnElement = getTranslateBtnElement();
+export const getBtnElement = getGetBtnElement();
+export const copyBtnElement = getCopyBtnElement();
+export const dataContainerElement = getDataContainerElement();
+export const alertElement = getAlertElement();
+export const experienceContainerElement = getExperienceContainerElement();
+export const appVerionElement = getAppVerionElement();

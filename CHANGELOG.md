@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [3.1.0] - 2025-02-04
+### Added
+- Display of company website in profile details.
+- Support for additional company name abbreviations (e.g., "SA").
+- Improved translation accuracy for better contextual results.
+
+### Changed
+- Refined person name parsing by removing new prefixes (e.g., "prof"), special characters, and embedded pictures.
+- Updated UI design for better readability and consistency.
+
 ## [3.0.0] - 2024-12-06
 ### Added
 - Alternative profile search via LinkedIn Sales Navigator.

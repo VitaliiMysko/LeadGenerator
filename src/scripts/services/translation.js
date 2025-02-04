@@ -36,7 +36,9 @@ function translateText(token) {
     .then((data) => {
       if (data && data.data && data.data.translations) {
         const translations = data.data.translations;
-        jobPositionElement.value = translations[0].translatedText;
+        jobPositionElement.value = translations[0].translatedText
+          .replace(/^([a-z])/, (match) => match.toUpperCase())
+          .replace(/&amp;/g, '&');
       } else {
         console.error("Error translating:", data);
       }

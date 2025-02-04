@@ -18,27 +18,27 @@ if (!window.leadGenerator.personalDataDeclared) {
 }
 
 if (!window.leadGenerator.experienceDataDeclared) {
-  getActualExperiencesData =
-    window.leadGenerator.experienceData.getActualExperiencesData;
+  getActualExperienceData =
+    window.leadGenerator.experienceData.getActualExperienceData;
   window.leadGenerator.experienceDataDeclared = true;
 }
 
 async function getData() {
   let data = [];
   let personalData = [];
-  let actualExperiencesData = [];
+  let actualExperienceData = [];
 
   try {
     personalData = await getPersonalData();
-    actualExperiencesData = getActualExperiencesData();
+    actualExperienceData = getActualExperienceData();
   } catch (error) {
     console.error("Problems with getting data", error.message);
   }
 
   data.push({ category: "personalData", value: personalData });
   data.push({
-    category: "actualExperiencesData",
-    value: actualExperiencesData,
+    category: "actualExperienceData",
+    value: actualExperienceData,
   });
 
   return data;
