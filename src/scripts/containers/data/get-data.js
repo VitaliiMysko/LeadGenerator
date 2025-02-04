@@ -1,5 +1,5 @@
 import { getBtnElement } from "../../helper/dom-helper.js";
-import { createRadioCompaniesList } from "../experience/actual-experience.js";
+import { createRadioCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyWebsite } from "../experience/website.js";
 
 getBtnElement.addEventListener("click", () => {
@@ -26,7 +26,7 @@ getBtnElement.addEventListener("click", () => {
                   populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
-                  createRadioCompaniesList(element.value);
+                  createRadioCompanyList(element.value);
                 }
               });
             }

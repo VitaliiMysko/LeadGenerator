@@ -39,15 +39,15 @@ export function getRadioButtonElements() {
 }
 
 export function getCompanyNameElements() {
-  return document.querySelectorAll(".current-company-name");
+  return document.querySelectorAll(".company-name");
 }
 
 export function getCompanyJobElements() {
-  return document.querySelectorAll(".current-company-job");
+  return document.querySelectorAll(".company-job");
 }
 
 export function getCompanyWebsiteElements() {
-  return document.querySelectorAll(".current-company-website");
+  return document.querySelectorAll(".company-website");
 }
 
 export const jobPositionElement = getJobPositionElement();

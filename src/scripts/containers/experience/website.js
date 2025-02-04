@@ -35,13 +35,13 @@ async function manageWebsiteBlock(radio) {
   });
 
   const parentDiv = radio.closest(".radio-company");
-  const companyNameLabel = parentDiv.querySelector(".current-company-name");
+  const companyNameLabel = parentDiv.querySelector(".company-name");
   companyNameLabel.classList.add("active");
 
-  const companyJobElement = parentDiv.querySelector(".current-company-job");
+  const companyJobElement = parentDiv.querySelector(".company-job");
   companyJobElement.classList.add("active");
 
-  const websiteBlock = parentDiv.querySelector(".current-company-website");
+  const websiteBlock = parentDiv.querySelector(".company-website");
   websiteBlock.classList.add("active");
 
   const companyLinkElement = parentDiv.querySelector("a");
