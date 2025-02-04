@@ -14,7 +14,9 @@ The "Lead Generator" extension allows users to collect publicly available inform
 - Company name  
 - LinkedIn profile link  
 
-The **Email** field is not auto-filled by the extension; instead, it is manually entered by the user if desired. No automated collection of email addresses occurs. This information is collected only when the user explicitly clicks on the "Get" button within the extension. The extension does not store or process this data on our servers.
+The **Email** field is not auto-filled by the extension; instead, it is manually entered by the user if desired. No automated collection of email addresses occurs. 
+
+This information is collected only when the user explicitly clicks on the "Get" button within the extension. The extension does not store or process this data on our servers.
 
 ## 2. Data Use
 

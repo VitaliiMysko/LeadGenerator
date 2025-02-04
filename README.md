@@ -6,7 +6,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
 - **Data Extraction**:
   - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," and "Company Name."
-  The Email field is not auto-filled.
+  The "Email" field is not auto-filled.
   - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
 
 ## Data Fields
@@ -22,7 +22,7 @@ This extension is a straightforward tool for extracting data about individuals d
 Each field is editable to allow manual adjustments before saving.
 
 **Right Panel:**
-- Displays a list of companies and job positions associated with the individual’s profile. Selecting an entry updates the "Job Position" and "Company Name" fields on the left side with the selected information.
+- Displays actual experience of the individual’s profile such as a list of companies, job positions and company website. Selecting an entry updates the "Job Position" and "Company Name" fields on the left side with the selected information.
 
 ## Additional Functionalities
 
@@ -79,7 +79,7 @@ After installation, you can pin the extension to your toolbar for quick access b
 After installing the **Lead Generator** extension, follow these steps to configure it for optimal functionality:
 
 1. **Permissions Configuration:**
-   - Ensure the extension has permission to access `https://www.linkedin.com/sales/lead/` or other LinkedIn pages (depending on future expansion).
+   - Ensure the extension has permission to access `https://www.linkedin.com/sales/` or other LinkedIn pages (depending on future expansion).
    - To adjust permissions manually, navigate to `chrome://extensions/`, find **Lead Generator**, and select **Details** to review and update permissions as needed.
 
 2. **Google Authentication (Optional):**
@@ -138,8 +138,11 @@ The "Lead generator" extension requires certain permissions to function effectiv
 3. **identity**:
    - Used for Google authentication when accessing Google services, such as the Google Translate API for translating job titles. This permission is only utilized if you activate the translation feature.
 
-4. **host_permissions**:
-   - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/lead/*` and only operates on these pages, ensuring limited access.
+4. **tabs**:
+   - Used to enhance the processing of company-related data and improve the extension's functionality.
+
+5. **host_permissions**:
+   - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/*` and only operates on these pages, ensuring limited access.
 
 The permissions are necessary for the extension to perform its data extraction and translation functions securely and effectively. The extension does not store or transmit user data beyond the local environment.
 
