@@ -1,5 +1,6 @@
 import {
   copyBtnElement,
+  emailElement,
   dataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
@@ -9,6 +10,8 @@ copyBtnElement.addEventListener("click", function () {
 });
 
 function copyToBuffer() {
+  emailElement.value = emailElement.value.toLocaleLowerCase();
+
   const inputs = dataContainerElement.querySelectorAll("input");
   const values = Array.from(inputs)
     .map((input) => input.value)

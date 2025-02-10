@@ -2,6 +2,10 @@ function getJobPositionElement() {
   return document.getElementById("job-position");
 }
 
+function getEmailElement() {
+  return document.getElementById("email");
+}
+
 function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
@@ -51,6 +55,7 @@ export function getCompanyWebsiteElements() {
 }
 
 export const jobPositionElement = getJobPositionElement();
+export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
