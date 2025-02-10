@@ -102,7 +102,10 @@ if (!window.leadGenerator.experienceDataInit) {
 
       if (companyElement) {
         const regex = removeCompanyStatusRegex();
-        name = companyElement.textContent.trim().replace(regex, "");
+        name = companyElement.textContent
+          .trim()
+          .replace(/[^\p{L}\p{N}\s-]/gu, "")
+          .replace(regex, "");
       }
       return name;
     }
