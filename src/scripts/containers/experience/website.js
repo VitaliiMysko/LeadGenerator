@@ -116,11 +116,6 @@ function getSecondLevelDomain(url) {
   try {
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
-    const parts = cleanHostname.split(".");
-
-    if (parts.length > 2) {
-      return parts.slice(-2).join(".");
-    }
 
     return cleanHostname;
   } catch (error) {
