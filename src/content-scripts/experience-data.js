@@ -113,7 +113,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
         if (periodElement) {
           const period = periodElement.textContent.trim();
-          return period.includes("Present");
+          return period.includes("Present") || period === "";
         }
       }
     }
