@@ -202,10 +202,13 @@ a:active {
   height: 16px;
   margin-right: 5px;
 }
-.company-website a,
 .company-website span {
   overflow: hidden; /* avoid overtext */
   text-overflow: ellipsis; /* three dots at the and if text too long */
   white-space: nowrap; /* in one line */
   color: #333;
+}
+.company-website a {
+  display: inline-flex; /* adapts to content size */
+  align-items: center; 
 }

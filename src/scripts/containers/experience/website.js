@@ -68,17 +68,24 @@ async function manageWebsiteBlock(radio) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   try {
-    const websiteData = companyLinkElement
+    let websiteData = companyLinkElement
       ? await getCompanyWebsite(companyLinkElement.href)
       : "";
 
     websiteBlock.innerHTML = "";
 
-    const websiteElement = websiteData
-      ? getWebsiteLinkElement(websiteData)
-      : getWebsiteSpanElement("No website found");
+    if (websiteData) {
+      const websiteLinkElement = getWebsiteLinkElement(websiteData);
+      websiteLinkElement.appendChild(websiteIconElement);
+      websiteBlock.appendChild(websiteLinkElement);
 
-    websiteBlock.appendChild(websiteIconElement);
+      websiteData = getHostName(websiteData);
+    } else {
+      websiteBlock.appendChild(websiteIconElement);
+      websiteData = "No website found";
+    }
+
+    const websiteElement = getWebsiteSpanElement(websiteData);
     websiteBlock.appendChild(websiteElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
@@ -108,11 +115,10 @@ function getWebsiteLinkElement(websiteData) {
   const websiteLinkElement = document.createElement("a");
   websiteLinkElement.href = websiteData;
   websiteLinkElement.target = "_blank";
-  websiteLinkElement.textContent = getSecondLevelDomain(websiteData);
   return websiteLinkElement;
 }
 
-function getSecondLevelDomain(url) {
+function getHostName(url) {
   try {
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
