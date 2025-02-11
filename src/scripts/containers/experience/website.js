@@ -5,6 +5,8 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
+import { addCopyByClick } from "../../helper/dom-action.js";
+
 export async function handlerCompanyWebsite() {
   await initCompanyWebsite();
   await addCompanyWebsiteListener();
@@ -78,7 +80,7 @@ async function manageWebsiteBlock(radio) {
       const websiteLinkElement = getWebsiteLinkElement(websiteData);
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
-
+      addCopyByClick(websiteBlock, "span");
       websiteData = getHostName(websiteData);
     } else {
       websiteBlock.appendChild(websiteIconElement);
