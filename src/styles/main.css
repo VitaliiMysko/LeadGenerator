@@ -93,7 +93,8 @@ a:active {
     color: #333;
   }
 }
-#job-position.updated {
+.update-effect,
+.copy-effect {
   animation: textChange 1s ease;
 }
 #translate-btn {
@@ -130,10 +131,10 @@ a:active {
   opacity: 0.9;
 }
 .alert.success {
-  background-color: #4caf50;
+  background-color: #8cca8e;
 }
 .alert.error {
-  background-color: #f44336;
+  background-color: #ca8c89;
 }
 .vertical-line {
   width: 2px;
@@ -141,7 +142,7 @@ a:active {
   align-self: stretch;
 }
 #experience-container {
-  width: -webkit-fill-available;
+  width: 184px; /* hard code */
   display: flex;
   flex-direction: column;
 }
@@ -215,15 +216,26 @@ a:active {
 .copy {
   cursor: copy;
 }
-.copy:active {
-  animation: flash-effect 0.6s ease-out;
+.valid,
+.no-valid{
+  position: relative;
+  padding-right: 10px;
 }
-
-@keyframes flash-effect {
-  0% {
-    background: rgba(0, 123, 255, 0.5);
-  }
-  100% {
-    background: #f9f9f9;
-  }
+.valid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(to right,  #f8faf8, #8cca8e);
+}
+.no-valid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 100%;
+  background: linear-gradient(to right,  #faefee, #ca8c89);
 }

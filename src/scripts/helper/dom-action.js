@@ -5,6 +5,13 @@ export const addCopyByClick = (element, dataCopySelector) => {
 
   element.addEventListener("click", () => {
     const dataElement = element.querySelector(dataCopySelector);
+
+    dataElement.classList.add("copy-effect");
+
+    setTimeout(() => {
+      dataElement.classList.remove("copy-effect");
+    }, 1000);
+
     if (dataElement) {
       navigator.clipboard
         .writeText(dataElement.textContent)
@@ -16,4 +23,12 @@ export const addCopyByClick = (element, dataCopySelector) => {
         });
     }
   });
+};
+
+export const setValidationStyle = (element, value) => {
+  if (value) {
+    element.classList.add("valid");
+  } else {
+    element.classList.add("no-valid");
+  }
 };

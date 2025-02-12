@@ -5,7 +5,7 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
-import { addCopyByClick } from "../../helper/dom-action.js";
+import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
 const websiteDataByDefault = { url: "", status: 0, ok: false };
 
@@ -84,6 +84,7 @@ async function manageWebsiteBlock(radio) {
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
       addCopyByClick(websiteBlock, "span");
+      setValidationStyle(websiteBlock, websiteData.ok);
       websiteUrl = getHostName(websiteData.url);
     } else {
       websiteBlock.appendChild(websiteIconElement);
