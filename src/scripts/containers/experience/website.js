@@ -5,7 +5,9 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
-import { addCopyByClick } from "../../helper/dom-action.js";
+import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
+
+const websiteDataByDefault = { url: "", status: 0, ok: false };
 
 export async function handlerCompanyWebsite() {
   await initCompanyWebsite();
@@ -72,22 +74,23 @@ async function manageWebsiteBlock(radio) {
   try {
     let websiteData = companyLinkElement
       ? await getCompanyWebsite(companyLinkElement.href)
-      : "";
+      : { ...websiteDataByDefault };
 
     websiteBlock.innerHTML = "";
 
-    if (websiteData) {
-      const websiteLinkElement = getWebsiteLinkElement(websiteData);
+    let websiteUrl = "No website found";
+    if (websiteData.url) {
+      const websiteLinkElement = getWebsiteLinkElement(websiteData.url);
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
       addCopyByClick(websiteBlock, "span");
-      websiteData = getHostName(websiteData);
+      setValidationStyle(websiteBlock, websiteData.ok);
+      websiteUrl = getHostName(websiteData.url);
     } else {
       websiteBlock.appendChild(websiteIconElement);
-      websiteData = "No website found";
     }
 
-    const websiteElement = getWebsiteSpanElement(websiteData);
+    const websiteElement = getWebsiteSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
@@ -139,7 +142,7 @@ async function getCompanyWebsite(companylink) {
     return websiteCache.get(companylink);
   }
 
-  let website = "";
+  let websiteData = "";
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -148,14 +151,19 @@ async function getCompanyWebsite(companylink) {
       });
 
       if (response) {
-        website = response;
-        websiteCache.set(companylink, website);
+        websiteData = response;
+      } else {
+        websiteData = { ...websiteDataByDefault };
       }
     } catch (error) {
+      websiteData = { ...websiteDataByDefault };
       console.error("Error fetching website data:", error);
     }
+  } else {
+    websiteData = { ...websiteDataByDefault };
   }
-  return website;
+  websiteCache.set(companylink, websiteData);
+  return websiteData;
 }
 
 function sendMessagePromise(message) {

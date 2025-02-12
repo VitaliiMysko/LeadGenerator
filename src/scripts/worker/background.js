@@ -14,11 +14,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true;
   }
-});
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "fetchPage") {
-    if (activeRequests[request.url] || activeRequests[request.url] === "") {
+    if (activeRequests[request.url]) {
       sendResponse(activeRequests[request.url]);
       return;
     }
@@ -32,7 +30,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       (window) => {
         const tabId = window.tabs[0].id;
 
-        chrome.tabs.onUpdated.addListener(function listener(
+        chrome.tabs.onUpdated.addListener(async function listener(
           tabIdUpdated,
           info
         ) {
@@ -45,19 +43,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                   "src/content-scripts/website-data.js",
                 ],
               },
-              (res) => {
-                chrome.runtime.onMessage.addListener(function responseListener(
-                  response,
-                  sender
-                ) {
-                  if (response.action === "pageContent") {
-                    if (response.data && request.url === response.data.url) {
-                      activeRequests[request.url] = response.data.website;
-                      sendResponse(response.data.website);
-                      chrome.runtime.onMessage.removeListener(responseListener);
+              async (res) => {
+                chrome.runtime.onMessage.addListener(
+                  async function responseListener(response, sender) {
+                    if (response.action === "pageContent") {
+                      if (response.data && request.url === response.data.url) {
+                        const result = await checkWebsiteStatus(
+                          response.data.website
+                        );
+                        activeRequests[request.url] = result;
+
+                        sendResponse(result);
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener
+                        );
+                      }
                     }
                   }
-                });
+                );
               }
             );
             chrome.tabs.onUpdated.removeListener(listener);
@@ -74,3 +77,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.windows.remove(sender.tab.windowId, () => {});
   }
 });
+
+function checkWebsiteStatus(url) {
+  return new Promise((resolve) => {
+    if (url) {
+      fetch(url, { method: "HEAD" })
+        .then((response) => {
+          resolve({ url: url, status: response.status, ok: response.ok });
+        })
+        .catch(() => {
+          resolve({ url: url, status: 0, ok: false });
+        });
+    } else {
+      resolve({ url: url, status: 0, ok: false });
+    }
+  });
+}
