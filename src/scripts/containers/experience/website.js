@@ -127,7 +127,6 @@ function getHostName(url) {
   try {
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
-
     return cleanHostname;
   } catch (error) {
     console.error("Invalid URL:", error);
