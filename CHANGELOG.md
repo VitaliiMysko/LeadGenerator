@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [3.1.1] - 2025-03-03
+### Added
+- Validation check for company website availability.
+- Copy functionality for the company website when clicked.
+- Navigation to the company website when clicking the website icon.
+
+### Fixed
+- Corrected display issues for company website links.
+- Converted email addresses to lowercase when copied via the "Copy" button.
+
+### Changed
+- Removed special characters and images from company names.
+- Optimized the display mechanism for a person's experience list.
+- Updated UI to reflect all new improvements.
+
 ## [3.1.0] - 2025-02-04
 ### Added
 - Display of company website in profile details.

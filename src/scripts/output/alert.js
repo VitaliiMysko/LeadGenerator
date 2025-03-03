@@ -1,6 +1,6 @@
 import { alertElement } from "../helper/dom-helper.js";
 
-export function showAlert(message, type = "success", duration = 3000) {
+export function showAlert(message, type = "success", duration = 2000) {
   alertElement.textContent = message;
   alertElement.classList.add("show", type);
   setTimeout(() => {

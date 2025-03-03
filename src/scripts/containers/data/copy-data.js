@@ -1,14 +1,17 @@
 import {
   copyBtnElement,
+  emailElement,
   dataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 
-copyBtnElement.addEventListener("click", function () {
+copyBtnElement.addEventListener("click", () => {
   copyToBuffer();
 });
 
 function copyToBuffer() {
+  emailElement.value = emailElement.value.toLocaleLowerCase();
+
   const inputs = dataContainerElement.querySelectorAll("input");
   const values = Array.from(inputs)
     .map((input) => input.value)
@@ -17,9 +20,9 @@ function copyToBuffer() {
   navigator.clipboard
     .writeText(values)
     .then(() => {
-      showAlert("Copy successful!", "success", 3000);
+      showAlert("Copy successful!", "success");
     })
     .catch((err) => {
-      showAlert("Copy failed!", "error", 3000);
+      showAlert("Copy failed!", "error");
     });
 }

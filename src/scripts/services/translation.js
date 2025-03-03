@@ -7,10 +7,10 @@ translateBtnElement.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {
     if (response.success) {
       translateText(response.token);
-      jobPositionElement.classList.add("updated");
+      jobPositionElement.classList.add("update-effect");
 
       setTimeout(() => {
-        jobPositionElement.classList.remove("updated");
+        jobPositionElement.classList.remove("update-effect");
       }, 1000);
     } else {
       console.error("Error authorization:", response.error);

@@ -5,6 +5,10 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
+import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
+
+const websiteDataByDefault = { url: "", status: 0, ok: false };
+
 export async function handlerCompanyWebsite() {
   await initCompanyWebsite();
   await addCompanyWebsiteListener();
@@ -68,17 +72,25 @@ async function manageWebsiteBlock(radio) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   try {
-    const websiteData = companyLinkElement
+    let websiteData = companyLinkElement
       ? await getCompanyWebsite(companyLinkElement.href)
-      : "";
+      : { ...websiteDataByDefault };
 
     websiteBlock.innerHTML = "";
 
-    const websiteElement = websiteData
-      ? getWebsiteLinkElement(websiteData)
-      : getWebsiteSpanElement("No website found");
+    let websiteUrl = "No website found";
+    if (websiteData.url) {
+      const websiteLinkElement = getWebsiteLinkElement(websiteData.url);
+      websiteLinkElement.appendChild(websiteIconElement);
+      websiteBlock.appendChild(websiteLinkElement);
+      addCopyByClick(websiteBlock, "span");
+      setValidationStyle(websiteBlock, websiteData.ok);
+      websiteUrl = getHostName(websiteData.url);
+    } else {
+      websiteBlock.appendChild(websiteIconElement);
+    }
 
-    websiteBlock.appendChild(websiteIconElement);
+    const websiteElement = getWebsiteSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
@@ -108,20 +120,13 @@ function getWebsiteLinkElement(websiteData) {
   const websiteLinkElement = document.createElement("a");
   websiteLinkElement.href = websiteData;
   websiteLinkElement.target = "_blank";
-  websiteLinkElement.textContent = getSecondLevelDomain(websiteData);
   return websiteLinkElement;
 }
 
-function getSecondLevelDomain(url) {
+function getHostName(url) {
   try {
     const hostname = new URL(url).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
-    const parts = cleanHostname.split(".");
-
-    if (parts.length > 2) {
-      return parts.slice(-2).join(".");
-    }
-
     return cleanHostname;
   } catch (error) {
     console.error("Invalid URL:", error);
@@ -136,7 +141,7 @@ async function getCompanyWebsite(companylink) {
     return websiteCache.get(companylink);
   }
 
-  let website = "";
+  let websiteData = "";
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -145,14 +150,19 @@ async function getCompanyWebsite(companylink) {
       });
 
       if (response) {
-        website = response;
-        websiteCache.set(companylink, website);
+        websiteData = response;
+      } else {
+        websiteData = { ...websiteDataByDefault };
       }
     } catch (error) {
+      websiteData = { ...websiteDataByDefault };
       console.error("Error fetching website data:", error);
     }
+  } else {
+    websiteData = { ...websiteDataByDefault };
   }
-  return website;
+  websiteCache.set(companylink, websiteData);
+  return websiteData;
 }
 
 function sendMessagePromise(message) {
