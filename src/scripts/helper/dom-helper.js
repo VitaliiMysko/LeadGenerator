@@ -1,3 +1,11 @@
+function getFirstNameElement() {
+  return document.getElementById("first-name");
+}
+
+function getSecondNameElement() {
+  return document.getElementById("second-name");
+}
+
 function getJobPositionElement() {
   return document.getElementById("job-position");
 }
@@ -54,6 +62,8 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
+export const firstNameElement = getFirstNameElement();
+export const secondNameElement = getSecondNameElement();
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();

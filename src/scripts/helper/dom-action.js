@@ -1,6 +1,11 @@
 import { showAlert } from "../output/alert.js";
 
-export const addCopyByClick = (element, dataCopySelector) => {
+export const addCopyByClick = (
+  element,
+  dataCopySelector,
+  textOnDemand = "",
+  alertInfoDetails = ""
+) => {
   element.classList.add("copy");
 
   element.addEventListener("click", () => {
@@ -12,14 +17,20 @@ export const addCopyByClick = (element, dataCopySelector) => {
       dataElement.classList.remove("copy-effect");
     }, 1000);
 
-    if (dataElement) {
+    let dataCopy = textOnDemand;
+
+    if (dataCopy === "" && dataElement) {
+      dataCopy = dataElement.textContent;
+    }
+
+    if (dataCopy !== "") {
       navigator.clipboard
-        .writeText(dataElement.textContent)
+        .writeText(dataCopy)
         .then(() => {
-          showAlert("Copy", "success");
+          showAlert(`Copy ${alertInfoDetails}`, "success");
         })
         .catch((err) => {
-          showAlert("Copy failed!", "error");
+          showAlert(`Copy ${alertInfoDetails} failed!`, "error");
         });
     }
   });

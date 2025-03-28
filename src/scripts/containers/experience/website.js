@@ -5,6 +5,8 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
+import { getBasicEmail } from "../../services/email.js";
+
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
 const websiteDataByDefault = { url: "", status: 0, ok: false };
@@ -83,9 +85,10 @@ async function manageWebsiteBlock(radio) {
       const websiteLinkElement = getWebsiteLinkElement(websiteData.url);
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
-      addCopyByClick(websiteBlock, "span");
-      setValidationStyle(websiteBlock, websiteData.ok);
       websiteUrl = getHostName(websiteData.url);
+      const basicEmail = getBasicEmail(websiteUrl);
+      addCopyByClick(websiteBlock, "span", basicEmail, "baic email");
+      setValidationStyle(websiteBlock, websiteData.ok);
     } else {
       websiteBlock.appendChild(websiteIconElement);
     }
