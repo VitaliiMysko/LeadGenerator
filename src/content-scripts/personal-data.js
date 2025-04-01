@@ -118,7 +118,9 @@ if (!window.leadGenerator.personalDataInit) {
       await new Promise((resolve) => setTimeout(resolve, 350));
 
       let linkProfileUrl = "";
-      const dropdownMenuElement = findElementByCSSVariable('--x-hue-web-level', 10000) ?? getDropdownMenuElement();
+      const dropdownMenuElement =
+        findElementByCSSVariable("--x-hue-web-level", 10000) ??
+        getDropdownMenuElement();
       if (dropdownMenuElement) {
         const linkProfileUrlElement = dropdownMenuElement.querySelector("a");
         linkProfileUrl = linkProfileUrlElement
@@ -148,8 +150,10 @@ if (!window.leadGenerator.personalDataInit) {
     }
 
     function findElementByCSSVariable(varName, varValue) {
-      return [...document.querySelectorAll('*')].find(el => 
-        getComputedStyle(el).getPropertyValue(varName).trim() === varValue.toString()
+      return [...document.querySelectorAll("*")].find(
+        (el) =>
+          getComputedStyle(el).getPropertyValue(varName).trim() ===
+          varValue.toString()
       );
     }
 
