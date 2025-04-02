@@ -86,7 +86,7 @@ async function manageWebsiteBlock(radio) {
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
       websiteUrl = getHostName(websiteData.url);
-      const basicEmail = getBasicEmail(websiteUrl);
+      const basicEmail = getBasicEmail.bind(null, websiteUrl);
       addCopyByClick(websiteBlock, "span", basicEmail, "baic email");
       setValidationStyle(websiteBlock, websiteData.ok);
     } else {
