@@ -32,6 +32,8 @@ Each field is editable to allow manual adjustments before saving.
 
 - **Transliteration**: Automatically transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data.
 
+- **Email service**: Generate a basic email address and copying it to the clipboard when clicking on a person's company website.
+
 ## Changelog
 For a detailed list of changes in each release, please refer to the [CHANGELOG.md](./CHANGELOG.md) file.
 

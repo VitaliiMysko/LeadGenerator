@@ -1,3 +1,11 @@
+export function getFirstNameElement() {
+  return document.getElementById("first-name");
+}
+
+export function getSecondNameElement() {
+  return document.getElementById("second-name");
+}
+
 function getJobPositionElement() {
   return document.getElementById("job-position");
 }
