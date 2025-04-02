@@ -1,7 +1,12 @@
-import { firstNameElement, secondNameElement } from "../helper/dom-helper.js";
+import {
+  getFirstNameElement,
+  getSecondNameElement,
+} from "../helper/dom-helper.js";
 
 export const getBasicEmail = (hostName) => {
-  const fulllName = `${firstNameElement.value} ${secondNameElement.value}`;
+  const fulllName = `${getFirstNameElement().value} ${
+    getSecondNameElement().value
+  }`;
   const emailName = prepareEmailName(fulllName);
   return `${emailName}@${hostName}`;
 };
