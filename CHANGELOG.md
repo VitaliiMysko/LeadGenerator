@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [3.1.2] - 2025-04-02
+### Added
+- Implemented a mechanism for generating a basic email address and copying it to the clipboard when clicking on a person's company website.
+
+### Optimized
+- Improved the retrieval process for additional person-related data.
+
+### Fixed
+- Corrected the mechanism for obtaining direct LinkedIn profile link.
+
 ## [3.1.1] - 2025-03-03
 ### Added
 - Validation check for company website availability.
