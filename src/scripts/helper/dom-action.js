@@ -3,7 +3,7 @@ import { showAlert } from "../output/alert.js";
 export const addCopyByClick = (
   element,
   dataCopySelector,
-  textOnDemand = "",
+  getTextOnDemand = () => "",
   alertInfoDetails = ""
 ) => {
   element.classList.add("copy");
@@ -17,7 +17,7 @@ export const addCopyByClick = (
       dataElement.classList.remove("copy-effect");
     }, 1000);
 
-    let dataCopy = textOnDemand;
+    let dataCopy = getTextOnDemand();
 
     if (dataCopy === "" && dataElement) {
       dataCopy = dataElement.textContent;

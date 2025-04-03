@@ -21,20 +21,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return;
     }
 
-    chrome.windows.create(
+    chrome.tabs.create(
       {
-        url: request.url, // Page that should download
-        type: "popup",
-        state: "minimized", // "hidden" window
+        url: request.url,
+        active: false,
       },
-      (window) => {
-        const tabId = window.tabs[0].id;
+      (tab) => {
+        const tabId = tab.id;
 
         chrome.tabs.onUpdated.addListener(async function listener(
-          tabIdUpdated,
+          updatedTabId,
           info
         ) {
-          if (tabId === tabIdUpdated && info.status === "complete") {
+          if (tabId === updatedTabId && info.status === "complete") {
             chrome.scripting.executeScript(
               {
                 target: { tabId },
@@ -74,7 +73,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === "closeTab" && sender.tab) {
     chrome.tabs.remove(sender.tab.id, () => {});
-    chrome.windows.remove(sender.tab.windowId, () => {});
   }
 });
 
