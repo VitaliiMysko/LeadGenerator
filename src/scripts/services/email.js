@@ -4,12 +4,14 @@ import {
 } from "../helper/dom-helper.js";
 
 export const getBasicEmail = (hostName) => {
-  const fullName = `${getFirstNameElement().value} ${
-    getSecondNameElement().value
-  }`;
+  const fullName = getFullName();
   const emailName = prepareBasicEmailName(fullName);
   return `${emailName}@${hostName}`;
 };
+
+function getFullName() {
+  return `${getFirstNameElement().value} ${getSecondNameElement().value}`;
+}
 
 function prepareBasicEmailName(fullName) {
   return fullName
@@ -22,9 +24,7 @@ function prepareBasicEmailName(fullName) {
 }
 
 export const generateEmails = (hostName) => {
-  const fullName = `${getFirstNameElement().value} ${
-    getSecondNameElement().value
-  }`;
+  const fullName = getFullName();
 
   const emailName = prepareBasicEmailName(fullName);
   const parts = emailName.split(".");
@@ -54,13 +54,15 @@ export const generateEmails = (hostName) => {
       hostName,
       emails
     );
-  } else {
+  } else if (parts.length === 3 && firstName.includes("-")) {
     generateTwoWordsInLastNameAndHyphenatedFirstName(
       firstName,
       lastName,
       hostName,
       emails
     );
+  } else {
+    return emailName;
   }
 
   return emails;
@@ -139,3 +141,5 @@ const addTwoWordsInLastNameEmails = (firstName, lastWord, hostName, emails) => {
 const addInitialsEmail = (initials, hostName, emails) => {
   emails.push(`${initials}@${hostName}`);
 };
+
+console.log(generateEmails("example@com"));
