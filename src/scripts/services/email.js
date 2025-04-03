@@ -4,10 +4,10 @@ import {
 } from "../helper/dom-helper.js";
 
 export const getBasicEmail = (hostName) => {
-  const fulllName = `${getFirstNameElement().value} ${
+  const fullName = `${getFirstNameElement().value} ${
     getSecondNameElement().value
   }`;
-  const emailName = prepareEmailName(fulllName);
+  const emailName = prepareBasicEmailName(fullName);
   return `${emailName}@${hostName}`;
 };
 
@@ -22,12 +22,9 @@ function prepareBasicEmailName(fullName) {
 }
 
 export const generateEmails = (hostName) => {
-  // const fullName = `${firstNameElement.value} ${secondNameElement.value}`;
-  // const fullName = "Lars Erik Presterud";
-  // const fullName = "Firstname Lastname";
-  // const fullName = "Jean-Luc Picford";
-  const fullName = "Stig-Ove Reitan Martinsen"
-  // const fullName = "Morten Munch-Olsen";
+  const fullName = `${getFirstNameElement().value} ${
+    getSecondNameElement().value
+  }`;
 
   const emailName = prepareBasicEmailName(fullName);
   const parts = emailName.split(".");
@@ -37,19 +34,28 @@ export const generateEmails = (hostName) => {
   const [firstName, ...lastNames] = parts;
   const lastName = lastNames.join(".");
   const initials = parts.map((name) => name[0]).join("");
-  
+
   const emails = [];
-  emails.push(`${firstName}.${lastName}@${hostName}`);
-  emails.push(`${firstName}@${hostName}`);
 
   if (parts.length === 2 && !firstName.includes("-")) {
-    twoWordsEmails(firstName, lastName, initials, hostName, emails);
+    generateTwoWordsEmails(firstName, lastName, initials, hostName, emails);
   } else if (parts.length === 2 && firstName.includes("-")) {
-    twoWordsAndHyphenatedFirstNameEmails(firstName, lastName, hostName, emails);
+    generateTwoWordsAndHyphenatedFirstNameEmails(
+      firstName,
+      lastName,
+      hostName,
+      emails
+    );
   } else if (parts.length === 3 && !firstName.includes("-")) {
-    twoWordsInLastNameEmails(firstName, lastName, initials, hostName, emails);
+    generateTwoWordsInLastNameEmails(
+      firstName,
+      lastName,
+      initials,
+      hostName,
+      emails
+    );
   } else {
-    twoWordsInLastNameAndHyphenatedFirstName(
+    generateTwoWordsInLastNameAndHyphenatedFirstName(
       firstName,
       lastName,
       hostName,
@@ -60,29 +66,33 @@ export const generateEmails = (hostName) => {
   return emails;
 };
 
-const twoWordsEmails = (firstName, lastName, initials, hostName, emails) => {
-  emails.push(`${firstName[0]}.${lastName}@${hostName}`);
-  emails.push(`${firstName[0]}${lastName}@${hostName}`);
-  emails.push(`${lastName}@${hostName}`);
-  emails.push(`${initials}@${hostName}`);
+const generateTwoWordsEmails = (
+  firstName,
+  lastName,
+  initials,
+  hostName,
+  emails
+) => {
+  addCommonEmails(firstName, lastName, hostName, emails);
+  addTwoWordsEmails(firstName, lastName, hostName, emails);
+  addInitialsEmail(initials, hostName, emails);
   emails.push(`${firstName}${lastName}@${hostName}`);
   emails.push(`${firstName}_${lastName}@${hostName}`);
 };
 
-const twoWordsAndHyphenatedFirstNameEmails = (
+const generateTwoWordsAndHyphenatedFirstNameEmails = (
   firstName,
   lastName,
   hostName,
   emails
 ) => {
   const shortFirstName = firstName.split("-")[0];
+  addCommonEmails(firstName, lastName, hostName, emails);
   emails.push(`${shortFirstName}.${lastName}@${hostName}`);
-  emails.push(`${firstName[0]}.${lastName}@${hostName}`);
-  emails.push(`${firstName[0]}${lastName}@${hostName}`);
-  emails.push(`${lastName}@${hostName}`);
+  addTwoWordsEmails(firstName, lastName, hostName, emails);
 };
 
-const twoWordsInLastNameEmails = (
+const generateTwoWordsInLastNameEmails = (
   firstName,
   lastName,
   initials,
@@ -90,14 +100,12 @@ const twoWordsInLastNameEmails = (
   emails
 ) => {
   const lastWord = lastName.split(".").pop();
-  emails.push(`${initials}@${hostName}`);
-  emails.push(`${lastWord}@${hostName}`);
-  emails.push(`${firstName[0]}.${lastWord}@${hostName}`);
-  emails.push(`${firstName[0]}${lastWord}@${hostName}`);
-  emails.push(`${firstName}.${lastWord}@${hostName}`);
+  addCommonEmails(firstName, lastName, hostName, emails);
+  addInitialsEmail(initials, hostName, emails);
+  addTwoWordsInLastNameEmails(firstName, lastWord, hostName, emails);
 };
 
-const twoWordsInLastNameAndHyphenatedFirstName = (
+const generateTwoWordsInLastNameAndHyphenatedFirstName = (
   firstName,
   lastName,
   hostName,
@@ -105,12 +113,29 @@ const twoWordsInLastNameAndHyphenatedFirstName = (
 ) => {
   const shortFirstName = firstName.split("-")[0];
   const lastWord = lastName.split(".").pop();
-
-  emails.push(`${firstName}.${lastWord}@${hostName}`);
+  addCommonEmails(firstName, lastName, hostName, emails);
+  addTwoWordsInLastNameEmails(firstName, lastWord, hostName, emails);
   emails.push(`${shortFirstName}.${lastWord}@${hostName}`);
-  emails.push(`${firstName[0]}${lastWord}@${hostName}`);
-  emails.push(`${firstName[0]}.${lastWord}@${hostName}`); // firstname.lastlastname@example.com
-  emails.push(`${lastWord}@${hostName}`); // lastlastname@example.com
 };
 
-console.log(generateEmails("example.com"));
+const addCommonEmails = (firstName, lastName, hostName, emails) => {
+  emails.push(`${firstName}.${lastName}@${hostName}`);
+  emails.push(`${firstName}@${hostName}`);
+};
+
+const addTwoWordsEmails = (firstName, lastName, hostName, emails) => {
+  emails.push(`${firstName[0]}.${lastName}@${hostName}`);
+  emails.push(`${firstName[0]}${lastName}@${hostName}`);
+  emails.push(`${lastName}@${hostName}`);
+};
+
+const addTwoWordsInLastNameEmails = (firstName, lastWord, hostName, emails) => {
+  emails.push(`${firstName}.${lastWord}@${hostName}`);
+  emails.push(`${firstName[0]}.${lastWord}@${hostName}`);
+  emails.push(`${firstName[0]}${lastWord}@${hostName}`);
+  emails.push(`${lastWord}@${hostName}`);
+};
+
+const addInitialsEmail = (initials, hostName, emails) => {
+  emails.push(`${initials}@${hostName}`);
+};
