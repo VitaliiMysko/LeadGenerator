@@ -62,7 +62,7 @@ export const generateEmails = (hostName) => {
       emails
     );
   } else {
-    return emailName;
+    emails.push(`${emailName}@${hostName}`);
   }
 
   return emails;
