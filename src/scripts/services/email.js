@@ -141,5 +141,3 @@ const addTwoWordsInLastNameEmails = (firstName, lastWord, hostName, emails) => {
 const addInitialsEmail = (initials, hostName, emails) => {
   emails.push(`${initials}@${hostName}`);
 };
-
-console.log(generateEmails("example@com"));
