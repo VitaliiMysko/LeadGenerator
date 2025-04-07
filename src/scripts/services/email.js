@@ -1,7 +1,21 @@
 import {
   getFirstNameElement,
   getSecondNameElement,
+  generateEmailsElement,
+  getCompanyDomainElement,
 } from "../helper/dom-helper.js";
+
+generateEmailsElement.addEventListener("click", () => {
+  const domain = getWebsiteDomain();
+  console.log(generateEmails(domain));
+})
+
+function getWebsiteDomain() {
+  const domainElement = getCompanyDomainElement();
+  const text = domainElement.textContent.trim();
+  return text && text !== "No website found" ? text : "";
+}
+
 
 export const getBasicEmail = (hostName) => {
   const fullName = getFullName();
@@ -36,6 +50,7 @@ export const generateEmails = (hostName) => {
   const initials = parts.map((name) => name[0]).join("");
 
   const emails = [];
+  if (hostName === "") return emails;
 
   if (parts.length === 2 && !firstName.includes("-")) {
     generateTwoWordsEmails(firstName, lastName, initials, hostName, emails);
