@@ -16,7 +16,6 @@ function getWebsiteDomain() {
   return text && text !== "No website found" ? text : "";
 }
 
-
 export const getBasicEmail = (hostName) => {
   const fullName = getFullName();
   const emailName = prepareBasicEmailName(fullName);
