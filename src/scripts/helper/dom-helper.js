@@ -23,7 +23,7 @@ function getTranslateBtnElement() {
 }
 
 function getGenerateEmailsElement() {
-  return document.getElementById("generate-emails-btn")
+  return document.getElementById("generate-emails-btn");
 }
 
 function getGetBtnElement() {

@@ -85,7 +85,6 @@ a:active {
 #job-position, #email {
   padding-right: 24px;
 }
-
 @keyframes textChange {
   0% {
     color: #999;
@@ -107,7 +106,6 @@ a:active {
   cursor: pointer;
   padding: 0;
 }
-
 .draggable-block {
   width: 100%;
   padding-top: 5px;
