@@ -79,10 +79,10 @@ a:hover {
 a:active {
   color: #004494;
 }
-#job-position-block {
+#job-position-block, #email-block {
   position: relative;
 }
-#job-position {
+#job-position, #email {
   padding-right: 24px;
 }
 @keyframes textChange {
@@ -97,7 +97,7 @@ a:active {
 .copy-effect {
   animation: textChange 1s ease;
 }
-#translate-btn {
+#translate-btn, #generate-emails-btn {
   position: absolute;
   right: 0;
   width: 20px;
