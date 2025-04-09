@@ -8,7 +8,7 @@ import {
 generateEmailsElement.addEventListener("click", () => {
   const domain = getWebsiteDomain();
   console.log(generateEmails(domain));
-})
+});
 
 function getWebsiteDomain() {
   const domainElement = getCompanyDomainElement();
@@ -23,7 +23,9 @@ export const getBasicEmail = (hostName) => {
 };
 
 function getFullName() {
-  return `${getFirstNameElement().value} ${getSecondNameElement().value}`;
+  return `${getFirstNameElement().getAttribute(
+    "data-first-name"
+  )} ${getSecondNameElement().getAttribute("data-second-name")}}`;
 }
 
 function prepareBasicEmailName(fullName) {

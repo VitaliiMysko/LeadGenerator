@@ -40,12 +40,36 @@ getBtnElement.addEventListener("click", () => {
 
 function populateGeneralData(items) {
   items.forEach((item) => {
+    const inputElement = document.querySelector(`#${item.inputId}`);
+    const value = item.value;
+
     if (item.inputId == "first-name" || item.inputId == "second-name") {
-      document.querySelector(`#${item.inputId}`).value = transliterate(
-        item.value
-      );
+      const baseTransliterated = transliterate(value);
+      const attributeValue = hasGermanLetters(value)
+        ? transliterate(transliterateGermanLetters(value))
+        : baseTransliterated;
+
+      inputElement.value = baseTransliterated;
+      inputElement.setAttribute(`data-${item.inputId}`, attributeValue);
     } else {
-      document.querySelector(`#${item.inputId}`).value = item.value;
+      inputElement.value = value;
     }
   });
+}
+
+function hasGermanLetters(text) {
+  return /[äöüÄÖÜ]/.test(text);
+}
+
+function transliterateGermanLetters(text) {
+  const map = {
+    ä: "ae",
+    ö: "oe",
+    ü: "ue",
+    Ä: "Ae",
+    Ö: "Oe",
+    Ü: "Ue",
+  };
+
+  return text.replace(/[äöüÄÖÜ]/g, (match) => map[match]);
 }
