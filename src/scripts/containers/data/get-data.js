@@ -46,7 +46,7 @@ function populateGeneralData(items) {
     if (item.inputId == "first-name" || item.inputId == "second-name") {
       const baseTransliterated = transliterate(value);
       const attributeValue = hasGermanLetters(value)
-        ? transliterateGermanLetters(value)
+        ? transliterate(transliterateGermanLetters(value))
         : baseTransliterated;
 
       inputElement.value = baseTransliterated;
@@ -58,7 +58,7 @@ function populateGeneralData(items) {
 }
 
 function hasGermanLetters(text) {
-  return /[äöüÄÖÜß]/.test(text);
+  return /[äöüÄÖÜ]/.test(text);
 }
 
 function transliterateGermanLetters(text) {
@@ -69,8 +69,7 @@ function transliterateGermanLetters(text) {
     Ä: "Ae",
     Ö: "Oe",
     Ü: "Ue",
-    ß: "ss",
   };
 
-  return text.replace(/[äöüÄÖÜß]/g, (match) => map[match]);
+  return text.replace(/[äöüÄÖÜ]/g, (match) => map[match]);
 }
