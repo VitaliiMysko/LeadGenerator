@@ -6,7 +6,7 @@ import {
   emailElement,
 } from "../helper/dom-helper.js";
 
-import { useUpdateEffect } from "../helper/dom-action.js";
+import { useTextChangeEffect } from "../helper/dom-action.js";
 
 generateEmailsElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
@@ -27,7 +27,7 @@ generateEmailsElement.addEventListener("click", async () => {
 
     if (isValid === true) {
       emailElement.value = email;
-      useUpdateEffect(emailElement);
+      useTextChangeEffect(emailElement);
 
       break;
     }

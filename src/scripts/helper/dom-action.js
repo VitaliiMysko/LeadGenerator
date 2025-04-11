@@ -11,11 +11,7 @@ export const addCopyByClick = (
   element.addEventListener("click", () => {
     const dataElement = element.querySelector(dataCopySelector);
 
-    dataElement.classList.add("copy-effect");
-
-    setTimeout(() => {
-      dataElement.classList.remove("copy-effect");
-    }, 1000);
+    useTextChangeEffect(dataElement);
 
     let dataCopy = getTextOnDemand();
 
@@ -44,10 +40,10 @@ export const setValidationStyle = (element, value) => {
   }
 };
 
-export const useUpdateEffect = (element) => {
-  element.classList.add("update-effect");
+export const useTextChangeEffect = (element) => {
+  element.classList.add("text-change-effect");
 
   setTimeout(() => {
-    element.classList.remove("update-effect");
+    element.classList.remove("text-change-effect");
   }, 1000);
 };
