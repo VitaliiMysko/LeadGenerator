@@ -35,6 +35,7 @@ function prepareBasicEmailName(fullName) {
     .replace(/[^a-zA-Z0-9\s-]/g, "")
     .replace(/(\S)\s+(\S)/g, "$1.$2")
     .replace(/^-+|-+$/g, "")
+    .replace(/\s(?=[a-zA-Z]+$)/, ".")
     .replace(/\.$/, "");
 }
 
@@ -53,9 +54,18 @@ export const generateEmails = (hostName) => {
   const emails = [];
   if (hostName === "") return emails;
 
-  if (parts.length === 2 && !firstName.includes("-")) {
+  if (
+    parts.length === 2 &&
+    firstName.length > 1 &&
+    lastName.length > 1 &&
+    !firstName.includes("-")
+  ) {
     generateTwoWordsEmails(firstName, lastName, initials, hostName, emails);
-  } else if (parts.length === 2 && firstName.includes("-")) {
+  } else if (
+    parts.length === 2 &&
+    lastName.length > 1 &&
+    firstName.includes("-")
+  ) {
     generateTwoWordsAndHyphenatedFirstNameEmails(
       firstName,
       lastName,
@@ -77,6 +87,16 @@ export const generateEmails = (hostName) => {
       hostName,
       emails
     );
+  } else if (parts.length === 2 && firstName.length === 1) {
+    generateAbbreviatedFirstNameEmails(
+      firstName,
+      lastName,
+      initials,
+      hostName,
+      emails
+    );
+  } else if (parts.length === 2 && lastName.length === 1) {
+    generateAbbreviatedLastNameEmails(firstName, initials, hostName, emails);
   } else {
     emails.push(`${emailName}@${hostName}`);
   }
@@ -118,9 +138,11 @@ const generateTwoWordsInLastNameEmails = (
   emails
 ) => {
   const lastWord = lastName.split(".").pop();
+  const firstAndLastWordsInitials = firstName.charAt(0) + lastWord.charAt(0);
   addCommonEmails(firstName, lastName, hostName, emails);
   addInitialsEmail(initials, hostName, emails);
   addTwoWordsInLastNameEmails(firstName, lastWord, hostName, emails);
+  emails.push(`${firstAndLastWordsInitials}@${hostName}`);
 };
 
 const generateTwoWordsInLastNameAndHyphenatedFirstName = (
@@ -134,6 +156,29 @@ const generateTwoWordsInLastNameAndHyphenatedFirstName = (
   addCommonEmails(firstName, lastName, hostName, emails);
   addTwoWordsInLastNameEmails(firstName, lastWord, hostName, emails);
   emails.push(`${shortFirstName}.${lastWord}@${hostName}`);
+};
+
+const generateAbbreviatedFirstNameEmails = (
+  firstName,
+  lastName,
+  initials,
+  hostName,
+  emails
+) => {
+  emails.push(`${firstName}${lastName}@${hostName}`);
+  addInitialsEmail(initials, hostName, emails);
+  emails.push(`${firstName}.${lastName}@${hostName}`);
+  emails.push(`${lastName}@${hostName}`);
+};
+
+const generateAbbreviatedLastNameEmails = (
+  firstName,
+  initials,
+  hostName,
+  emails
+) => {
+  emails.push(`${firstName}@${hostName}`);
+  addInitialsEmail(initials, hostName, emails);
 };
 
 const addCommonEmails = (firstName, lastName, hostName, emails) => {
