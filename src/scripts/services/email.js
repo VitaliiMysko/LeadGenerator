@@ -3,11 +3,35 @@ import {
   getSecondNameElement,
   generateEmailsElement,
   getCompanyDomainElement,
+  emailElement,
 } from "../helper/dom-helper.js";
 
-generateEmailsElement.addEventListener("click", () => {
+import { useUpdateEffect } from "../helper/dom-action.js";
+
+generateEmailsElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
-  console.log(generateEmails(domain));
+  const emails = generateEmails(domain);
+
+  for (const email of emails) {
+    const isValid = await new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "verifyEmail",
+          email: email,
+        },
+        (response) => {
+          resolve(response);
+        }
+      );
+    });
+
+    if (isValid === true) {
+      emailElement.value = email;
+      useUpdateEffect(emailElement);
+
+      break;
+    }
+  }
 });
 
 function getWebsiteDomain() {

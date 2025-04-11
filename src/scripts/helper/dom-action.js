@@ -43,3 +43,11 @@ export const setValidationStyle = (element, value) => {
     element.classList.add("no-valid");
   }
 };
+
+export const useUpdateEffect = (element) => {
+  element.classList.add("update-effect");
+
+  setTimeout(() => {
+    element.classList.remove("update-effect");
+  }, 1000);
+};
