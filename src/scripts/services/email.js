@@ -8,12 +8,27 @@ import {
 
 import { useTextChangeEffect } from "../helper/dom-action.js";
 
+const emailCache = new Map();
+
 generateEmailsElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
+  const emailEmpty = "";
+
+  if (emailCache.has(domain)) {
+    showEmail(emailCache.get(domain));
+    return;
+  }
+  if (domain === "") {
+    emailCache.set(domain, emailEmpty);
+    showEmail(emailEmpty);
+    return;
+  }
+
   const emails = generateEmails(domain);
+  let isValid = false;
 
   for (const email of emails) {
-    const isValid = await new Promise((resolve) => {
+    isValid = await new Promise((resolve) => {
       chrome.runtime.sendMessage(
         {
           action: "verifyEmail",
@@ -25,14 +40,34 @@ generateEmailsElement.addEventListener("click", async () => {
       );
     });
 
-    if (isValid === true) {
-      emailElement.value = email;
-      useTextChangeEffect(emailElement);
+    if (isValid) {
+      emailCache.set(domain, email);
+      showEmail(email);
 
       break;
     }
   }
+
+  if (!isValid) {
+    emailCache.set(domain, emailEmpty);
+    showEmail(emailEmpty);
+  }
 });
+
+export function fillEmailFromCache() {
+  const domain = getWebsiteDomain();
+  let email = "";
+
+  if (emailCache.has(domain)) {
+    email = emailCache.get(domain);
+  }
+  showEmail(email);
+}
+
+function showEmail(email) {
+  emailElement.value = email;
+  useTextChangeEffect(emailElement);
+}
 
 function getWebsiteDomain() {
   const domainElement = getCompanyDomainElement();

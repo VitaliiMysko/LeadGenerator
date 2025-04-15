@@ -5,7 +5,7 @@ import {
   getCompanyWebsiteElements,
 } from "../../helper/dom-helper.js";
 
-import { getBasicEmail } from "../../services/email.js";
+import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
@@ -20,6 +20,7 @@ async function addCompanyWebsiteListener() {
   getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
       await manageWebsiteBlock(radio);
+      fillEmailFromCache();
     });
   });
 }
