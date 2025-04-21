@@ -3,6 +3,8 @@ import {
   getCompanyNameElements,
   getCompanyJobElements,
   getCompanyWebsiteElements,
+  emailElement,
+  generateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
@@ -75,9 +77,15 @@ async function manageWebsiteBlock(radio) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   try {
+    emailElement.disabled = true;
+    generateEmailsBtnElement.disabled = true;
+
     let websiteData = companyLinkElement
       ? await getCompanyWebsite(companyLinkElement.href)
       : { ...websiteDataByDefault };
+
+    emailElement.disabled = false;
+    generateEmailsBtnElement.disabled = false;
 
     websiteBlock.innerHTML = "";
 

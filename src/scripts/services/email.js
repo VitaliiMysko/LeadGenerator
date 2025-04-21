@@ -1,7 +1,7 @@
 import {
   getFirstNameElement,
   getSecondNameElement,
-  generateEmailsElement,
+  generateEmailsBtnElement,
   getCompanyDomainElement,
   emailElement,
 } from "../helper/dom-helper.js";
@@ -12,13 +12,13 @@ import { showAlert } from "../output/alert.js";
 const emailCache = new Map();
 let loadingInterval = null;
 
-generateEmailsElement.addEventListener("click", async () => {
+generateEmailsBtnElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
   let emailValue = "";
 
   if (emailCache.has(domain)) {
     showEmail(emailCache.get(domain));
-    showMessage(true);
+    domain === "" ? showMessage(false) : showMessage(true);
     return;
   }
   if (domain === "") {
