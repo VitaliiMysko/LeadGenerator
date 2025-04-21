@@ -9,23 +9,26 @@ import {
 import { useTextChangeEffect } from "../helper/dom-action.js";
 
 const emailCache = new Map();
+let loadingInterval = null;
 
 generateEmailsElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
-  const emailEmpty = "";
+  let emailValue = "";
 
   if (emailCache.has(domain)) {
     showEmail(emailCache.get(domain));
     return;
   }
   if (domain === "") {
-    emailCache.set(domain, emailEmpty);
-    showEmail(emailEmpty);
+    emailCache.set(domain, emailValue);
+    showEmail(emailValue);
     return;
   }
 
   const emails = generateEmails(domain);
   let isValid = false;
+
+  startLoadingEffect();
 
   for (const email of emails) {
     isValid = await new Promise((resolve) => {
@@ -41,18 +44,32 @@ generateEmailsElement.addEventListener("click", async () => {
     });
 
     if (isValid) {
-      emailCache.set(domain, email);
-      showEmail(email);
-
+      emailValue = email;
       break;
     }
   }
 
-  if (!isValid) {
-    emailCache.set(domain, emailEmpty);
-    showEmail(emailEmpty);
-  }
+  emailCache.set(domain, emailValue);
+  showEmail(emailValue);
+
+  stopLoadingEffect();
 });
+
+function startLoadingEffect() {
+  emailElement.disabled = true;
+  let dots = "";
+  emailElement.value = "Loading";
+
+  loadingInterval = setInterval(() => {
+    dots = dots.length < 3 ? dots + "." : "";
+    emailElement.value = "Loading" + dots;
+  }, 500);
+}
+
+function stopLoadingEffect(finalValue = "") {
+  clearInterval(loadingInterval);
+  emailElement.disabled = false;
+}
 
 export function fillEmailFromCache() {
   const domain = getWebsiteDomain();

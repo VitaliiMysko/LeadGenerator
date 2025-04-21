@@ -1,6 +1,7 @@
 import {
   jobPositionElement,
   companyNameElement,
+  emailElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
 
@@ -26,12 +27,14 @@ function getRadioCompanyBlock(company, index) {
     radioItem.checked = true;
     jobPositionElement.value = companyJobElement.textContent;
     companyNameElement.value = company.companyName;
+    emailElement.value = "";
   }
 
   radioItem.addEventListener("change", () => {
     if (radioItem.checked) {
       jobPositionElement.value = companyJobElement.textContent;
       companyNameElement.value = company.companyName;
+      emailElement.value = "";
     }
   });
 
