@@ -7,6 +7,7 @@ import {
 } from "../helper/dom-helper.js";
 
 import { useTextChangeEffect } from "../helper/dom-action.js";
+import { showAlert } from "../output/alert.js";
 
 const emailCache = new Map();
 let loadingInterval = null;
@@ -17,11 +18,13 @@ generateEmailsElement.addEventListener("click", async () => {
 
   if (emailCache.has(domain)) {
     showEmail(emailCache.get(domain));
+    showMessage(true);
     return;
   }
   if (domain === "") {
     emailCache.set(domain, emailValue);
     showEmail(emailValue);
+    showMessage(false);
     return;
   }
 
@@ -49,10 +52,12 @@ generateEmailsElement.addEventListener("click", async () => {
     }
   }
 
-  emailCache.set(domain, emailValue);
-  showEmail(emailValue);
-
   stopLoadingEffect();
+
+  emailCache.set(domain, emailValue);
+
+  showEmail(emailValue);
+  showMessage(isValid);
 });
 
 function startLoadingEffect() {
@@ -84,6 +89,14 @@ export function fillEmailFromCache() {
 function showEmail(email) {
   emailElement.value = email;
   useTextChangeEffect(emailElement);
+}
+
+function showMessage(isEmailValid) {
+  if (isEmailValid) {
+    showAlert("Email found!", "success");
+  } else {
+    showAlert("Email not found!", "error");
+  }
 }
 
 function getWebsiteDomain() {
