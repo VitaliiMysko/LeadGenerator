@@ -15,6 +15,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === "verifyEmail") {
+    (async () => {
+      const result = await verifyEmail(request.email);
+      sendResponse(result);
+    })();
+
+    return true;
+  }
+
   if (request.action === "fetchPage") {
     if (activeRequests[request.url]) {
       sendResponse(activeRequests[request.url]);
@@ -90,4 +99,26 @@ function checkWebsiteStatus(url) {
       resolve({ url: url, status: 0, ok: false });
     }
   });
+}
+
+async function verifyEmail(email) {
+  const apiKey = "live_45885526fe81fa4f8dc8";
+  const url = `https://api.emailable.com/v1/verify?email=${encodeURIComponent(
+    email
+  )}&api_key=${apiKey}`;
+
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+
+    // result.state: "deliverable", "undeliverable", "risky", etc.
+    if (result.state === "deliverable") {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.error("Email verification failed:", err);
+    return false;
+  }
 }

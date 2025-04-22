@@ -1,15 +1,105 @@
 import {
   getFirstNameElement,
   getSecondNameElement,
-  generateEmailsElement,
+  generateEmailsBtnElement,
   getCompanyDomainElement,
+  emailElement,
 } from "../helper/dom-helper.js";
 import { emailTemplates } from "../helper/emails-generation.js";
 
-generateEmailsElement.addEventListener("click", () => {
+import { useTextChangeEffect } from "../helper/dom-action.js";
+import { showAlert } from "../output/alert.js";
+
+const emailCache = new Map();
+let loadingInterval = null;
+
+export function fillEmailFromCache() {
   const domain = getWebsiteDomain();
-  console.log(generateEmails(domain));
+  let email = "";
+
+  if (emailCache.has(domain)) {
+    email = emailCache.get(domain);
+  }
+  showEmail(email);
+}
+
+generateEmailsBtnElement.addEventListener("click", async () => {
+  const domain = getWebsiteDomain();
+  let emailValue = "";
+
+  if (emailCache.has(domain)) {
+    emailValue = emailCache.get(domain);
+    showEmail(emailValue);
+    emailValue === "" ? showMessage(false) : showMessage(true);
+    return;
+  }
+  if (domain === "") {
+    emailCache.set(domain, emailValue);
+    showEmail(emailValue);
+    showMessage(false);
+    return;
+  }
+
+  const emails = generateEmails(domain);
+  let isValid = false;
+
+  startLoadingEffect();
+
+  for (const email of emails) {
+    isValid = await new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "verifyEmail",
+          email: email,
+        },
+        (response) => {
+          resolve(response);
+        }
+      );
+    });
+
+    if (isValid) {
+      emailValue = email;
+      break;
+    }
+  }
+
+  stopLoadingEffect();
+
+  emailCache.set(domain, emailValue);
+
+  showEmail(emailValue);
+  showMessage(isValid);
 });
+
+function startLoadingEffect() {
+  emailElement.disabled = true;
+  let dots = "";
+  emailElement.value = "Loading";
+
+  loadingInterval = setInterval(() => {
+    dots = dots.length < 3 ? dots + "." : "";
+    emailElement.value = "Loading" + dots;
+  }, 500);
+}
+
+function stopLoadingEffect(finalValue = "") {
+  clearInterval(loadingInterval);
+  emailElement.disabled = false;
+}
+
+function showEmail(email) {
+  emailElement.value = email;
+  useTextChangeEffect(emailElement);
+}
+
+function showMessage(isEmailValid) {
+  if (isEmailValid) {
+    showAlert("Email found!", "success");
+  } else {
+    showAlert("Email not found!", "error");
+  }
+}
 
 function getWebsiteDomain() {
   const domainElement = getCompanyDomainElement();

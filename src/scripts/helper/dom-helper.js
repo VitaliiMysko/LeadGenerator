@@ -22,7 +22,7 @@ function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
 
-function getGenerateEmailsElement() {
+function getGenerateEmailsBtnElement() {
   return document.getElementById("generate-emails-btn");
 }
 
@@ -80,4 +80,4 @@ export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
 export const appVerionElement = getAppVerionElement();
-export const generateEmailsElement = getGenerateEmailsElement();
+export const generateEmailsBtnElement = getGenerateEmailsBtnElement();

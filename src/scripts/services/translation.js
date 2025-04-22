@@ -3,15 +3,13 @@ import {
   jobPositionElement,
 } from "../helper/dom-helper.js";
 
+import { useTextChangeEffect } from "../helper/dom-action.js";
+
 translateBtnElement.addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {
     if (response.success) {
       translateText(response.token);
-      jobPositionElement.classList.add("update-effect");
-
-      setTimeout(() => {
-        jobPositionElement.classList.remove("update-effect");
-      }, 1000);
+      useTextChangeEffect(jobPositionElement);
     } else {
       console.error("Error authorization:", response.error);
     }
@@ -38,7 +36,7 @@ function translateText(token) {
         const translations = data.data.translations;
         jobPositionElement.value = translations[0].translatedText
           .replace(/^([a-z])/, (match) => match.toUpperCase())
-          .replace(/&amp;/g, '&');
+          .replace(/&amp;/g, "&");
       } else {
         console.error("Error translating:", data);
       }
