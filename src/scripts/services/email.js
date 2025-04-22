@@ -12,13 +12,24 @@ import { showAlert } from "../output/alert.js";
 const emailCache = new Map();
 let loadingInterval = null;
 
+export function fillEmailFromCache() {
+  const domain = getWebsiteDomain();
+  let email = "";
+
+  if (emailCache.has(domain)) {
+    email = emailCache.get(domain);
+  }
+  showEmail(email);
+}
+
 generateEmailsBtnElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
   let emailValue = "";
 
   if (emailCache.has(domain)) {
-    showEmail(emailCache.get(domain));
-    domain === "" ? showMessage(false) : showMessage(true);
+    emailValue = emailCache.get(domain);
+    showEmail(emailValue);
+    emailValue === "" ? showMessage(false) : showMessage(true);
     return;
   }
   if (domain === "") {
@@ -74,16 +85,6 @@ function startLoadingEffect() {
 function stopLoadingEffect(finalValue = "") {
   clearInterval(loadingInterval);
   emailElement.disabled = false;
-}
-
-export function fillEmailFromCache() {
-  const domain = getWebsiteDomain();
-  let email = "";
-
-  if (emailCache.has(domain)) {
-    email = emailCache.get(domain);
-  }
-  showEmail(email);
 }
 
 function showEmail(email) {
