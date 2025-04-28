@@ -73,3 +73,19 @@ function transliterateGermanLetters(text) {
 
   return text.replace(/[äöüÄÖÜ]/g, (match) => map[match]);
 }
+
+const inputs = [
+  { id: "first-name", dataAttr: "data-first-name" },
+  { id: "second-name", dataAttr: "data-second-name" },
+];
+
+inputs.forEach(({ id, dataAttr }) => {
+  const input = document.getElementById(id);
+
+  input.addEventListener("blur", () => {
+    const value = input.value;
+    if (value) {
+      input.setAttribute(`${dataAttr}`, value);
+    }
+  });
+});
