@@ -4,11 +4,11 @@ export const emailTemplates = [
     condition: ({ first, last }) => first && last.length > 1,
   },
   {
-    template: "{f}{last}@{host}",
+    template: "{initialFirst}{last}@{host}",
     condition: ({ last }) => last.length > 1 && !last.includes("."),
   },
   {
-    template: "{f}.{last}@{host}",
+    template: "{initialFirst}.{last}@{host}",
     condition: ({ last }) => last.length > 1 && !last.includes("."),
   },
   {
@@ -33,11 +33,11 @@ export const emailTemplates = [
     condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
-    template: "{f}.{lastPart2}@{host}",
+    template: "{initialFirst}.{lastPart2}@{host}",
     condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
-    template: "{f}{lastPart2}@{host}",
+    template: "{initialFirst}{lastPart2}@{host}",
     condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
@@ -66,5 +66,31 @@ export const emailTemplates = [
     template: "{first}_{last}@{host}",
     condition: ({ first, last }) =>
       first && last.length > 1 && !last.includes("."),
+  },
+  {
+    template: "{first}{lastPart1}{lastPart2}@{host}",
+    condition: ({ first, lastPart1, lastPart2 }) =>
+      first && !lastPart1.includes("-") && !lastPart2.includes("-"),
+  },
+  {
+    template: "{first}{lastPart1}@{host}",
+    condition: ({ first, lastPart1 }) => first && !lastPart1.includes("-"),
+  },
+  {
+    template: "{first}.{lastPart1}@{host}",
+    condition: ({ first, lastPart1 }) => first && !lastPart1.includes("-"),
+  },
+  {
+    template: "{initialFirst}{lastPart1}@{host}",
+    condition: ({ lastPart1 }) => !lastPart1.includes("-"),
+  },
+  {
+    template: "{first}_{lastPart2}@{host}",
+    condition: ({ lastPart2 }) => lastPart2 !== "",
+  },
+  {
+    template: "{initialFirst}.{initialLastPart1}.{lastPart2}@{host}",
+    condition: ({ initialLastPart1, lastPart2 }) =>
+      initialLastPart1 !== "" && lastPart2 !== "",
   },
 ];

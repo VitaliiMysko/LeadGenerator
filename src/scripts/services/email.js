@@ -144,16 +144,20 @@ export const generateEmails = (hostName) => {
   const initials = parts.some((p) => p.includes("-"))
     ? ""
     : parts.map((p) => p[0]).join("");
-  const f = rawFirst[0];
+  const initialLastPart1 = last.length > 1 ? last[0] : "";
+  const initialFirst = rawFirst[0];
   const firstNoHyphen = first.includes("-") ? first.split("-")[0] : "";
+  const lastPart1 = lastParts[0] || "";
   const lastPart2 = lastParts[1] || "";
 
   const data = {
     first,
     last,
     initials,
+    initialFirst,
+    initialLastPart1,
     firstNoHyphen,
-    f,
+    lastPart1,
     lastPart2,
     host: hostName,
   };
