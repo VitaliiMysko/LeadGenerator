@@ -102,10 +102,8 @@ function checkWebsiteStatus(url) {
 }
 
 async function verifyEmail(email) {
-  const apiKey = "live_45885526fe81fa4f8dc8";
-  const url = `https://api.emailable.com/v1/verify?email=${encodeURIComponent(
-    email
-  )}&api_key=${apiKey}`;
+  const workerUrl = "https://my-apikey-worker.vitalij-musko.workers.dev";
+  const url = `${workerUrl}?email=${encodeURIComponent(email)}`;
 
   try {
     const response = await fetch(url);
