@@ -124,6 +124,7 @@ function prepareBasicEmailName(fullName) {
     .trim()
     .toLowerCase()
     .replace(/[^a-zA-Z0-9\s-]/g, "")
+    .replace(/'/g, "")
     .replace(/(\S)\s+(\S)/g, "$1.$2")
     .replace(/^-+|-+$/g, "")
     .replace(/\s(?=[a-zA-Z]+$)/, ".")
