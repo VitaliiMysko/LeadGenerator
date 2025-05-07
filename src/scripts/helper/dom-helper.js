@@ -77,10 +77,10 @@ export function getCompanyDomainElement() {
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
-export const companyIndustryElement = getCompanyIndustryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
 export const copyBtnElement = getCopyBtnElement();
+export const copyToFileBtnElement = getCopyToFileBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
