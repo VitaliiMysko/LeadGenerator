@@ -5,6 +5,7 @@ import {
   getCompanyWebsiteElements,
   emailElement,
   generateEmailsBtnElement,
+  companyIndustryElement
 } from "../../helper/dom-helper.js";
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
@@ -81,7 +82,7 @@ async function manageWebsiteBlock(radio) {
     generateEmailsBtnElement.disabled = true;
 
     let websiteData = companyLinkElement
-      ? await getCompanyWebsite(companyLinkElement.href)
+      ? await getCompanyData(companyLinkElement.href)
       : { ...websiteDataByDefault };
 
     emailElement.disabled = false;
@@ -100,6 +101,10 @@ async function manageWebsiteBlock(radio) {
       setValidationStyle(websiteBlock, websiteData.ok);
     } else {
       websiteBlock.appendChild(websiteIconElement);
+    }
+
+    if(websiteData.industry){
+      companyIndustryElement.value = websiteData.industry
     }
 
     const websiteElement = getWebsiteSpanElement(websiteUrl);
@@ -149,7 +154,7 @@ function getHostName(url) {
 
 const websiteCache = new Map();
 
-async function getCompanyWebsite(companylink) {
+async function getCompanyData(companylink) {
   if (websiteCache.has(companylink)) {
     return websiteCache.get(companylink);
   }
@@ -161,6 +166,7 @@ async function getCompanyWebsite(companylink) {
         action: "fetchPage",
         url: companylink,
       });
+      console.log(response)
 
       if (response) {
         websiteData = response;

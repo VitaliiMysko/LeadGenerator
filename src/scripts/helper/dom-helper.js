@@ -18,6 +18,10 @@ function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
 
+function getCompanyIndustryElement(){
+  return document.querySelector("#company-industry");
+}
+
 function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
@@ -73,6 +77,7 @@ export function getCompanyDomainElement() {
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
+export const companyIndustryElement = getCompanyIndustryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
 export const copyBtnElement = getCopyBtnElement();
