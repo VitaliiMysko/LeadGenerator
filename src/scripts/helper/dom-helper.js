@@ -34,6 +34,10 @@ function getCopyBtnElement() {
   return document.getElementById("copy-btn");
 }
 
+function getCopyToFileBtnElement() {
+  return document.getElementById("copy-to-file-btn");
+}
+
 function getDataContainerElement() {
   return document.getElementById("data-container");
 }
@@ -73,6 +77,7 @@ export function getCompanyDomainElement() {
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
+export const companyIndustryElement = getCompanyIndustryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
 export const copyBtnElement = getCopyBtnElement();
