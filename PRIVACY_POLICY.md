@@ -1,8 +1,9 @@
 # Privacy Policy for Lead Generator Extension
 
-**Effective Date**: November 12, 2024
+**Effective Date**: November 12, 2024  
+**Last Updated**: May 14, 2025
 
-Thank you for using the "Lead Generator" extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
+Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
 ## 1. Data Collection
 
@@ -13,43 +14,65 @@ The "Lead Generator" extension allows users to collect publicly available inform
 - Job position  
 - Company name  
 - LinkedIn profile link  
+- (Optional) Email address
 
-The **Email** field is not auto-filled by the extension; instead, it is manually entered by the user if desired. No automated collection of email addresses occurs. 
+The **Email** field is not auto-filled by default. Email addresses may be:
 
-This information is collected only when the user explicitly clicks on the "Get" button within the extension. The extension does not store or process this data on our servers.
+- **Manually entered** by the user (in which case they are not validated or stored); or  
+- **Automatically generated and validated** using common email patterns based on company websites. In this case, validation is performed through a secure backend.
+
+All information is collected only when the user explicitly clicks on the button **"Get"**. The extension does **not** passively collect or scrape data.
 
 ## 2. Data Use
 
-Once collected, the data is temporarily saved in the clipboard (buffer) for further use by the user. The extension does not store any data beyond the clipboard, and the data is not processed or saved in any other location by the extension. The extension does not control, access, or store any data after it is copied to the clipboard, and its handling is subject solely to the user's discretion and use.
+Collected data is temporarily stored in your device’s clipboard for your convenience. The extension does not:
+
+- Save any data locally or remotely  
+- Transmit collected personal data to any third-party service (except for temporary validation of generated email addresses via a secure backend)  
+- Track or monitor clipboard content after it is copied  
+
+All further handling and storage of the clipboard data is solely at the user's discretion.
 
 ## 3. Data Retention
 
-The "Lead Generator" extension does not store, transmit, or share any data on external servers. All data remains in the user's local environment and is erased when the extension is closed.
+The extension does not persistently store any collected or generated data. Email validation requests are processed **in real-time** via a secure backend (see section 5) and are not retained. Once copied to the clipboard, the data is no longer accessible by the extension.
 
-## 4. No Third-Party Data Access
+## 4. No Third-Party Data Sharing
 
-The extension does not share, sell, or provide any personal data to third parties. The data is solely collected and stored temporarily in the clipboard for the user's personal use.
+The extension does not share, sell, or transfer any user data to third parties. The only exception is for **temporary email validation**:
 
-## 5. Data Security
+- When generating an email address, the extension sends candidate email formats for validation to a secure backend  
+- The backend uses the **Emailable API** to verify whether the email is valid  
+- No personal data is retained, stored, or reused during this process  
 
-We do not collect or store any data on our servers, so the responsibility for data security lies with the user once the data is copied to the clipboard. Data in the clipboard is typically transient and can be cleared by the user or system at any time.
+## 5. Secure Architecture
+
+All sensitive operations (such as email validation and API key usage) are handled by a secure backend hosted on [Cloudflare Workers](https://developers.cloudflare.com/workers/). This architecture ensures:
+
+- API keys and logic remain hidden from the client  
+- All communication between the extension and backend is encrypted  
+- No user-identifiable data is stored or reused after validation  
 
 ## 6. User Control and Responsibility
 
-You have full control over the data you collect using the extension. Once the data is copied to your clipboard, you decide where to store it and how to use it. The extension does not access or store data once it has been copied.
+You have full control over all data collected by the extension. Once copied to your clipboard, the extension no longer accesses or retains that data. You are responsible for how and where the data is stored, shared, or managed after copying.
 
 ## 7. Google Authentication
 
-If you use the Google Translate feature in the extension, you need to log in through your Google account. The extension uses Google OAuth2 for user authentication when interacting with the translation API. This allows users to access Google services securely. This service does not store your data permanently, and the translation is only used for your current session.
+If you choose to use the translation feature for job titles, you will be prompted to sign in with your Google account via OAuth2. This is used solely for authenticated access to the **Google Translate API**. The extension:
+
+- Does not store your Google credentials  
+- Does not access other parts of your Google account  
+- Uses the translation API only for the duration of your current session  
 
 ## 8. Cookies
 
-This extension does not set or read cookies on any user device.
+This extension does not set, store, or read cookies on your device.
 
 ## 9. Changes to This Privacy Policy
 
-We may update this Privacy Policy from time to time. Any changes will be posted in the Extension's settings or through a new version of the Extension.
+This Privacy Policy may be updated periodically. Any significant changes will be reflected in an updated version of the extension and communicated through the extension settings or release notes.
 
 ## 10. Contact Us
 
-If you have any questions or concerns about this Privacy Policy, please contact us directly.
+If you have any questions or concerns about this Privacy Policy or the use of your data, please contact us directly.

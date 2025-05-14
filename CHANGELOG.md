@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [3.2.1] - 2025-05-14
+### Added
+- Developed an email generation mechanism based on company website, first name, and last name.
+- Integrated a third-party email validation service (Emailable API) to ensure deliverability of generated emails.
+- Provided real-time user feedback indicating the result of email generation and validation.
+- Implemented a secure backend (Cloudflare Worker) to protect and manage API keys used for validation.
+
 ## [3.1.2] - 2025-04-02
 ### Added
 - Implemented a mechanism for generating a basic email address and copying it to the clipboard when clicking on a person's company website.
