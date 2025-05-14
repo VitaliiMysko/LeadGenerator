@@ -82,7 +82,7 @@ Handles user-interaction logic related to core actions:
 - **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored.
 - **All secret keys (Emailable API)** are stored only in the Cloudflare Worker.
 
-For more, see [PRIVACY_POLICY.md](./PRIVACY_POLICY.md)
+For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ---
 
@@ -96,9 +96,9 @@ For more, see [PRIVACY_POLICY.md](./PRIVACY_POLICY.md)
    - Rearrange data using drag-and-drop.
    - Translate job title via the Google Translate API (if logged in via Google OAuth2).
    - Trigger email generation:
-     - - Extension sends company domain to backend.
-     - - Backend validates generated emails via Emailable.
-     - - Valid result is returned and inserted into form and clipboard.
+     - Extension sends company domain to backend.
+     - Backend validates generated emails via Emailable.
+     - Valid result is returned and inserted into form and clipboard.
 5. No data is stored on servers; data only exists temporarily in memory or clipboard.
 
 ---
@@ -131,9 +131,9 @@ The modular directory structure allows easy scaling:
 
 ## 9. Related Documents
 
-- [`README.md`](./README.md) – Installation and usage instructions.
-- [`PRIVACY_POLICY.md`](./PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
-- [`CHANGELOG.md`](./CHANGELOG.md) – List of version changes.
+- [`README.md`](../README.md) – Installation and usage instructions.
+- [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
+- [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
 
 ---
 
