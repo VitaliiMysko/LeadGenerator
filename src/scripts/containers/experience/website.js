@@ -9,7 +9,11 @@ import {
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 
-import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
+import {
+  addCopyByClick,
+  setValidationStyle,
+  editText,
+} from "../../helper/dom-action.js";
 
 const websiteDataByDefault = { url: "", status: 0, ok: false };
 
@@ -96,7 +100,7 @@ async function manageWebsiteBlock(radio) {
       websiteBlock.appendChild(websiteLinkElement);
       websiteUrl = getHostName(websiteData.url);
       const basicEmail = getBasicEmail.bind(null, websiteUrl);
-      addCopyByClick(websiteBlock, "span", basicEmail, "baic email");
+      addCopyByClick(websiteBlock, "span", basicEmail, "basic email");
       setValidationStyle(websiteBlock, websiteData.ok);
     } else {
       websiteBlock.appendChild(websiteIconElement);
@@ -106,6 +110,28 @@ async function manageWebsiteBlock(radio) {
     websiteBlock.appendChild(websiteElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
+
+    let isDomainEditing = false;
+
+    const blockCopyByClick = (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+    };
+
+    websiteElement.addEventListener("dblclick", () => {
+      isDomainEditing = true;
+      websiteBlock.addEventListener("click", blockCopyByClick, true);
+      websiteElement.focus();
+    });
+
+    editText(websiteElement, {
+      onSave: (newValue) => {
+        isDomainEditing = false;
+        websiteBlock.removeEventListener("click", blockCopyByClick, true);
+        const newBasicEmail = getBasicEmail.bind(null, newValue);
+        addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
+      },
+    });
   } catch (error) {
     websiteBlock.innerHTML = "Error loading website.";
     console.error("Error fetching website:", error);
