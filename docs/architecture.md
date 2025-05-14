@@ -7,6 +7,7 @@ This document provides a high-level overview of the architectural structure of t
 ---
 
 ## 1. Overview
+
 The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
 
 The extension is composed of modular JavaScript files, grouped logically into directories. These files operate in two main environments:
@@ -62,11 +63,13 @@ Handles user-interaction logic related to core actions:
 ## 4. Third-Party Services
 
 ### 4.1 Emailable API
+
 - Used for email verification.
 - Accessed only via secure backend (Cloudflare Worker).
 - No email address is validated on the client directly.
 
 ### 4.2 Google Cloud Translate API
+
 - Optional.
 - Used to translate non-English job titles into English.
 - Requires Google account authentication via OAuth2.
@@ -136,4 +139,3 @@ The modular directory structure allows easy scaling:
 - [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
 
 ---
-
