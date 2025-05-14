@@ -15,6 +15,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === "verifyEmail") {
+    (async () => {
+      const result = await verifyEmail(request.email);
+      sendResponse(result);
+    })();
+
+    return true;
+  }
+
   if (request.action === "fetchPage") {
     if (activeRequests[request.url]) {
       sendResponse(activeRequests[request.url]);
@@ -90,4 +99,25 @@ function checkWebsiteStatus(url) {
       resolve({ url: url, status: 0, ok: false });
     }
   });
+}
+
+async function verifyEmail(email) {
+  const workerUrl = "https://my-apikey-worker.vitalij-musko.workers.dev";
+  const url = `${workerUrl}?email=${encodeURIComponent(email)}`;
+
+  let emailData;
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+
+    emailData = { state: result.state, reason: result.reason, error: "" };
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    emailData = {
+      state: "",
+      reason: "",
+      error: error.message,
+    };
+  }
+  return emailData;
 }

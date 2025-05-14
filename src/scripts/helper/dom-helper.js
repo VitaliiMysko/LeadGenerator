@@ -22,6 +22,10 @@ function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
 
+function getGenerateEmailsBtnElement() {
+  return document.getElementById("generate-emails-btn");
+}
+
 function getGetBtnElement() {
   return document.getElementById("get-btn");
 }
@@ -62,6 +66,10 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
+export function getCompanyDomainElement() {
+  return document.querySelector("div.company-website.active > span");
+}
+
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
@@ -72,3 +80,4 @@ export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
 export const appVerionElement = getAppVerionElement();
+export const generateEmailsBtnElement = getGenerateEmailsBtnElement();

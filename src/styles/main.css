@@ -79,10 +79,12 @@ a:hover {
 a:active {
   color: #004494;
 }
-#job-position-block {
+#job-position-block,
+#email-block {
   position: relative;
 }
-#job-position {
+#job-position,
+#email {
   padding-right: 24px;
 }
 @keyframes textChange {
@@ -93,11 +95,11 @@ a:active {
     color: #333;
   }
 }
-.update-effect,
-.copy-effect {
+.text-change-effect {
   animation: textChange 1s ease;
 }
-#translate-btn {
+#translate-btn,
+#generate-emails-btn {
   position: absolute;
   right: 0;
   width: 20px;
@@ -217,7 +219,7 @@ a:active {
   cursor: copy;
 }
 .valid,
-.no-valid{
+.no-valid {
   position: relative;
   padding-right: 10px;
 }
@@ -228,7 +230,7 @@ a:active {
   right: 0;
   width: 10px;
   height: 100%;
-  background: linear-gradient(to right,  #f8faf8, #8cca8e);
+  background: linear-gradient(to right, #f8faf8, #8cca8e);
 }
 .no-valid::before {
   content: "";
@@ -237,5 +239,5 @@ a:active {
   right: 0;
   width: 10px;
   height: 100%;
-  background: linear-gradient(to right,  #faefee, #ca8c89);
+  background: linear-gradient(to right, #faefee, #ca8c89);
 }
