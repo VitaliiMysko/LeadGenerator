@@ -6,7 +6,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
 - **Data Extraction**:
   - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," and "Company Name."
-  The "Email" field is not auto-filled.
+    The "Email" field is not auto-filled.
   - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
 
 ## Data Fields
@@ -32,7 +32,11 @@ Each field is editable to allow manual adjustments before saving.
 
 - **Transliteration**: Automatically transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data.
 
-- **Email service**: Generate a basic email address and copying it to the clipboard when clicking on a person's company website.
+- **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field.
+
+- **Secure Architecture**: 
+  - All sensitive operations, including email validation and API key handling, are delegated to a secure backend hosted on a [Cloudflare Worker](https://developers.cloudflare.com/workers/), ensuring that API secrets remain secure and never exposed to the client.
+  - This architecture enhances both performance and security by utilizing edge computing.
 
 ## Changelog
 For a detailed list of changes in each release, please refer to the [CHANGELOG.md](./CHANGELOG.md) file.
@@ -101,9 +105,11 @@ After installing the **Lead Generator** extension, follow these steps to configu
    - All data collected remains in your local clipboard until you manually paste it into a document, spreadsheet, or other location. The extension does not store data persistently or transmit it to external servers.
 
 6. **Optional Fields and Manual Entry:**
-   - If you need to add an email address, this can be done manually by typing into the "Email" field, as this information is not automatically extracted.
+   - If you need to add an email address, this can be done manually by typing into the "Email" field.
+   - Please note that manually entered email addresses are **not** validated, and the extension does not notify you of their validity.
 
-With these configurations, your extension will be ready for efficient and secure data collection from LinkedIn Sales Navigator pages.
+7. **Email Validation Behavior:**
+   - Validation is performed **only** during the automatic generation of email addresses (by clicking the email icon). Each generated candidate is validated via the Emailable service using a secure backend, and the valid email is inserted into the "Email" field.
 
 ## Usage
 
@@ -125,7 +131,10 @@ With these configurations, your extension will be ready for efficient and secure
 6. **Using Translation (Optional):**
    - If the job position is in a language other than English, click the translation icon next to the "Job Position" field. Sign in with your Google account if prompted to enable translation through Google Translate.
 
-This guide will help you quickly get started and make the most of the extension's features for efficient data collection and management.
+7. **Generating and Validating Emails (Optional):**
+   - Click the email icon next to the "Email" field to initiate automatic email generation.
+   - The extension will try a series of common email formats and validate each via a secure backend using the Emailable API.
+   - The valid email found will be populated into the "Email" field.
 
 ## Permissions
 
@@ -169,11 +178,3 @@ These requirements ensure that the extension functions as intended and that you 
 ## Privacy Policy
 
 The "Lead generator" extension respects your privacy and is committed to protecting your personal information. For detailed information on how we collect, use, and protect your data, please refer to our [Privacy Policy](PRIVACY_POLICY.md).
-
-By using this extension, you agree to the terms outlined in our Privacy Policy. If you have any questions or concerns, feel free to contact us.
-
-## License
-
-The "Lead generator" extension is open-source and available under the [MIT License](LICENSE). You are free to use, modify, and distribute this extension, provided that you comply with the terms of the MIT License.
-
-For more information about the MIT License, please refer to the LICENSE file in the repository.
