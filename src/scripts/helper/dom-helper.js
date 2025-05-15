@@ -38,10 +38,6 @@ function getCopyBtnElement() {
   return document.getElementById("copy-btn");
 }
 
-function getCopyToFileBtnElement() {
-  return document.getElementById("copy-to-file-btn");
-}
-
 function getDataContainerElement() {
   return document.getElementById("data-container");
 }
@@ -89,7 +85,6 @@ export const companyIndustryElement = getCompanyIndustryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
 export const copyBtnElement = getCopyBtnElement();
-export const copyToFileBtnElement = getCopyToFileBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
