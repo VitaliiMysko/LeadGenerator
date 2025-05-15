@@ -3,6 +3,7 @@ import {
   getCompanyNameElements,
   getCompanyJobElements,
   getCompanyWebsiteElements,
+  getCompanyIndustryElements,
   emailElement,
   generateEmailsBtnElement,
   companyIndustryElement
@@ -43,6 +44,10 @@ async function manageWebsiteBlock(radio) {
     website.classList.remove("active");
     website.style.display = "none";
   });
+  getCompanyIndustryElements().forEach((industry) => {
+    industry.classList.remove("active");
+    industry.style.display = "none";
+  });
 
   const parentDiv = radio.closest(".radio-company");
   const companyNameLabel = parentDiv.querySelector(".company-name");
@@ -54,28 +59,34 @@ async function manageWebsiteBlock(radio) {
   const websiteBlock = parentDiv.querySelector(".company-website");
   websiteBlock.classList.add("active");
 
+  const industryBlock = parentDiv.querySelector(".company-industry");
+  industryBlock.classList.add("active");
+
   const companyLinkElement = parentDiv.querySelector("a");
 
   websiteBlock.style.display = "flex";
+  industryBlock.style.display = "flex";
 
-  if (websiteBlock.getAttribute("data-initialized") === "true") {
-    websiteBlock.style.display = "flex";
+  if (websiteBlock.getAttribute("data-initialized") === "true" 
+      || websiteBlock.getAttribute("data-loading") === "true") {
     return;
   }
-
-  if (websiteBlock.getAttribute("data-loading") === "true") {
-    return;
-  }
+  
   websiteBlock.setAttribute("data-loading", "true");
+  industryBlock.setAttribute("data-loading", "true");
 
   websiteBlock.innerHTML = "";
+  industryBlock.innerHTML = "";
   websiteBlock.classList.add("loading");
+  industryBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
-  const websiteLoadingTextElement = getWebsiteSpanElement("Loading");
+  const websiteLoadingTextElement = getSpanElement("Loading");
+  const industryLoadingTextElement = getSpanElement("Loading");
 
   websiteBlock.appendChild(websiteIconElement);
   websiteBlock.appendChild(websiteLoadingTextElement);
+  industryBlock.appendChild(industryLoadingTextElement);
 
   try {
     emailElement.disabled = true;
@@ -89,6 +100,7 @@ async function manageWebsiteBlock(radio) {
     generateEmailsBtnElement.disabled = false;
 
     websiteBlock.innerHTML = "";
+    industryBlock.innerHTML = "";
 
     let websiteUrl = "No website found";
     if (websiteData.url) {
@@ -104,10 +116,13 @@ async function manageWebsiteBlock(radio) {
     }
 
     if(websiteData.industry){
-      companyIndustryElement.value = websiteData.industry
+      const industryTextElement = getSpanElement(websiteData.industry);
+      industryBlock.appendChild(industryTextElement);
+      
+      companyIndustryElement.value = industryTextElement.textContent;
     }
 
-    const websiteElement = getWebsiteSpanElement(websiteUrl);
+    const websiteElement = getSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
@@ -117,6 +132,7 @@ async function manageWebsiteBlock(radio) {
   } finally {
     websiteBlock.removeAttribute("data-loading");
     websiteBlock.classList.remove("loading");
+    industryBlock.classList.remove("loading");
   }
 }
 
@@ -127,10 +143,10 @@ function getWebsiteIconElement() {
   return websiteIconElement;
 }
 
-function getWebsiteSpanElement(websiteData) {
-  const websiteSpanElement = document.createElement("span");
-  websiteSpanElement.textContent = websiteData;
-  return websiteSpanElement;
+function getSpanElement(text) {
+  const spanElement = document.createElement("span");
+  spanElement.textContent = text;
+  return spanElement;
 }
 
 function getWebsiteLinkElement(websiteData) {
@@ -166,7 +182,6 @@ async function getCompanyData(companylink) {
         action: "fetchPage",
         url: companylink,
       });
-      console.log(response)
 
       if (response) {
         websiteData = response;

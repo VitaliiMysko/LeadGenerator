@@ -1,6 +1,7 @@
 import {
   jobPositionElement,
   companyNameElement,
+  companyIndustryElement,
   emailElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
@@ -19,29 +20,34 @@ function getRadioCompanyBlock(company, index) {
   radioCompanyBlock.classList.add("radio-company");
 
   const radioItem = getCompanyRadioElement(company);
-  const companyLabelElement = getCompanyLabelElement(company);
-  const companyJobElement = getCompanyJobElement(company);
-  const companyWebsiteElement = getCompanyWebsiteElement();
+  const companyLabeRadiolElement = getCompanyLabelRadioElement(company);
+  const companyJobRadioElement = getCompanyJobRadioElement(company);
+  const companyWebsiteRadioElement = getCompanyWebsiteRadioElement();
+  const companyIndustryRadioElement = getCompanyIndustryRadioElement()
 
   if (index === 0) {
     radioItem.checked = true;
-    jobPositionElement.value = companyJobElement.textContent;
+    jobPositionElement.value = companyJobRadioElement.textContent;
     companyNameElement.value = company.companyName;
+    companyIndustryElement.value = "";
     emailElement.value = "";
   }
 
   radioItem.addEventListener("change", () => {
     if (radioItem.checked) {
-      jobPositionElement.value = companyJobElement.textContent;
+      const parentDiv = radioItem.closest(".radio-company");
+      jobPositionElement.value = companyJobRadioElement.textContent;
       companyNameElement.value = company.companyName;
       emailElement.value = "";
+      companyIndustryElement.value = parentDiv.querySelector(".company-industry").firstChild?.textContent || "";
     }
   });
 
   radioCompanyBlock.appendChild(radioItem);
-  radioCompanyBlock.appendChild(companyLabelElement);
-  radioCompanyBlock.appendChild(companyJobElement);
-  radioCompanyBlock.appendChild(companyWebsiteElement);
+  radioCompanyBlock.appendChild(companyLabeRadiolElement);
+  radioCompanyBlock.appendChild(companyJobRadioElement);
+  radioCompanyBlock.appendChild(companyWebsiteRadioElement);
+  radioCompanyBlock.appendChild(companyIndustryRadioElement);
   return radioCompanyBlock;
 }
 
@@ -54,7 +60,7 @@ function getCompanyRadioElement(company) {
   return radioItem;
 }
 
-function getCompanyLabelElement(company) {
+function getCompanyLabelRadioElement(company) {
   const label = document.createElement("label");
   label.setAttribute("for", `radio-company-${company.id}`);
   label.classList.add("company-name");
@@ -71,15 +77,21 @@ function getCompanyLabelElement(company) {
   return label;
 }
 
-function getCompanyJobElement(company) {
+function getCompanyJobRadioElement(company) {
   const jobElement = document.createElement("div");
   jobElement.classList.add("company-job");
   jobElement.textContent = company.jobPosition;
   return jobElement;
 }
 
-function getCompanyWebsiteElement() {
+function getCompanyWebsiteRadioElement() {
   const websiteElement = document.createElement("div");
   websiteElement.classList.add("company-website");
+  return websiteElement;
+}
+
+function getCompanyIndustryRadioElement() {
+  const websiteElement = document.createElement("div");
+  websiteElement.classList.add("company-industry");
   return websiteElement;
 }

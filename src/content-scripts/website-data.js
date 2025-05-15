@@ -26,7 +26,6 @@
       data.error = error.message;
     })
     .finally(() => {
-      console.log(data);
       sendMessageAndCloseTab(data);
     });
 

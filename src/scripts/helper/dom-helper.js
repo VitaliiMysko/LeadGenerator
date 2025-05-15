@@ -74,6 +74,10 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
+export function getCompanyIndustryElements() {
+  return document.querySelectorAll(".company-industry");
+}
+
 export function getCompanyDomainElement() {
   return document.querySelector("div.company-website.active > span");
 }

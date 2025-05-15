@@ -55,12 +55,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 chrome.runtime.onMessage.addListener(
                   async function responseListener(response, sender) {
                     if (response.action === "pageContent") {
-                      console.log(response)
                       if (response.data && request.url === response.data.url) {
                         const result = await checkWebsiteStatus(
                           response.data
                         );
-                        console.log(result);
                         activeRequests[request.url] = result;
 
                         sendResponse(result);
@@ -92,8 +90,6 @@ function checkWebsiteStatus(data) {
     if (data.website) {
       fetch(data.website, { method: "HEAD" })
         .then((response) => {
-          console.log(response)
-          console.log(data)
           resolve({ url: data.website, status: response.status, ok: response.ok, industry: data.industry });
         })
         .catch(() => {
