@@ -58,7 +58,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                       if (response.data && request.url === response.data.url) {
                         const result = await checkWebsiteStatus(
                           response.data
-                          response.data
                         );
                         activeRequests[request.url] = result;
 
@@ -87,10 +86,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function checkWebsiteStatus(data) {
-function checkWebsiteStatus(data) {
   return new Promise((resolve) => {
-    if (data.website) {
-      fetch(data.website, { method: "HEAD" })
     if (data.website) {
       fetch(data.website, { method: "HEAD" })
         .then((response) => {

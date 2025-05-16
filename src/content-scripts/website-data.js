@@ -22,7 +22,6 @@
     })
     .then((element) => {
       data.website = container.querySelector('.view-website-link').href || "";
-      data.website = container.querySelector('.view-website-link').href || "";
     })
     .catch((error) => {
       console.error("Error finding element:", error);
