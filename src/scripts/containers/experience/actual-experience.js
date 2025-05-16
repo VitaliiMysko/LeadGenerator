@@ -30,7 +30,9 @@ function getRadioCompanyBlock(company, index) {
   if (index === 0) {
     radioItem.checked = true;
     jobPositionElement.value = companyJobRadioElement.textContent;
+    jobPositionElement.value = companyJobRadioElement.textContent;
     companyNameElement.value = company.companyName;
+    companyIndustryElement.value = "";
     emailElement.value = "";
     companyIndustryElement.value = "";
     companyCountryElement.value = "";
@@ -38,6 +40,8 @@ function getRadioCompanyBlock(company, index) {
 
   radioItem.addEventListener("change", () => {
     if (radioItem.checked) {
+      const parentDiv = radioItem.closest(".radio-company");
+      jobPositionElement.value = companyJobRadioElement.textContent;
       const parentDiv = radioItem.closest(".radio-company");
       jobPositionElement.value = companyJobRadioElement.textContent;
       companyNameElement.value = company.companyName;
@@ -66,6 +70,7 @@ function getCompanyRadioElement(company) {
 }
 
 function getCompanyLabelRadioElement(company) {
+function getCompanyLabelRadioElement(company) {
   const label = document.createElement("label");
   label.setAttribute("for", `radio-company-${company.id}`);
   label.classList.add("company-name");
@@ -83,12 +88,14 @@ function getCompanyLabelRadioElement(company) {
 }
 
 function getCompanyJobRadioElement(company) {
+function getCompanyJobRadioElement(company) {
   const jobElement = document.createElement("div");
   jobElement.classList.add("company-job");
   jobElement.textContent = company.jobPosition;
   return jobElement;
 }
 
+function getCompanyWebsiteRadioElement() {
 function getCompanyWebsiteRadioElement() {
   const websiteElement = document.createElement("div");
   websiteElement.classList.add("company-website");

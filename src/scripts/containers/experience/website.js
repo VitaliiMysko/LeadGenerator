@@ -79,8 +79,11 @@ async function manageWebsiteBlock(radio) {
 
   if (websiteBlock.getAttribute("data-initialized") === "true" 
       || websiteBlock.getAttribute("data-loading") === "true") {
+  if (websiteBlock.getAttribute("data-initialized") === "true" 
+      || websiteBlock.getAttribute("data-loading") === "true") {
     return;
   }
+  
   
   websiteBlock.setAttribute("data-loading", "true");
   industryBlock.setAttribute("data-loading", "true");
@@ -108,6 +111,7 @@ async function manageWebsiteBlock(radio) {
     generateEmailsBtnElement.disabled = true;
 
     let websiteData = companyLinkElement
+      ? await getCompanyData(companyLinkElement.href)
       ? await getCompanyData(companyLinkElement.href)
       : { ...websiteDataByDefault };
 
@@ -175,6 +179,10 @@ function getSpanElement(text) {
   const spanElement = document.createElement("span");
   spanElement.textContent = text;
   return spanElement;
+function getSpanElement(text) {
+  const spanElement = document.createElement("span");
+  spanElement.textContent = text;
+  return spanElement;
 }
 
 function getWebsiteLinkElement(websiteData) {
@@ -198,6 +206,7 @@ function getHostName(url) {
 
 const websiteCache = new Map();
 
+async function getCompanyData(companylink) {
 async function getCompanyData(companylink) {
   if (websiteCache.has(companylink)) {
     return websiteCache.get(companylink);
