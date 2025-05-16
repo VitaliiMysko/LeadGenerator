@@ -119,7 +119,9 @@ async function manageWebsiteBlock(radio) {
       const industryTextElement = getSpanElement(websiteData.industry);
       industryBlock.appendChild(industryTextElement);
       
-      companyIndustryElement.value = industryTextElement.textContent;
+      if(radio.checked){
+        companyIndustryElement.value = industryTextElement.textContent;
+      }
     }
 
     const websiteElement = getSpanElement(websiteUrl);
