@@ -90,13 +90,31 @@ function checkWebsiteStatus(data) {
     if (data.website) {
       fetch(data.website, { method: "HEAD" })
         .then((response) => {
-          resolve({ url: data.website, status: response.status, ok: response.ok, industry: data.industry });
+          resolve({ 
+            url: data.website, 
+            status: response.status, 
+            ok: response.ok, 
+            industry: data.industry,
+            location: data.location,
+          });
         })
         .catch(() => {
-          resolve({ url: data.website, status: 0, ok: false, industry: data.industry });
+          resolve({ 
+            url: data.website, 
+            status: 0, 
+            ok: false, 
+            industry: data.industry,
+            location: data.location,
+          });
         });
     } else {
-      resolve({ url: data.website, status: 0, ok: false, industry: data.industry });
+      resolve({ 
+        url: data.website, 
+        status: 0, 
+        ok: false, 
+        industry: data.industry,
+        location: data.location,
+      });
     }
   });
 }

@@ -2,6 +2,7 @@ import {
   jobPositionElement,
   companyNameElement,
   companyIndustryElement,
+  companyCountryElement,
   emailElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
@@ -23,14 +24,16 @@ function getRadioCompanyBlock(company, index) {
   const companyLabeRadiolElement = getCompanyLabelRadioElement(company);
   const companyJobRadioElement = getCompanyJobRadioElement(company);
   const companyWebsiteRadioElement = getCompanyWebsiteRadioElement();
-  const companyIndustryRadioElement = getCompanyIndustryRadioElement()
+  const companyIndustryRadioElement = getCompanyIndustryRadioElement();
+  const companyLocationRadioElement = getCompanyLocationRadioElement();
 
   if (index === 0) {
     radioItem.checked = true;
     jobPositionElement.value = companyJobRadioElement.textContent;
     companyNameElement.value = company.companyName;
-    companyIndustryElement.value = "";
     emailElement.value = "";
+    companyIndustryElement.value = "";
+    companyCountryElement.value = "";
   }
 
   radioItem.addEventListener("change", () => {
@@ -40,6 +43,7 @@ function getRadioCompanyBlock(company, index) {
       companyNameElement.value = company.companyName;
       emailElement.value = "";
       companyIndustryElement.value = parentDiv.querySelector(".company-industry").firstChild?.textContent || "";
+      companyCountryElement.value = parentDiv.querySelector(".company-country").firstChild?.textContent.split(', ').pop() || "";
     }
   });
 
@@ -48,6 +52,7 @@ function getRadioCompanyBlock(company, index) {
   radioCompanyBlock.appendChild(companyJobRadioElement);
   radioCompanyBlock.appendChild(companyWebsiteRadioElement);
   radioCompanyBlock.appendChild(companyIndustryRadioElement);
+  radioCompanyBlock.appendChild(companyLocationRadioElement);
   return radioCompanyBlock;
 }
 
@@ -94,4 +99,10 @@ function getCompanyIndustryRadioElement() {
   const industryElement = document.createElement("div");
   industryElement.classList.add("company-industry");
   return industryElement;
+}
+
+function getCompanyLocationRadioElement() {
+  const countryElement = document.createElement("div");
+  countryElement.classList.add("company-location");
+  return countryElement;
 }

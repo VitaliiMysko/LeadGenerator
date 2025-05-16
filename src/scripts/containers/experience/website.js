@@ -4,9 +4,11 @@ import {
   getCompanyJobElements,
   getCompanyWebsiteElements,
   getCompanyIndustryElements,
+  getCompanyLocationElements,
   emailElement,
   generateEmailsBtnElement,
-  companyIndustryElement
+  companyIndustryElement,
+  companyCountryElement
 } from "../../helper/dom-helper.js";
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
@@ -48,6 +50,10 @@ async function manageWebsiteBlock(radio) {
     industry.classList.remove("active");
     industry.style.display = "none";
   });
+  getCompanyLocationElements().forEach((country) => {
+    country.classList.remove("active");
+    country.style.display = "none";
+  });
 
   const parentDiv = radio.closest(".radio-company");
   const companyNameLabel = parentDiv.querySelector(".company-name");
@@ -62,10 +68,14 @@ async function manageWebsiteBlock(radio) {
   const industryBlock = parentDiv.querySelector(".company-industry");
   industryBlock.classList.add("active");
 
+  const locationBlock = parentDiv.querySelector(".company-location");
+  locationBlock.classList.add("active");
+
   const companyLinkElement = parentDiv.querySelector("a");
 
   websiteBlock.style.display = "flex";
   industryBlock.style.display = "flex";
+  locationBlock.style.display = "flex";
 
   if (websiteBlock.getAttribute("data-initialized") === "true" 
       || websiteBlock.getAttribute("data-loading") === "true") {
@@ -74,19 +84,24 @@ async function manageWebsiteBlock(radio) {
   
   websiteBlock.setAttribute("data-loading", "true");
   industryBlock.setAttribute("data-loading", "true");
+  locationBlock.setAttribute("data-loading", "true");
 
   websiteBlock.innerHTML = "";
   industryBlock.innerHTML = "";
+  locationBlock.innerHTML = "";
   websiteBlock.classList.add("loading");
   industryBlock.classList.add("loading");
+  locationBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
-  const websiteLoadingTextElement = getSpanElement("Loading");
-  const industryLoadingTextElement = getSpanElement("Loading");
+  const websiteLoadingTextElement = getSpanElement("Loading website");
+  const industryLoadingTextElement = getSpanElement("Loading industry");
+  const countryLoadingTextElement = getSpanElement("Loading country");
 
   websiteBlock.appendChild(websiteIconElement);
   websiteBlock.appendChild(websiteLoadingTextElement);
   industryBlock.appendChild(industryLoadingTextElement);
+  locationBlock.appendChild(countryLoadingTextElement);
 
   try {
     emailElement.disabled = true;
@@ -101,6 +116,7 @@ async function manageWebsiteBlock(radio) {
 
     websiteBlock.innerHTML = "";
     industryBlock.innerHTML = "";
+    locationBlock.innerHTML = "";
 
     let websiteUrl = "No website found";
     if (websiteData.url) {
@@ -123,6 +139,15 @@ async function manageWebsiteBlock(radio) {
         companyIndustryElement.value = industryTextElement.textContent;
       }
     }
+    
+    if(websiteData.location){
+      const locationTextElement = getSpanElement(websiteData.location);
+      locationBlock.appendChild(locationTextElement);
+      
+      if(radio.checked){
+        companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
+      }
+    }
 
     const websiteElement = getSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
@@ -135,6 +160,7 @@ async function manageWebsiteBlock(radio) {
     websiteBlock.removeAttribute("data-loading");
     websiteBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
+    locationBlock.classList.remove("loading");
   }
 }
 

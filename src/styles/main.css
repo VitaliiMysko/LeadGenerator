@@ -154,13 +154,9 @@ a:active {
 .company-name.active {
   font-weight: 600;
 }
-.company-job {
-  padding: 5px;
-  border-left: 1px solid #ccc;
-  background-color: #f9f9f9;
-  margin-top: 5px;
-}
-.company-industry {
+.company-job,
+.company-industry,
+.company-location {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -204,7 +200,8 @@ a:active {
 }
 .company-job.active,
 .company-website.active,
-.company-industry.active {
+.company-industry.active,
+.company-location.active {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }
