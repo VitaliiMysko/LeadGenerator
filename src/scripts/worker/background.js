@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     if (response.action === "pageContent") {
                       if (response.data && request.url === response.data.url) {
                         const result = await checkWebsiteStatus(
-                          response.data.website
+                          response.data
                         );
                         activeRequests[request.url] = result;
 
@@ -85,18 +85,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function checkWebsiteStatus(url) {
+function checkWebsiteStatus(data) {
   return new Promise((resolve) => {
-    if (url) {
-      fetch(url, { method: "HEAD" })
+    if (data.website) {
+      fetch(data.website, { method: "HEAD" })
         .then((response) => {
-          resolve({ url: url, status: response.status, ok: response.ok });
+          resolve({ url: data.website, status: response.status, ok: response.ok, industry: data.industry });
         })
         .catch(() => {
-          resolve({ url: url, status: 0, ok: false });
+          resolve({ url: data.website, status: 0, ok: false, industry: data.industry });
         });
     } else {
-      resolve({ url: url, status: 0, ok: false });
+      resolve({ url: data.website, status: 0, ok: false, industry: data.industry });
     }
   });
 }
