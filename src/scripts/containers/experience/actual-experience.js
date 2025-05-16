@@ -91,7 +91,7 @@ function getCompanyWebsiteRadioElement() {
 }
 
 function getCompanyIndustryRadioElement() {
-  const websiteElement = document.createElement("div");
-  websiteElement.classList.add("company-industry");
-  return websiteElement;
+  const industryElement = document.createElement("div");
+  industryElement.classList.add("company-industry");
+  return industryElement;
 }
