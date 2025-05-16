@@ -11,42 +11,52 @@ import { useTextChangeEffect } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 
 const emailCache = new Map();
+const emailDataByDefault = {
+  email: "",
+  message: "Email not found!",
+  ok: false,
+  error: false,
+  invalidDomain: false,
+  unknown: false,
+};
 let loadingInterval = null;
 
 export function fillEmailFromCache() {
   const domain = getWebsiteDomain();
-  let email = "";
+
+  let emailData = { ...emailDataByDefault };
 
   if (emailCache.has(domain)) {
-    email = emailCache.get(domain);
+    emailData = emailCache.get(domain);
   }
-  showEmail(email);
+  showEmail(emailData.email);
 }
 
 generateEmailsBtnElement.addEventListener("click", async () => {
   const domain = getWebsiteDomain();
-  let emailValue = "";
 
   if (emailCache.has(domain)) {
-    emailValue = emailCache.get(domain);
-    showEmail(emailValue);
-    emailValue === "" ? showMessage(false) : showMessage(true);
+    const emailDataCache = emailCache.get(domain);
+    showEmail(emailDataCache.email);
+    showMessage(emailDataCache.message, emailDataCache.ok);
     return;
   }
+
+  const emailData = { ...emailDataByDefault };
+
   if (domain === "") {
-    emailCache.set(domain, emailValue);
-    showEmail(emailValue);
-    showMessage(false);
+    emailCache.set(domain, emailData);
+    showEmail(emailData.email);
+    showMessage(emailData.message, emailData.ok);
     return;
   }
 
   const emails = generateEmails(domain);
-  let isValid = false;
 
   startLoadingEffect();
 
   for (const email of emails) {
-    isValid = await new Promise((resolve) => {
+    const verifyEmailResult = await new Promise((resolve) => {
       chrome.runtime.sendMessage(
         {
           action: "verifyEmail",
@@ -58,18 +68,26 @@ generateEmailsBtnElement.addEventListener("click", async () => {
       );
     });
 
-    if (isValid) {
-      emailValue = email;
+    checkVerifyEmailResult(verifyEmailResult, emailData);
+
+    if (emailData.ok) {
+      emailData.email = email;
+      break;
+    }
+
+    if (emailData.invalidDomain || emailData.error) {
       break;
     }
   }
 
+  if (!(emailData.unknown || emailData.error)) {
+    emailCache.set(domain, emailData);
+  }
+
   stopLoadingEffect();
 
-  emailCache.set(domain, emailValue);
-
-  showEmail(emailValue);
-  showMessage(isValid);
+  showEmail(emailData.email);
+  showMessage(emailData.message, emailData.ok);
 });
 
 function startLoadingEffect() {
@@ -83,9 +101,28 @@ function startLoadingEffect() {
   }, 500);
 }
 
-function stopLoadingEffect(finalValue = "") {
+function stopLoadingEffect() {
   clearInterval(loadingInterval);
   emailElement.disabled = false;
+}
+
+function checkVerifyEmailResult(result, emailData) {
+  if (result.state === "deliverable") {
+    emailData.ok = true;
+    emailData.message = "Email found";
+  }
+  if (result.state === "unknown") {
+    emailData.unknown = true;
+    emailData.message = "There are unknown emails. Please, recheck it later";
+  }
+  if (result.state === "undeliverable" && result.reason === "invalid_domain") {
+    emailData.invalidDomain = true;
+    emailData.message = "Email not found. Domain is invalid";
+  }
+  if (result.error !== "") {
+    emailData.error = true;
+    emailData.message = `Email verification failed: ${result.error}`;
+  }
 }
 
 function showEmail(email) {
@@ -93,12 +130,9 @@ function showEmail(email) {
   useTextChangeEffect(emailElement);
 }
 
-function showMessage(isEmailValid) {
-  if (isEmailValid) {
-    showAlert("Email found!", "success");
-  } else {
-    showAlert("Email not found!", "error");
-  }
+function showMessage(message, isEmailValid) {
+  const state = isEmailValid ? "success" : "error";
+  showAlert(message, state);
 }
 
 function getWebsiteDomain() {
@@ -144,16 +178,20 @@ export const generateEmails = (hostName) => {
   const initials = parts.some((p) => p.includes("-"))
     ? ""
     : parts.map((p) => p[0]).join("");
-  const f = rawFirst[0];
+  const initialLastPart1 = last.length > 1 ? last[0] : "";
+  const initialFirst = rawFirst[0];
   const firstNoHyphen = first.includes("-") ? first.split("-")[0] : "";
+  const lastPart1 = lastParts[0] || "";
   const lastPart2 = lastParts[1] || "";
 
   const data = {
     first,
     last,
     initials,
+    initialFirst,
+    initialLastPart1,
     firstNoHyphen,
-    f,
+    lastPart1,
     lastPart2,
     host: hostName,
   };

@@ -102,23 +102,22 @@ function checkWebsiteStatus(data) {
 }
 
 async function verifyEmail(email) {
-  const apiKey = "live_45885526fe81fa4f8dc8";
-  const url = `https://api.emailable.com/v1/verify?email=${encodeURIComponent(
-    email
-  )}&api_key=${apiKey}`;
+  const workerUrl = "https://my-apikey-worker.vitalij-musko.workers.dev";
+  const url = `${workerUrl}?email=${encodeURIComponent(email)}`;
 
+  let emailData;
   try {
     const response = await fetch(url);
     const result = await response.json();
 
-    // result.state: "deliverable", "undeliverable", "risky", etc.
-    if (result.state === "deliverable") {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.error("Email verification failed:", err);
-    return false;
+    emailData = { state: result.state, reason: result.reason, error: "" };
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    emailData = {
+      state: "",
+      reason: "",
+      error: error.message,
+    };
   }
+  return emailData;
 }
