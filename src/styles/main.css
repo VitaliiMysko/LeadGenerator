@@ -160,6 +160,13 @@ a:active {
   background-color: #f9f9f9;
   margin-top: 5px;
 }
+.company-industry {
+  padding: 5px;
+  border-left: 1px solid #ccc;
+  background-color: #f9f9f9;
+  margin-top: 5px;
+}
+
 #version-container {
   position: fixed;
   top: 5px;
@@ -196,7 +203,8 @@ a:active {
   margin-top: 5px;
 }
 .company-job.active,
-.company-website.active {
+.company-website.active,
+.company-industry.active {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }
