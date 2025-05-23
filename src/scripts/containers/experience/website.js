@@ -96,13 +96,13 @@ async function manageWebsiteBlock(radio) {
 
   const websiteIconElement = getWebsiteIconElement();
   const websiteLoadingTextElement = getSpanElement("Loading website");
-  const industryLoadingTextElement = getSpanElement("Loading industry");
   const countryLoadingTextElement = getSpanElement("Loading country");
+  const industryLoadingTextElement = getSpanElement("Loading industry");
 
   websiteBlock.appendChild(websiteIconElement);
   websiteBlock.appendChild(websiteLoadingTextElement);
-  industryBlock.appendChild(industryLoadingTextElement);
   locationBlock.appendChild(countryLoadingTextElement);
+  industryBlock.appendChild(industryLoadingTextElement);
 
   try {
     emailElement.disabled = true;
