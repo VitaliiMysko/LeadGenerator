@@ -8,7 +8,15 @@ export const addCopyByClick = (
 ) => {
   element.classList.add("copy");
 
-  element.addEventListener("click", () => {
+  element.addEventListener("click", (event) => {
+    const target = event.target;
+    if (
+      target.tagName === "IMG" ||
+      element.querySelector(`[contenteditable="true"]`)
+    ) {
+      return;
+    }
+
     const dataElement = element.querySelector(dataCopySelector);
 
     useTextChangeEffect(dataElement);
@@ -47,56 +55,3 @@ export const useTextChangeEffect = (element) => {
     element.classList.remove("text-change-effect");
   }, 1000);
 };
-
-export function editText(element, { onSave } = {}) {
-  if (!(element instanceof HTMLElement)) return;
-
-  const previousValueKey = "data-previous-value";
-  const isEditingKey = "data-is-editing";
-
-  const startEditing = () => {
-    if (element.getAttribute(isEditingKey) === "true") return;
-    element.setAttribute(previousValueKey, element.textContent.trim());
-    element.contentEditable = true;
-    element.setAttribute(isEditingKey, "true");
-    element.focus();
-  };
-
-  const finishEditing = () => {
-    if (element.getAttribute(isEditingKey) !== "true") return;
-    element.contentEditable = false;
-    element.removeAttribute(isEditingKey);
-
-    const previousValue = element.getAttribute(previousValueKey);
-    let newValue = element.textContent.trim();
-
-    // Handling an empty value - return the previous value
-    if (!newValue) {
-      element.textContent = previousValue;
-      return;
-    }
-
-    if (newValue !== previousValue && typeof onSave === "function") {
-      onSave(newValue);
-    }
-  };
-
-  const onBlur = () => {
-    finishEditing();
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      element.blur();
-    }
-  };
-
-  const onDoubleClick = () => {
-    startEditing();
-  };
-
-  element.addEventListener("blur", onBlur);
-  element.addEventListener("keydown", onKeyDown);
-  element.addEventListener("dblclick", onDoubleClick);
-}

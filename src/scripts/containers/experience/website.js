@@ -6,16 +6,12 @@ import {
   getCompanyIndustryElements,
   emailElement,
   generateEmailsBtnElement,
-  companyIndustryElement
+  companyIndustryElement,
 } from "../../helper/dom-helper.js";
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 
-import {
-  addCopyByClick,
-  setValidationStyle,
-  editText,
-} from "../../helper/dom-action.js";
+import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
 const websiteDataByDefault = { url: "", status: 0, ok: false };
 
@@ -71,11 +67,13 @@ async function manageWebsiteBlock(radio) {
   websiteBlock.style.display = "flex";
   industryBlock.style.display = "flex";
 
-  if (websiteBlock.getAttribute("data-initialized") === "true" 
-      || websiteBlock.getAttribute("data-loading") === "true") {
+  if (
+    websiteBlock.getAttribute("data-initialized") === "true" ||
+    websiteBlock.getAttribute("data-loading") === "true"
+  ) {
     return;
   }
-  
+
   websiteBlock.setAttribute("data-loading", "true");
   industryBlock.setAttribute("data-loading", "true");
 
@@ -85,6 +83,7 @@ async function manageWebsiteBlock(radio) {
   industryBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
+  const editWebsiteDomainElement = getEditWebsiteDomainElement();
   const websiteLoadingTextElement = getSpanElement("Loading");
   const industryLoadingTextElement = getSpanElement("Loading");
 
@@ -119,37 +118,23 @@ async function manageWebsiteBlock(radio) {
       websiteBlock.appendChild(websiteIconElement);
     }
 
-    if(websiteData.industry){
+    if (websiteData.industry) {
       const industryTextElement = getSpanElement(websiteData.industry);
       industryBlock.appendChild(industryTextElement);
-      
-      if(radio.checked){
+
+      if (radio.checked) {
         companyIndustryElement.value = industryTextElement.textContent;
       }
     }
 
     const websiteElement = getSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
+    websiteBlock.appendChild(editWebsiteDomainElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
 
-    let isDomainEditing = false;
-
-    const blockCopyByClick = (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    };
-
-    websiteElement.addEventListener("dblclick", () => {
-      isDomainEditing = true;
-      websiteBlock.addEventListener("click", blockCopyByClick, true);
-      websiteElement.focus();
-    });
-
-    editText(websiteElement, {
+    editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
       onSave: (newValue) => {
-        isDomainEditing = false;
-        websiteBlock.removeEventListener("click", blockCopyByClick, true);
         const newBasicEmail = getBasicEmail.bind(null, newValue);
         addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
       },
@@ -174,6 +159,7 @@ function getWebsiteIconElement() {
 function getSpanElement(text) {
   const spanElement = document.createElement("span");
   spanElement.textContent = text;
+  spanElement.title = text;
   return spanElement;
 }
 
@@ -182,6 +168,22 @@ function getWebsiteLinkElement(websiteData) {
   websiteLinkElement.href = websiteData;
   websiteLinkElement.target = "_blank";
   return websiteLinkElement;
+}
+
+function getEditWebsiteDomainElement() {
+  const wrapperDiv = document.createElement("div");
+  wrapperDiv.classList.add("edit-website-domain-wrapper");
+
+  const editWebsiteElement = document.createElement("img");
+  editWebsiteElement.classList.add("edit-website-domain-icon");
+  editWebsiteElement.src = "assets/icons/edit-website-domain-16.png";
+  editWebsiteElement.alt = "Edit website domain";
+  editWebsiteElement.title = "Edit website domain";
+
+  wrapperDiv.appendChild(editWebsiteElement);
+  wrapperDiv._icon = editWebsiteElement;
+
+  return wrapperDiv;
 }
 
 function getHostName(url) {
@@ -237,4 +239,101 @@ function sendMessagePromise(message) {
       }
     });
   });
+}
+
+function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
+  if (!(element instanceof HTMLElement)) return;
+
+  const iconElement = controlEditElement._icon;
+  const previousValueKey = "data-previous-value";
+  const isEditingKey = "data-is-editing";
+
+  const Icons = {
+    edit: {
+      src: "assets/icons/edit-website-domain-16.png",
+      alt: "Edit website domain",
+      title: "Edit website domain",
+    },
+    save: {
+      src: "assets/icons/save-website-domain-icon-16.png",
+      alt: "Save domain",
+      title: "Save domain",
+    },
+  };
+
+  const updateIcon = (type) => {
+    const icon = Icons[type];
+    if (!icon) return;
+    iconElement.src = icon.src;
+    iconElement.alt = icon.alt;
+    iconElement.title = icon.title;
+  };
+
+  const isEditing = () => element.getAttribute(isEditingKey) === "true";
+
+  const startEditing = () => {
+    if (isEditing()) return;
+    element.setAttribute(previousValueKey, element.textContent.trim());
+    element.setAttribute(isEditingKey, "true");
+    element.setAttribute("spellcheck", "false");
+    element.contentEditable = "true";
+    element.classList.add("editing-domain");
+    updateIcon("save");
+    element.focus();
+  };
+
+  const stopEditing = (shouldSave = true) => {
+    if (!isEditing()) return;
+
+    const previousValue = element.getAttribute(previousValueKey);
+    const newValue = element.textContent.trim();
+
+    element.contentEditable = "false";
+    element.classList.remove("editing-domain");
+    element.removeAttribute(isEditingKey);
+    updateIcon("edit");
+    element.title = newValue;
+
+    if (shouldSave) {
+      if (!newValue) {
+        element.textContent = previousValue;
+        element.title = previousValue;
+        return;
+      }
+
+      if (newValue !== previousValue && typeof onSave === "function") {
+        onSave(newValue);
+      }
+    } else {
+      element.textContent = previousValue;
+      element.title = previousValue;
+    }
+  };
+
+  const finishEditing = () => stopEditing(true);
+  const cancelEditing = () => stopEditing(false);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      finishEditing();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      cancelEditing();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain");
+    element.textContent += text;
+  };
+
+  const handleControlClick = () => {
+    isEditing() ? finishEditing() : startEditing();
+  };
+
+  controlEditElement.addEventListener("click", handleControlClick);
+  element.addEventListener("keydown", handleKeyDown);
+  element.addEventListener("paste", handlePaste);
 }
