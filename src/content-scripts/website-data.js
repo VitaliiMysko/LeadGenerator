@@ -6,12 +6,14 @@
     url: window.location.href,
     website: "",
     industry: "",
+    location: "",
     error: "",
   };
   let container;
   waitForElementWithTimeout("._header_1808vy", 4000)
     .then((element) => {
-      data.industry = element.querySelector("span[data-anonymize='industry']").textContent.trim()
+      data.industry = element.querySelector("span[data-anonymize='industry']").textContent.trim();
+      data.location = element.querySelector("div[data-anonymize='location']").textContent.trim();
       container = element;
     })
     .catch((error) => {
@@ -28,6 +30,7 @@
     .finally(() => {
       sendMessageAndCloseTab(data);
     });
+
 
 
   const sendMessageAndCloseTab = (data) => {
