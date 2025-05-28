@@ -2,6 +2,7 @@ import {
   jobPositionElement,
   companyNameElement,
   companyIndustryElement,
+  companyCountryElement,
   emailElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
@@ -23,7 +24,8 @@ function getRadioCompanyBlock(company, index) {
   const companyLabeRadiolElement = getCompanyLabelRadioElement(company);
   const companyJobRadioElement = getCompanyJobRadioElement(company);
   const companyWebsiteRadioElement = getCompanyWebsiteRadioElement();
-  const companyIndustryRadioElement = getCompanyIndustryRadioElement()
+  const companyIndustryRadioElement = getCompanyIndustryRadioElement();
+  const companyLocationRadioElement = getCompanyLocationRadioElement();
 
   if (index === 0) {
     radioItem.checked = true;
@@ -31,6 +33,8 @@ function getRadioCompanyBlock(company, index) {
     companyNameElement.value = company.companyName;
     companyIndustryElement.value = "";
     emailElement.value = "";
+    companyIndustryElement.value = "";
+    companyCountryElement.value = "";
   }
 
   radioItem.addEventListener("change", () => {
@@ -39,7 +43,10 @@ function getRadioCompanyBlock(company, index) {
       jobPositionElement.value = companyJobRadioElement.textContent;
       companyNameElement.value = company.companyName;
       emailElement.value = "";
-      companyIndustryElement.value = parentDiv.querySelector(".company-industry").firstChild?.textContent || "";
+      let industryRadioItemValue = parentDiv.querySelector(".company-industry").firstChild?.textContent || "";
+      companyIndustryElement.value = industryRadioItemValue == "No industry found" ? "" : industryRadioItemValue;
+      let locationRadioElementValue = parentDiv.querySelector(".company-location").firstChild?.textContent || ""; 
+      companyCountryElement.value = locationRadioElementValue == "No location found" ? "" : locationRadioElementValue.split(', ').pop();
     }
   });
 
@@ -47,6 +54,7 @@ function getRadioCompanyBlock(company, index) {
   radioCompanyBlock.appendChild(companyLabeRadiolElement);
   radioCompanyBlock.appendChild(companyJobRadioElement);
   radioCompanyBlock.appendChild(companyWebsiteRadioElement);
+  radioCompanyBlock.appendChild(companyLocationRadioElement);
   radioCompanyBlock.appendChild(companyIndustryRadioElement);
   return radioCompanyBlock;
 }
@@ -94,4 +102,10 @@ function getCompanyIndustryRadioElement() {
   const industryElement = document.createElement("div");
   industryElement.classList.add("company-industry");
   return industryElement;
+}
+
+function getCompanyLocationRadioElement() {
+  const countryElement = document.createElement("div");
+  countryElement.classList.add("company-location");
+  return countryElement;
 }
