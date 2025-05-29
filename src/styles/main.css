@@ -228,6 +228,7 @@ a:active {
   border-radius: 3px;
   user-select: text;
   pointer-events: auto;
+  cursor: text;
 }
 
 .edit-website-domain-wrapper {

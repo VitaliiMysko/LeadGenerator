@@ -95,6 +95,7 @@ async function manageWebsiteBlock(radio) {
   locationBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
+  const editWebsiteDomainElement = getEditWebsiteDomainElement();
   const websiteLoadingTextElement = getSpanElement("Loading website");
   const countryLoadingTextElement = getSpanElement("Loading country");
   const industryLoadingTextElement = getSpanElement("Loading industry");
@@ -341,7 +342,7 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
     if (e.key === "Enter") {
       e.preventDefault();
       finishEditing();
-    } else if (e.key === "Escape") {
+    } else if (e.key === "Escape" || e.key === "Tab") {
       e.preventDefault();
       cancelEditing();
     }
