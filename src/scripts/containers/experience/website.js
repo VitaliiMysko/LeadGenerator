@@ -95,6 +95,7 @@ async function manageWebsiteBlock(radio) {
   locationBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
+  const editWebsiteDomainElement = getEditWebsiteDomainElement();
   const websiteLoadingTextElement = getSpanElement("Loading website");
   const countryLoadingTextElement = getSpanElement("Loading country");
   const industryLoadingTextElement = getSpanElement("Loading industry");
@@ -126,7 +127,7 @@ async function manageWebsiteBlock(radio) {
       websiteBlock.appendChild(websiteLinkElement);
       websiteUrl = getHostName(websiteData.url);
       const basicEmail = getBasicEmail.bind(null, websiteUrl);
-      addCopyByClick(websiteBlock, "span", basicEmail, "baic email");
+      addCopyByClick(websiteBlock, "span", basicEmail, "basic email");
       setValidationStyle(websiteBlock, websiteData.ok);
     } else {
       websiteBlock.appendChild(websiteIconElement);
@@ -152,8 +153,16 @@ async function manageWebsiteBlock(radio) {
 
     const websiteElement = getSpanElement(websiteUrl);
     websiteBlock.appendChild(websiteElement);
+    websiteBlock.appendChild(editWebsiteDomainElement);
 
     websiteBlock.setAttribute("data-initialized", "true");
+
+    editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
+      onSave: (newValue) => {
+        const newBasicEmail = getBasicEmail.bind(null, newValue);
+        addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
+      },
+    });
   } catch (error) {
     websiteBlock.innerHTML = "Error loading website.";
     console.error("Error fetching website:", error);
@@ -175,6 +184,7 @@ function getWebsiteIconElement() {
 function getSpanElement(text) {
   const spanElement = document.createElement("span");
   spanElement.textContent = text;
+  spanElement.title = text;
   return spanElement;
 }
 
@@ -183,6 +193,22 @@ function getWebsiteLinkElement(websiteData) {
   websiteLinkElement.href = websiteData;
   websiteLinkElement.target = "_blank";
   return websiteLinkElement;
+}
+
+function getEditWebsiteDomainElement() {
+  const wrapperDiv = document.createElement("div");
+  wrapperDiv.classList.add("edit-website-domain-wrapper");
+
+  const editWebsiteElement = document.createElement("img");
+  editWebsiteElement.classList.add("edit-website-domain-icon");
+  editWebsiteElement.src = "assets/icons/edit-website-domain-16.png";
+  editWebsiteElement.alt = "Edit website domain";
+  editWebsiteElement.title = "Edit website domain";
+
+  wrapperDiv.appendChild(editWebsiteElement);
+  wrapperDiv._icon = editWebsiteElement;
+
+  return wrapperDiv;
 }
 
 function getHostName(url) {
@@ -238,4 +264,101 @@ function sendMessagePromise(message) {
       }
     });
   });
+}
+
+function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
+  if (!(element instanceof HTMLElement)) return;
+
+  const iconElement = controlEditElement._icon;
+  const previousValueKey = "data-previous-value";
+  const isEditingKey = "data-is-editing";
+
+  const Icons = {
+    edit: {
+      src: "assets/icons/edit-website-domain-16.png",
+      alt: "Edit website domain",
+      title: "Edit website domain",
+    },
+    save: {
+      src: "assets/icons/save-website-domain-icon-16.png",
+      alt: "Save domain",
+      title: "Save domain",
+    },
+  };
+
+  const updateIcon = (type) => {
+    const icon = Icons[type];
+    if (!icon) return;
+    iconElement.src = icon.src;
+    iconElement.alt = icon.alt;
+    iconElement.title = icon.title;
+  };
+
+  const isEditing = () => element.getAttribute(isEditingKey) === "true";
+
+  const startEditing = () => {
+    if (isEditing()) return;
+    element.setAttribute(previousValueKey, element.textContent.trim());
+    element.setAttribute(isEditingKey, "true");
+    element.setAttribute("spellcheck", "false");
+    element.contentEditable = "true";
+    element.classList.add("editing-domain");
+    updateIcon("save");
+    element.focus();
+  };
+
+  const stopEditing = (shouldSave = true) => {
+    if (!isEditing()) return;
+
+    const previousValue = element.getAttribute(previousValueKey);
+    const newValue = element.textContent.trim();
+
+    element.contentEditable = "false";
+    element.classList.remove("editing-domain");
+    element.removeAttribute(isEditingKey);
+    updateIcon("edit");
+    element.title = newValue;
+
+    if (shouldSave) {
+      if (!newValue) {
+        element.textContent = previousValue;
+        element.title = previousValue;
+        return;
+      }
+
+      if (newValue !== previousValue && typeof onSave === "function") {
+        onSave(newValue);
+      }
+    } else {
+      element.textContent = previousValue;
+      element.title = previousValue;
+    }
+  };
+
+  const finishEditing = () => stopEditing(true);
+  const cancelEditing = () => stopEditing(false);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      finishEditing();
+    } else if (e.key === "Escape" || e.key === "Tab") {
+      e.preventDefault();
+      cancelEditing();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData?.getData("text/plain");
+    element.textContent += text;
+  };
+
+  const handleControlClick = () => {
+    isEditing() ? finishEditing() : startEditing();
+  };
+
+  controlEditElement.addEventListener("click", handleControlClick);
+  element.addEventListener("keydown", handleKeyDown);
+  element.addEventListener("paste", handlePaste);
 }
