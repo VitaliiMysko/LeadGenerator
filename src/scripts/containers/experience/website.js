@@ -305,6 +305,7 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
     element.classList.add("editing-domain");
     updateIcon("save");
     element.focus();
+    document.addEventListener("click", handleDocumentClick);
   };
 
   const stopEditing = (shouldSave = true) => {
@@ -333,6 +334,7 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
       element.textContent = previousValue;
       element.title = previousValue;
     }
+    document.removeEventListener("click", handleDocumentClick);
   };
 
   const finishEditing = () => stopEditing(true);
@@ -356,6 +358,12 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
 
   const handleControlClick = () => {
     isEditing() ? finishEditing() : startEditing();
+  };
+
+  const handleDocumentClick = (e) => {
+    if (isEditing() && !element.contains(e.target) && !controlEditElement.contains(e.target)) {
+      cancelEditing();
+    }
   };
 
   controlEditElement.addEventListener("click", handleControlClick);
