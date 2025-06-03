@@ -8,14 +8,20 @@ import {
   emailElement,
   generateEmailsBtnElement,
   companyIndustryElement,
-  companyCountryElement
+  companyCountryElement,
 } from "../../helper/dom-helper.js";
 
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
-const websiteDataByDefault = { url: "", industry: "", location: "", status: 0, ok: false };
+const websiteDataByDefault = {
+  url: "",
+  industry: "",
+  location: "",
+  status: 0,
+  ok: false,
+};
 
 export async function handlerCompanyWebsite() {
   await initCompanyWebsite();
@@ -77,11 +83,12 @@ async function manageWebsiteBlock(radio) {
   industryBlock.style.display = "flex";
   locationBlock.style.display = "flex";
 
-  if (websiteBlock.getAttribute("data-initialized") === "true"
-    || websiteBlock.getAttribute("data-loading") === "true") {
+  if (
+    websiteBlock.getAttribute("data-initialized") === "true" ||
+    websiteBlock.getAttribute("data-loading") === "true"
+  ) {
     return;
   }
-
 
   websiteBlock.setAttribute("data-loading", "true");
   industryBlock.setAttribute("data-loading", "true");
@@ -142,13 +149,15 @@ async function manageWebsiteBlock(radio) {
       companyIndustryElement.value = industryTextElement.textContent;
     }
 
-    let location = "No location found"
+    let location = "No location found";
     location = websiteData.location == "" ? location : websiteData.location;
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
     if (radio.checked && location != "No location found") {
-      companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
+      companyCountryElement.value = locationTextElement.textContent
+        .split(", ")
+        .pop();
     }
 
     const websiteElement = getSpanElement(websiteUrl);
@@ -353,7 +362,21 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
   const handlePaste = (e) => {
     e.preventDefault();
     const text = e.clipboardData?.getData("text/plain");
-    element.textContent += text;
+
+    const selection = window.getSelection(); // Get the current selection/cursor position
+    if (!selection.rangeCount) return; // Exit if there's no active selection
+
+    const range = selection.getRangeAt(0); // Get the active selection range
+    range.deleteContents(); // Delete the selected content
+
+    const textNode = document.createTextNode(text); // Create a text node from the pasted text
+    range.insertNode(textNode); // Insert the text node at the current position
+
+    // Set the cursor immediately after the inserted text
+    range.setStartAfter(textNode);
+    range.setEndAfter(textNode);
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
 
   const handleControlClick = () => {
@@ -361,7 +384,11 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
   };
 
   const handleDocumentClick = (e) => {
-    if (isEditing() && !element.contains(e.target) && !controlEditElement.contains(e.target)) {
+    if (
+      isEditing() &&
+      !element.contains(e.target) &&
+      !controlEditElement.contains(e.target)
+    ) {
       cancelEditing();
     }
   };
