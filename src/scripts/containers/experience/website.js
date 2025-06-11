@@ -208,7 +208,7 @@ async function getCompanyData(companylink) {
   if (companylink) {
     try {
       const response = await sendMessagePromise({
-        action: "fetchPage",
+        action: "fetchSalesNavigatorCompanyPage",
         url: companylink,
       });
 
