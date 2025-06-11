@@ -133,20 +133,20 @@ async function manageWebsiteBlock(radio) {
     }
 
     let industry = "No industry found";
-    industry = websiteData.industry == "" ? industry : websiteData.industry;
+    industry = websiteData.industry === "" ? industry : websiteData.industry;
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
-    if (radio.checked && industry != "No industry found") {
+    if (radio.checked && industry !== "No industry found") {
       companyIndustryElement.value = industryTextElement.textContent;
     }
 
     let location = "No location found"
-    location = websiteData.location == "" ? location : websiteData.location;
+    location = websiteData.location === "" ? location : websiteData.location;
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
-    if (radio.checked && location != "No location found") {
+    if (radio.checked && location !== "No location found") {
       companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
     }
 

@@ -42,7 +42,7 @@ if (!window.leadGenerator.personalDataInit) {
           ""
         );
       const [textBeforeComma] = str.split(",");
-      const dutchSurnames = window.leadGenerator.content.dutchSurnames;
+      const dutchSurnames = window.leadGenerator.constants.dutchSurnames;
 
       return textBeforeComma
         .trim()
