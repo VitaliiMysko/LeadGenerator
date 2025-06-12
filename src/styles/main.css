@@ -216,6 +216,34 @@ a:active {
   white-space: nowrap; /* in one line */
   color: #333;
 }
+
+.company-website span.editing-domain {
+  flex-grow: 1;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  outline: 1px solid #0078d7;
+  padding: 2px 4px;
+  border-radius: 3px;
+  user-select: text;
+  pointer-events: auto;
+  cursor: text;
+}
+
+.edit-website-domain-wrapper {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.edit-website-domain-icon {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
 .company-website a {
   display: inline-flex; /* adapts to content size */
   align-items: center;
