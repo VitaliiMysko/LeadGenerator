@@ -149,7 +149,6 @@ async function manageWebsiteBlock(radio) {
       companyIndustryElement.value = industryTextElement.textContent;
     }
 
-<<<<<<< HEAD
     let location = "No location found"
     location = websiteData.location === "" ? location : websiteData.location;
     const locationTextElement = getSpanElement(location);
@@ -157,17 +156,6 @@ async function manageWebsiteBlock(radio) {
 
     if (radio.checked && location !== "No location found") {
       companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
-=======
-    let location = "No location found";
-    location = websiteData.location == "" ? location : websiteData.location;
-    const locationTextElement = getSpanElement(location);
-    locationBlock.appendChild(locationTextElement);
-
-    if (radio.checked && location != "No location found") {
-      companyCountryElement.value = locationTextElement.textContent
-        .split(", ")
-        .pop();
->>>>>>> master
     }
 
     const websiteElement = getSpanElement(websiteUrl);
