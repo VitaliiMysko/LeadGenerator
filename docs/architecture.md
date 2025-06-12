@@ -23,7 +23,7 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - Injected into `https://www.linkedin.com/sales/lead/*` pages.
 - Responsible for extracting public data from the DOM of LinkedIn Sales Navigator via messaging.
-- Examples: `personal-data.js`, `experience-data.js`.
+- Examples: `lead.js`, `lead-experience.js`.
 
 ### 2.2 Extension Scripts (`src/scripts`)
 

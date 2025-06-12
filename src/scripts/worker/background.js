@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 target: { tabId },
                 files: [
                   "src/utils/mutation-observer.js",
-                  "src/content-scripts/website-data.js",
+                  "src/content-scripts/sales-navigator-pages/company/company.js",
                 ],
               },
               async (res) => {
