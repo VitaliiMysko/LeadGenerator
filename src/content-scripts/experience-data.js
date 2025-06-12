@@ -22,7 +22,7 @@ if (!window.leadGenerator.experienceDataInit) {
         const jobPositionElement = getJobPositionElement(companyDataElement);
 
         if (jobPositionElement) {
-          jobPosition = jobPositionElement.textContent.trim();
+          jobPosition = jobPositionElement.textContent.replace(/[^\p{L}\p{N}\s-]/gu, "").trim();
 
           const actualPositionElement = companyDataElement.children[2];
 
