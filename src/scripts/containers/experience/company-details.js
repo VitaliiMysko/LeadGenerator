@@ -15,37 +15,37 @@ import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
-const websiteDataByDefault = {
-  url: "",
+const companyDetailsByDefault = {
+  website: "",
   industry: "",
   location: "",
   status: 0,
   ok: false,
 };
 
-export async function handlerCompanyWebsite() {
-  await initCompanyWebsite();
-  await addCompanyWebsiteListener();
+export async function handlerCompanyDetails() {
+  await initCompanyDetails();
+  await addCompanyDetailsListener();
 }
 
-async function addCompanyWebsiteListener() {
+async function addCompanyDetailsListener() {
   getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
-      await manageWebsiteBlock(radio);
+      await manageCompanyDetailsBlock(radio);
       fillEmailFromCache();
     });
   });
 }
 
-async function initCompanyWebsite() {
+async function initCompanyDetails() {
   getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
-      await manageWebsiteBlock(radio);
+      await manageCompanyDetailsBlock(radio);
     }
   });
 }
 
-async function manageWebsiteBlock(radio) {
+async function manageCompanyDetailsBlock(radio) {
   getCompanyNameElements().forEach((label) => label.classList.remove("active"));
   getCompanyJobElements().forEach((job) => job.classList.remove("active"));
   getCompanyWebsiteElements().forEach((website) => {
@@ -116,9 +116,9 @@ async function manageWebsiteBlock(radio) {
     emailElement.disabled = true;
     generateEmailsBtnElement.disabled = true;
 
-    let websiteData = companyLinkElement
+    let companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href)
-      : { ...websiteDataByDefault };
+      : { ...companyDetailsByDefault };
 
     emailElement.disabled = false;
     generateEmailsBtnElement.disabled = false;
@@ -127,21 +127,21 @@ async function manageWebsiteBlock(radio) {
     industryBlock.innerHTML = "";
     locationBlock.innerHTML = "";
 
-    let websiteUrl = "No website found";
-    if (websiteData.url) {
-      const websiteLinkElement = getWebsiteLinkElement(websiteData.url);
+    let website = "No website found";
+    if (companyDetails.website) {
+      const websiteLinkElement = getWebsiteLinkElement(companyDetails.website);
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
-      websiteUrl = getHostName(websiteData.url);
-      const basicEmail = getBasicEmail.bind(null, websiteUrl);
+      website = getHostName(companyDetails.website);
+      const basicEmail = getBasicEmail.bind(null, website);
       addCopyByClick(websiteBlock, "span", basicEmail, "basic email");
-      setValidationStyle(websiteBlock, websiteData.ok);
+      setValidationStyle(websiteBlock, companyDetails.ok);
     } else {
       websiteBlock.appendChild(websiteIconElement);
     }
 
     let industry = "No industry found";
-    industry = websiteData.industry === "" ? industry : websiteData.industry;
+    industry = companyDetails.industry === "" ? industry : companyDetails.industry;
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
@@ -150,7 +150,7 @@ async function manageWebsiteBlock(radio) {
     }
 
     let location = "No location found"
-    location = websiteData.location === "" ? location : websiteData.location;
+    location = companyDetails.location === "" ? location : companyDetails.location;
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
@@ -158,7 +158,7 @@ async function manageWebsiteBlock(radio) {
       companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
     }
 
-    const websiteElement = getSpanElement(websiteUrl);
+    const websiteElement = getSpanElement(website);
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
 
@@ -230,14 +230,14 @@ function getHostName(url) {
   }
 }
 
-const websiteCache = new Map();
+const companyDetailsCache = new Map();
 
 async function getCompanyData(companylink) {
-  if (websiteCache.has(companylink)) {
-    return websiteCache.get(companylink);
+  if (companyDetailsCache.has(companylink)) {
+    return companyDetailsCache.get(companylink);
   }
 
-  let websiteData = "";
+  let companyDetails = "";
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -246,19 +246,19 @@ async function getCompanyData(companylink) {
       });
 
       if (response) {
-        websiteData = response;
+        companyDetails = response;
       } else {
-        websiteData = { ...websiteDataByDefault };
+        companyDetails = { ...companyDetailsByDefault };
       }
     } catch (error) {
-      websiteData = { ...websiteDataByDefault };
-      console.error("Error fetching website data:", error);
+      companyDetails = { ...companyDetailsByDefault };
+      console.error("Error fetching company details data:", error);
     }
   } else {
-    websiteData = { ...websiteDataByDefault };
+    companyDetails = { ...companyDetailsByDefault };
   }
-  websiteCache.set(companylink, websiteData);
-  return websiteData;
+  companyDetailsCache.set(companylink, companyDetails);
+  return companyDetails;
 }
 
 function sendMessagePromise(message) {

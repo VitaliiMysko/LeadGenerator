@@ -1,6 +1,6 @@
 import { getBtnElement } from "../../helper/dom-helper.js";
 import { createRadioCompanyList } from "../experience/actual-experience.js";
-import { handlerCompanyWebsite } from "../experience/website.js";
+import { handlerCompanyDetails } from "../experience/company-details.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -30,7 +30,7 @@ getBtnElement.addEventListener("click", () => {
                 }
               });
             }
-            await handlerCompanyWebsite();
+            await handlerCompanyDetails();
           }
         );
       }

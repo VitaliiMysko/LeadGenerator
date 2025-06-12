@@ -62,7 +62,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                       if (data) {
                         const websiteState = await getkWebsiteState(data);
                         const result = {
-                          url: data.website,
+                          website: data.website,
                           status: websiteState.status,
                           ok: websiteState.ok,
                           industry: data.industry,
