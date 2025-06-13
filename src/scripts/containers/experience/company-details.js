@@ -141,7 +141,8 @@ async function manageCompanyDetailsBlock(radio) {
     }
 
     let industry = "No industry found";
-    industry = companyDetails.industry === "" ? industry : companyDetails.industry;
+    industry =
+      companyDetails.industry === "" ? industry : companyDetails.industry;
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
@@ -149,13 +150,16 @@ async function manageCompanyDetailsBlock(radio) {
       companyIndustryElement.value = industryTextElement.textContent;
     }
 
-    let location = "No location found"
-    location = companyDetails.location === "" ? location : companyDetails.location;
+    let location = "No location found";
+    location =
+      companyDetails.location === "" ? location : companyDetails.location;
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
     if (radio.checked && location !== "No location found") {
-      companyCountryElement.value = locationTextElement.textContent.split(', ').pop();
+      companyCountryElement.value = locationTextElement.textContent
+        .split(", ")
+        .pop();
     }
 
     const websiteElement = getSpanElement(website);
