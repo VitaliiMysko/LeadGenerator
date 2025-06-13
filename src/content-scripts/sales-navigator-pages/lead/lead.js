@@ -38,11 +38,11 @@ if (!window.leadGenerator.personalDataInit) {
       str = str
         .trim()
         .replace(
-          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z])/i,
+          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z-İÜÖÇĞŞ])/i,
           ""
         );
       const [textBeforeComma] = str.split(",");
-      const dutchSurnames = window.leadGenerator.content.dutchSurnames;
+      const dutchSurnames = window.leadGenerator.constants.dutchSurnames;
 
       return textBeforeComma
         .trim()

@@ -18,6 +18,14 @@ function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
 
+function getCompanyIndustryElement() {
+  return document.querySelector("#company-industry");
+}
+
+function getCompanyCountryElement() {
+  return document.querySelector("#company-country");
+}
+
 function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
@@ -66,6 +74,14 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
+export function getCompanyIndustryElements() {
+  return document.querySelectorAll(".company-industry");
+}
+
+export function getCompanyLocationElements() {
+  return document.querySelectorAll(".company-location");
+}
+
 export function getCompanyDomainElement() {
   return document.querySelector("div.company-website.active > span");
 }
@@ -73,6 +89,8 @@ export function getCompanyDomainElement() {
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
+export const companyIndustryElement = getCompanyIndustryElement();
+export const companyCountryElement = getCompanyCountryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const getBtnElement = getGetBtnElement();
 export const copyBtnElement = getCopyBtnElement();

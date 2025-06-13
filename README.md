@@ -6,7 +6,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
 - **Data Extraction**:
-  - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," and "Company Name."
+  - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," "Company Name", "Country" and "Industry".
     The "Email" field is not auto-filled.
   - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
 
@@ -20,12 +20,14 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Link**: The URL to the individual's LinkedIn profile.
 - **Email**: The individual’s email address.
 - **Company Name**: The name of the company where the individual currently works.
+- **Country**: Country of the current company location.
+- **Industry**: Industry of the current company.
 
 Each field is editable to allow manual adjustments before saving.
 
 **Right Panel:**
 
-- Displays actual experience of the individual’s profile such as a list of companies, job positions and company website. Selecting an entry updates the "Job Position" and "Company Name" fields on the left side with the selected information.
+- Displays actual experience of the individual’s profile such as a list of companies with detailed information about job positions, website, location and industries. Selecting an entry updates the "Job Position", "Company Name", "Counrty" and "Industry" fields on the left side with the selected information.
 
 ## Additional Functionalities
 
@@ -84,6 +86,7 @@ After installation, you can pin the extension to your toolbar for quick access b
 
 6. **Start Using the Extension:**
    - Navigate to a LinkedIn Sales Navigator profile page to begin using the **Get** and **Copy** buttons to collect data.
+   - The extension runs only through `https://www.linkedin.com/sales/lead/*` page, others pages such as `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` use in the background mode.
 
 ---
 
@@ -95,7 +98,7 @@ After installing the **Lead Generator** extension, follow these steps to configu
 
 1. **Permissions Configuration:**
 
-   - Ensure the extension has permission to access `https://www.linkedin.com/sales/` or other LinkedIn pages (depending on future expansion).
+   - Ensure the extension has permission to access `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` or other LinkedIn pages (depending on future expansion).
    - To adjust permissions manually, navigate to `chrome://extensions/`, find **Lead Generator**, and select **Details** to review and update permissions as needed.
 
 2. **Google Authentication (Optional):**
@@ -134,7 +137,7 @@ After installing the **Lead Generator** extension, follow these steps to configu
 
 2. **Extracting Data:**
 
-   - Click the **Get** button to automatically fill in fields with information from the LinkedIn page, including the individual's name, surname, job position, company name, profile link, and any manually added email address.
+   - Click the **Get** button to automatically fill in fields with information from the LinkedIn Sales Navigator page (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and the LinkedIn page (`https://www.linkedin.com/company/*`) on demand, including the individual's name, surname, job position, profile link, any manually added email address, company name, country of company location and company industry.
 
 3. **Editing Fields:**
 
@@ -178,7 +181,8 @@ The "Lead generator" extension requires certain permissions to function effectiv
    - Used to enhance the processing of company-related data and improve the extension's functionality.
 
 5. **host_permissions**:
-   - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/*` and only operates on these pages, ensuring limited access.
+   - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/lead/*` as main, and `https://www.linkedin.com/sales/company/*` and `https://www.linkedin.com/company/*` on demand for gathering full information about person for the user. The extension does not interact with other LinkedIn pages.
+   - `https://my-apikey-worker.vitalij-musko.workers.dev/*` — to securely perform on-demand services such as email validation or translation via a backend proxy owned by the developer. No personal data is stored, and requests are triggered only by user actions.
 
 The permissions are necessary for the extension to perform its data extraction and translation functions securely and effectively. The extension does not store or transmit user data beyond the local environment.
 
@@ -192,13 +196,17 @@ To use the "Lead generator" extension, please ensure the following requirements 
 
 2. **LinkedIn Sales Navigator Access**:
 
-   - A LinkedIn account with access to LinkedIn Sales Navigator is required, as the extension is tailored specifically for extracting information from Sales Navigator pages.
+   - A LinkedIn account with access to LinkedIn Sales Navigator (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) is required, as the extension is tailored specifically for extracting information from Sales Navigator pages.
 
-3. **Google Account (for Translation Feature)**:
+3. **LinkedIn Access**:
+
+- A LinkedIn account with access to `https://www.linkedin.com/company/*` is required, as the extension is tailored specifically for extracting information from Linkedin pages.
+
+4. **Google Account (for Translation Feature)**:
 
    - If you plan to use the Google Translate feature for job titles, you must be signed into your Google account to enable this functionality.
 
-4. **Chrome Web Store Installation**:
+5. **Chrome Web Store Installation**:
    - For easy updates and improved security, it’s recommended to install the extension from the official Chrome Web Store once it’s published.
 
 These requirements ensure that the extension functions as intended and that you have access to all features available within the "Lead generator" tool.
