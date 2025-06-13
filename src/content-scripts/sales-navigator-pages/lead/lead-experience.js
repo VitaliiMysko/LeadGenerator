@@ -22,7 +22,7 @@ if (!window.leadGenerator.experienceDataInit) {
         const jobPositionElement = getJobPositionElement(companyDataElement);
 
         if (jobPositionElement) {
-          jobPosition = jobPositionElement.textContent.replace(/[^\p{L}\p{N}\s-]/gu, "").trim();
+          jobPosition = jobPositionElement.textContent.trim();
 
           const actualPositionElement = companyDataElement.children[2];
 
@@ -89,7 +89,7 @@ if (!window.leadGenerator.experienceDataInit) {
     }
 
     function removeCompanyStatusRegex() {
-      const companyStatus = window.leadGenerator.content.companyStatus;
+      const companyStatus = window.leadGenerator.constants.companyStatus;
       return new RegExp(
         `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
         "i"

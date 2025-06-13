@@ -43,10 +43,22 @@ function getRadioCompanyBlock(company, index) {
       jobPositionElement.value = companyJobRadioElement.textContent;
       companyNameElement.value = company.companyName;
       emailElement.value = "";
-      let industryRadioItemValue = parentDiv.querySelector(".company-industry").firstChild?.textContent || "";
-      companyIndustryElement.value = industryRadioItemValue == "No industry found" ? "" : industryRadioItemValue;
-      let locationRadioElementValue = parentDiv.querySelector(".company-location").firstChild?.textContent || ""; 
-      companyCountryElement.value = locationRadioElementValue == "No location found" ? "" : locationRadioElementValue.split(', ').pop();
+      
+      let industryRadioItemValue =
+        parentDiv.querySelector(".company-industry").firstChild?.textContent ||
+        "";
+      companyIndustryElement.value =
+        industryRadioItemValue === "No industry found"
+          ? ""
+          : industryRadioItemValue;
+
+      let locationRadioElementValue =
+        parentDiv.querySelector(".company-location").firstChild?.textContent ||
+        "";
+      companyCountryElement.value =
+        locationRadioElementValue === "No location found"
+          ? ""
+          : locationRadioElementValue.split(", ").pop();
     }
   });
 
