@@ -89,7 +89,7 @@ if (!window.leadGenerator.experienceDataInit) {
     }
 
     function removeCompanyStatusRegex() {
-      const companyStatus = window.leadGenerator.constants.companyStatus;
+      const companyStatus = window.leadGenerator.content.companyStatus;
       return new RegExp(
         `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
         "i"

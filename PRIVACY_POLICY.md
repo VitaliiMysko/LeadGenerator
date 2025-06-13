@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: June 13, 2025
+**Last Updated**: May 14, 2025
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -15,15 +15,11 @@ The "Lead Generator" extension allows users to collect publicly available inform
 - Company name
 - LinkedIn profile link
 - (Optional) Email address
-- Country
-- Industry
 
 The **Email** field is not auto-filled by default. Email addresses may be:
 
 - **Manually entered** by the user (in which case they are not validated or stored); or
 - **Automatically generated and validated** using common email patterns based on company websites. In this case, validation is performed through a secure backend.
-
-The **Country** and **Industry** fields refers to the selected company.
 
 All information is collected only when the user explicitly clicks on the button **"Get"**. The extension does **not** passively collect or scrape data.
 

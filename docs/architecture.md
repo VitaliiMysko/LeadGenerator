@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 13, 2025
+**Last updated**: May 14, 2025
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -8,11 +8,11 @@ This document provides a high-level overview of the architectural structure of t
 
 ## 1. Overview
 
-The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and **Linkedin** pages (`https://www.linkedin.com/company/*`) just on demand. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
+The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
 
 The extension is composed of modular JavaScript files, grouped logically into directories. These files operate in two main environments:
 
-- **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and Linkedin pages (`https://www.linkedin.com/company/*`).
+- **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages.
 - **Extension UI Scripts**: Power the popup interface, background logic, and user interactions.
 
 ---
@@ -21,9 +21,9 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 ### 2.1 Content Scripts (`src/content-scripts`)
 
-- Injected into `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*` pages.
+- Injected into `https://www.linkedin.com/sales/lead/*` pages.
 - Responsible for extracting public data from the DOM of LinkedIn Sales Navigator via messaging.
-- Examples: `lead.js`, `lead-experience.js`.
+- Examples: `personal-data.js`, `experience-data.js`.
 
 ### 2.2 Extension Scripts (`src/scripts`)
 
@@ -92,7 +92,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 ## 6. Data Flow Summary
 
 1. User opens the popup.
-2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode.
+2. On pressing "Get", content scripts extract data from the current LinkedIn Sales Navigator page.
 3. Data is returned and displayed in the popup.
 4. The user can:
    - Copy the data via the "Copy" button.
@@ -116,10 +116,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
   "tabs"
 ],
 "host_permissions": [
-  "https://www.linkedin.com/sales/lead/*",
-  "https://www.linkedin.com/sales/company/*",
-  "https://www.linkedin.com/company/*",
-  "https://my-apikey-worker.vitalij-musko.workers.dev"
+  "https://www.linkedin.com/sales/*"
 ]
 ```
 

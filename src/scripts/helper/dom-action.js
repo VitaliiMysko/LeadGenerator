@@ -8,15 +8,7 @@ export const addCopyByClick = (
 ) => {
   element.classList.add("copy");
 
-  element.addEventListener("click", (event) => {
-    const target = event.target;
-    if (
-      target.tagName === "IMG" ||
-      element.querySelector(`[contenteditable="true"]`)
-    ) {
-      return;
-    }
-
+  element.addEventListener("click", () => {
     const dataElement = element.querySelector(dataCopySelector);
 
     useTextChangeEffect(dataElement);

@@ -1,6 +1,6 @@
 import { getBtnElement } from "../../helper/dom-helper.js";
 import { createRadioCompanyList } from "../experience/actual-experience.js";
-import { handlerCompanyDetails } from "../experience/company-details.js";
+import { handlerCompanyWebsite } from "../experience/website.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -8,10 +8,10 @@ getBtnElement.addEventListener("click", () => {
       {
         target: { tabId: tabs[0].id },
         files: [
-          "src/content-scripts/common/constants.js",
-          "src/content-scripts/sales-navigator-pages/lead/lead.js",
-          "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",
-          "src/content-scripts/actions/extract-data.js",
+          "src/content-scripts/content.js",
+          "src/content-scripts/personal-data.js",
+          "src/content-scripts/experience-data.js",
+          "src/content-scripts/extract-data.js",
         ],
       },
       () => {
@@ -30,7 +30,7 @@ getBtnElement.addEventListener("click", () => {
                 }
               });
             }
-            await handlerCompanyDetails();
+            await handlerCompanyWebsite();
           }
         );
       }

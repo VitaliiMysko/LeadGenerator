@@ -25,21 +25,16 @@ export const emailTemplates = [
   },
   {
     template: "{first}{last}@{host}",
-    condition: ({ first, last }) =>
-      !first.includes("-") &&
-      last.length > 1 &&
-      !last.includes(".") &&
-      !last.includes("-"),
+    condition: ({ last }) =>
+      last.length > 1 && !last.includes(".") && !last.includes("-"),
   },
   {
     template: "{first}.{lastPart2}@{host}",
-    condition: ({ lastPart1, lastPart2 }) =>
-      lastPart2 !== "" && lastPart1 === "",
+    condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
     template: "{initialFirst}.{lastPart2}@{host}",
-    condition: ({ lastPart1, lastPart2 }) =>
-      lastPart2 !== "" && lastPart1 === "",
+    condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
     template: "{initialFirst}{lastPart2}@{host}",
@@ -47,13 +42,12 @@ export const emailTemplates = [
   },
   {
     template: "{first}{lastPart2}@{host}",
-    condition: ({ first, lastPart1, lastPart2 }) =>
-      lastPart2 !== "" && !first.includes("-") && lastPart1 === "",
+    condition: ({ first, lastPart2 }) =>
+      lastPart2 !== "" && !first.includes("-"),
   },
   {
     template: "{first}.{lastPart2}@{host}",
-    condition: ({ lastPart1, lastPart2 }) =>
-      lastPart2 !== "" && lastPart1 === "",
+    condition: ({ lastPart2 }) => lastPart2 !== "",
   },
   {
     template: "{lastPart2}@{host}",
@@ -71,14 +65,32 @@ export const emailTemplates = [
   {
     template: "{first}_{last}@{host}",
     condition: ({ first, last }) =>
-      first.length > 1 &&
-      !first.includes("-") &&
-      last.length > 1 &&
-      !last.includes("."),
+      first && last.length > 1 && !last.includes("."),
+  },
+  {
+    template: "{first}{lastPart1}{lastPart2}@{host}",
+    condition: ({ first, lastPart1, lastPart2 }) =>
+      first && !lastPart1.includes("-") && !lastPart2.includes("-"),
+  },
+  {
+    template: "{first}{lastPart1}@{host}",
+    condition: ({ first, lastPart1 }) => first && !lastPart1.includes("-"),
+  },
+  {
+    template: "{first}.{lastPart1}@{host}",
+    condition: ({ first, lastPart1 }) => first && !lastPart1.includes("-"),
+  },
+  {
+    template: "{initialFirst}{lastPart1}@{host}",
+    condition: ({ lastPart1 }) => !lastPart1.includes("-"),
   },
   {
     template: "{first}_{lastPart2}@{host}",
-    condition: ({ first, lastPart1, lastPart2 }) =>
-      !first.includes("-") && lastPart2 !== "" && lastPart1 === "",
+    condition: ({ lastPart2 }) => lastPart2 !== "",
+  },
+  {
+    template: "{initialFirst}.{initialLastPart1}.{lastPart2}@{host}",
+    condition: ({ initialLastPart1, lastPart2 }) =>
+      initialLastPart1 !== "" && lastPart2 !== "",
   },
 ];

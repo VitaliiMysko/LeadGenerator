@@ -154,15 +154,12 @@ a:active {
 .company-name.active {
   font-weight: 600;
 }
-.company-job,
-.company-industry,
-.company-location {
+.company-job {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
   margin-top: 5px;
 }
-
 #version-container {
   position: fixed;
   top: 5px;
@@ -199,9 +196,7 @@ a:active {
   margin-top: 5px;
 }
 .company-job.active,
-.company-website.active,
-.company-industry.active,
-.company-location.active {
+.company-website.active {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }
@@ -216,34 +211,6 @@ a:active {
   white-space: nowrap; /* in one line */
   color: #333;
 }
-
-.company-website span.editing-domain {
-  flex-grow: 1;
-  min-width: 0;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-  outline: 1px solid #0078d7;
-  padding: 2px 4px;
-  border-radius: 3px;
-  user-select: text;
-  pointer-events: auto;
-  cursor: text;
-}
-
-.edit-website-domain-wrapper {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.edit-website-domain-icon {
-  cursor: pointer;
-  margin-left: 5px;
-}
-
 .company-website a {
   display: inline-flex; /* adapts to content size */
   align-items: center;

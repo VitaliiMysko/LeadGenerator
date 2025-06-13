@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === "fetchSalesNavigatorCompanyPage") {
+  if (request.action === "fetchPage") {
     if (activeRequests[request.url]) {
       sendResponse(activeRequests[request.url]);
       return;
@@ -48,78 +48,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 target: { tabId },
                 files: [
                   "src/utils/mutation-observer.js",
-                  "src/content-scripts/sales-navigator-pages/company/company.js",
+                  "src/content-scripts/website-data.js",
                 ],
               },
               async (res) => {
                 chrome.runtime.onMessage.addListener(
                   async function responseListener(response, sender) {
-                    if (
-                      response.action === "salesNavigatorCompanyPageContent" &&
-                      request.url === response.data.url
-                    ) {
-                      const data = response.data;
-                      if (data) {
-                        const websiteState = await getkWebsiteState(data);
-                        const result = {
-                          website: data.website,
-                          status: websiteState.status,
-                          ok: websiteState.ok,
-                          industry: data.industry,
-                          location: data.location,
-                        };
+                    if (response.action === "pageContent") {
+                      if (response.data && request.url === response.data.url) {
+                        const result = await checkWebsiteStatus(
+                          response.data.website
+                        );
                         activeRequests[request.url] = result;
 
                         sendResponse(result);
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener
+                        );
                       }
-                      chrome.runtime.onMessage.removeListener(responseListener);
-                    }
-                  }
-                );
-              }
-            );
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
-    );
-
-    return true;
-  }
-
-  if (request.action === "fetchLinkedinCompanyPage") {
-    chrome.tabs.create(
-      {
-        url: request.url,
-        active: false,
-      },
-      (tab) => {
-        const tabId = tab.id;
-
-        chrome.tabs.onUpdated.addListener(async function listener(
-          updatedTabId,
-          info
-        ) {
-          if (tabId === updatedTabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files: [
-                  "src/utils/mutation-observer.js",
-                  "src/content-scripts/linkedin-pages/company.js",
-                ],
-              },
-              async (res) => {
-                chrome.runtime.onMessage.addListener(
-                  async function responseListener(response, sender) {
-                    if (
-                      response.action === "linkedinCompanyPageContent" &&
-                      sender.tab?.id === tabId
-                    ) {
-                      if (response.data) {
-                        sendResponse(response.data);
-                      }
-                      chrome.runtime.onMessage.removeListener(responseListener);
                     }
                   }
                 );
@@ -139,27 +85,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function getkWebsiteState(data) {
+function checkWebsiteStatus(url) {
   return new Promise((resolve) => {
-    if (data.website) {
-      fetch(data.website, { method: "HEAD" })
+    if (url) {
+      fetch(url, { method: "HEAD" })
         .then((response) => {
-          resolve({
-            status: response.status,
-            ok: response.ok,
-          });
+          resolve({ url: url, status: response.status, ok: response.ok });
         })
         .catch(() => {
-          resolve({
-            status: 0,
-            ok: false,
-          });
+          resolve({ url: url, status: 0, ok: false });
         });
     } else {
-      resolve({
-        status: 0,
-        ok: false,
-      });
+      resolve({ url: url, status: 0, ok: false });
     }
   });
 }

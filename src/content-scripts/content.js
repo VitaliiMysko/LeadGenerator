@@ -1,7 +1,7 @@
 window.leadGenerator = window.leadGenerator || {};
 
-if (!window.leadGenerator.constantsInit) {
-  window.leadGenerator.constants = window.leadGenerator.constants || {};
+if (!window.leadGenerator.contentInit) {
+  window.leadGenerator.content = window.leadGenerator.content || {};
   (() => {
     const companyStatus = [
       "inc",
@@ -32,9 +32,9 @@ if (!window.leadGenerator.constantsInit) {
 
     const dutchSurnames = ["van", "der", "den", "de"];
 
-    window.leadGenerator.constants.companyStatus = companyStatus;
-    window.leadGenerator.constants.dutchSurnames = dutchSurnames;
+    window.leadGenerator.content.companyStatus = companyStatus;
+    window.leadGenerator.content.dutchSurnames = dutchSurnames;
   })();
 
-  window.leadGenerator.constantsInit = true;
+  window.leadGenerator.contentInit = true;
 }
