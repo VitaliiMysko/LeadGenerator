@@ -18,11 +18,11 @@ function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
 
-function getCompanyIndustryElement(){
+function getCompanyIndustryElement() {
   return document.querySelector("#company-industry");
 }
 
-function getCompanyCountryElement(){
+function getCompanyCountryElement() {
   return document.querySelector("#company-country");
 }
 

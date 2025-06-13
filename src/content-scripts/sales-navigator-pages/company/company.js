@@ -75,8 +75,11 @@
   }
 
   const sendMessageAndCloseTab = (data) => {
-    chrome.runtime.sendMessage({ action: "salesNavigatorCompanyPageContent", data }, () => {
-      chrome.runtime.sendMessage({ action: "closeTab" });
-    });
+    chrome.runtime.sendMessage(
+      { action: "salesNavigatorCompanyPageContent", data },
+      () => {
+        chrome.runtime.sendMessage({ action: "closeTab" });
+      }
+    );
   };
 })();

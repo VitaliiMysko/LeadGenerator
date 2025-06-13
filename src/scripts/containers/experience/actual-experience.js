@@ -43,7 +43,7 @@ function getRadioCompanyBlock(company, index) {
       jobPositionElement.value = companyJobRadioElement.textContent;
       companyNameElement.value = company.companyName;
       emailElement.value = "";
-      
+
       let industryRadioItemValue =
         parentDiv.querySelector(".company-industry").firstChild?.textContent ||
         "";

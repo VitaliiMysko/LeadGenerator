@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.2] - 2025-06-13
+
+### Added
+
+- Field "Country" showing the location of the selected company.
+- Field "Industry" showing the industry of the selected company.
+- Ability to fetch company details directly from the official LinkedIn company page.
+- Option to manually edit the company website if needed.
+
+### Optimized
+
+- Templates for generating person's email addresses.
+- Logic for retrieving the person's full name.
+
+### Changed
+
+- Refactored project structure for better modularity and maintainability.
+
 ## [3.2.1] - 2025-05-14
 
 ### Added
