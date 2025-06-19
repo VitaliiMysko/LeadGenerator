@@ -104,7 +104,7 @@ if (!window.leadGenerator.experienceDataInit) {
         const regex = removeCompanyStatusRegex();
         name = companyElement.textContent
           .trim()
-          .replace(/[^\p{L}\p{N}\s-]/gu, "")
+          .replace(/\p{Extended_Pictographic}/gu, "")
           .replace(regex, "");
       }
       return name;
