@@ -141,26 +141,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function getkWebsiteState(data) {
   return new Promise((resolve) => {
-    if (data.website) {
-      fetch(data.website, { method: "HEAD" })
-        .then((response) => {
-          resolve({
-            status: response.status,
-            ok: response.ok,
-          });
-        })
-        .catch(() => {
-          resolve({
-            status: 0,
-            ok: false,
-          });
-        });
-    } else {
-      resolve({
-        status: 0,
-        ok: false,
-      });
+    if (!data.website) {
+      return resolve({ status: 0, ok: false });
     }
+
+    fetch(data.website, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "User-Agent": navigator.userAgent,
+        Accept: "text/html",
+      },
+    })
+      .then((response) => {
+        resolve({
+          status: response.status,
+          ok: response.ok,
+        });
+      })
+      .catch((error) => {
+        resolve({
+          status: 0,
+          ok: false,
+        });
+      });
   });
 }
 
