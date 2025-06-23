@@ -38,7 +38,7 @@ if (!window.leadGenerator.personalDataInit) {
       str = str
         .trim()
         .replace(
-          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?)\s+(?=[A-Z-İÜÖÇĞŞ])/i,
+          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?|dr\.-ing\.?)\s+(?=[A-Z-İÜÖÇĞŞ])/i,
           ""
         );
       const [textBeforeComma] = str.split(",");
