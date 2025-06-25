@@ -8,6 +8,7 @@ getBtnElement.addEventListener("click", () => {
       {
         target: { tabId: tabs[0].id },
         files: [
+          "src/utils/mutation-observer.js",
           "src/content-scripts/common/constants.js",
           "src/content-scripts/sales-navigator-pages/lead/lead.js",
           "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",

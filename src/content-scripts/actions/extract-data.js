@@ -30,7 +30,7 @@ async function getData() {
 
   try {
     personalData = await getPersonalData();
-    actualExperienceData = getActualExperienceData();
+    actualExperienceData = await getActualExperienceData();
   } catch (error) {
     console.error("Problems with getting data", error.message);
   }
