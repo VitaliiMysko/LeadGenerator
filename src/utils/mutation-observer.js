@@ -1,6 +1,6 @@
 window.leadGenerator = window.leadGenerator || {};
 
-const waitForElementWithTimeout = (selector, timeout = 2000) => {
+const waitForElementWithTimeout = (selector, timeout = 3000) => {
   return new Promise((resolve, reject) => {
     const observer = new MutationObserver((mutations, obs) => {
       const element = document.querySelector(selector);
@@ -27,7 +27,7 @@ const waitForElementWithTimeout = (selector, timeout = 2000) => {
   });
 };
 
-const waitForElementById = (id, conditionFn = () => true, timeout = 5000) => {
+const waitForElementById = (id, conditionFn = () => true, timeout = 3000) => {
   return new Promise((resolve, reject) => {
     const check = () => {
       const el = document.getElementById(id);
