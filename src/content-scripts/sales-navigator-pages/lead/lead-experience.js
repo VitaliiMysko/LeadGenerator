@@ -157,7 +157,6 @@ if (!window.leadGenerator.experienceDataInit) {
         const tooltip = await waitForElementById(
           tooltipId,
           (el) => el.querySelector("li"), // tooltip has to have <li>
-          5000
         );
         return tooltip;
       } catch (e) {
