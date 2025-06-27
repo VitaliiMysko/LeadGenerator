@@ -35,7 +35,7 @@ if (!window.leadGenerator.experienceDataInit) {
                 companyName: companyName,
                 jobPosition: jobPosition,
                 companylink: companylink,
-                companyData: await getCompanyData(experienceComponent),
+                extraData: await getTooltipCompanyData(experienceComponent),
               });
             }
           } else {
@@ -69,7 +69,7 @@ if (!window.leadGenerator.experienceDataInit) {
                     companyName: companyName,
                     jobPosition: jobPosition,
                     companylink: companylink,
-                    companyData: await getCompanyData(experienceComponent),
+                    extraData: await getTooltipCompanyData(experienceComponent),
                   });
                 }
               } else {
@@ -127,13 +127,13 @@ if (!window.leadGenerator.experienceDataInit) {
       }
     }
 
-    async function getCompanyData(experienceComponent) {
+    async function getTooltipCompanyData(experienceComponent) {
       const companyTooltipElement = await triggerHoverAndWaitTooltip(
         experienceComponent
       );
 
-      const companyData = extractCompanyData(companyTooltipElement);
-      return companyData;
+      const extraCompanyData = extractCompanyData(companyTooltipElement);
+      return extraCompanyData;
     }
 
     function triggerMouseHover(element) {
