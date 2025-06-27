@@ -5,33 +5,51 @@
   data = {
     url: window.location.href,
     website: "",
-    industry: "",
     location: "",
+    industry: "",
     error: "",
   };
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === "initSalesNavigatorCompanyData") {
+      data.location = message.data.location || "";
+      data.industry = message.data.industry || "";
+    }
+  });
 
   let container;
   waitForElementWithTimeout("._header_1808vy")
     .then((element) => {
-      data.industry = element
-        .querySelector("span[data-anonymize='industry']")
-        .textContent.trim();
-      data.location = element
-        .querySelector("div[data-anonymize='location']")
-        .textContent.trim();
       container = element;
-    })
-    .catch((error) => {
-      console.error("Error finding element:", error);
-    })
-    .then((element) => {
       data.website = container.querySelector(".view-website-link").href || "";
     })
     .catch((error) => {
       console.error("Error finding element:", error);
     })
+    .then((element) => {
+      if (!data.location) {
+        data.location =
+          container
+            .querySelector("div[data-anonymize='location']")
+            .textContent.trim() || "";
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding element:", error);
+    })
+    .then((element) => {
+      if (!data.industry) {
+        data.industry =
+          container
+            .querySelector("span[data-anonymize='industry']")
+            .textContent.trim() || "";
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding element:", error);
+    })
     .finally(async () => {
-      if (data.website === "" || data.industry === "") {
+      if (!data.website || !data.industry) {
         await fillDataFromLinkedinCompanyPage();
       }
       sendMessageAndCloseTab(data);
@@ -44,6 +62,8 @@
       const response = await sendMessagePromise({
         action: "fetchLinkedinCompanyPage",
         url: linkedinCompanyUrl,
+        location: data.location,
+        industry: data.industry,
       });
 
       if (response) {
