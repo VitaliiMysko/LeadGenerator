@@ -120,7 +120,7 @@ async function manageCompanyDetailsBlock(radio) {
 
   websiteBlock.appendChild(websiteIconElement);
   websiteBlock.appendChild(websiteLoadingTextElement);
-  
+
   if (!location) {
     const countryLoadingTextElement = getSpanElement("Loading country");
     locationBlock.appendChild(countryLoadingTextElement);

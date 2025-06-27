@@ -156,7 +156,7 @@ if (!window.leadGenerator.experienceDataInit) {
       try {
         const tooltip = await waitForElementById(
           tooltipId,
-          (el) => el.querySelector("li"), // tooltip has to have <li>
+          (el) => el.querySelector("li") // tooltip has to have <li>
         );
         return tooltip;
       } catch (e) {
