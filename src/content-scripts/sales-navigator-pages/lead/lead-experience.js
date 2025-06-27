@@ -49,6 +49,9 @@ if (!window.leadGenerator.experienceDataInit) {
             const positionComponents =
               multiPositionCompanyComponent.querySelectorAll(":scope > li");
 
+            let hasActualJobPosition = false;
+            let extraData = "";
+
             for (const positionComponent of positionComponents) {
               const jobPositionElement =
                 getJobPositionElement(positionComponent);
@@ -64,17 +67,27 @@ if (!window.leadGenerator.experienceDataInit) {
 
               if (isActualJobPosition(actualPositionElement)) {
                 if (companyName != "" && jobPosition != "") {
+                  hasActualJobPosition = true;
+                  if (!extraData) {
+                    extraData = await getTooltipCompanyData(
+                      experienceComponent
+                    );
+                  }
+
                   actualExperienceData.push({
                     id: ++id,
                     companyName: companyName,
                     jobPosition: jobPosition,
                     companylink: companylink,
-                    extraData: await getTooltipCompanyData(experienceComponent),
+                    extraData: extraData,
                   });
                 }
               } else {
                 break;
               }
+            }
+            if (!hasActualJobPosition) {
+              break;
             }
           }
         }
