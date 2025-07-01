@@ -91,6 +91,8 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.getAttribute("data-initialized") === "true" ||
     websiteBlock.getAttribute("data-loading") === "true"
   ) {
+    //emailElement.disabled = false;
+    generateEmailsBtnElement.disabled = false;
     return;
   }
 
@@ -131,15 +133,12 @@ async function manageCompanyDetailsBlock(radio) {
   }
 
   try {
-    emailElement.disabled = true;
+    //emailElement.disabled = true;
     generateEmailsBtnElement.disabled = true;
 
     let companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href, location, industry)
       : { ...companyDetailsByDefault };
-
-    emailElement.disabled = false;
-    generateEmailsBtnElement.disabled = false;
 
     websiteBlock.innerHTML = "";
     industryBlock.innerHTML = "";
@@ -196,6 +195,11 @@ async function manageCompanyDetailsBlock(radio) {
 
     websiteBlock.setAttribute("data-initialized", "true");
 
+    if (companyNameLabel.classList.contains("active")) {
+      //emailElement.disabled = false;
+      generateEmailsBtnElement.disabled = false;
+    }
+
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
       onSave: (newValue) => {
         const newBasicEmail = getBasicEmail.bind(null, newValue);
@@ -207,6 +211,8 @@ async function manageCompanyDetailsBlock(radio) {
     console.error("Error fetching website:", error);
   } finally {
     websiteBlock.removeAttribute("data-loading");
+    locationBlock.removeAttribute("data-loading");
+    industryBlock.removeAttribute("data-loading");
     websiteBlock.classList.remove("loading");
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
