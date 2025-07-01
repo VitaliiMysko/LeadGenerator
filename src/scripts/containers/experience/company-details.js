@@ -5,7 +5,6 @@ import {
   getCompanyWebsiteElements,
   getCompanyIndustryElements,
   getCompanyLocationElements,
-  emailElement,
   generateEmailsBtnElement,
   companyIndustryElement,
   companyCountryElement,
@@ -87,19 +86,17 @@ async function manageCompanyDetailsBlock(radio) {
   industryBlock.style.display = "flex";
   locationBlock.style.display = "flex";
 
-  if (
-    websiteBlock.getAttribute("data-initialized") === "true" ||
-    websiteBlock.getAttribute("data-loading") === "true"
-  ) {
-    return;
-  }
+  const generateEmailIcon = generateEmailsBtnElement.querySelector("img");
+  const generateEmailIconByDefaultSrc = "assets/icons/generate-emails-16.png";
+  const generateEmailIconGreySrc = "assets/icons/generate-emails-grey-16.png";
 
-  websiteBlock.setAttribute("data-loading", "true");
-  if (!location) {
-    locationBlock.setAttribute("data-loading", "true");
-  }
-  if (!industry) {
-    industryBlock.setAttribute("data-loading", "true");
+  if (websiteBlock.getAttribute("data-initialized") === "true") {
+    generateEmailsBtnElement.disabled = false;
+    generateEmailIcon.src = generateEmailIconByDefaultSrc;
+    return;
+  } else {
+    generateEmailsBtnElement.disabled = true;
+    generateEmailIcon.src = generateEmailIconGreySrc;
   }
 
   websiteBlock.innerHTML = "";
@@ -131,15 +128,9 @@ async function manageCompanyDetailsBlock(radio) {
   }
 
   try {
-    emailElement.disabled = true;
-    generateEmailsBtnElement.disabled = true;
-
     let companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href, location, industry)
       : { ...companyDetailsByDefault };
-
-    emailElement.disabled = false;
-    generateEmailsBtnElement.disabled = false;
 
     websiteBlock.innerHTML = "";
     industryBlock.innerHTML = "";
@@ -194,7 +185,10 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
 
-    websiteBlock.setAttribute("data-initialized", "true");
+    if (companyNameLabel.classList.contains("active")) {
+      generateEmailsBtnElement.disabled = false;
+      generateEmailIcon.src = generateEmailIconByDefaultSrc;
+    }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
       onSave: (newValue) => {
@@ -206,7 +200,7 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.innerHTML = "Error loading website.";
     console.error("Error fetching website:", error);
   } finally {
-    websiteBlock.removeAttribute("data-loading");
+    websiteBlock.setAttribute("data-initialized", "true");
     websiteBlock.classList.remove("loading");
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
