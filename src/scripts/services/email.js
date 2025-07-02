@@ -72,7 +72,8 @@ generateEmailsBtnElement.addEventListener("click", async () => {
         }
       );
     });
-
+    
+    checkVerifyEmailResult(verifyEmailResult, emailData);
     stateResults.push(verifyEmailResult);
 
     if (emailData.ok) {
