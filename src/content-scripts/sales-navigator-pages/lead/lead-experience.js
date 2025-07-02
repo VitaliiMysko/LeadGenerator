@@ -2,8 +2,8 @@ if (!window.leadGenerator.experienceDataInit) {
   window.leadGenerator.experienceData =
     window.leadGenerator.experienceData || {};
 
-  (() => {
-    const getActualExperienceData = () => {
+  (async () => {
+    const getActualExperienceData = async () => {
       let actualExperienceData = [];
       const experienceComponents = getExperienceComponents();
 
@@ -22,7 +22,9 @@ if (!window.leadGenerator.experienceDataInit) {
         const jobPositionElement = getJobPositionElement(companyDataElement);
 
         if (jobPositionElement) {
-          jobPosition = jobPositionElement.textContent.replace(/\p{Extended_Pictographic}/gu, "").trim();
+          jobPosition = jobPositionElement.textContent
+            .replace(/\p{Extended_Pictographic}/gu, "")
+            .trim();
 
           const actualPositionElement = companyDataElement.children[2];
 
@@ -33,6 +35,7 @@ if (!window.leadGenerator.experienceDataInit) {
                 companyName: companyName,
                 jobPosition: jobPosition,
                 companylink: companylink,
+                extraData: await getTooltipCompanyData(experienceComponent),
               });
             }
           } else {
@@ -46,12 +49,17 @@ if (!window.leadGenerator.experienceDataInit) {
             const positionComponents =
               multiPositionCompanyComponent.querySelectorAll(":scope > li");
 
+            let hasActualJobPosition = false;
+            let extraData = "";
+
             for (const positionComponent of positionComponents) {
               const jobPositionElement =
                 getJobPositionElement(positionComponent);
 
               if (jobPositionElement) {
-                jobPosition = jobPositionElement.textContent.replace(/\p{Extended_Pictographic}/gu, "").trim();
+                jobPosition = jobPositionElement.textContent
+                  .replace(/\p{Extended_Pictographic}/gu, "")
+                  .trim();
               }
 
               const actualPositionElement =
@@ -59,16 +67,27 @@ if (!window.leadGenerator.experienceDataInit) {
 
               if (isActualJobPosition(actualPositionElement)) {
                 if (companyName != "" && jobPosition != "") {
+                  hasActualJobPosition = true;
+                  if (!extraData) {
+                    extraData = await getTooltipCompanyData(
+                      experienceComponent
+                    );
+                  }
+
                   actualExperienceData.push({
                     id: ++id,
                     companyName: companyName,
                     jobPosition: jobPosition,
                     companylink: companylink,
+                    extraData: extraData,
                   });
                 }
               } else {
                 break;
               }
+            }
+            if (!hasActualJobPosition) {
+              break;
             }
           }
         }
@@ -119,6 +138,65 @@ if (!window.leadGenerator.experienceDataInit) {
           return period.includes("Present") || period === "";
         }
       }
+    }
+
+    async function getTooltipCompanyData(experienceComponent) {
+      const companyTooltipElement = await triggerHoverAndWaitTooltip(
+        experienceComponent
+      );
+
+      const extraCompanyData = extractCompanyData(companyTooltipElement);
+      return extraCompanyData;
+    }
+
+    function triggerMouseHover(element) {
+      if (!element) return;
+      element.dispatchEvent(new MouseEvent("mouseover", { bubbles: true }));
+      element.dispatchEvent(new MouseEvent("mouseenter", { bubbles: true }));
+    }
+
+    async function triggerHoverAndWaitTooltip(experienceComponent) {
+      const link = experienceComponent.querySelector("a");
+      if (!link) return "";
+
+      const tooltipId = link.getAttribute("aria-describedby");
+      if (!tooltipId) return "";
+
+      const waitForElementById = window.leadGenerator.waitForElementById;
+
+      triggerMouseHover(link);
+
+      try {
+        const tooltip = await waitForElementById(
+          tooltipId,
+          (el) => el.querySelector("li") // tooltip has to have <li>
+        );
+        return tooltip;
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function extractCompanyData(tooltipElement) {
+      if (!tooltipElement)
+        return {
+          industry: "",
+          revenue: "",
+          location: "",
+          companySize: "",
+        };
+
+      const getTextByDataAttr = (attr) => {
+        const el = tooltipElement.querySelector(`[data-anonymize="${attr}"]`);
+        return el ? el.innerText.trim() : "";
+      };
+
+      return {
+        industry: getTextByDataAttr("industry"),
+        revenue: getTextByDataAttr("revenue"),
+        location: getTextByDataAttr("location"),
+        companySize: getTextByDataAttr("company-size"),
+      };
     }
 
     function getExperienceComponents() {

@@ -5,36 +5,44 @@
   data = {
     url: window.location.href,
     website: "",
-    industry: "",
     location: "",
+    industry: "",
     error: "",
   };
+
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === "initLinkedinCompanyData") {
+      data.location = message.data.location || "";
+      data.industry = message.data.industry || "";
+    }
+  });
 
   let descriptionList;
   waitForElementWithTimeout(".org-page-details-module__card-spacing")
     .then((element) => {
       descriptionList = element.querySelector("dl");
-      data.website = getDefinitionByTerm(descriptionList, "Website");
-      if (!data.website) {
-        data.website = getDefinitionByTerm(descriptionList, "Вебсайт");
-      }
+      data.website =
+        getDefinitionByTerm(descriptionList, "Website") ||
+        getDefinitionByTerm(descriptionList, "Вебсайт");
     })
     .catch((error) => {
       console.error("Error finding element:", error);
     })
     .then((element) => {
-      data.industry = getDefinitionByTerm(descriptionList, "Industry");
-      if (!data.industry) {
-        data.industry = getDefinitionByTerm(descriptionList, "Галузь");
-      }
-    })
-    .catch((error) => {
-      console.error("Error finding element:", error);
-    })
-    .then((element) => {
-      data.location = getDefinitionByTerm(descriptionList, "Headquarters");
       if (!data.location) {
-        data.location = getDefinitionByTerm(descriptionList, "Штаб-квартира");
+        data.location =
+          getDefinitionByTerm(descriptionList, "Headquarters") ||
+          getDefinitionByTerm(descriptionList, "Штаб-квартира");
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding element:", error);
+    })
+    .then((element) => {
+      if (!data.industry) {
+        data.industry =
+          getDefinitionByTerm(descriptionList, "Industry") ||
+          getDefinitionByTerm(descriptionList, "Галузь");
       }
     })
     .catch((error) => {
