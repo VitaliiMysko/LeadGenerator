@@ -90,8 +90,6 @@ generateEmailsBtnElement.addEventListener("click", async () => {
     emailCache.set(domain, emailData);
   }
 
-  const emailsStates = stateResults.map((r) => r.state);
-
   stopLoadingEffect();
 
   if (
@@ -103,8 +101,9 @@ generateEmailsBtnElement.addEventListener("click", async () => {
       emailData.invalidDomain
     )
   ) {
+    const emailsStates = stateResults.map((r) => r.state);
     showEmail("");
-    showMessage(`Email statuses: ${emailsStates.join(", ")}`, false);
+    showMessage(`Email statuses: ${emailsStates.join(", ")}`, false, 5000);
     return;
   }
 
@@ -152,9 +151,9 @@ function showEmail(email) {
   useTextChangeEffect(emailElement);
 }
 
-function showMessage(message, isEmailValid) {
+function showMessage(message, isEmailValid, duration = 2000) {
   const state = isEmailValid ? "success" : "error";
-  showAlert(message, state);
+  showAlert(message, state, duration);
 }
 
 function getWebsiteDomain() {
