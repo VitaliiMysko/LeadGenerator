@@ -10,6 +10,9 @@ import { emailTemplates } from "../helper/emails-generation.js";
 import { useTextChangeEffect } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 
+const manifest = chrome.runtime.getManifest();
+const environment = manifest.environment;
+
 const emailCache = new Map();
 const emailDataByDefault = {
   email: "",
@@ -55,6 +58,8 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 
   startLoadingEffect();
 
+  const stateResults = [];
+
   for (const email of emails) {
     const verifyEmailResult = await new Promise((resolve) => {
       chrome.runtime.sendMessage(
@@ -67,8 +72,9 @@ generateEmailsBtnElement.addEventListener("click", async () => {
         }
       );
     });
-
+    
     checkVerifyEmailResult(verifyEmailResult, emailData);
+    stateResults.push(verifyEmailResult);
 
     if (emailData.ok) {
       emailData.email = email;
@@ -85,6 +91,21 @@ generateEmailsBtnElement.addEventListener("click", async () => {
   }
 
   stopLoadingEffect();
+
+  if (
+    environment === "local" &&
+    !(
+      emailData.ok ||
+      emailData.unknown ||
+      emailData.error ||
+      emailData.invalidDomain
+    )
+  ) {
+    const emailsStates = stateResults.map((r) => r.state);
+    showEmail("");
+    showMessage(`Email statuses: ${emailsStates.join(", ")}`, false, 5000);
+    return;
+  }
 
   showEmail(emailData.email);
   showMessage(emailData.message, emailData.ok);
@@ -130,9 +151,9 @@ function showEmail(email) {
   useTextChangeEffect(emailElement);
 }
 
-function showMessage(message, isEmailValid) {
+function showMessage(message, isEmailValid, duration = 2000) {
   const state = isEmailValid ? "success" : "error";
-  showAlert(message, state);
+  showAlert(message, state, duration);
 }
 
 function getWebsiteDomain() {
