@@ -62,7 +62,15 @@ function getRadioCompanyBlock(company, index) {
   radioItem.addEventListener("change", () => {
     if (radioItem.checked) {
       const parentDiv = radioItem.closest(".radio-company");
-      emailElement.value = "";
+
+      console.log("change => ", parentDiv.getAttribute("data-quick-paste-email"));
+      console.log("change => ", parentDiv.getAttribute("data-quick-paste-email") !== "true");
+      if (parentDiv.getAttribute("data-quick-paste-email") !== "true"){
+        emailElement.value = "";
+        console.log("change ok");
+        parentDiv.removeAttribute("data-quick-paste-email");
+      }
+
       companyNameElement.value = parentDiv.getAttribute("data-company-name");
       jobPositionElement.value = parentDiv.getAttribute(
         "data-company-job-position"
