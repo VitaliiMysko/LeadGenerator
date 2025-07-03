@@ -54,7 +54,7 @@ function getExperienceContainerElement() {
   return document.getElementById("experience-container");
 }
 
-function getAppVerionElement() {
+function getAppVersionElement() {
   return document.getElementById("app-version");
 }
 
@@ -97,5 +97,5 @@ export const copyBtnElement = getCopyBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
-export const appVerionElement = getAppVerionElement();
+export const appVersionElement = getAppVersionElement();
 export const generateEmailsBtnElement = getGenerateEmailsBtnElement();

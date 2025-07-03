@@ -1,11 +1,11 @@
-import { appVerionElement } from "./helper/dom-helper.js";
+import { appVersionElement } from "./helper/dom-helper.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const manifest = chrome.runtime.getManifest();
 
-  if (appVerionElement) {
+  if (appVersionElement) {
     const environment = manifest.environment;
     const showEnvironment = environment ? ` (${environment})` : environment;
-    appVerionElement.textContent = `Version: ${manifest.version}${showEnvironment}`;
+    appVersionElement.textContent = `Version: ${manifest.version}${showEnvironment}`;
   }
 });
