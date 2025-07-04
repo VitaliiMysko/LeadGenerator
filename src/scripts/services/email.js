@@ -6,7 +6,6 @@ import {
   emailElement,
 } from "../helper/dom-helper.js";
 import { emailTemplates } from "../helper/emails-generation.js";
-
 import { useTextChangeEffect } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 

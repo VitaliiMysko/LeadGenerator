@@ -10,9 +10,7 @@ import {
   companyIndustryElement,
   companyCountryElement,
 } from "../../helper/dom-helper.js";
-
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
-
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 
 const companyDetailsByDefault = {
