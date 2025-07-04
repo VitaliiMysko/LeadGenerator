@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.3] - 2025-07-04
+
+### Added
+
+- The ability to manually enter an email before identifying the company's domain.
+
+### Optimized
+
+- Obtaining additional data about the company.
+- Validation of the company's websites.
+- Removal of excess information from the company name, job position, and person's first and last name.
+
 ## [3.2.2] - 2025-06-13
 
 ### Added
