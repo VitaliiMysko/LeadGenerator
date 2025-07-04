@@ -31,9 +31,9 @@ export async function handlerCompanyDetails() {
 async function addCompanyDetailsListener() {
   getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
-      console.log("AAAA");
       await manageCompanyDetailsBlock(radio);
-      fillEmailFromCache();
+      const pastedEmailWhileFindingWebsite = emailElement.value;
+      fillEmailFromCache(pastedEmailWhileFindingWebsite);
     });
   });
 }
@@ -41,7 +41,6 @@ async function addCompanyDetailsListener() {
 async function initCompanyDetails() {
   getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
-      console.log("BBBB");
       await manageCompanyDetailsBlock(radio);
     }
   });
@@ -129,7 +128,7 @@ async function manageCompanyDetailsBlock(radio) {
     const industryLoadingTextElement = getSpanElement("Loading industry");
     industryBlock.appendChild(industryLoadingTextElement);
   }
-console.log("email value 001  => ", emailElement.value, parentDiv.getAttribute("data-company-name"));
+
   try {
     let companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href, location, industry)
@@ -138,8 +137,6 @@ console.log("email value 001  => ", emailElement.value, parentDiv.getAttribute("
     websiteBlock.innerHTML = "";
     industryBlock.innerHTML = "";
     locationBlock.innerHTML = "";
-
-console.log("email value 002  => ", emailElement.value, parentDiv.getAttribute("data-company-name"));
 
     let website = "No website found";
     if (companyDetails.website) {
@@ -153,7 +150,7 @@ console.log("email value 002  => ", emailElement.value, parentDiv.getAttribute("
     } else {
       websiteBlock.appendChild(websiteIconElement);
     }
-console.log("email value 003  => ", emailElement.value, parentDiv.getAttribute("data-company-name"));
+
     const locationNoFound = "No location found";
     if (!location || location !== companyDetails.location) {
       location =
@@ -190,24 +187,9 @@ console.log("email value 003  => ", emailElement.value, parentDiv.getAttribute("
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
 
-    console.log("email value 911 => ", emailElement.value);
-    console.log("email value | getAttribute => ", parentDiv.getAttribute("data-quick-paste-email"));
-    // if (emailElement.value) {
-    //   console.log("email value | setAttribute => ", emailElement.value);
-    //   parentDiv.setAttribute(`data-quick-paste-email`, "true");
-    //   console.log("email value | getAttribute | data-company-name => ", parentDiv.getAttribute("data-company-name"));
-    // }
-
     if (companyNameLabel.classList.contains("active")) {
       generateEmailsBtnElement.disabled = false;
       generateEmailIcon.src = generateEmailIconByDefaultSrc;
-
-      if (emailElement.value) {
-      console.log("email value | setAttribute => ", emailElement.value);
-      parentDiv.setAttribute(`data-quick-paste-email`, "true");
-      console.log("email value | getAttribute | data-company-name => ", parentDiv.getAttribute("data-company-name"));
-      
-    }
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {

@@ -24,7 +24,7 @@ const emailDataByDefault = {
 };
 let loadingInterval = null;
 
-export function fillEmailFromCache() {
+export function fillEmailFromCache(pastedEmailWhileFindingWebsite) {
   const domain = getWebsiteDomain();
 
   let emailData = { ...emailDataByDefault };
@@ -32,7 +32,9 @@ export function fillEmailFromCache() {
   if (emailCache.has(domain)) {
     emailData = emailCache.get(domain);
   }
-  showEmail(emailData.email);
+
+  const email = emailData.email ? emailData.email : pastedEmailWhileFindingWebsite; 
+  showEmail(email);
 }
 
 generateEmailsBtnElement.addEventListener("click", async () => {
