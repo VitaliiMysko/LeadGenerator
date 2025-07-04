@@ -5,6 +5,7 @@ import {
   getCompanyWebsiteElements,
   getCompanyIndustryElements,
   getCompanyLocationElements,
+  emailElement,
   generateEmailsBtnElement,
   companyIndustryElement,
   companyCountryElement,
@@ -31,7 +32,8 @@ async function addCompanyDetailsListener() {
   getRadioButtonElements().forEach(async (radio) => {
     radio.addEventListener("change", async () => {
       await manageCompanyDetailsBlock(radio);
-      fillEmailFromCache();
+      const pastedEmailWhileFindingWebsite = emailElement.value;
+      fillEmailFromCache(pastedEmailWhileFindingWebsite);
     });
   });
 }
