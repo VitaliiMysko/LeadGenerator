@@ -63,7 +63,6 @@ function getRadioCompanyBlock(company, index) {
     if (radioItem.checked) {
       const parentDiv = radioItem.closest(".radio-company");
       emailElement.value = "";
-
       companyNameElement.value = parentDiv.getAttribute("data-company-name");
       jobPositionElement.value = parentDiv.getAttribute(
         "data-company-job-position"
