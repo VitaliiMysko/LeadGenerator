@@ -29,6 +29,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse(activeRequests[request.url]);
       return;
     }
+    const location = request.location;
+    const industry = request.industry;
 
     chrome.tabs.create(
       {
@@ -52,6 +54,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 ],
               },
               async (res) => {
+                chrome.tabs.sendMessage(tabId, {
+                  action: "initSalesNavigatorCompanyData",
+                  data: {
+                    location,
+                    industry,
+                  },
+                });
+
                 chrome.runtime.onMessage.addListener(
                   async function responseListener(response, sender) {
                     if (
@@ -65,8 +75,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                           website: data.website,
                           status: websiteState.status,
                           ok: websiteState.ok,
-                          industry: data.industry,
                           location: data.location,
+                          industry: data.industry,
                         };
                         activeRequests[request.url] = result;
 
@@ -88,6 +98,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === "fetchLinkedinCompanyPage") {
+    const location = request.location;
+    const industry = request.industry;
+
     chrome.tabs.create(
       {
         url: request.url,
@@ -110,6 +123,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 ],
               },
               async (res) => {
+                chrome.tabs.sendMessage(tabId, {
+                  action: "initLinkedinCompanyData",
+                  data: {
+                    location,
+                    industry,
+                  },
+                });
+
                 chrome.runtime.onMessage.addListener(
                   async function responseListener(response, sender) {
                     if (
@@ -141,26 +162,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function getkWebsiteState(data) {
   return new Promise((resolve) => {
-    if (data.website) {
-      fetch(data.website, { method: "HEAD" })
-        .then((response) => {
-          resolve({
-            status: response.status,
-            ok: response.ok,
-          });
-        })
-        .catch(() => {
-          resolve({
-            status: 0,
-            ok: false,
-          });
-        });
-    } else {
-      resolve({
-        status: 0,
-        ok: false,
-      });
+    if (!data.website) {
+      return resolve({ status: 0, ok: false });
     }
+
+    fetch(data.website, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "User-Agent": navigator.userAgent,
+        Accept: "text/html",
+      },
+    })
+      .then((response) => {
+        resolve({
+          status: response.status,
+          ok: response.ok,
+        });
+      })
+      .catch((error) => {
+        resolve({
+          status: 0,
+          ok: false,
+        });
+      });
   });
 }
 
