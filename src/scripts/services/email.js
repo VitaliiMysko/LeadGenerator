@@ -33,7 +33,9 @@ export function fillEmailFromCache(pastedEmailWhileFindingWebsite) {
     emailData = emailCache.get(domain);
   }
 
-  const email = emailData.email ? emailData.email : pastedEmailWhileFindingWebsite; 
+  const email = emailData.email
+    ? emailData.email
+    : pastedEmailWhileFindingWebsite;
   showEmail(email);
 }
 
@@ -74,7 +76,7 @@ generateEmailsBtnElement.addEventListener("click", async () => {
         }
       );
     });
-    
+
     checkVerifyEmailResult(verifyEmailResult, emailData);
     stateResults.push(verifyEmailResult);
 
