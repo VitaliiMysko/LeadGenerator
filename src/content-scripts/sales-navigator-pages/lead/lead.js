@@ -68,7 +68,7 @@ if (!window.leadGenerator.personalDataInit) {
     function getFirstName(fullName) {
       let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
       return firstName;
-    }    
+    }
 
     function getSecondName(fullName) {
       let [, ...remainingWords] = fullName.split(" ");
