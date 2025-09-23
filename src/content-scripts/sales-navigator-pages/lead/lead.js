@@ -25,20 +25,20 @@ if (!window.leadGenerator.personalDataInit) {
     };
 
     function getFullName() {
-      const fullNamelement = getFullNameElement();
+      const fullNameElement = getFullNameElement();
 
-      if (!fullNamelement) return "";
+      if (!fullNameElement) return "";
 
-      return handleFullName(fullNamelement.textContent);
+      return handleFullName(fullNameElement.textContent);
     }
 
     function handleFullName(str) {
-      str = str.replace(/^[^a-zA-Z]+/, "");
+      str = str.replace(/^[^a-zA-Z\u00C0-\u017F]+/, "");
       // Removes the prefix dr/Dr/prof/Prof before the full name
       str = str
         .trim()
         .replace(
-          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?|dr\.-ing\.?)\s+(?=[A-Z-İÜÖÇĞŞ])/i,
+          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?|dr\.-ing\.?)\s+(?=[A-Z\u00C0-\u017F])/i,
           ""
         );
       const [textBeforeComma] = str.split(",");
@@ -69,6 +69,8 @@ if (!window.leadGenerator.personalDataInit) {
       let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
       return firstName;
     }
+
+    
 
     function getSecondName(fullName) {
       let [, ...remainingWords] = fullName.split(" ");
