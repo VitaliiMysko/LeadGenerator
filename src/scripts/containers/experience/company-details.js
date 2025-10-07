@@ -245,8 +245,10 @@ function getEditWebsiteDomainElement() {
 }
 
 function getHostName(url) {
+  const fullUrl = url.includes("://") ? url : `http://${url}`;
+
   try {
-    const hostname = new URL(url).hostname;
+    const hostname = new URL(fullUrl).hostname;
     const cleanHostname = hostname.replace(/^www\./, "");
 
     return cleanHostname;
