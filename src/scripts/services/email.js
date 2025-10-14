@@ -2,11 +2,15 @@ import {
   getFirstNameElement,
   getSecondNameElement,
   generateEmailsBtnElement,
+  validateEmailsBtnElement,
   getCompanyDomainElement,
   emailElement,
 } from "../helper/dom-helper.js";
 import { emailTemplates } from "../helper/emails-generation.js";
-import { useTextChangeEffect } from "../helper/dom-action.js";
+import {
+  useTextChangeEffect,
+  useValidationEffect,
+} from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 
 const manifest = chrome.runtime.getManifest();
@@ -112,6 +116,33 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 
   showEmail(emailData.email);
   showMessage(emailData.message, emailData.ok);
+});
+
+validateEmailsBtnElement.addEventListener("click", async () => {
+  const emailData = { ...emailDataByDefault };
+
+  if (!emailElement.checkValidity()) {
+    emailData.message = "Email is not corrent";
+  } else {
+    emailElement.value = emailElement.value.toLocaleLowerCase();
+
+    const verifyEmailResult = await new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          action: "verifyEmail",
+          email: emailElement.value,
+        },
+        (response) => {
+          resolve(response);
+        }
+      );
+    });
+
+    checkVerifyEmailResult(verifyEmailResult, emailData);
+  }
+
+  showMessage(emailData.message, emailData.ok);
+  useValidationEffect(emailElement, emailData.ok);
 });
 
 function startLoadingEffect() {
