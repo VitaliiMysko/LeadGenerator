@@ -48,10 +48,24 @@ export const setValidationStyle = (element, value) => {
   }
 };
 
-export const useTextChangeEffect = (element) => {
+export const useTextChangeEffect = (element, duration = 1000) => {
   element.classList.add("text-change-effect");
 
   setTimeout(() => {
     element.classList.remove("text-change-effect");
-  }, 1000);
+  }, duration);
+};
+
+export const useValidationEffect = (element, isValid, duration = 2000) => {
+  element.classList.remove("validation-success", "validation-error");
+
+  if (isValid) {
+    element.classList.add("validation-success");
+  } else {
+    element.classList.add("validation-error");
+  }
+
+  setTimeout(() => {
+    element.classList.remove("validation-success", "validation-error");
+  }, duration);
 };

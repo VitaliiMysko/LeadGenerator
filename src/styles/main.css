@@ -1,5 +1,5 @@
 body {
-  width: 400px;
+  width: 424px;
   font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
@@ -83,9 +83,12 @@ a:active {
 #email-block {
   position: relative;
 }
-#job-position,
-#email {
+#job-position {
   padding-right: 24px;
+}
+#email {
+  padding-right: 48px;
+  transition: background-color 0.5s ease;
 }
 @keyframes textChange {
   0% {
@@ -99,7 +102,8 @@ a:active {
   animation: textChange 1s ease;
 }
 #translate-btn,
-#generate-emails-btn {
+#generate-emails-btn,
+#validete-emails-btn {
   position: absolute;
   right: 0;
   width: 20px;
@@ -273,4 +277,12 @@ a:active {
   width: 10px;
   height: 100%;
   background: linear-gradient(to right, #faefee, #ca8c89);
+}
+.validation-success {
+  background-color: #dbf5dc;
+  transition: background-color 0.5s ease;
+}
+.validation-error {
+  background-color: #fce1e0;
+  transition: background-color 0.5s ease;
 }
