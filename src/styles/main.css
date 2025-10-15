@@ -1,5 +1,5 @@
 body {
-  width: 424px;
+  width: 400px;
   font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
@@ -87,7 +87,9 @@ a:active {
   padding-right: 24px;
 }
 #email {
+  width: 100%;
   padding-right: 48px;
+  box-sizing: border-box;
   transition: background-color 0.5s ease;
 }
 @keyframes textChange {
@@ -148,7 +150,7 @@ a:active {
   align-self: stretch;
 }
 #experience-container {
-  width: 184px; /* hard code */
+  width: 183px; /* hard code */
   display: flex;
   flex-direction: column;
 }
@@ -220,21 +222,19 @@ a:active {
   white-space: nowrap; /* in one line */
   color: #333;
 }
-
 .company-website span.editing-domain {
   flex-grow: 1;
   min-width: 0;
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
-  outline: 1px solid #0078d7;
-  padding: 2px 4px;
-  border-radius: 3px;
+  border-bottom: 1px solid #999;
+  outline: none;
   user-select: text;
   pointer-events: auto;
   cursor: text;
+  margin-right: 3px;
 }
-
 .edit-website-domain-wrapper {
   display: flex;
   align-items: center;
@@ -242,12 +242,10 @@ a:active {
   cursor: pointer;
   flex-shrink: 0;
 }
-
 .edit-website-domain-icon {
   cursor: pointer;
   margin-left: 5px;
 }
-
 .company-website a {
   display: inline-flex; /* adapts to content size */
   align-items: center;
