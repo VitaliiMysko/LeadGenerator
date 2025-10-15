@@ -11,7 +11,11 @@ import {
   companyCountryElement,
 } from "../../helper/dom-helper.js";
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
-import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
+import {
+  addCopyByClick,
+  setValidationStyle,
+  useTextChangeEffect,
+} from "../../helper/dom-action.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -313,19 +317,12 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
       alt: "Edit website domain",
       title: "Edit website domain",
     },
-    save: {
-      src: "assets/icons/save-website-domain-icon-16.png",
-      alt: "Save domain",
-      title: "Save domain",
-    },
   };
 
-  const updateIcon = (type) => {
-    const icon = Icons[type];
-    if (!icon) return;
-    iconElement.src = icon.src;
-    iconElement.alt = icon.alt;
-    iconElement.title = icon.title;
+  const updateIcon = () => {
+    iconElement.src = Icons.edit.src;
+    iconElement.alt = Icons.edit.alt;
+    iconElement.title = Icons.edit.title;
   };
 
   const isEditing = () => element.getAttribute(isEditingKey) === "true";
@@ -337,8 +334,10 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
     element.setAttribute("spellcheck", "false");
     element.contentEditable = "true";
     element.classList.add("editing-domain");
-    updateIcon("save");
     element.focus();
+
+    controlEditElement.style.display = "none";
+
     document.addEventListener("click", handleDocumentClick);
   };
 
@@ -351,8 +350,10 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
     element.contentEditable = "false";
     element.classList.remove("editing-domain");
     element.removeAttribute(isEditingKey);
-    updateIcon("edit");
+    updateIcon();
     element.title = newValue;
+
+    controlEditElement.style.display = "inline-flex";
 
     if (shouldSave) {
       if (!newValue) {
@@ -368,6 +369,9 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
       element.textContent = previousValue;
       element.title = previousValue;
     }
+
+    useTextChangeEffect(element);
+
     document.removeEventListener("click", handleDocumentClick);
   };
 
@@ -387,25 +391,11 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
   const handlePaste = (e) => {
     e.preventDefault();
     const text = e.clipboardData?.getData("text/plain");
-
-    const selection = window.getSelection(); // Get the current selection/cursor position
-    if (!selection.rangeCount) return; // Exit if there's no active selection
-
-    const range = selection.getRangeAt(0); // Get the active selection range
-    range.deleteContents(); // Delete the selected content
-
-    const textNode = document.createTextNode(text); // Create a text node from the pasted text
-    range.insertNode(textNode); // Insert the text node at the current position
-
-    // Set the cursor immediately after the inserted text
-    range.setStartAfter(textNode);
-    range.setEndAfter(textNode);
-    selection.removeAllRanges();
-    selection.addRange(range);
+    document.execCommand("insertText", false, text);
   };
 
   const handleControlClick = () => {
-    isEditing() ? finishEditing() : startEditing();
+    if (!isEditing()) startEditing();
   };
 
   const handleDocumentClick = (e) => {
@@ -414,7 +404,7 @@ function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
       !element.contains(e.target) &&
       !controlEditElement.contains(e.target)
     ) {
-      cancelEditing();
+      finishEditing();
     }
   };
 
