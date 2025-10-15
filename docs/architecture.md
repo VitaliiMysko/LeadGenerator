@@ -102,6 +102,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
      - Extension sends company domain to backend.
      - Backend validates generated emails via Emailable.
      - Valid result is returned and inserted into form and clipboard.
+   - Validate email separately via Emailable.
 5. No data is stored on servers; data only exists temporarily in memory or clipboard.
 
 ---

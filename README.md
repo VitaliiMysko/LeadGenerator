@@ -37,7 +37,7 @@ Each field is editable to allow manual adjustments before saving.
 
 - **Transliteration**: Automatically transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data.
 
-- **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field.
+- **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field. A tick icon enables users to validate entered email on demand.
 
 - **Secure Architecture**:
   - All sensitive operations, including email validation and API key handling, are delegated to a secure backend hosted on a [Cloudflare Worker](https://developers.cloudflare.com/workers/), ensuring that API secrets remain secure and never exposed to the client.
@@ -124,10 +124,10 @@ After installing the **Lead Generator** extension, follow these steps to configu
 6. **Optional Fields and Manual Entry:**
 
    - If you need to add an email address, this can be done manually by typing into the "Email" field.
-   - Please note that manually entered email addresses are **not** validated, and the extension does not notify you of their validity.
 
 7. **Email Validation Behavior:**
-   - Validation is performed **only** during the automatic generation of email addresses (by clicking the email icon). Each generated candidate is validated via the Emailable service using a secure backend, and the valid email is inserted into the "Email" field.
+   - Validation is performed during the automatic generation of email addresses (by clicking the email icon). Each generated candidate is validated via the Emailable service using a secure backend, and the valid email is inserted into the "Email" field.
+   - Manually entered email address is validated by clicking the tick icon, and the extension does notify you of its validity.
 
 ## Usage
 
@@ -159,6 +159,7 @@ After installing the **Lead Generator** extension, follow these steps to configu
    - Click the email icon next to the "Email" field to initiate automatic email generation.
    - The extension will try a series of common email formats and validate each via a secure backend using the Emailable API.
    - The valid email found will be populated into the "Email" field.
+   - The email can be validated separately by clicking the tick icon.
 
 ## Permissions
 

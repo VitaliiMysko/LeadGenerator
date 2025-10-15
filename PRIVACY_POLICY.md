@@ -20,7 +20,7 @@ The "Lead Generator" extension allows users to collect publicly available inform
 
 The **Email** field is not auto-filled by default. Email addresses may be:
 
-- **Manually entered** by the user (in which case they are not validated or stored); or
+- **Manually entered and validated** by the user (in which case they are not stored); or
 - **Automatically generated and validated** using common email patterns based on company websites. In this case, validation is performed through a secure backend.
 
 The **Country** and **Industry** fields refers to the selected company.
@@ -45,7 +45,7 @@ The extension does not persistently store any collected or generated data. Email
 
 The extension does not share, sell, or transfer any user data to third parties. The only exception is for **temporary email validation**:
 
-- When generating an email address, the extension sends candidate email formats for validation to a secure backend
+- When generating an email address or checking entered one on demand, the extension sends candidate email formats for validation to a secure backend
 - The backend uses the **Emailable API** to verify whether the email is valid
 - No personal data is retained, stored, or reused during this process
 
