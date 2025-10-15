@@ -34,6 +34,10 @@ function getGenerateEmailsBtnElement() {
   return document.getElementById("generate-emails-btn");
 }
 
+function getValidateEmailsBtnElement() {
+  return document.getElementById("validete-emails-btn");
+}
+
 function getGetBtnElement() {
   return document.getElementById("get-btn");
 }
@@ -99,3 +103,4 @@ export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
 export const appVersionElement = getAppVersionElement();
 export const generateEmailsBtnElement = getGenerateEmailsBtnElement();
+export const validateEmailsBtnElement = getValidateEmailsBtnElement();

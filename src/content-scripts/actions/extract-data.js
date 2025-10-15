@@ -28,6 +28,18 @@ async function getData() {
   let personalData = [];
   let actualExperienceData = [];
 
+  const showAllPositionsButton = document.querySelector(".show-all-button");
+
+  if (showAllPositionsButton) {
+    const showAllPositionsButtonState =
+      showAllPositionsButton.getAttribute("aria-expanded");
+
+    if (showAllPositionsButtonState === "false") {
+      showAllPositionsButton.click();
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
   try {
     personalData = await getPersonalData();
     actualExperienceData = await getActualExperienceData();

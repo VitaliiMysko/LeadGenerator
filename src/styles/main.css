@@ -83,9 +83,14 @@ a:active {
 #email-block {
   position: relative;
 }
-#job-position,
-#email {
+#job-position {
   padding-right: 24px;
+}
+#email {
+  width: 100%;
+  padding-right: 48px;
+  box-sizing: border-box;
+  transition: background-color 0.5s ease;
 }
 @keyframes textChange {
   0% {
@@ -99,7 +104,8 @@ a:active {
   animation: textChange 1s ease;
 }
 #translate-btn,
-#generate-emails-btn {
+#generate-emails-btn,
+#validete-emails-btn {
   position: absolute;
   right: 0;
   width: 20px;
@@ -144,12 +150,17 @@ a:active {
   align-self: stretch;
 }
 #experience-container {
-  width: 184px; /* hard code */
+  width: 183px; /* hard code */
   display: flex;
   flex-direction: column;
 }
 .radio-company {
   padding: 5px 0;
+}
+.radio-company * {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .company-name.active {
   font-weight: 600;
@@ -216,21 +227,19 @@ a:active {
   white-space: nowrap; /* in one line */
   color: #333;
 }
-
 .company-website span.editing-domain {
   flex-grow: 1;
   min-width: 0;
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
-  outline: 1px solid #0078d7;
-  padding: 2px 4px;
-  border-radius: 3px;
+  border-bottom: 1px solid #999;
+  outline: none;
   user-select: text;
   pointer-events: auto;
   cursor: text;
+  margin-right: 3px;
 }
-
 .edit-website-domain-wrapper {
   display: flex;
   align-items: center;
@@ -238,12 +247,10 @@ a:active {
   cursor: pointer;
   flex-shrink: 0;
 }
-
 .edit-website-domain-icon {
   cursor: pointer;
   margin-left: 5px;
 }
-
 .company-website a {
   display: inline-flex; /* adapts to content size */
   align-items: center;
@@ -273,4 +280,12 @@ a:active {
   width: 10px;
   height: 100%;
   background: linear-gradient(to right, #faefee, #ca8c89);
+}
+.validation-success {
+  background-color: #dbf5dc;
+  transition: background-color 0.5s ease;
+}
+.validation-error {
+  background-color: #fce1e0;
+  transition: background-color 0.5s ease;
 }

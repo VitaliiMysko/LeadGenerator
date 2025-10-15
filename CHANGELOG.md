@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.4] - 2025-10-15
+
+### Added
+
+- Ability to read the complete list of a person’s current positions.
+- Email validation feature triggered manually via button.
+
+### Optimized
+
+- Mechanism for modifying and normalizing company domains.
+
+### Fixed
+
+- Minor inaccuracies in person name transliteration.
+- Small stylistic and UI inconsistencies.
+
 ## [3.2.3] - 2025-07-04
 
 ### Added

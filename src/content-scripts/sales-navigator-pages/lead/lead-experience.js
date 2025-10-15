@@ -23,6 +23,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
         if (jobPositionElement) {
           jobPosition = jobPositionElement.textContent
+            .replace(/\s+/g, " ")
             .replace(/\p{Extended_Pictographic}/gu, "")
             .trim();
 
@@ -58,6 +59,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
               if (jobPositionElement) {
                 jobPosition = jobPositionElement.textContent
+                  .replace(/\s+/g, " ")
                   .replace(/\p{Extended_Pictographic}/gu, "")
                   .trim();
               }
