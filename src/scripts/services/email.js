@@ -205,7 +205,11 @@ export const getBasicEmail = (hostName) => {
 function getFullName() {
   return `${getFirstNameElement().getAttribute(
     "data-first-name"
-  )} ${getSecondNameElement().getAttribute("data-second-name")}}`;
+  )} ${getSecondNameElement().getAttribute("data-second-name")}`;
+}
+
+function getFullNameAlternative() {
+  return `${getFirstNameElement().value} ${getSecondNameElement().value}`;
 }
 
 function prepareBasicEmailName(fullName) {
@@ -219,8 +223,7 @@ function prepareBasicEmailName(fullName) {
     .replace(/\.$/, "");
 }
 
-export const generateEmails = (hostName) => {
-  const fullName = getFullName();
+function getEmails(emails, hostName, fullName) {
   const emailName = prepareBasicEmailName(fullName);
   const parts = emailName.split(".");
 
@@ -256,15 +259,25 @@ export const generateEmails = (hostName) => {
     host: hostName,
   };
 
-  const emails = [];
-  if (hostName === "") return emails;
-
   emailTemplates.forEach(({ template, condition }) => {
     if (condition(data)) {
       const email = template.replace(/{(\w+)}/g, (_, key) => data[key] || "");
       if (!emails.includes(email)) emails.push(email);
     }
   });
+}
+
+export const generateEmails = (hostName) => {
+  const emails = [];
+  if (hostName === "") return emails;
+
+  const fullName = getFullName();
+  getEmails(emails, hostName, fullName);
+
+  const fullNameAlternative = getFullNameAlternative();
+  if (fullName !== fullNameAlternative) {
+    getEmails(emails, hostName, fullNameAlternative);
+  }
 
   return emails;
 };
