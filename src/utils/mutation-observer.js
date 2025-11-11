@@ -1,6 +1,6 @@
 window.leadGenerator = window.leadGenerator || {};
 
-const waitForElementWithTimeout = (selector, timeout = 3000) => {
+const waitForElementWithTimeout = (selector, timeout = 4000) => {
   return new Promise((resolve, reject) => {
     const observer = new MutationObserver((mutations, obs) => {
       const element = document.querySelector(selector);
