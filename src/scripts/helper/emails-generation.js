@@ -68,17 +68,17 @@ export const emailTemplates = [
     template: "{firstNoHyphen}.{lastPart2}@{host}",
     condition: ({ firstNoHyphen, lastPart2 }) => firstNoHyphen && lastPart2,
   },
-  {
-    template: "{first}_{last}@{host}",
-    condition: ({ first, last }) =>
-      first.length > 1 &&
-      !first.includes("-") &&
-      last.length > 1 &&
-      !last.includes("."),
-  },
-  {
-    template: "{first}_{lastPart2}@{host}",
-    condition: ({ first, lastPart1, lastPart2 }) =>
-      !first.includes("-") && lastPart2 !== "" && lastPart1 === "",
-  },
+  // {
+  //   template: "{first}_{last}@{host}",
+  //   condition: ({ first, last }) =>
+  //     first.length > 1 &&
+  //     !first.includes("-") &&
+  //     last.length > 1 &&
+  //     !last.includes("."),
+  // },
+  // {
+  //   template: "{first}_{lastPart2}@{host}",
+  //   condition: ({ first, lastPart1, lastPart2 }) =>
+  //     !first.includes("-") && lastPart2 !== "" && lastPart1 === "",
+  // },
 ];

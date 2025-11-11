@@ -58,7 +58,6 @@ function populateGeneralData(items) {
       const attributeValue = hasGermanLetters(value)
         ? transliterate(transliterateGermanLetters(value))
         : baseTransliterated;
-
       inputElement.value = baseTransliterated;
       inputElement.setAttribute(`data-${item.inputId}`, attributeValue);
     } else {
@@ -92,7 +91,7 @@ const inputs = [
 inputs.forEach(({ id, dataAttr }) => {
   const input = document.getElementById(id);
 
-  input.addEventListener("blur", () => {
+  input.addEventListener("change", () => {
     const value = input.value;
     if (value) {
       input.setAttribute(`${dataAttr}`, value);

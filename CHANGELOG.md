@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.2.5] - 2025-11-11
+
+### Added
+
+- New email templates.
+
+### Optimized
+
+- Increase timeout for loading web pages in the background.
+
 ## [3.2.4] - 2025-10-15
 
 ### Added
