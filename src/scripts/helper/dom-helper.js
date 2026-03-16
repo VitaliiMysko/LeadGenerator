@@ -78,12 +78,16 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
+export function getCompanyLocationElements() {
+  return document.querySelectorAll(".company-location");
+}
+
 export function getCompanyIndustryElements() {
   return document.querySelectorAll(".company-industry");
 }
 
-export function getCompanyLocationElements() {
-  return document.querySelectorAll(".company-location");
+export function getCompanySizeElements() {
+  return document.querySelectorAll(".company-size");
 }
 
 export function getCompanyDomainElement() {

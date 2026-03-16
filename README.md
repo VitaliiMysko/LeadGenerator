@@ -27,7 +27,7 @@ Each field is editable to allow manual adjustments before saving.
 
 **Right Panel:**
 
-- Displays actual experience of the individual’s profile such as a list of companies with detailed information about job positions, website, location and industries. Selecting an entry updates the "Job Position", "Company Name", "Counrty" and "Industry" fields on the left side with the selected information.
+- Displays actual experience of the individual’s profile such as a list of companies with detailed information about job positions, website, location, industries and company size. Selecting an entry updates the "Job Position", "Company Name", "Counrty" and "Industry" fields on the left side with the selected information.
 
 ## Additional Functionalities
 

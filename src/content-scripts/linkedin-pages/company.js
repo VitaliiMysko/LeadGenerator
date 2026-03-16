@@ -7,6 +7,7 @@
     website: "",
     location: "",
     industry: "",
+    size: "",
     error: "",
   };
 
@@ -14,6 +15,7 @@
     if (message.action === "initLinkedinCompanyData") {
       data.location = message.data.location || "";
       data.industry = message.data.industry || "";
+      data.size = message.data.size || "";
     }
   });
 
@@ -48,6 +50,16 @@
     .catch((error) => {
       console.error("Error finding element:", error);
     })
+    .then((element) => {
+      if (!data.size) {
+        data.size =
+          getDefinitionByTerm(descriptionList, "Company size") ||
+          getDefinitionByTerm(descriptionList, "Розмір компанії");
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding element:", error);
+    })
     .finally(() => {
       sendMessageAndCloseTab(data);
     });
@@ -57,7 +69,7 @@
       { action: "linkedinCompanyPageContent", data },
       () => {
         chrome.runtime.sendMessage({ action: "closeTab" });
-      }
+      },
     );
   };
 

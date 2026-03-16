@@ -166,8 +166,9 @@ a:active {
   font-weight: 600;
 }
 .company-job,
+.company-location,
 .company-industry,
-.company-location {
+.company-size {
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -211,8 +212,9 @@ a:active {
 }
 .company-job.active,
 .company-website.active,
+.company-location.active,
 .company-industry.active,
-.company-location.active {
+.company-size.active {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }

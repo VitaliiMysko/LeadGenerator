@@ -31,6 +31,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     const location = request.location;
     const industry = request.industry;
+    const size = request.size;
 
     chrome.tabs.create(
       {
@@ -40,58 +41,62 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       (tab) => {
         const tabId = tab.id;
 
-        chrome.tabs.onUpdated.addListener(async function listener(
-          updatedTabId,
-          info
-        ) {
-          if (tabId === updatedTabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files: [
-                  "src/utils/mutation-observer.js",
-                  "src/content-scripts/sales-navigator-pages/company/company.js",
-                ],
-              },
-              async (res) => {
-                chrome.tabs.sendMessage(tabId, {
-                  action: "initSalesNavigatorCompanyData",
-                  data: {
-                    location,
-                    industry,
-                  },
-                });
+        chrome.tabs.onUpdated.addListener(
+          async function listener(updatedTabId, info) {
+            if (tabId === updatedTabId && info.status === "complete") {
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files: [
+                    "src/utils/mutation-observer.js",
+                    "src/content-scripts/sales-navigator-pages/company/company.js",
+                  ],
+                },
+                async (res) => {
+                  chrome.tabs.sendMessage(tabId, {
+                    action: "initSalesNavigatorCompanyData",
+                    data: {
+                      location,
+                      industry,
+                      size,
+                    },
+                  });
 
-                chrome.runtime.onMessage.addListener(
-                  async function responseListener(response, sender) {
-                    if (
-                      response.action === "salesNavigatorCompanyPageContent" &&
-                      request.url === response.data.url
-                    ) {
-                      const data = response.data;
-                      if (data) {
-                        const websiteState = await getkWebsiteState(data);
-                        const result = {
-                          website: data.website,
-                          status: websiteState.status,
-                          ok: websiteState.ok,
-                          location: data.location,
-                          industry: data.industry,
-                        };
-                        activeRequests[request.url] = result;
+                  chrome.runtime.onMessage.addListener(
+                    async function responseListener(response, sender) {
+                      if (
+                        response.action ===
+                          "salesNavigatorCompanyPageContent" &&
+                        request.url === response.data.url
+                      ) {
+                        const data = response.data;
+                        if (data) {
+                          const websiteState = await getkWebsiteState(data);
+                          const result = {
+                            website: data.website,
+                            status: websiteState.status,
+                            ok: websiteState.ok,
+                            location: data.location,
+                            industry: data.industry,
+                            size: data.size,
+                          };
+                          activeRequests[request.url] = result;
 
-                        sendResponse(result);
+                          sendResponse(result);
+                        }
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener,
+                        );
                       }
-                      chrome.runtime.onMessage.removeListener(responseListener);
-                    }
-                  }
-                );
-              }
-            );
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
+                    },
+                  );
+                },
+              );
+              chrome.tabs.onUpdated.removeListener(listener);
+            }
+          },
+        );
+      },
     );
 
     return true;
@@ -100,6 +105,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "fetchLinkedinCompanyPage") {
     const location = request.location;
     const industry = request.industry;
+    const size = request.size;
 
     chrome.tabs.create(
       {
@@ -109,47 +115,49 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       (tab) => {
         const tabId = tab.id;
 
-        chrome.tabs.onUpdated.addListener(async function listener(
-          updatedTabId,
-          info
-        ) {
-          if (tabId === updatedTabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files: [
-                  "src/utils/mutation-observer.js",
-                  "src/content-scripts/linkedin-pages/company.js",
-                ],
-              },
-              async (res) => {
-                chrome.tabs.sendMessage(tabId, {
-                  action: "initLinkedinCompanyData",
-                  data: {
-                    location,
-                    industry,
-                  },
-                });
+        chrome.tabs.onUpdated.addListener(
+          async function listener(updatedTabId, info) {
+            if (tabId === updatedTabId && info.status === "complete") {
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files: [
+                    "src/utils/mutation-observer.js",
+                    "src/content-scripts/linkedin-pages/company.js",
+                  ],
+                },
+                async (res) => {
+                  chrome.tabs.sendMessage(tabId, {
+                    action: "initLinkedinCompanyData",
+                    data: {
+                      location,
+                      industry,
+                      size,
+                    },
+                  });
 
-                chrome.runtime.onMessage.addListener(
-                  async function responseListener(response, sender) {
-                    if (
-                      response.action === "linkedinCompanyPageContent" &&
-                      sender.tab?.id === tabId
-                    ) {
-                      if (response.data) {
-                        sendResponse(response.data);
+                  chrome.runtime.onMessage.addListener(
+                    async function responseListener(response, sender) {
+                      if (
+                        response.action === "linkedinCompanyPageContent" &&
+                        sender.tab?.id === tabId
+                      ) {
+                        if (response.data) {
+                          sendResponse(response.data);
+                        }
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener,
+                        );
                       }
-                      chrome.runtime.onMessage.removeListener(responseListener);
-                    }
-                  }
-                );
-              }
-            );
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
+                    },
+                  );
+                },
+              );
+              chrome.tabs.onUpdated.removeListener(listener);
+            }
+          },
+        );
+      },
     );
 
     return true;

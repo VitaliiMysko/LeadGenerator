@@ -71,9 +71,8 @@ if (!window.leadGenerator.experienceDataInit) {
                 if (companyName != "" && jobPosition != "") {
                   hasActualJobPosition = true;
                   if (!extraData) {
-                    extraData = await getTooltipCompanyData(
-                      experienceComponent
-                    );
+                    extraData =
+                      await getTooltipCompanyData(experienceComponent);
                   }
 
                   actualExperienceData.push({
@@ -113,7 +112,7 @@ if (!window.leadGenerator.experienceDataInit) {
       const companyStatus = window.leadGenerator.constants.companyStatus;
       return new RegExp(
         `[\\s,]+(${companyStatus.join("|")})([.,](?=\\s|$)|\\s|$).*$`,
-        "i"
+        "i",
       );
     }
 
@@ -143,9 +142,8 @@ if (!window.leadGenerator.experienceDataInit) {
     }
 
     async function getTooltipCompanyData(experienceComponent) {
-      const companyTooltipElement = await triggerHoverAndWaitTooltip(
-        experienceComponent
-      );
+      const companyTooltipElement =
+        await triggerHoverAndWaitTooltip(experienceComponent);
 
       const extraCompanyData = extractCompanyData(companyTooltipElement);
       return extraCompanyData;
@@ -172,7 +170,7 @@ if (!window.leadGenerator.experienceDataInit) {
         const tooltip = await waitForElementById(
           tooltipId,
           (el) => el.querySelector("li"), // tooltip has to have <li>
-          600
+          600,
         );
         return tooltip;
       } catch (e) {
@@ -183,10 +181,10 @@ if (!window.leadGenerator.experienceDataInit) {
     function extractCompanyData(tooltipElement) {
       if (!tooltipElement)
         return {
-          industry: "",
-          revenue: "",
           location: "",
+          industry: "",
           companySize: "",
+          revenue: "",
         };
 
       const getTextByDataAttr = (attr) => {
@@ -195,10 +193,10 @@ if (!window.leadGenerator.experienceDataInit) {
       };
 
       return {
-        industry: getTextByDataAttr("industry"),
-        revenue: getTextByDataAttr("revenue"),
         location: getTextByDataAttr("location"),
+        industry: getTextByDataAttr("industry"),
         companySize: getTextByDataAttr("company-size"),
+        revenue: getTextByDataAttr("revenue"),
       };
     }
 

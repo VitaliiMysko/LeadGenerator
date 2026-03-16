@@ -3,8 +3,9 @@ import {
   getCompanyNameElements,
   getCompanyJobElements,
   getCompanyWebsiteElements,
-  getCompanyIndustryElements,
   getCompanyLocationElements,
+  getCompanyIndustryElements,
+  getCompanySizeElements,
   emailElement,
   generateEmailsBtnElement,
   companyIndustryElement,
@@ -19,8 +20,9 @@ import {
 
 const companyDetailsByDefault = {
   website: "",
-  industry: "",
   location: "",
+  industry: "",
+  size: "",
   status: 0,
   ok: false,
 };
@@ -55,19 +57,24 @@ async function manageCompanyDetailsBlock(radio) {
     website.classList.remove("active");
     website.style.display = "none";
   });
+  getCompanyLocationElements().forEach((country) => {
+    country.classList.remove("active");
+    country.style.display = "none";
+  });
   getCompanyIndustryElements().forEach((industry) => {
     industry.classList.remove("active");
     industry.style.display = "none";
   });
-  getCompanyLocationElements().forEach((country) => {
-    country.classList.remove("active");
-    country.style.display = "none";
+  getCompanySizeElements().forEach((size) => {
+    size.classList.remove("active");
+    size.style.display = "none";
   });
 
   const parentDiv = radio.closest(".radio-company");
 
   let location = parentDiv.getAttribute("data-company-location");
   let industry = parentDiv.getAttribute("data-company-industry");
+  let size = parentDiv.getAttribute("data-company-size");
 
   const companyNameLabel = parentDiv.querySelector(".company-name");
   companyNameLabel.classList.add("active");
@@ -78,17 +85,21 @@ async function manageCompanyDetailsBlock(radio) {
   const websiteBlock = parentDiv.querySelector(".company-website");
   websiteBlock.classList.add("active");
 
+  const locationBlock = parentDiv.querySelector(".company-location");
+  locationBlock.classList.add("active");
+
   const industryBlock = parentDiv.querySelector(".company-industry");
   industryBlock.classList.add("active");
 
-  const locationBlock = parentDiv.querySelector(".company-location");
-  locationBlock.classList.add("active");
+  const sizeBlock = parentDiv.querySelector(".company-size");
+  sizeBlock.classList.add("active");
 
   const companyLinkElement = parentDiv.querySelector("a");
 
   websiteBlock.style.display = "flex";
-  industryBlock.style.display = "flex";
   locationBlock.style.display = "flex";
+  industryBlock.style.display = "flex";
+  sizeBlock.style.display = "flex";
 
   const generateEmailIcon = generateEmailsBtnElement.querySelector("img");
   const generateEmailIconByDefaultSrc = "assets/icons/generate-emails-16.png";
@@ -114,6 +125,10 @@ async function manageCompanyDetailsBlock(radio) {
     industryBlock.innerHTML = "";
     industryBlock.classList.add("loading");
   }
+  if (!size) {
+    sizeBlock.innerHTML = "";
+    sizeBlock.classList.add("loading");
+  }
 
   const websiteIconElement = getWebsiteIconElement();
   const editWebsiteDomainElement = getEditWebsiteDomainElement();
@@ -130,15 +145,20 @@ async function manageCompanyDetailsBlock(radio) {
     const industryLoadingTextElement = getSpanElement("Loading industry");
     industryBlock.appendChild(industryLoadingTextElement);
   }
+  if (!size) {
+    const sizeLoadingTextElement = getSpanElement("Loading company size");
+    sizeBlock.appendChild(sizeLoadingTextElement);
+  }
 
   try {
     let companyDetails = companyLinkElement
-      ? await getCompanyData(companyLinkElement.href, location, industry)
+      ? await getCompanyData(companyLinkElement.href, location, industry, size)
       : { ...companyDetailsByDefault };
 
     websiteBlock.innerHTML = "";
-    industryBlock.innerHTML = "";
     locationBlock.innerHTML = "";
+    industryBlock.innerHTML = "";
+    sizeBlock.innerHTML = "";
 
     let website = "No website found";
     if (companyDetails.website) {
@@ -185,6 +205,18 @@ async function manageCompanyDetailsBlock(radio) {
       companyIndustryElement.value = industry;
     }
 
+    const sizeNoFound = "No company size found";
+    if (!size || size !== companyDetails.size) {
+      size =
+        companyDetails.size === ""
+          ? sizeNoFound
+          : companyDetails.size;
+      parentDiv.setAttribute(`data-company-size`, companyDetails.size);
+    }
+
+    const sizeTextElement = getSpanElement(size);
+    sizeBlock.appendChild(sizeTextElement);
+
     const websiteElement = getSpanElement(website);
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
@@ -208,6 +240,7 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.classList.remove("loading");
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
+    sizeBlock.classList.remove("loading");
   }
 }
 
@@ -264,7 +297,7 @@ function getHostName(url) {
 
 const companyDetailsCache = new Map();
 
-async function getCompanyData(companylink, location, industry) {
+async function getCompanyData(companylink, location, industry, size) {
   if (companyDetailsCache.has(companylink)) {
     return companyDetailsCache.get(companylink);
   }
@@ -272,6 +305,7 @@ async function getCompanyData(companylink, location, industry) {
   let companyDetails = { ...companyDetailsByDefault };
   companyDetails.location = location;
   companyDetails.industry = industry;
+  companyDetails.size = size;
   if (companylink) {
     try {
       const response = await sendMessagePromise({
@@ -279,6 +313,7 @@ async function getCompanyData(companylink, location, industry) {
         url: companylink,
         location: location,
         industry: industry,
+        size: size,
       });
 
       if (response) {
