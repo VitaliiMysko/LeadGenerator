@@ -18,7 +18,6 @@ export function createRadioCompanyList(experience) {
 
 function getRadioCompanyBlock(company, index) {
   const extraCompanyData = company.extraData;
-
   const radioCompanyBlock = document.createElement("div");
   radioCompanyBlock.classList.add("radio-company");
   radioCompanyBlock.setAttribute(`data-company-name`, company.companyName);
@@ -27,28 +26,29 @@ function getRadioCompanyBlock(company, index) {
     company.jobPosition
   );
   radioCompanyBlock.setAttribute(
-    `data-company-industry`,
-    extraCompanyData.industry
-  );
-  radioCompanyBlock.setAttribute(
-    `data-company-revenue`,
-    extraCompanyData.revenue
-  );
-  radioCompanyBlock.setAttribute(
     `data-company-location`,
     extraCompanyData.location
   );
   radioCompanyBlock.setAttribute(
+    `data-company-industry`,
+    extraCompanyData.industry
+  );
+  radioCompanyBlock.setAttribute(
     `data-company-size`,
     extraCompanyData.companySize
+  );
+    radioCompanyBlock.setAttribute(
+    `data-company-revenue`,
+    extraCompanyData.revenue
   );
 
   const radioItem = getCompanyRadioElement(company);
   const companyLabeRadiolElement = getCompanyLabelRadioElement(company);
   const companyJobRadioElement = getCompanyJobRadioElement(company);
   const companyWebsiteRadioElement = getCompanyWebsiteRadioElement();
-  const companyIndustryRadioElement = getCompanyIndustryRadioElement(company);
   const companyLocationRadioElement = getCompanyLocationRadioElement(company);
+  const companyIndustryRadioElement = getCompanyIndustryRadioElement(company);
+  const companySizeRadioElement = getCompanySizeRadioElement(company);
 
   if (index === 0) {
     radioItem.checked = true;
@@ -67,13 +67,13 @@ function getRadioCompanyBlock(company, index) {
       jobPositionElement.value = parentDiv.getAttribute(
         "data-company-job-position"
       );
-      companyIndustryElement.value = parentDiv.getAttribute(
-        "data-company-industry"
-      );
       companyCountryElement.value = parentDiv
         .getAttribute("data-company-location")
         .split(", ")
         .pop();
+      companyIndustryElement.value = parentDiv.getAttribute(
+        "data-company-industry"
+      );
     }
   });
 
@@ -83,6 +83,7 @@ function getRadioCompanyBlock(company, index) {
   radioCompanyBlock.appendChild(companyWebsiteRadioElement);
   radioCompanyBlock.appendChild(companyLocationRadioElement);
   radioCompanyBlock.appendChild(companyIndustryRadioElement);
+  radioCompanyBlock.appendChild(companySizeRadioElement);
   return radioCompanyBlock;
 }
 
@@ -125,6 +126,13 @@ function getCompanyWebsiteRadioElement() {
   return websiteElement;
 }
 
+function getCompanyLocationRadioElement(company) {
+  const countryElement = document.createElement("div");
+  countryElement.classList.add("company-location");
+  countryElement.textContent = company.extraData.location;
+  return countryElement;
+}
+
 function getCompanyIndustryRadioElement(company) {
   const industryElement = document.createElement("div");
   industryElement.classList.add("company-industry");
@@ -132,9 +140,9 @@ function getCompanyIndustryRadioElement(company) {
   return industryElement;
 }
 
-function getCompanyLocationRadioElement(company) {
-  const countryElement = document.createElement("div");
-  countryElement.classList.add("company-location");
-  countryElement.textContent = company.extraData.location;
-  return countryElement;
+function getCompanySizeRadioElement(company) {
+  const sizeElement = document.createElement("div");
+  sizeElement.classList.add("company-size");
+  sizeElement.textContent = company.extraData.companySize;
+  return sizeElement;
 }
