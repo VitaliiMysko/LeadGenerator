@@ -94,6 +94,22 @@ export function getCompanyDomainElement() {
   return document.querySelector("div.company-website.active > span");
 }
 
+export function getTabSelectorTriggerElement() {
+  return document.querySelector(".tab-selector-trigger");
+}
+
+export function getTabDropdownElement() {
+  return document.querySelector(".tab-dropdown");
+}
+
+export function getTabOptionElements() {
+  return document.querySelectorAll(".tab-option");
+}
+
+export function getTabElements() {
+  return document.querySelectorAll(".tab");
+}
+
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();

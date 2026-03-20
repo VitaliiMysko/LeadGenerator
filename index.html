@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>Lead generator</title>
@@ -75,9 +75,44 @@
         <div id="alert" class="alert"></div>
       </div>
       <div class="vertical-line"></div>
-      <div class="container">
-        <h3>Actual experience</h3>
-        <div id="experience-container"></div>
+      <div class="container tabs-container">
+        <div class="tab-selector">
+          <div class="tab-selector-trigger">
+            <span id="selected-tab"><h3>Actual experience</h3></span>
+            <span class="arrow"></span>
+          </div>
+          <div class="tab-dropdown">
+            <div class="tab-option active" data-tab="experience">
+              Actual experiece
+            </div>
+            <div class="tab-option" data-tab="filters">Filters</div>
+            <div class="tab-option" data-tab="settings">Settings</div>
+            <div class="tab-option" data-tab="login">Log in / Sign up</div>
+          </div>
+        </div>
+        <div class="tabs-content">
+          <div id="tab-experience" class="tab active">
+            <div id="experience-container"></div>
+          </div>
+          <div id="tab-filters" class="tab">
+            <input type="text" placeholder="Filter by company" />
+            <input type="text" placeholder="Filter by industry" />
+            <input type="text" placeholder="Filter by country" />
+          </div>
+          <div id="tab-settings" class="tab">
+            <label>
+              <input type="checkbox" />
+              Test 1
+            </label>
+            <label>
+              <input type="checkbox" />
+              Test 2
+            </label>
+          </div>
+          <div id="tab-login" class="tab">
+            <span>Test test: </span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -93,6 +128,10 @@
     <script
       type="module"
       src="src/scripts/containers/data/drag-and-drop-data.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/navigation/tab-selector.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>
