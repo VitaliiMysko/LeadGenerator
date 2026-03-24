@@ -110,6 +110,10 @@ export function getTabElements() {
   return document.querySelectorAll(".tab");
 }
 
+export function getDragAndDropSettingsElement() {
+  return document.getElementById("drag-and-drop-settings");
+}
+
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();

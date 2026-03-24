@@ -18,15 +18,15 @@
         <button id="get-btn">Get</button>
         <button id="copy-btn">Copy</button>
         <div id="data-container">
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Name: </span>
             <input type="text" id="first-name" value="" />
           </div>
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Surname: </span>
             <input type="text" id="second-name" value="" />
           </div>
-          <div class="draggable-block" id="job-position-block" draggable="true">
+          <div class="draggable-block" id="job-position-block">
             <span>Job position: </span>
             <input type="text" id="job-position" value="" />
             <button id="translate-btn">
@@ -37,11 +37,11 @@
               />
             </button>
           </div>
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Link: </span>
             <input type="text" id="link" value="" />
           </div>
-          <div class="draggable-block" id="email-block" draggable="true">
+          <div class="draggable-block" id="email-block">
             <span>Email: </span>
             <input type="email" id="email" value="" />
             <button id="validete-emails-btn" style="right: 23px">
@@ -59,15 +59,15 @@
               />
             </button>
           </div>
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Company name: </span>
             <input type="text" id="company-name" value="" />
           </div>
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Country:</span>
             <input type="text" id="company-country" value="" />
           </div>
-          <div class="draggable-block" draggable="true">
+          <div class="draggable-block">
             <span>Industry:</span>
             <input type="text" id="company-industry" value="" />
           </div>
@@ -101,12 +101,8 @@
           </div>
           <div id="tab-settings" class="tab">
             <label>
-              <input type="checkbox" />
-              Test 1
-            </label>
-            <label>
-              <input type="checkbox" />
-              Test 2
+              <input id="drag-and-drop-settings" type="checkbox" />
+              using "Drag & drop"
             </label>
           </div>
           <div id="tab-login" class="tab">
@@ -132,6 +128,10 @@
     <script
       type="module"
       src="src/scripts/containers/navigation/tab-selector.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/settings/settings.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>

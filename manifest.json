@@ -4,7 +4,7 @@
   "version": "3.3.1",
   "environment": "local",
   "description": "Lead generator is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page.",
-  "permissions": ["activeTab", "scripting", "identity", "tabs"],
+  "permissions": ["activeTab", "scripting", "identity", "tabs", "storage"],
   "host_permissions": [
     "https://www.linkedin.com/sales/lead/*",
     "https://www.linkedin.com/sales/company/*",
