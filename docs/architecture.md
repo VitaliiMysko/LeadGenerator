@@ -4,8 +4,6 @@
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
----
-
 ## 1. Overview
 
 The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and **Linkedin** pages (`https://www.linkedin.com/company/*`) just on demand. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
@@ -14,8 +12,6 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and Linkedin pages (`https://www.linkedin.com/company/*`).
 - **Extension UI Scripts**: Power the popup interface, background logic, and user interactions.
-
----
 
 ## 2. Key Components
 
@@ -67,16 +63,12 @@ The extension UI follows a lightweight SPA-like approach within the popup.
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
 
----
-
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – No front-end frameworks are used
 - **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations
 - **Chrome Storage API** – used to persist user preferences (e.g., drag & drop settings)
-
----
 
 ## 4. Third-Party Services
 
@@ -93,8 +85,6 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 - Requires Google account authentication via OAuth2.
 - Translation is performed client-side during the session.
 
----
-
 ## 5. Security & Privacy Considerations
 
 - **No personal or extracted profile data is stored**
@@ -105,8 +95,6 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 - **All secret keys (Emailable API)** are stored only in the Cloudflare Worker.
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
-
----
 
 ## 6. Data Flow Summary
 
@@ -127,8 +115,6 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
    - Toggle drag-and-drop functionality
    - Preferences are persisted using Chrome Storage API
 
----
-
 ## 7. Permissions Summary
 
 ```json
@@ -147,8 +133,6 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 ]
 ```
 
----
-
 ## 8. Extensibility Notes
 
 The modular directory structure allows easy scaling:
@@ -159,12 +143,9 @@ The modular directory structure allows easy scaling:
 - The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
 - New tabs can be added without restructuring the core layout
 
----
-
 ## 9. Related Documents
 
 - [`README.md`](../README.md) – Installation and usage instructions.
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
 - [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
 
----

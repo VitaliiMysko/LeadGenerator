@@ -5,11 +5,13 @@ This extension is a straightforward tool for extracting data about individuals d
 ## Key Features
 
 - **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
+
 - **Dynamic Tab Navigation**:
   - The right panel now includes a tab system with a dropdown selector, allowing you to switch between different functional views without overloading the UI.
   - Available tabs:
-  - **Actual Experience** – displays extracted company experience data
-  - **Settings** – allows customization of extension behavior
+    - **Actual Experience** – displays extracted company experience data
+    - **Settings** – allows customization of extension behavior
+
 - **Data Extraction**:
   - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," "Company Name", "Country" and "Industry".
     The "Email" field is not auto-filled.
@@ -28,9 +30,9 @@ This extension is a straightforward tool for extracting data about individuals d
 - Controlled via dropdown tab selector
 - Content updates dynamically without reloading the UI
 
-**Tabs**
+**Tabs:**
 
-1. **Actual Experience:**(actual tab by default)
+1. **Actual Experience:** (actual tab by default)
    - Displays a list of companies associated with the profile
    - Includes:
      - Job position
@@ -97,8 +99,6 @@ For a detailed list of changes in each release, please refer to the [CHANGELOG.m
 
 After installation, you can pin the extension to your toolbar for quick access by clicking the puzzle icon in the Chrome toolbar and selecting **Pin** next to **Lead Generator**.
 
----
-
 ### Option 2: Install Locally from Source
 
 1. **Download the Extension:**
@@ -122,8 +122,6 @@ After installation, you can pin the extension to your toolbar for quick access b
 6. **Start Using the Extension:**
    - Navigate to a LinkedIn Sales Navigator profile page to begin using the **Get** and **Copy** buttons to collect data.
    - The extension runs only through `https://www.linkedin.com/sales/lead/*` page, others pages such as `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` use in the background mode.
-
----
 
 > **Note:** This extension is optimized for LinkedIn Sales Navigator pages. Some permissions may need to be granted to ensure full functionality.
 
@@ -158,11 +156,12 @@ After installing the **Lead Generator** extension, follow these steps to configu
    - Validation is performed during the automatic generation of email addresses (by clicking the email icon). Each generated candidate is validated via the Emailable service using a secure backend, and the valid email is inserted into the "Email" field.
    - Manually entered email address is validated by clicking the tick icon, and the extension does notify you of its validity.
 
-8. **Settings Tab**
+8. **Settings Tab:**
 
-You can configure behavior directly in the extension UI
+You can configure behavior directly in the extension UI:
+
 - Enable/disable drag & drop functionality
-- Preferences are saved locally using Chrome storage
+- Preferences are saved locally using Chrome `storage`
 
 ## Usage
 
