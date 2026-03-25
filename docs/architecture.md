@@ -1,10 +1,8 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 13, 2025
+**Last updated**: March 25, 2025
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
-
----
 
 ## 1. Overview
 
@@ -14,8 +12,6 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and Linkedin pages (`https://www.linkedin.com/company/*`).
 - **Extension UI Scripts**: Power the popup interface, background logic, and user interactions.
-
----
 
 ## 2. Key Components
 
@@ -50,15 +46,29 @@ Handles user-interaction logic related to core actions:
 
 - `index.html` is located at the root and serves as the popup's main container.
 
----
+### 2.5 UI Architecture
+
+The extension UI follows a lightweight SPA-like approach within the popup.
+
+- The **left panel** is static and always visible
+- The **right panel** is dynamic and controlled via a tab system
+
+#### Tab System
+
+- Implemented using a **dropdown selector**
+- Tabs are rendered using a **show/hide pattern (no full re-render)**
+- Current tabs:
+  - **Actual Experience** (actual tab by default) – displays extracted company data
+  - **Settings** – manages user preferences
+
+This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
 
 ## 3. Technologies Used
 
-- **Vanilla JavaScript** – No front-end frameworks are used.
-- **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage.
-- **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations.
-
----
+- **Vanilla JavaScript** – No front-end frameworks are used
+- **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage
+- **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations
+- **Chrome Storage API** – used to persist user preferences (e.g., drag & drop settings)
 
 ## 4. Third-Party Services
 
@@ -75,19 +85,16 @@ Handles user-interaction logic related to core actions:
 - Requires Google account authentication via OAuth2.
 - Translation is performed client-side during the session.
 
----
-
 ## 5. Security & Privacy Considerations
 
-- **No user data is stored** — neither in localStorage, nor in a database.
+- **No personal or extracted profile data is stored**
+- **User preferences (UI settings)** are stored locally using Chrome Storage
 - **No cookies are set or read**.
 - **Clipboard is used only temporarily**, initiated manually by the user.
 - **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored.
 - **All secret keys (Emailable API)** are stored only in the Cloudflare Worker.
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
-
----
 
 ## 6. Data Flow Summary
 
@@ -104,8 +111,9 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
      - Valid result is returned and inserted into form and clipboard.
    - Validate email separately via Emailable.
 5. No data is stored on servers; data only exists temporarily in memory or clipboard.
-
----
+6. The user can configure extension behavior via the Settings tab:
+   - Toggle drag-and-drop functionality
+   - Preferences are persisted using Chrome Storage API
 
 ## 7. Permissions Summary
 
@@ -114,7 +122,8 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
   "activeTab",
   "scripting",
   "identity",
-  "tabs"
+  "tabs",
+  "storage"
 ],
 "host_permissions": [
   "https://www.linkedin.com/sales/lead/*",
@@ -124,8 +133,6 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 ]
 ```
 
----
-
 ## 8. Extensibility Notes
 
 The modular directory structure allows easy scaling:
@@ -133,8 +140,8 @@ The modular directory structure allows easy scaling:
 - New button logic can be added inside `containers/data/`.
 - Background tasks can be isolated under `worker/`.
 - Any new content scripts should go under `content-scripts/`.
-
----
+- The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
+- New tabs can be added without restructuring the core layout
 
 ## 9. Related Documents
 
@@ -142,4 +149,3 @@ The modular directory structure allows easy scaling:
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
 - [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
 
----

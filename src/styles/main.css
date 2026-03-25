@@ -50,6 +50,10 @@ input[type="radio"] {
   height: 11px;
   width: 11px;
 }
+input[type="checkbox"] {
+  width: auto;
+  margin-left: 0;
+}
 button {
   margin: 5px;
   width: 100%;
@@ -121,6 +125,9 @@ a:active {
 .draggable-block {
   width: 100%;
   padding-top: 5px;
+  cursor: default;
+}
+.draggable-block.enabled {
   cursor: move;
 }
 .alert {
@@ -352,7 +359,7 @@ a:active {
 /* ---------- TABS ---------- */
 .tabs-container {
   flex: 1;
-  display: flex;
+  display: block;
   flex-direction: column;
   width: 183px;
 }
