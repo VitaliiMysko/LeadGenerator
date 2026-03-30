@@ -143,8 +143,6 @@ The modular directory structure allows easy scaling:
 - The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
 - New tabs can be added without restructuring the core layout
 
----
-
 ## 9. Background Script Usage Strategy
 
 In the current architecture of the extension, the `background.js` (service worker) is **used selectively** and only for scenarios where it provides clear technical value.
@@ -159,8 +157,6 @@ The background service worker is responsible for:
 - Executing **centralized logic** that must persist independently of the popup lifecycle
 - Acting as a **secure intermediary** when sensitive data (e.g., API keys) must not be exposed to the client
 
----
-
 ### 9.2 When Background Script Is NOT Used
 
 For simple network operations (e.g., HTTP requests to external APIs), the extension **avoids using the background script as a proxy layer**.
@@ -170,8 +166,6 @@ Instead, such requests are executed **directly from the popup (UI layer)** when 
 - The request does not require Chrome-specific APIs
 - No sensitive data (e.g., API keys) is exposed in the client
 - The external service is already protected via a secure backend (e.g., Cloudflare Worker)
-
----
 
 ### 9.3 Rationale
 
@@ -194,8 +188,6 @@ In Manifest V3, the background script runs as a **service worker**, which:
 - Does not guarantee completion of long-running async operations
 - May interrupt pending requests or responses
 
----
-
 ### 9.4 Architecture Comparison
 
 #### ❌ Legacy (Problematic) Approach
@@ -214,8 +206,6 @@ sequenceDiagram
     Note over Popup,Background: Risk: message timeout / null response
 ```
 
----
-
 ### 9.5 Benefits of Direct Fetch from Popup
 
 Using direct fetch calls from the popup provides:
@@ -225,12 +215,10 @@ Using direct fetch calls from the popup provides:
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
 
----
-
 ### 9.6 Summary
 
 The background script is **not a default communication layer**, but a **specialized tool**.
-> **Note:** It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
+> It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
 
 ## 10. Related Documents
 
