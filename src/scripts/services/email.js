@@ -13,9 +13,6 @@ import {
 } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 
-const manifest = chrome.runtime.getManifest();
-const environment = manifest.environment;
-
 const emailCache = new Map();
 const emailDataByDefault = {
   email: "",
@@ -65,13 +62,10 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 
   startLoadingEffect();
 
-  const stateResults = [];
-
   for (const email of emails) {
     try {
       const verifyEmailResult = await verifyEmailDirect(email);
       checkVerifyEmailResult(verifyEmailResult, emailData);
-      stateResults.push(verifyEmailResult);
     } catch (e) {}
 
     if (emailData.ok) {
@@ -89,21 +83,6 @@ generateEmailsBtnElement.addEventListener("click", async () => {
   }
 
   stopLoadingEffect();
-
-  if (
-    environment === "local" &&
-    !(
-      emailData.ok ||
-      emailData.unknown ||
-      emailData.error ||
-      emailData.invalidDomain
-    )
-  ) {
-    const emailsStates = stateResults.map((r) => r.state);
-    showEmail("");
-    showMessage(`Email statuses: ${emailsStates.join(", ")}`, false, 5000);
-    return;
-  }
 
   showEmail(emailData.email);
   showMessage(emailData.message, emailData.ok);
@@ -192,9 +171,9 @@ function showEmail(email) {
   useTextChangeEffect(emailElement);
 }
 
-function showMessage(message, isEmailValid, duration = 2000) {
+function showMessage(message, isEmailValid) {
   const state = isEmailValid ? "success" : "error";
-  showAlert(message, state, duration);
+  showAlert(message, state);
 }
 
 function getWebsiteDomain() {
