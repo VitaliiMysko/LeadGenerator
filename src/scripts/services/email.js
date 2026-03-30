@@ -68,20 +68,11 @@ generateEmailsBtnElement.addEventListener("click", async () => {
   const stateResults = [];
 
   for (const email of emails) {
-    const verifyEmailResult = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "verifyEmail",
-          email: email,
-        },
-        (response) => {
-          resolve(response);
-        }
-      );
-    });
-
-    checkVerifyEmailResult(verifyEmailResult, emailData);
-    stateResults.push(verifyEmailResult);
+    try {
+      const verifyEmailResult = await verifyEmailDirect(email);
+      checkVerifyEmailResult(verifyEmailResult, emailData);
+      stateResults.push(verifyEmailResult);
+    } catch (e) {}
 
     if (emailData.ok) {
       emailData.email = email;
@@ -125,25 +116,41 @@ validateEmailsBtnElement.addEventListener("click", async () => {
     emailData.message = "Email is not corrent";
   } else {
     emailElement.value = emailElement.value.toLocaleLowerCase();
-
-    const verifyEmailResult = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "verifyEmail",
-          email: emailElement.value,
-        },
-        (response) => {
-          resolve(response);
-        }
-      );
-    });
-
-    checkVerifyEmailResult(verifyEmailResult, emailData);
+    try {
+      const verifyEmailResult = await verifyEmailDirect(emailElement.value);
+      checkVerifyEmailResult(verifyEmailResult, emailData);
+    } catch (e) {}
   }
 
   showMessage(emailData.message, emailData.ok);
   useValidationEffect(emailElement, emailData.ok);
 });
+
+async function verifyEmailDirect(email) {
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[3];
+  const url = `${worker}?email=${encodeURIComponent(email)}`;
+
+  let emailVerificationResponse;
+  try {
+    const response = await fetch(url);
+    const result = await response.json();
+
+    emailVerificationResponse = {
+      state: result.state,
+      reason: result.reason,
+      error: "",
+    };
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    emailVerificationResponse = {
+      state: "",
+      reason: "",
+      error: error.message,
+    };
+  }
+  return emailVerificationResponse;
+}
 
 function startLoadingEffect() {
   emailElement.disabled = true;
@@ -204,7 +211,7 @@ export const getBasicEmail = (hostName) => {
 
 function getFullName() {
   return `${getFirstNameElement().getAttribute(
-    "data-first-name"
+    "data-first-name",
   )} ${getSecondNameElement().getAttribute("data-second-name")}`;
 }
 
