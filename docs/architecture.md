@@ -143,7 +143,84 @@ The modular directory structure allows easy scaling:
 - The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
 - New tabs can be added without restructuring the core layout
 
-## 9. Related Documents
+## 9. Background Script Usage Strategy
+
+In the current architecture of the extension, the `background.js` (service worker) is **used selectively** and only for scenarios where it provides clear technical value.
+
+### 9.1 When Background Script Is Used
+
+The background service worker is responsible for:
+
+- Handling tasks that require **Chrome Extension APIs**, such as:
+  - tab interaction (`tabs`)
+  - script injection (`scripting`)
+- Executing **centralized logic** that must persist independently of the popup lifecycle
+- Acting as a **secure intermediary** when sensitive data (e.g., API keys) must not be exposed to the client
+
+### 9.2 When Background Script Is NOT Used
+
+For simple network operations (e.g., HTTP requests to external APIs), the extension **avoids using the background script as a proxy layer**.
+
+Instead, such requests are executed **directly from the popup (UI layer)** when the following conditions are met:
+
+- The request does not require Chrome-specific APIs
+- No sensitive data (e.g., API keys) is exposed in the client
+- The external service is already protected via a secure backend (e.g., Cloudflare Worker)
+
+### 9.3 Rationale
+
+Avoiding the background script in these cases improves both **stability** and **performance**.
+
+#### ❗ Limitations of Chrome Messaging
+
+Communication between the popup and background relies on `chrome.runtime.sendMessage`, which has an **implicit timeout and lifecycle constraints**:
+
+- If an asynchronous operation (e.g., `fetch`) takes too long  
+  → the message channel may close prematurely  
+  → the popup receives a `null` response  
+- This behavior is especially common under network latency or high load
+
+#### ⚠️ Service Worker Lifecycle (Manifest V3)
+
+In Manifest V3, the background script runs as a **service worker**, which:
+
+- Can be **terminated at any time**
+- Does not guarantee completion of long-running async operations
+- May interrupt pending requests or responses
+
+### 9.4 Architecture Comparison
+
+#### ❌ Legacy (Problematic) Approach
+
+```mermaid
+sequenceDiagram
+    participant Popup
+    participant Background
+    participant API as Cloudflare Worker API
+
+    Popup->>Background: sendMessage (verifyEmail)
+    Background->>API: fetch(email)
+    API-->>Background: response
+    Background-->>Popup: sendResponse
+
+    Note over Popup,Background: Risk: message timeout / null response
+```
+
+### 9.5 Benefits of Direct Fetch from Popup
+
+Using direct fetch calls from the popup provides:
+- Reliable async behavior (async/await works without interruption)
+- No dependency on message passing or channel timeouts
+- Lower latency (no intermediate layer)
+- Simpler and more maintainable code
+- Improved user experience (fewer edge-case failures)
+
+### 9.6 Summary
+
+The background script is **not a default communication layer**, but a **specialized tool**.
+> It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
+
+## 10. Related Documents
 
 - [`README.md`](../README.md) – Installation and usage instructions.
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
