@@ -4,24 +4,35 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ## Key Features
 
-- **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality.
+- **Modern, User-Friendly Interface**: 
+   The application features a simple, modern layout with intuitive functionality.
 
 - **Dynamic Tab Navigation**:
-  - The right panel now includes a tab system with a dropdown selector, allowing you to switch between different functional views without overloading the UI.
+  The right panel uses a dropdown-based tab selector to keep the UI clean and scalable.
   - Available tabs:
     - **Actual Experience** – displays extracted company experience data
     - **Settings** – allows customization of extension behavior
 
 - **Data Extraction**:
-  - **"Get" Button**: Automatically populates the following fields with information extracted from the page: "Name," "Surname," "Job Position," "Link," "Company Name", "Country" and "Industry".
+  - **"Get" Button**: Automatically populates:
+    - Name
+    - Surname
+    - Job Position
+    - Link
+    - Company Name
+    - Country
+    - Industry
     The "Email" field is not auto-filled.
-  - **"Copy" Button**: Saves the values of the populated fields to the clipboard in a format compatible with spreadsheet applications.
+  - **"Copy" Button**: Copies data to clipboard in spreadsheet-friendly format.
 
 ## UI Structure
 
 **Left Panel (Fixed):**
 
-- Core data fields and main actions (**Get / Copy**) remain always visible
+- Always visible
+- Contains:
+   - Core data fields
+   - Main actions (**Get / Copy**)
 - Fully editable inputs
 - Supports drag & drop (configurable via Settings)
 
@@ -32,7 +43,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 **Tabs:**
 
-1. **Actual Experience:** (actual tab by default)
+1. **Actual Experience:** (default)
    - Displays a list of companies associated with the profile
    - Includes:
      - Job position
@@ -40,7 +51,8 @@ This extension is a straightforward tool for extracting data about individuals d
      - Location
      - Industry
      - Company size
-   - Selecting an entry updates:
+   
+   Selecting an entry updates:
      - Job Position
      - Company Name
      - Country
@@ -48,10 +60,10 @@ This extension is a straightforward tool for extracting data about individuals d
 
 2. **Settings:**
    - Provides control over extension behavior
-   - Example option:
+   - Available option:
      - **Drag & Drop Toggle**
        - Enable/disable reordering of fields in the left panel
-       - Preference is saved locally using Chrome storage
+       - State is persisted via Chrome `storage`
 
 ## Data Fields
 
@@ -71,23 +83,49 @@ Each field is editable to allow manual adjustments before saving.
 ## Additional Functionalities
 
 - **Drag & Drop Field Reordering**:
-  - You can rearrange the input fields on the left side.
-  - This feature can now be enabled or disabled via Settings.
-  - The state is persisted using local storage.
+  - Reorder fields in the left panel
+  - Controlled via Settings
+  - State is persisted using Chrome `storage`
 
-- **Translation Service**: A translation icon next to the "Job Position" field enables translation of job titles into English. This feature uses the Google Cloud Translation API and requires the user to be signed in through their Google account to activate.
+- **Translation Service**: 
+   A translation icon next to the "Job Position" field enables translation of job titles into English. This feature uses the Google Cloud Translation API and requires the user to be signed in through their Google account to activate.
 
-- **Transliteration**: Automatically transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data.
+- **Transliteration**: 
+   Automatically transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data.
 
-- **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field. A tick icon enables users to validate entered email on demand.
+- **Email Service**: 
+   When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field. A tick icon enables users to validate entered email on demand.
 
-- **Secure Architecture**:
-  - All sensitive operations, including email validation and API key handling, are delegated to a secure backend hosted on a [Cloudflare Worker](https://developers.cloudflare.com/workers/), ensuring that API secrets remain secure and never exposed to the client.
-  - This architecture enhances both performance and security by utilizing edge computing.
+## Network & Data Fetching Strategy
+
+Due to modern browser security restrictions, the extension operates under the following model: 
+- Runs only on:
+   - `https://www.linkedin.com/*`
+
+**Important**
+- The extension does NOT directly fetch external websites from the browser context
+- All external requests are routed through a backend service
+
+## Secure Architecture
+- All sensitive and cross-origin operations are handled via a [Cloudflare Worker](https://developers.cloudflare.com/workers/)
+
+Includes:
+- Email validation (via Emailable API)
+- Website availability checks
+
+Benefits:
+- No API keys exposed
+- No CORS issues
+- Stable networking layer
+
+## Performance & Reliability Improvements
+- External requests are handled via backend proxy
+- Prevents failures under heavy load
+- Ensures consistent results across different environments
 
 ## Changelog
 
-For a detailed list of changes in each release, please refer to the [CHANGELOG.md](./CHANGELOG.md) file.
+For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
 ## Installation
 

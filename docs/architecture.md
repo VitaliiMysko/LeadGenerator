@@ -6,29 +6,52 @@ This document provides a high-level overview of the architectural structure of t
 
 ## 1. Overview
 
-The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and **Linkedin** pages (`https://www.linkedin.com/company/*`) just on demand. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
+The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from:
+
+- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- **LinkedIn company pages** (`https://www.linkedin.com/company/*`)
+
+The extension operates **only within LinkedIn domains** (`https://www.linkedin.com/*`).
+
+Due to modern browser security restrictions (CORS), all external network requests are performed via a **secure backend (Cloudflare Worker)**.
 
 The extension is composed of modular JavaScript files, grouped logically into directories. These files operate in two main environments:
 
-- **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and Linkedin pages (`https://www.linkedin.com/company/*`).
-- **Extension UI Scripts**: Power the popup interface, background logic, and user interactions.
+- **Content Scripts** – run inside LinkedIn pages
+- **Extension UI Scripts (Popup)** – handle user interaction and UI logic
 
 ## 2. Key Components
 
 ### 2.1 Content Scripts (`src/content-scripts`)
 
-- Injected into `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*` pages.
-- Responsible for extracting public data from the DOM of LinkedIn Sales Navigator via messaging.
+- Injected into:
+  - `https://www.linkedin.com/sales/lead/*`
+  - `https://www.linkedin.com/sales/company/*`
+  - `https://www.linkedin.com/company/*`
+- Responsible for extracting public data from the DOM via messaging
+- Do **not perform external network requests**
 - Examples: `lead.js`, `lead-experience.js`.
 
 ### 2.2 Extension Scripts (`src/scripts`)
 
-Contain all logic related to the extension interface, state management, button behavior, drag-and-drop, and background communication.
+Contain all logic related to:
 
-#### ▸ `src/scripts/worker/`
+- UI rendering
+- State management
+- User interaction
+- Direct communication with backend services
 
-- Contains `background.js`, used for tasks like validating email addresses through third-party APIs (e.g., Emailable).
-- Runs as a background service worker.
+#### ▸ `src/scripts/worker/` (background.js)
+
+Used **only when necessary** for:
+
+- Chrome APIs:
+  - `tabs`
+  - `scripting`
+- Managing background tab processing (e.g., opening company pages)
+- Coordinating data extraction from secondary pages
+
+🚫 **Not used for external HTTP requests**
 
 #### ▸ `src/scripts/containers/data/`
 
@@ -38,15 +61,27 @@ Handles user-interaction logic related to core actions:
 - `copy-data.js` – Copies the collected data to the clipboard.
 - `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop.
 
-### 2.3 Styles (`src/styles`)
+### 2.3 Backend (Cloudflare Worker)
+
+A critical part of the architecture.
+
+Handles:
+
+- Email validation (via Emailable API)
+- Website availability checks
+- Cross-origin requests (CORS-safe proxy)
+
+All external requests go through: [Cloudflare Worker](https://developers.cloudflare.com/workers/)
+
+### 2.4 Styles (`src/styles`)
 
 - `main.css` defines styles for the popup interface and interactive components.
 
-### 2.4 HTML Interface
+### 2.5 HTML Interface
 
 - `index.html` is located at the root and serves as the popup's main container.
 
-### 2.5 UI Architecture
+### 2.6 UI Architecture
 
 The extension UI follows a lightweight SPA-like approach within the popup.
 
@@ -58,7 +93,7 @@ The extension UI follows a lightweight SPA-like approach within the popup.
 - Implemented using a **dropdown selector**
 - Tabs are rendered using a **show/hide pattern (no full re-render)**
 - Current tabs:
-  - **Actual Experience** (actual tab by default) – displays extracted company data
+  - **Actual Experience** (default) – displays extracted company data
   - **Settings** – manages user preferences
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
@@ -69,6 +104,7 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 - **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations
 - **Chrome Storage API** – used to persist user preferences (e.g., drag & drop settings)
+- **Cloudflare Workers (Backend layer)**
 
 ## 4. Third-Party Services
 
@@ -114,6 +150,25 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 6. The user can configure extension behavior via the Settings tab:
    - Toggle drag-and-drop functionality
    - Preferences are persisted using Chrome Storage API
+
+   ```mermaid
+sequenceDiagram
+    participant UI as Popup UI
+    participant CS as Content Script
+    participant BG as Background
+    participant API as Cloudflare Worker
+
+    UI->>CS: Request profile data
+    CS-->>UI: Return extracted data
+
+    UI->>API: Request (email validation / website check)
+    API-->>UI: Response
+
+    UI->>BG: Request (open company page)
+    BG->>CS: Inject script
+    CS-->>BG: Extracted company data
+    BG-->>UI: Result
+    ```
 
 ## 7. Permissions Summary
 
