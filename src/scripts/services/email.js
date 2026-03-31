@@ -108,11 +108,11 @@ validateEmailsBtnElement.addEventListener("click", async () => {
 async function verifyEmailDirect(email) {
   const manifest = chrome.runtime.getManifest();
   const worker = manifest.host_permissions[3];
-  const url = `${worker}?email=${encodeURIComponent(email)}`;
+  const workerUrl = `${worker}?email=${encodeURIComponent(email)}`;
 
   let emailVerificationResponse;
   try {
-    const response = await fetch(url);
+    const response = await fetch(workerUrl);
     const result = await response.json();
 
     emailVerificationResponse = {

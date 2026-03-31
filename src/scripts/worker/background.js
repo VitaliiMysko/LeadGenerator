@@ -62,7 +62,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                       ) {
                         const data = response.data;
                         if (data) {
-                          const websiteState = await getkWebsiteState(data);
+                          const websiteState = await getWebsiteState(
+                            data.website,
+                          );
                           const result = {
                             website: data.website,
                             status: websiteState.status,
@@ -159,31 +161,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function getkWebsiteState(data) {
-  return new Promise((resolve) => {
-    if (!data.website) {
-      return resolve({ status: 0, ok: false });
-    }
+async function getWebsiteState(url) {
+  if (!url) {
+    return resolve({ status: 0, ok: false });
+  }
 
-    fetch(data.website, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "User-Agent": navigator.userAgent,
-        Accept: "text/html",
-      },
-    })
-      .then((response) => {
-        resolve({
-          status: response.status,
-          ok: response.ok,
-        });
-      })
-      .catch((error) => {
-        resolve({
-          status: 0,
-          ok: false,
-        });
-      });
-  });
+  if (!url.startsWith("http")) {
+    url = "https://" + url;
+  }
+
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[3];
+
+  const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
+  const response = await fetch(workerUrl);
+  return await response.json();
 }
