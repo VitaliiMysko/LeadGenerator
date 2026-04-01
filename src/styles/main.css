@@ -387,13 +387,11 @@ a:active {
 .tabs-content::-webkit-scrollbar-track {
   background: transparent;
 }
-
 .tabs-content::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #66b2ff 0%, #007bff 100%);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
-
 .tabs-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
