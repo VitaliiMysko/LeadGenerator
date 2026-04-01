@@ -1,5 +1,6 @@
 body {
   width: 400px;
+  height: 550px;
   font-family: "Roboto", sans-serif;
   background-color: #f4f4f4;
   color: #333;
@@ -8,6 +9,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 .main-container {
   display: flex;
@@ -21,6 +23,7 @@ body {
   align-items: center;
   padding: 8px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 input {
   font-family: "Roboto", sans-serif;
@@ -345,10 +348,8 @@ a:active {
 .arrow {
   width: 0;
   height: 0;
-
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-
   border-top: 6px solid #333;
 }
 .tab-selector-trigger.open .arrow {
@@ -358,13 +359,18 @@ a:active {
 /* ---------- TABS ---------- */
 .tabs-container {
   flex: 1;
-  display: block;
+  display: flex;
   flex-direction: column;
   width: 183px;
+  overflow: hidden;
 }
 .tabs-content {
   flex: 1;
   overflow-y: auto;
+  min-height: 0;
+
+  scrollbar-gutter: stable;
+  padding-left: 3px;
 }
 .tab {
   display: none;
@@ -372,4 +378,20 @@ a:active {
 }
 .tab.active {
   display: flex;
+}
+
+/* ---------- SCROLLBAR ---------- */
+.tabs-content::-webkit-scrollbar {
+  width: 3px;
+}
+.tabs-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tabs-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #66b2ff 0%, #007bff 100%);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+.tabs-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
