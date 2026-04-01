@@ -30,7 +30,7 @@ The extension is composed of modular JavaScript files, grouped logically into di
   - `https://www.linkedin.com/company/*`
 - Responsible for extracting public data from the DOM via messaging
 - Do **not perform external network requests**
-- Examples: `lead.js`, `lead-experience.js`.
+- Examples: `lead.js`, `lead-experience.js`
 
 ### 2.2 Extension Scripts (`src/scripts`)
 
@@ -57,9 +57,9 @@ Used **only when necessary** for:
 
 Handles user-interaction logic related to core actions:
 
-- `get-data.js` – Fetches and formats the data from the LinkedIn page when the "Get" button is clicked.
-- `copy-data.js` – Copies the collected data to the clipboard.
-- `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop.
+- `get-data.js` – Fetches and formats the data from the LinkedIn page when the "Get" button is clicked
+- `copy-data.js` – Copies the collected data to the clipboard
+- `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop
 
 ### 2.3 Backend (Cloudflare Worker)
 
@@ -75,11 +75,11 @@ All external requests go through: [Cloudflare Worker](https://developers.cloudfl
 
 ### 2.4 Styles (`src/styles`)
 
-- `main.css` defines styles for the popup interface and interactive components.
+- `main.css` defines styles for the popup interface and interactive components
 
 ### 2.5 HTML Interface
 
-- `index.html` is located at the root and serves as the popup's main container.
+- `index.html` is located at the root and serves as the popup's main container
 
 ### 2.6 UI Architecture
 
@@ -110,48 +110,48 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 
 ### 4.1 Emailable API
 
-- Used for email verification.
-- Accessed only via secure backend (Cloudflare Worker).
-- No email address is validated on the client directly.
+- Used for email verification
+- Accessed only via secure backend (Cloudflare Worker)
+- No email address is validated on the client directly
 
 ### 4.2 Google Cloud Translate API
 
-- Optional.
-- Used to translate non-English job titles into English.
-- Requires Google account authentication via OAuth2.
-- Translation is performed client-side during the session.
+- Optional
+- Used to translate non-English job titles into English
+- Requires Google account authentication via OAuth2
+- Translation is performed client-side during the session
 
 ## 5. Security & Privacy Considerations
 
 - **No personal or extracted profile data is stored**
 - **User preferences (UI settings)** are stored locally using Chrome Storage
-- **No cookies are set or read**.
-- **Clipboard is used only temporarily**, initiated manually by the user.
-- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored.
-- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker.
+- **No cookies are set or read**
+- **Clipboard is used only temporarily**, initiated manually by the user
+- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored
+- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ## 6. Data Flow Summary
 
-1. User opens the popup.
-2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode.
-3. Data is returned and displayed in the popup.
+1. User opens the popup
+2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+3. Data is returned and displayed in the popup
 4. The user can:
-   - Copy the data via the "Copy" button.
-   - Rearrange data using drag-and-drop.
-   - Translate job title via the Google Translate API (if logged in via Google OAuth2).
+   - Copy the data via the "Copy" button
+   - Rearrange data using drag-and-drop
+   - Translate job title via the Google Translate API (if logged in via Google OAuth2)
    - Trigger email generation:
-     - Extension sends company domain to backend.
-     - Backend validates generated emails via Emailable.
-     - Valid result is returned and inserted into form and clipboard.
-   - Validate email separately via Emailable.
-5. No data is stored on servers; data only exists temporarily in memory or clipboard.
+     - Extension sends company domain to backend
+     - Backend validates generated emails via Emailable
+     - Valid result is returned and inserted into form and clipboard
+   - Validate email separately via Emailable
+5. No data is stored on servers; data only exists temporarily in memory or clipboard
 6. The user can configure extension behavior via the Settings tab:
    - Toggle drag-and-drop functionality
    - Preferences are persisted using Chrome Storage API
 
-   ```mermaid
+```mermaid
 sequenceDiagram
     participant UI as Popup UI
     participant CS as Content Script
@@ -168,7 +168,7 @@ sequenceDiagram
     BG->>CS: Inject script
     CS-->>BG: Extracted company data
     BG-->>UI: Result
-    ```
+```
 
 ## 7. Permissions Summary
 
@@ -192,9 +192,9 @@ sequenceDiagram
 
 The modular directory structure allows easy scaling:
 
-- New button logic can be added inside `containers/data/`.
-- Background tasks can be isolated under `worker/`.
-- Any new content scripts should go under `content-scripts/`.
+- New button logic can be added inside `containers/data/`
+- Background tasks can be isolated under `worker/`
+- Any new content scripts should go under `content-scripts/`
 - The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
 - New tabs can be added without restructuring the core layout
 
@@ -264,6 +264,7 @@ sequenceDiagram
 ### 9.5 Benefits of Direct Fetch from Popup
 
 Using direct fetch calls from the popup provides:
+
 - Reliable async behavior (async/await works without interruption)
 - No dependency on message passing or channel timeouts
 - Lower latency (no intermediate layer)
@@ -277,7 +278,7 @@ The background script is **not a default communication layer**, but a **speciali
 
 ## 10. Related Documents
 
-- [`README.md`](../README.md) – Installation and usage instructions.
-- [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
-- [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
+- [`README.md`](../README.md) – Installation and usage instructions
+- [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled
+- [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes
 
