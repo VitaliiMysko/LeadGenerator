@@ -6,47 +6,82 @@ This document provides a high-level overview of the architectural structure of t
 
 ## 1. Overview
 
-The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from **LinkedIn Sales Navigator** pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and **Linkedin** pages (`https://www.linkedin.com/company/*`) just on demand. It operates entirely in the client environment, with optional secure interactions with external APIs for translation and email validation.
+The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from:
+
+- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- **LinkedIn company pages** (`https://www.linkedin.com/company/*`)
+
+The extension operates **only within LinkedIn domains** (`https://www.linkedin.com/*`).
+
+Due to modern browser security restrictions (CORS), all external network requests are performed via a **secure backend (Cloudflare Worker)**.
 
 The extension is composed of modular JavaScript files, grouped logically into directories. These files operate in two main environments:
 
-- **Content Scripts**: Run in the context of LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and Linkedin pages (`https://www.linkedin.com/company/*`).
-- **Extension UI Scripts**: Power the popup interface, background logic, and user interactions.
+- **Content Scripts** – run inside LinkedIn pages
+- **Extension UI Scripts (Popup)** – handle user interaction and UI logic
 
 ## 2. Key Components
 
 ### 2.1 Content Scripts (`src/content-scripts`)
 
-- Injected into `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*` pages.
-- Responsible for extracting public data from the DOM of LinkedIn Sales Navigator via messaging.
-- Examples: `lead.js`, `lead-experience.js`.
+- Injected into:
+  - `https://www.linkedin.com/sales/lead/*`
+  - `https://www.linkedin.com/sales/company/*`
+  - `https://www.linkedin.com/company/*`
+- Responsible for extracting public data from the DOM via messaging
+- Do **not perform external network requests**
+- Examples: `lead.js`, `lead-experience.js`
 
 ### 2.2 Extension Scripts (`src/scripts`)
 
-Contain all logic related to the extension interface, state management, button behavior, drag-and-drop, and background communication.
+Contain all logic related to:
 
-#### ▸ `src/scripts/worker/`
+- UI rendering
+- State management
+- User interaction
+- Direct communication with backend services
 
-- Contains `background.js`, used for tasks like validating email addresses through third-party APIs (e.g., Emailable).
-- Runs as a background service worker.
+#### ▸ `src/scripts/worker/` (background.js)
+
+Used **only when necessary** for:
+
+- Chrome APIs:
+  - `tabs`
+  - `scripting`
+- Managing background tab processing (e.g., opening company pages)
+- Coordinating data extraction from secondary pages
+
+🚫 **Not used for external HTTP requests**
 
 #### ▸ `src/scripts/containers/data/`
 
 Handles user-interaction logic related to core actions:
 
-- `get-data.js` – Fetches and formats the data from the LinkedIn page when the "Get" button is clicked.
-- `copy-data.js` – Copies the collected data to the clipboard.
-- `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop.
+- `get-data.js` – Fetches and formats the data from the LinkedIn page when the "Get" button is clicked
+- `copy-data.js` – Copies the collected data to the clipboard
+- `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop
 
-### 2.3 Styles (`src/styles`)
+### 2.3 Backend (Cloudflare Worker)
 
-- `main.css` defines styles for the popup interface and interactive components.
+A critical part of the architecture.
 
-### 2.4 HTML Interface
+Handles:
 
-- `index.html` is located at the root and serves as the popup's main container.
+- Email validation (via Emailable API)
+- Website availability checks
+- Cross-origin requests (CORS-safe proxy)
 
-### 2.5 UI Architecture
+All external requests go through: [Cloudflare Worker](https://developers.cloudflare.com/workers/)
+
+### 2.4 Styles (`src/styles`)
+
+- `main.css` defines styles for the popup interface and interactive components
+
+### 2.5 HTML Interface
+
+- `index.html` is located at the root and serves as the popup's main container
+
+### 2.6 UI Architecture
 
 The extension UI follows a lightweight SPA-like approach within the popup.
 
@@ -58,7 +93,7 @@ The extension UI follows a lightweight SPA-like approach within the popup.
 - Implemented using a **dropdown selector**
 - Tabs are rendered using a **show/hide pattern (no full re-render)**
 - Current tabs:
-  - **Actual Experience** (actual tab by default) – displays extracted company data
+  - **Actual Experience** (default) – displays extracted company data
   - **Settings** – manages user preferences
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
@@ -69,51 +104,71 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 - **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations
 - **Chrome Storage API** – used to persist user preferences (e.g., drag & drop settings)
+- **Cloudflare Workers (Backend layer)**
 
 ## 4. Third-Party Services
 
 ### 4.1 Emailable API
 
-- Used for email verification.
-- Accessed only via secure backend (Cloudflare Worker).
-- No email address is validated on the client directly.
+- Used for email verification
+- Accessed only via secure backend (Cloudflare Worker)
+- No email address is validated on the client directly
 
 ### 4.2 Google Cloud Translate API
 
-- Optional.
-- Used to translate non-English job titles into English.
-- Requires Google account authentication via OAuth2.
-- Translation is performed client-side during the session.
+- Optional
+- Used to translate non-English job titles into English
+- Requires Google account authentication via OAuth2
+- Translation is performed client-side during the session
 
 ## 5. Security & Privacy Considerations
 
 - **No personal or extracted profile data is stored**
 - **User preferences (UI settings)** are stored locally using Chrome Storage
-- **No cookies are set or read**.
-- **Clipboard is used only temporarily**, initiated manually by the user.
-- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored.
-- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker.
+- **No cookies are set or read**
+- **Clipboard is used only temporarily**, initiated manually by the user
+- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored
+- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ## 6. Data Flow Summary
 
-1. User opens the popup.
-2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode.
-3. Data is returned and displayed in the popup.
+1. User opens the popup
+2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+3. Data is returned and displayed in the popup
 4. The user can:
-   - Copy the data via the "Copy" button.
-   - Rearrange data using drag-and-drop.
-   - Translate job title via the Google Translate API (if logged in via Google OAuth2).
+   - Copy the data via the "Copy" button
+   - Rearrange data using drag-and-drop
+   - Translate job title via the Google Translate API (if logged in via Google OAuth2)
    - Trigger email generation:
-     - Extension sends company domain to backend.
-     - Backend validates generated emails via Emailable.
-     - Valid result is returned and inserted into form and clipboard.
-   - Validate email separately via Emailable.
-5. No data is stored on servers; data only exists temporarily in memory or clipboard.
+     - Extension sends company domain to backend
+     - Backend validates generated emails via Emailable
+     - Valid result is returned and inserted into form and clipboard
+   - Validate email separately via Emailable
+5. No data is stored on servers; data only exists temporarily in memory or clipboard
 6. The user can configure extension behavior via the Settings tab:
    - Toggle drag-and-drop functionality
    - Preferences are persisted using Chrome Storage API
+
+```mermaid
+sequenceDiagram
+    participant UI as Popup UI
+    participant CS as Content Script
+    participant BG as Background
+    participant API as Cloudflare Worker
+
+    UI->>CS: Request profile data
+    CS-->>UI: Return extracted data
+
+    UI->>API: Request (email validation / website check)
+    API-->>UI: Response
+
+    UI->>BG: Request (open company page)
+    BG->>CS: Inject script
+    CS-->>BG: Extracted company data
+    BG-->>UI: Result
+```
 
 ## 7. Permissions Summary
 
@@ -137,9 +192,9 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 The modular directory structure allows easy scaling:
 
-- New button logic can be added inside `containers/data/`.
-- Background tasks can be isolated under `worker/`.
-- Any new content scripts should go under `content-scripts/`.
+- New button logic can be added inside `containers/data/`
+- Background tasks can be isolated under `worker/`
+- Any new content scripts should go under `content-scripts/`
 - The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
 - New tabs can be added without restructuring the core layout
 
@@ -209,6 +264,7 @@ sequenceDiagram
 ### 9.5 Benefits of Direct Fetch from Popup
 
 Using direct fetch calls from the popup provides:
+
 - Reliable async behavior (async/await works without interruption)
 - No dependency on message passing or channel timeouts
 - Lower latency (no intermediate layer)
@@ -222,7 +278,7 @@ The background script is **not a default communication layer**, but a **speciali
 
 ## 10. Related Documents
 
-- [`README.md`](../README.md) – Installation and usage instructions.
-- [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled.
-- [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes.
+- [`README.md`](../README.md) – Installation and usage instructions
+- [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled
+- [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes
 

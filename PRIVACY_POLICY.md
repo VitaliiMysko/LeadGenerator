@@ -1,13 +1,20 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: March 25, 2025
+**Last Updated**: March 31, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
 ## 1. Data Collection
 
-The "Lead Generator" extension allows users to collect publicly available information from LinkedIn profiles, specifically from LinkedIn Sales Navigator pages. The data collected includes, but is not limited to:
+The "Lead Generator" extension allows users to collect publicly available information from LinkedIn profiles, specifically from:
+
+- LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- LinkedIn company pages (`https://www.linkedin.com/company/*`)
+
+The extension operates **only within LinkedIn domains** and does not run on other websites.
+
+The data collected includes, but is not limited to:
 
 - Name
 - Surname
@@ -20,12 +27,13 @@ The "Lead Generator" extension allows users to collect publicly available inform
 
 The **Email** field is not auto-filled by default. Email addresses may be:
 
-- **Manually entered and validated** by the user (in which case they are not stored); or
-- **Automatically generated and validated** using common email patterns based on company websites. In this case, validation is performed through a secure backend.
+- **Manually entered and validated** by the user (not stored); or
+- **Automatically generated and validated** using common email patterns based on company websites
 
-The **Country** and **Industry** fields refers to the selected company.
+The **Country** and **Industry** fields refer to the selected company.
 
-All information is collected only when the user explicitly clicks on the button **"Get"**. The extension does **not** passively collect or scrape data.
+All information is collected **only when the user explicitly clicks the "Get" button**.  
+The extension does **not passively collect or scrape data**.
 
 ## 2. Data Use
 
@@ -37,12 +45,12 @@ The collected data is used solely to:
 The extension does not:
 
 - Store collected profile data locally or remotely
-- Track user activity outside of the extension
+- Track user activity outside of LinkedIn
 - Monitor clipboard content after copying
 
 ## 3. Local Storage Usage
 
-The extension uses Chrome's storage permission to store **user preferences only**, such as:
+The extension uses Chrome's `storage` permission to store **user preferences only**, such as:
 
 - UI settings (e.g., enabling or disabling drag & drop functionality)
 
@@ -54,53 +62,90 @@ This data:
 
 ## 4. Data Retention
 
-The extension does not persistently store any collected or generated data. Email validation requests are processed **in real-time** via a secure backend (see section 6) and are not retained. Once copied to the clipboard, the data is no longer accessible by the extension.
+The extension does not persistently store any collected or generated data.
+
+- Data exists temporarily in the UI or clipboard
+- Email validation and website checks are processed **in real-time**
+- No data is retained after processing
 
 ## 5. No Third-Party Data Sharing
 
-The extension does not share, sell, or transfer any user data to third parties. The only exception is for **temporary email validation**:
+The extension does not sell, share, or distribute user data.
 
-- When generating an email address or checking entered one on demand, the extension sends candidate email formats for validation to a secure backend
-- The backend uses the **Emailable API** to verify whether the email is valid
-- No personal data is retained, stored, or reused during this process
+However, certain operations require **temporary processing via a secure backend**, including:
+
+- Email validation
+- Website availability checks
+
+In such cases:
+
+- Only minimal required data (e.g., email or domain) is sent
+- Data is processed in real-time
+- No data is stored, logged, or reused
 
 ## 6. Secure Architecture
 
-All sensitive operations (such as email validation and API key usage) are handled by a secure backend hosted on [Cloudflare Workers](https://developers.cloudflare.com/workers/). This architecture ensures:
+All sensitive and cross-origin operations are handled via a secure backend hosted on  
+[Cloudflare Workers](https://developers.cloudflare.com/workers/).
 
-- API keys and logic remain hidden from the client
-- All communication between the extension and backend is encrypted
-- No user-identifiable data is stored or reused after validation
+This includes:
+
+- Email validation (via **Emailable API**)
+- Website availability checks
+
+This architecture ensures:
+
+- No API keys are exposed in the extension
+- No CORS restrictions affect functionality
+- All requests are securely proxied
+- No user-identifiable data is stored or persisted
 
 ## 7. User Control and Responsibility
 
-You have full control over all data collected by the extension. Once copied to your clipboard, the extension no longer accesses or retains that data. You are responsible for how and where the data is stored, shared, or managed after copying.
+You have full control over all data collected by the extension.
+
+- Data is collected only on user action
+- Data is stored only in the clipboard (temporarily)
+- The extension does not access data after copying
+
+You are responsible for how copied data is used or stored.
 
 ## 8. Google Authentication
 
-If you choose to use the translation feature for job titles, you will be prompted to sign in with your Google account via OAuth2. This is used solely for authenticated access to the **Google Translate API**. The extension:
+If you use the translation feature, you will be prompted to sign in with your Google account via OAuth2.
+
+This is used solely for:
+
+- Accessing the **Google Translate API**
+
+The extension:
 
 - Does not store your Google credentials
-- Does not access other parts of your Google account
-- Uses the translation API only for the duration of your current session
+- Does not access other Google account data
+- Uses authentication only during active sessions
 
 ## 9. Permissions Justification
 
-The extension requests the following permission:
+The extension requests the following permissions:
 
-- **activeTab, scripting** — used to extract data from the currently active LinkedIn page upon user request
-- **tabs** — used to access the active tab context
-- **identity** — used for secure Google OAuth authentication for translation
-- **storage** — used to store user preferences locally
+- **activeTab, scripting** — to extract data from the current LinkedIn page upon user action
+- **tabs** — to manage background tab processing for company data
+- **identity** — for Google OAuth authentication (translation feature)
+- **storage** — to store user preferences locally
 
 ## 10. Cookies
 
-This extension does not set, store, or read cookies on your device.
+This extension does not set, store, or read cookies.
 
 ## 11. Changes to This Privacy Policy
 
-This Privacy Policy may be updated periodically. Any significant changes will be reflected in an updated version of the extension and communicated through the extension settings or release notes.
+This Privacy Policy may be updated periodically.
+
+Any significant changes will be reflected:
+
+- In updated versions of the extension
+- In release notes or documentation
 
 ## 12. Contact Us
 
-If you have any questions or concerns about this Privacy Policy or the use of your data, please contact us directly.
+If you have any questions or concerns about this Privacy Policy, please contact us directly.
