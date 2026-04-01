@@ -189,12 +189,11 @@ a:active {
 }
 
 #version-container {
-  position: fixed;
+  position: absolute;
   top: 5px;
   right: 10px;
   color: #ccc;
   font-size: 9px;
-  z-index: 1000;
 }
 .loading::after {
   content: "";
