@@ -8,31 +8,31 @@ All notable changes to this project will be documented in this file.
 
 - Tab-based UI system in the right panel for improved navigation and scalability
 - Dropdown tab selector to switch between functional views without breaking layout constraints
-- New Actual experience tab (actual tab by default) with existing Actual experience functionality
+- New Actual experience tab (default) with existing Actual experience functionality
 - New Settings tab for managing extension behavior
 - User preferences persistence using Chrome Storage API
-- Ability to enable/disable Drag & Drop functionality via Settings
+- Ability to enable / disable drag & drop functionality and via Settings
+- Ability to enable / disable individual's names transliteration via Settings
 
 ### Changed
 
 - Refactored right panel into a dynamic, SPA-like UI (show/hide tabs)
 - Improved overall UI structure by separating:
-    - Static left panel (core data & actions)
-    - Dynamic right panel (tabs & controls)
+  - Static left panel (core data & actions)
+  - Dynamic right panel (tabs & controls)
 - Updated internal logic to support state-driven UI behavior
 - Restricted extension execution scope to:
-    - `https://www.linkedin.com/*`
+  - `https://www.linkedin.com/*`
 
 ### Improved
 
 - Enhanced usability and flexibility of the extension interface
-- Better scalability for adding future features (e.g., filters, logs)
+- Better scalability for adding future features (e.g., filters)
 - Cleaner and more maintainable UI architecture
 - Improved scrolling behavior in the right panel:
-    - Scroll is now isolated to tab conten
-    - Fixed left panel remains static
-    - Added custom, minimal scrollbar styled to match UI
-
+  - Scroll is now isolated to tab conten
+  - Fixed left panel remains static
+  - Added custom, minimal scrollbar styled to match UI
 
 ## [3.2.5] - 2025-11-11
 
