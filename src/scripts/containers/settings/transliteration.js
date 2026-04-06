@@ -1,7 +1,7 @@
 import { getFromStorage, setToStorage } from "./common.js";
 import { showAlert } from "../../output/alert.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function initTransliteration() {
   const settingsElement = document.getElementById("transliteration-settings");
   if (settingsElement == null) return;
 
@@ -24,4 +24,4 @@ document.addEventListener("DOMContentLoaded", async () => {
       showAlert("Failed", "error");
     }
   });
-});
+}

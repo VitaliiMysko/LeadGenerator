@@ -5,7 +5,7 @@ import {
 import { getFromStorage, setToStorage } from "./common.js";
 import { showAlert } from "../../output/alert.js";
 
-document.addEventListener("DOMContentLoaded", async () => {
+export async function initDragAndDrop() {
   const settingsElement = document.getElementById("drag-and-drop-settings");
   if (settingsElement == null) return;
 
@@ -36,4 +36,4 @@ document.addEventListener("DOMContentLoaded", async () => {
       showAlert("Failed", "error");
     }
   });
-});
+}

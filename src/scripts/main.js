@@ -1,11 +1,8 @@
-import { appVersionElement } from "./helper/dom-helper.js";
+import { showAppsVersion } from "./helper/general.js";
+import { initSettings } from "./containers/settings/main.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const manifest = chrome.runtime.getManifest();
+document.addEventListener("DOMContentLoaded", async () => {
+  showAppsVersion();
 
-  if (appVersionElement) {
-    const environment = manifest.environment;
-    const showEnvironment = environment ? ` (${environment})` : environment;
-    appVersionElement.textContent = `Version: ${manifest.version}${showEnvironment}`;
-  }
+  await initSettings();
 });
