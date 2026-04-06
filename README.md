@@ -92,7 +92,7 @@ Each field is editable to allow manual adjustments before saving.
 
 - **Translation Service**: A translation icon next to the "Job Position" field enables translation of job titles into English. This feature uses the Google Cloud Translation API and requires the user to be signed in through their Google account to activate
 
-- **Transliteration**: Transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data. This functionality is configurable and controlled via Settings
+- **Transliteration**: Transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data. This functionality can be configurabled and controlled via Settings
 
 - **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field. A tick icon enables users to validate entered email on demand
 

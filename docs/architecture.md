@@ -59,7 +59,6 @@ Handles user-interaction logic related to core actions:
 
 - `get-data.js` – fetches and formats the data from the LinkedIn page when the "Get" button is clicked
 - `copy-data.js` – copies the collected data to the clipboard
-- `drag-and-drop-data.js` – handles reordering of elements in the popup via drag and drop
 
 ### 2.3 Backend (Cloudflare Worker)
 

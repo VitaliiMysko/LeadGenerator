@@ -1,7 +1,7 @@
 import {
   enableDragAndDrop,
   disableDragAndDrop,
-} from "../data/drag-and-drop-data.js";
+} from "../../feature/drag-and-drop.js";
 import { getFromStorage, setToStorage } from "./common.js";
 import { showAlert } from "../../output/alert.js";
 

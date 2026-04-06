@@ -1,4 +1,4 @@
-import { initDragAndDrop } from "./drag-and-drop-data.js";
+import { initDragAndDrop } from "./drag-and-drop.js";
 import { initTransliteration } from "./transliteration.js";
 
 export async function initSettings() {
