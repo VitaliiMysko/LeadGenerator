@@ -57,9 +57,8 @@ Used **only when necessary** for:
 
 Handles user-interaction logic related to core actions:
 
-- `get-data.js` – Fetches and formats the data from the LinkedIn page when the "Get" button is clicked
-- `copy-data.js` – Copies the collected data to the clipboard
-- `drag-and-drop-data.js` – Handles reordering of elements in the popup via drag and drop
+- `get-data.js` – fetches and formats the data from the LinkedIn page when the "Get" button is clicked
+- `copy-data.js` – copies the collected data to the clipboard
 
 ### 2.3 Backend (Cloudflare Worker)
 
@@ -100,11 +99,11 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 
 ## 3. Technologies Used
 
-- **Vanilla JavaScript** – No front-end frameworks are used
-- **Chrome Extension APIs** – Used for background workers, clipboard operations, and storage
-- **OAuth2 (Google)** – Used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag & drop settings)
-- **Cloudflare Workers (Backend layer)**
+- **Vanilla JavaScript** – no front-end frameworks are used
+- **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
+- **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
+- **Chrome Storage API** – used to persist user preferences (e.g., drag & drop, individual's names transliteration settings)
+- **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
 
@@ -112,7 +111,6 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 
 - Used for email verification
 - Accessed only via secure backend (Cloudflare Worker)
-- No email address is validated on the client directly
 
 ### 4.2 Google Cloud Translate API
 
@@ -124,7 +122,7 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 ## 5. Security & Privacy Considerations
 
 - **No personal or extracted profile data is stored**
-- **User preferences (UI settings)** are stored locally using Chrome Storage
+- **User preferences (UI settings)** are stored locally using Chrome Storage API
 - **No cookies are set or read**
 - **Clipboard is used only temporarily**, initiated manually by the user
 - **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored
@@ -135,8 +133,11 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 ## 6. Data Flow Summary
 
 1. User opens the popup
+
 2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+
 3. Data is returned and displayed in the popup
+
 4. The user can:
    - Copy the data via the "Copy" button
    - Rearrange data using drag-and-drop
@@ -146,9 +147,12 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
      - Backend validates generated emails via Emailable
      - Valid result is returned and inserted into form and clipboard
    - Validate email separately via Emailable
+
 5. No data is stored on servers; data only exists temporarily in memory or clipboard
+
 6. The user can configure extension behavior via the Settings tab:
    - Toggle drag-and-drop functionality
+   - Toggle individual's names transliteration
    - Preferences are persisted using Chrome Storage API
 
 ```mermaid
@@ -195,7 +199,7 @@ The modular directory structure allows easy scaling:
 - New button logic can be added inside `containers/data/`
 - Background tasks can be isolated under `worker/`
 - Any new content scripts should go under `content-scripts/`
-- The tab-based UI allows easy addition of new functional modules (e.g., Filters, Logs, Analytics)
+- The tab-based UI allows easy addition of new functional modules (e.g., filters)
 - New tabs can be added without restructuring the core layout
 
 ## 9. Background Script Usage Strategy
@@ -210,7 +214,6 @@ The background service worker is responsible for:
   - tab interaction (`tabs`)
   - script injection (`scripting`)
 - Executing **centralized logic** that must persist independently of the popup lifecycle
-- Acting as a **secure intermediary** when sensitive data (e.g., API keys) must not be exposed to the client
 
 ### 9.2 When Background Script Is NOT Used
 
@@ -230,9 +233,9 @@ Avoiding the background script in these cases improves both **stability** and **
 
 Communication between the popup and background relies on `chrome.runtime.sendMessage`, which has an **implicit timeout and lifecycle constraints**:
 
-- If an asynchronous operation (e.g., `fetch`) takes too long  
-  → the message channel may close prematurely  
-  → the popup receives a `null` response  
+- If an asynchronous operation (e.g., `fetch`) takes too long
+  - the message channel may close prematurely
+  - the popup receives a `null` response
 - This behavior is especially common under network latency or high load
 
 #### ⚠️ Service Worker Lifecycle (Manifest V3)
@@ -274,6 +277,7 @@ Using direct fetch calls from the popup provides:
 ### 9.6 Summary
 
 The background script is **not a default communication layer**, but a **specialized tool**.
+
 > It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
 
 ## 10. Related Documents
@@ -281,4 +285,3 @@ The background script is **not a default communication layer**, but a **speciali
 - [`README.md`](../README.md) – Installation and usage instructions
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled
 - [`CHANGELOG.md`](../CHANGELOG.md) – List of version changes
-

@@ -52,7 +52,9 @@ The extension does not:
 
 The extension uses Chrome's `storage` permission to store **user preferences only**, such as:
 
-- UI settings (e.g., enabling or disabling drag & drop functionality)
+- UI settings, enabling or disabling:
+  - drag & drop functionality
+  - individual's names transliteration
 
 This data:
 
