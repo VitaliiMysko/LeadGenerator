@@ -4,6 +4,7 @@ import {
 } from "../../helper/dom-helper.js";
 import { createRadioCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
+import { getFromStorage } from "../settings/common.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -30,25 +31,29 @@ getBtnElement.addEventListener("click", () => {
           async (results) => {
             experienceContainerElement.innerHTML = "";
             if (results) {
+              const transliterationEnabled = !!(await getFromStorage(
+                "transliterationEnabled",
+              ));
+
               const data = results.data;
-              data.forEach(async (element) => {
+              for (const element of data) {
                 if (element.category === "personalData") {
-                  populateGeneralData(element.value);
+                  populateGeneralData(element.value, transliterationEnabled);
                 }
                 if (element.category === "actualExperienceData") {
                   createRadioCompanyList(element.value);
                 }
-              });
+              }
             }
             await handlerCompanyDetails();
-          }
+          },
         );
-      }
+      },
     );
   });
 });
 
-function populateGeneralData(items) {
+function populateGeneralData(items, transliterationEnabled) {
   items.forEach((item) => {
     const inputElement = document.querySelector(`#${item.inputId}`);
     const value = item.value;
@@ -58,7 +63,7 @@ function populateGeneralData(items) {
       const attributeValue = hasGermanLetters(value)
         ? transliterate(transliterateGermanLetters(value))
         : baseTransliterated;
-      inputElement.value = baseTransliterated;
+      inputElement.value = transliterationEnabled ? baseTransliterated : value;
       inputElement.setAttribute(`data-${item.inputId}`, attributeValue);
     } else {
       inputElement.value = value;

@@ -20,9 +20,9 @@ function copyToBuffer() {
   navigator.clipboard
     .writeText(values)
     .then(() => {
-      showAlert("Copy successful!", "success");
+      showAlert("Done", "success");
     })
     .catch((err) => {
-      showAlert("Copy failed!", "error");
+      showAlert("Failed", "error");
     });
 }

@@ -54,8 +54,8 @@ input[type="radio"] {
   width: 11px;
 }
 input[type="checkbox"] {
-  width: auto;
   margin-left: 0;
+  width: 16px;
 }
 button {
   margin: 5px;
@@ -368,6 +368,7 @@ a:active {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  width: 100%;
 
   scrollbar-gutter: stable;
   padding-left: 3px;
@@ -378,6 +379,9 @@ a:active {
 }
 .tab.active {
   display: flex;
+}
+.tab-item-block{
+  padding-bottom: 5px;
 }
 
 /* ---------- SCROLLBAR ---------- */

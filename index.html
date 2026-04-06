@@ -85,32 +85,22 @@
             <div class="tab-option active" data-tab="experience">
               Actual experiece
             </div>
-            <div class="tab-option" data-tab="filters">Filters</div>
             <div class="tab-option" data-tab="settings">Settings</div>
-            <div class="tab-option" data-tab="login">Log in / Sign up</div>
           </div>
         </div>
         <div class="tabs-content">
           <div id="tab-experience" class="tab active">
             <div id="experience-container"></div>
           </div>
-          <div id="tab-filters" class="tab">
-            <input type="text" placeholder="Filter by company" />
-            <input type="text" placeholder="Filter by industry" />
-            <input type="text" placeholder="Filter by country" />
-          </div>
           <div id="tab-settings" class="tab">
-            <label>
-              <input id="drag-and-drop-settings" type="checkbox" />
-              Enable/disable drag & drop field reordering
-            </label>
-            <label>
-              <input id="transliteration-settings" type="checkbox" />
-              Enable/disable transliteration
-            </label>
-          </div>
-          <div id="tab-login" class="tab">
-            <span>Test test: </span>
+            <div class="tab-item-block">
+              <input id="drag-and-drop-settings" type="checkbox" title="Enable / disable drag & drop field reordering"/>
+              Drag & drop
+            </div>
+            <div class="tab-item-block">
+              <input id="transliteration-settings" type="checkbox" title="Enable / disable transliteration names"/>
+              Transliteration
+            </div>
           </div>
         </div>
       </div>
@@ -135,7 +125,11 @@
     ></script>
     <script
       type="module"
-      src="src/scripts/containers/settings/settings.js"
+      src="src/scripts/containers/settings/drag-and-drop-data.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/settings/transliteration.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>
