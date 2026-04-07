@@ -2,9 +2,9 @@ import {
   getBtnElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
+import { transliterateElement } from "../../services/transliteration.js";
 import { createRadioCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
-import { getFromStorage } from "../settings/common.js";
 
 getBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -31,14 +31,10 @@ getBtnElement.addEventListener("click", () => {
           async (results) => {
             experienceContainerElement.innerHTML = "";
             if (results) {
-              const transliterationEnabled = !!(await getFromStorage(
-                "transliterationEnabled",
-              ));
-
               const data = results.data;
               for (const element of data) {
                 if (element.category === "personalData") {
-                  populateGeneralData(element.value, transliterationEnabled);
+                  populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
                   createRadioCompanyList(element.value);
@@ -53,53 +49,24 @@ getBtnElement.addEventListener("click", () => {
   });
 });
 
-function populateGeneralData(items, transliterationEnabled) {
-  items.forEach((item) => {
+async function populateGeneralData(items) {
+  for (const item of items) {
     const inputElement = document.querySelector(`#${item.inputId}`);
     const value = item.value;
+    inputElement.value = value;
 
     if (item.inputId == "first-name" || item.inputId == "second-name") {
-      const baseTransliterated = transliterate(value);
-      const attributeValue = hasGermanLetters(value)
-        ? transliterate(transliterateGermanLetters(value))
-        : baseTransliterated;
-      inputElement.value = transliterationEnabled ? baseTransliterated : value;
-      inputElement.setAttribute(`data-${item.inputId}`, attributeValue);
-    } else {
-      inputElement.value = value;
+      await transliterateElement(inputElement);
     }
+  }
+}
+
+const nameIds = ["first-name", "second-name"];
+
+for (const nameId of nameIds) {
+  const inputNameElement = document.getElementById(nameId);
+
+  inputNameElement.addEventListener("change", async () => {
+    await transliterateElement(inputNameElement);
   });
 }
-
-function hasGermanLetters(text) {
-  return /[äöüÄÖÜ]/.test(text);
-}
-
-function transliterateGermanLetters(text) {
-  const map = {
-    ä: "ae",
-    ö: "oe",
-    ü: "ue",
-    Ä: "Ae",
-    Ö: "Oe",
-    Ü: "Ue",
-  };
-
-  return text.replace(/[äöüÄÖÜ]/g, (match) => map[match]);
-}
-
-const inputs = [
-  { id: "first-name", dataAttr: "data-first-name" },
-  { id: "second-name", dataAttr: "data-second-name" },
-];
-
-inputs.forEach(({ id, dataAttr }) => {
-  const input = document.getElementById(id);
-
-  input.addEventListener("change", () => {
-    const value = input.value;
-    if (value) {
-      input.setAttribute(`${dataAttr}`, value);
-    }
-  });
-});

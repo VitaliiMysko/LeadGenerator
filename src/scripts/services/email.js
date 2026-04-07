@@ -195,7 +195,9 @@ function getFullName() {
 }
 
 function getFullNameAlternative() {
-  return `${getFirstNameElement().value} ${getSecondNameElement().value}`;
+  const firstNameAlternative = transliterate(getFirstNameElement().value);
+  const secondNameAlternative = transliterate(getSecondNameElement().value);
+  return `${firstNameAlternative} ${secondNameAlternative}`;
 }
 
 function prepareBasicEmailName(fullName) {
