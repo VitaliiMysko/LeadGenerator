@@ -2,7 +2,7 @@ import {
   getBtnElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
-import { transliterateElement } from "../../helper/transliteration.js";
+import { transliterateElement } from "../../services/transliteration.js";
 import { createRadioCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
 

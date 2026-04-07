@@ -1,5 +1,5 @@
 import { getFromStorage, setToStorage } from "./common.js";
-import { transliterateElement } from "../../helper/transliteration.js";
+import { transliterateElement } from "../../services/transliteration.js";
 import { showAlert } from "../../output/alert.js";
 import {
   getFirstNameElement,
