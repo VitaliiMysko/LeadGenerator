@@ -256,7 +256,7 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 6. **host_permissions**:
    - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/lead/*` as main, and `https://www.linkedin.com/sales/company/*` and `https://www.linkedin.com/company/*` on demand for gathering full information about person for the user. The extension does not interact with other LinkedIn pages
-   - `https://my-apikey-worker.vitalij-musko.workers.dev/*` — to securely perform on-demand services such as email validation or website availability checks via a backend proxy owned by the developer. No personal data is stored, and requests are triggered only by user actions
+   - `https://lead-generator-backend-worker.vitalij-musko.workers.dev` — to securely perform on-demand services such as email validation or website availability checks via a backend proxy owned by the developer. No personal data is stored, and requests are triggered only by user actions
 
 ## Requirements
 

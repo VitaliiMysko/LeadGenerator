@@ -188,7 +188,7 @@ sequenceDiagram
   "https://www.linkedin.com/sales/lead/*",
   "https://www.linkedin.com/sales/company/*",
   "https://www.linkedin.com/company/*",
-  "https://my-apikey-worker.vitalij-musko.workers.dev"
+  "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
 ]
 ```
 
