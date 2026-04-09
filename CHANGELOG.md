@@ -2,37 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.0] - 2026-03-25
+## [3.3.0] - 2026-04-09
 
 ### Added
 
-- Tab-based UI system in the right panel for improved navigation and scalability
-- Dropdown tab selector to switch between functional views without breaking layout constraints
-- New Actual experience tab (default) with existing Actual experience functionality
-- New Settings tab for managing extension behavior
-- User preferences persistence using Chrome Storage API
-- Ability to enable / disable drag & drop functionality and via Settings
-- Ability to enable / disable individual's names transliteration via Settings
+- Tab-based UI system in the right panel to improve navigation and scalability
+- Dropdown tab selector for switching between functional views without layout reflows
+- "Actual Experience" tab (default) with existing experience-related functionality
+- "Settings" tab for managing extension behavior
+- Persistent user preferences using Chrome Storage API
+- Ability to enable or disable drag-and-drop field reordering via Settings
+- Ability to enable or disable transliteration of personal names via Settings
+- Support for non-Latin characters (e.g., Cyrillic) in name and surname fields
 
 ### Changed
 
-- Refactored right panel into a dynamic, SPA-like UI (show/hide tabs)
-- Improved overall UI structure by separating:
-  - Static left panel (core data & actions)
-  - Dynamic right panel (tabs & controls)
+- Updated personal data handling logic:
+  - Name and surname fields now preserve original values (including non-Latin characters)
+  - Transliteration is applied conditionally based on user preference
+- Refactored right panel into a dynamic, SPA-like interface using a show/hide tab model
+- Improved UI structure by separating:
+  - Static left panel (core data and actions)
+  - Dynamic right panel (tabs and controls)
 - Updated internal logic to support state-driven UI behavior
 - Restricted extension execution scope to:
   - `https://www.linkedin.com/*`
 
 ### Improved
 
-- Enhanced usability and flexibility of the extension interface
-- Better scalability for adding future features (e.g., filters)
+- Improved overall usability and flexibility of the extension interface
+- Enhanced scalability for future features (e.g., filters, additional tabs)
 - Cleaner and more maintainable UI architecture
 - Improved scrolling behavior in the right panel:
-  - Scroll is now isolated to tab conten
-  - Fixed left panel remains static
-  - Added custom, minimal scrollbar styled to match UI
+  - Scroll is now isolated to tab content only
+  - Left panel remains fixed and always visible
+  - Added custom, minimal scrollbar styled to match the UI
+
+### Fixed
+
+- Prevented layout shift caused by scrollbar appearance/disappearance in the tab content area
 
 ## [3.2.5] - 2025-11-11
 
