@@ -26,13 +26,20 @@ if (!window.leadGenerator.personalDataInit) {
 
     function getFullName() {
       const fullNameElement = getFullNameElement();
-
       if (!fullNameElement) return "";
 
       return handleFullName(fullNameElement.textContent);
     }
 
     function handleFullName(str) {
+      const hasCyrillic = /\p{Script=Cyrillic}/u.test(str);
+      if(hasCyrillic){
+        return str
+        .trim()
+        .split(/\s+/)
+        .join(" ");
+      }
+
       str = str.replace(/^[^a-zA-Z\u00C0-\u017F]+/, "");
       // Removes the prefix dr/Dr/prof/Prof before the full name
       str = str
