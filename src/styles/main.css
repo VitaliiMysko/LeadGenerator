@@ -5,7 +5,6 @@ body {
   background-color: #f4f4f4;
   color: #333;
   margin: 0;
-  padding: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -47,15 +46,12 @@ textarea:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
-input[type="radio"] {
+input[type="radio"],
+input[type="checkbox"] {
   margin: 0;
   margin-right: 5px;
-  height: 11px;
-  width: 11px;
-}
-input[type="checkbox"] {
-  margin-left: 0;
-  width: 16px;
+  height: 12px;
+  width: 12px;
 }
 button {
   margin: 5px;
@@ -367,8 +363,8 @@ a:active {
 .tabs-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
-  width: 100%;
 
   scrollbar-gutter: stable;
   padding-left: 3px;
@@ -376,11 +372,12 @@ a:active {
 .tab {
   display: none;
   flex-direction: column;
+  width: 183px;
 }
 .tab.active {
   display: flex;
 }
-.tab-item-block{
+.tab-item-block {
   padding-bottom: 5px;
 }
 
