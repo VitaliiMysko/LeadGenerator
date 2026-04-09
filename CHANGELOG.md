@@ -14,12 +14,13 @@ All notable changes to this project will be documented in this file.
 - Ability to enable or disable drag-and-drop field reordering via Settings
 - Ability to enable or disable transliteration of personal names via Settings
 - Support for non-Latin characters (e.g., Cyrillic) in name and surname fields
+- "Company size" field of the selected company in the actual experience tab 
 
 ### Changed
 
 - Updated personal data handling logic:
   - Name and surname fields now preserve original values (including non-Latin characters)
-  - Transliteration is applied conditionally based on user preference
+  - Transliteration is re-applied dynamically after manual edits of name and surname fields, based on user settings
 - Refactored right panel into a dynamic, SPA-like interface using a show/hide tab model
 - Improved UI structure by separating:
   - Static left panel (core data and actions)
