@@ -34,7 +34,7 @@ This extension is a straightforward tool for extracting data about individuals d
   - Core data fields
   - Main actions (**Get / Copy**)
 - Fully editable inputs
-- Supports drag & drop (configurable via Settings)
+- Supports drag-and-drop (configurable via Settings)
 - Supports individual's names transliteration (configurable via Settings)
 
 **Right Panel (Dynamic):**
@@ -61,7 +61,7 @@ This extension is a straightforward tool for extracting data about individuals d
 2. **Settings:**
    - Provides control over extension behavior
    - Available option:
-     - **Drag & Drop Toggle**
+     - **Drag-and-drop Toggle**
        - Enable / disable reordering of fields in the left panel
        - State is persisted via Chrome `storage`
      - **Transliteration Toggle**
@@ -85,7 +85,7 @@ Each field is editable to allow manual adjustments before saving.
 
 ## Additional Functionalities
 
-- **Drag & Drop Field Reordering**:
+- **Drag-and-drop Field Reordering**:
   - Reorder fields in the left panel
   - Controlled via Settings
   - State is persisted using Chrome `storage`
@@ -202,7 +202,7 @@ After installing the **Lead Generator** extension, follow these steps to configu
 
 8. **Settings Tab:** You can configure behavior directly in the extension UI:
 
-- Enable / disable drag & drop functionality
+- Enable / disable drag-and-drop functionality
 - Enable / disable individual's names transliteration
 - Preferences are saved locally using Chrome `storage`
 

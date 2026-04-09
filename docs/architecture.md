@@ -102,7 +102,7 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 - **Vanilla JavaScript** – no front-end frameworks are used
 - **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag & drop, individual's names transliteration settings)
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, individual's names transliteration settings)
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services

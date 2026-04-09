@@ -34,7 +34,7 @@ getBtnElement.addEventListener("click", () => {
               const data = results.data;
               for (const element of data) {
                 if (element.category === "personalData") {
-                  populateGeneralData(element.value);
+                  await populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
                   createRadioCompanyList(element.value);
