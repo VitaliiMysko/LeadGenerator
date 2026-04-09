@@ -46,12 +46,7 @@ textarea:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
-input[type="radio"] {
-  margin: 0;
-  margin-right: 5px;
-  height: 12px;
-  width: 12px;
-}
+input[type="radio"],
 input[type="checkbox"] {
   margin: 0;
   margin-right: 5px;
@@ -382,7 +377,7 @@ a:active {
 .tab.active {
   display: flex;
 }
-.tab-item-block{
+.tab-item-block {
   padding-bottom: 5px;
 }
 
