@@ -15,15 +15,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === "verifyEmail") {
-    (async () => {
-      const result = await verifyEmail(request.email);
-      sendResponse(result);
-    })();
-
-    return true;
-  }
-
   if (request.action === "fetchSalesNavigatorCompanyPage") {
     if (activeRequests[request.url]) {
       sendResponse(activeRequests[request.url]);
@@ -31,6 +22,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     const location = request.location;
     const industry = request.industry;
+    const size = request.size;
 
     chrome.tabs.create(
       {
@@ -40,58 +32,64 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       (tab) => {
         const tabId = tab.id;
 
-        chrome.tabs.onUpdated.addListener(async function listener(
-          updatedTabId,
-          info
-        ) {
-          if (tabId === updatedTabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files: [
-                  "src/utils/mutation-observer.js",
-                  "src/content-scripts/sales-navigator-pages/company/company.js",
-                ],
-              },
-              async (res) => {
-                chrome.tabs.sendMessage(tabId, {
-                  action: "initSalesNavigatorCompanyData",
-                  data: {
-                    location,
-                    industry,
-                  },
-                });
+        chrome.tabs.onUpdated.addListener(
+          async function listener(updatedTabId, info) {
+            if (tabId === updatedTabId && info.status === "complete") {
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files: [
+                    "src/utils/mutation-observer.js",
+                    "src/content-scripts/sales-navigator-pages/company/company.js",
+                  ],
+                },
+                async (res) => {
+                  chrome.tabs.sendMessage(tabId, {
+                    action: "initSalesNavigatorCompanyData",
+                    data: {
+                      location,
+                      industry,
+                      size,
+                    },
+                  });
 
-                chrome.runtime.onMessage.addListener(
-                  async function responseListener(response, sender) {
-                    if (
-                      response.action === "salesNavigatorCompanyPageContent" &&
-                      request.url === response.data.url
-                    ) {
-                      const data = response.data;
-                      if (data) {
-                        const websiteState = await getkWebsiteState(data);
-                        const result = {
-                          website: data.website,
-                          status: websiteState.status,
-                          ok: websiteState.ok,
-                          location: data.location,
-                          industry: data.industry,
-                        };
-                        activeRequests[request.url] = result;
+                  chrome.runtime.onMessage.addListener(
+                    async function responseListener(response, sender) {
+                      if (
+                        response.action ===
+                          "salesNavigatorCompanyPageContent" &&
+                        request.url === response.data.url
+                      ) {
+                        const data = response.data;
+                        if (data) {
+                          const websiteState = await getWebsiteState(
+                            data.website,
+                          );
+                          const result = {
+                            website: data.website,
+                            status: websiteState.status,
+                            ok: websiteState.ok,
+                            location: data.location,
+                            industry: data.industry,
+                            size: data.size,
+                          };
+                          activeRequests[request.url] = result;
 
-                        sendResponse(result);
+                          sendResponse(result);
+                        }
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener,
+                        );
                       }
-                      chrome.runtime.onMessage.removeListener(responseListener);
-                    }
-                  }
-                );
-              }
-            );
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
+                    },
+                  );
+                },
+              );
+              chrome.tabs.onUpdated.removeListener(listener);
+            }
+          },
+        );
+      },
     );
 
     return true;
@@ -100,6 +98,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "fetchLinkedinCompanyPage") {
     const location = request.location;
     const industry = request.industry;
+    const size = request.size;
 
     chrome.tabs.create(
       {
@@ -109,47 +108,49 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       (tab) => {
         const tabId = tab.id;
 
-        chrome.tabs.onUpdated.addListener(async function listener(
-          updatedTabId,
-          info
-        ) {
-          if (tabId === updatedTabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files: [
-                  "src/utils/mutation-observer.js",
-                  "src/content-scripts/linkedin-pages/company.js",
-                ],
-              },
-              async (res) => {
-                chrome.tabs.sendMessage(tabId, {
-                  action: "initLinkedinCompanyData",
-                  data: {
-                    location,
-                    industry,
-                  },
-                });
+        chrome.tabs.onUpdated.addListener(
+          async function listener(updatedTabId, info) {
+            if (tabId === updatedTabId && info.status === "complete") {
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files: [
+                    "src/utils/mutation-observer.js",
+                    "src/content-scripts/linkedin-pages/company.js",
+                  ],
+                },
+                async (res) => {
+                  chrome.tabs.sendMessage(tabId, {
+                    action: "initLinkedinCompanyData",
+                    data: {
+                      location,
+                      industry,
+                      size,
+                    },
+                  });
 
-                chrome.runtime.onMessage.addListener(
-                  async function responseListener(response, sender) {
-                    if (
-                      response.action === "linkedinCompanyPageContent" &&
-                      sender.tab?.id === tabId
-                    ) {
-                      if (response.data) {
-                        sendResponse(response.data);
+                  chrome.runtime.onMessage.addListener(
+                    async function responseListener(response, sender) {
+                      if (
+                        response.action === "linkedinCompanyPageContent" &&
+                        sender.tab?.id === tabId
+                      ) {
+                        if (response.data) {
+                          sendResponse(response.data);
+                        }
+                        chrome.runtime.onMessage.removeListener(
+                          responseListener,
+                        );
                       }
-                      chrome.runtime.onMessage.removeListener(responseListener);
-                    }
-                  }
-                );
-              }
-            );
-            chrome.tabs.onUpdated.removeListener(listener);
-          }
-        });
-      }
+                    },
+                  );
+                },
+              );
+              chrome.tabs.onUpdated.removeListener(listener);
+            }
+          },
+        );
+      },
     );
 
     return true;
@@ -160,52 +161,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function getkWebsiteState(data) {
-  return new Promise((resolve) => {
-    if (!data.website) {
-      return resolve({ status: 0, ok: false });
-    }
-
-    fetch(data.website, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "User-Agent": navigator.userAgent,
-        Accept: "text/html",
-      },
-    })
-      .then((response) => {
-        resolve({
-          status: response.status,
-          ok: response.ok,
-        });
-      })
-      .catch((error) => {
-        resolve({
-          status: 0,
-          ok: false,
-        });
-      });
-  });
-}
-
-async function verifyEmail(email) {
-  const workerUrl = "https://my-apikey-worker.vitalij-musko.workers.dev";
-  const url = `${workerUrl}?email=${encodeURIComponent(email)}`;
-
-  let emailData;
-  try {
-    const response = await fetch(url);
-    const result = await response.json();
-
-    emailData = { state: result.state, reason: result.reason, error: "" };
-  } catch (error) {
-    console.error("Email verification failed:", error);
-    emailData = {
-      state: "",
-      reason: "",
-      error: error.message,
-    };
+async function getWebsiteState(url) {
+  if (!url) {
+    return resolve({ status: 0, ok: false });
   }
-  return emailData;
+
+  if (!url.startsWith("http")) {
+    url = "https://" + url;
+  }
+
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[3];
+
+  const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
+  const response = await fetch(workerUrl);
+  return await response.json();
 }

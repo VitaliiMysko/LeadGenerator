@@ -7,6 +7,7 @@
     website: "",
     location: "",
     industry: "",
+    size: "",
     error: "",
   };
 
@@ -14,6 +15,7 @@
     if (message.action === "initSalesNavigatorCompanyData") {
       data.location = message.data.location || "";
       data.industry = message.data.industry || "";
+      data.size = message.data.size || "";
     }
   });
 
@@ -48,6 +50,31 @@
     .catch((error) => {
       console.error("Error finding element:", error);
     })
+    .then((element) => {
+      if (!data.size) {
+        const linkCompanySizeElement = container.querySelector(
+          '[data-anonymize="company-size"]',
+        );
+
+        if (!linkCompanySizeElement) {
+          return waitForElementWithTimeout('[data-anonymize="company-size"]')
+            .then((element) => {
+              data.size =
+                element.querySelector("span").textContent.trim() || "";
+            })
+            .catch((error) => {
+              console.error("Error finding element:", error);
+            });
+        } else {
+          data.size =
+            linkCompanySizeElement.querySelector("span").textContent.trim() ||
+            "";
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding element:", error);
+    })
     .finally(async () => {
       if (!data.website || !data.industry) {
         await fillDataFromLinkedinCompanyPage();
@@ -64,12 +91,14 @@
         url: linkedinCompanyUrl,
         location: data.location,
         industry: data.industry,
+        size: data.size,
       });
 
       if (response) {
         data.website = response.website;
         data.industry = data.industry ? data.industry : response.industry;
         data.location = data.location ? data.location : response.location;
+        data.size = data.size ? data.size : response.size;
       }
     } catch (error) {
       console.error("Error fetching data from linkedin comany page:", error);
@@ -99,7 +128,7 @@
       { action: "salesNavigatorCompanyPageContent", data },
       () => {
         chrome.runtime.sendMessage({ action: "closeTab" });
-      }
+      },
     );
   };
 })();

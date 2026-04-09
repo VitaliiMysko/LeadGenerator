@@ -78,16 +78,40 @@ export function getCompanyWebsiteElements() {
   return document.querySelectorAll(".company-website");
 }
 
-export function getCompanyIndustryElements() {
-  return document.querySelectorAll(".company-industry");
-}
-
 export function getCompanyLocationElements() {
   return document.querySelectorAll(".company-location");
 }
 
+export function getCompanyIndustryElements() {
+  return document.querySelectorAll(".company-industry");
+}
+
+export function getCompanySizeElements() {
+  return document.querySelectorAll(".company-size");
+}
+
 export function getCompanyDomainElement() {
   return document.querySelector("div.company-website.active > span");
+}
+
+export function getTabSelectorTriggerElement() {
+  return document.querySelector(".tab-selector-trigger");
+}
+
+export function getTabDropdownElement() {
+  return document.querySelector(".tab-dropdown");
+}
+
+export function getTabOptionElements() {
+  return document.querySelectorAll(".tab-option");
+}
+
+export function getTabElements() {
+  return document.querySelectorAll(".tab");
+}
+
+export function getDragAndDropSettingsElement() {
+  return document.getElementById("drag-and-drop-settings");
 }
 
 export const jobPositionElement = getJobPositionElement();

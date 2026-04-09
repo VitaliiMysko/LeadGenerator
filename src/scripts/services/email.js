@@ -13,9 +13,6 @@ import {
 } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
 
-const manifest = chrome.runtime.getManifest();
-const environment = manifest.environment;
-
 const emailCache = new Map();
 const emailDataByDefault = {
   email: "",
@@ -65,23 +62,11 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 
   startLoadingEffect();
 
-  const stateResults = [];
-
   for (const email of emails) {
-    const verifyEmailResult = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "verifyEmail",
-          email: email,
-        },
-        (response) => {
-          resolve(response);
-        }
-      );
-    });
-
-    checkVerifyEmailResult(verifyEmailResult, emailData);
-    stateResults.push(verifyEmailResult);
+    try {
+      const verifyEmailResult = await verifyEmailDirect(email);
+      checkVerifyEmailResult(verifyEmailResult, emailData);
+    } catch (e) {}
 
     if (emailData.ok) {
       emailData.email = email;
@@ -99,21 +84,6 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 
   stopLoadingEffect();
 
-  if (
-    environment === "local" &&
-    !(
-      emailData.ok ||
-      emailData.unknown ||
-      emailData.error ||
-      emailData.invalidDomain
-    )
-  ) {
-    const emailsStates = stateResults.map((r) => r.state);
-    showEmail("");
-    showMessage(`Email statuses: ${emailsStates.join(", ")}`, false, 5000);
-    return;
-  }
-
   showEmail(emailData.email);
   showMessage(emailData.message, emailData.ok);
 });
@@ -125,25 +95,41 @@ validateEmailsBtnElement.addEventListener("click", async () => {
     emailData.message = "Email is not corrent";
   } else {
     emailElement.value = emailElement.value.toLocaleLowerCase();
-
-    const verifyEmailResult = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          action: "verifyEmail",
-          email: emailElement.value,
-        },
-        (response) => {
-          resolve(response);
-        }
-      );
-    });
-
-    checkVerifyEmailResult(verifyEmailResult, emailData);
+    try {
+      const verifyEmailResult = await verifyEmailDirect(emailElement.value);
+      checkVerifyEmailResult(verifyEmailResult, emailData);
+    } catch (e) {}
   }
 
   showMessage(emailData.message, emailData.ok);
   useValidationEffect(emailElement, emailData.ok);
 });
+
+async function verifyEmailDirect(email) {
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[3];
+  const workerUrl = `${worker}?email=${encodeURIComponent(email)}`;
+
+  let emailVerificationResponse;
+  try {
+    const response = await fetch(workerUrl);
+    const result = await response.json();
+
+    emailVerificationResponse = {
+      state: result.state,
+      reason: result.reason,
+      error: "",
+    };
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    emailVerificationResponse = {
+      state: "",
+      reason: "",
+      error: error.message,
+    };
+  }
+  return emailVerificationResponse;
+}
 
 function startLoadingEffect() {
   emailElement.disabled = true;
@@ -185,9 +171,9 @@ function showEmail(email) {
   useTextChangeEffect(emailElement);
 }
 
-function showMessage(message, isEmailValid, duration = 2000) {
+function showMessage(message, isEmailValid) {
   const state = isEmailValid ? "success" : "error";
-  showAlert(message, state, duration);
+  showAlert(message, state);
 }
 
 function getWebsiteDomain() {
@@ -204,12 +190,14 @@ export const getBasicEmail = (hostName) => {
 
 function getFullName() {
   return `${getFirstNameElement().getAttribute(
-    "data-first-name"
+    "data-first-name",
   )} ${getSecondNameElement().getAttribute("data-second-name")}`;
 }
 
 function getFullNameAlternative() {
-  return `${getFirstNameElement().value} ${getSecondNameElement().value}`;
+  const firstNameAlternative = transliterate(getFirstNameElement().value);
+  const secondNameAlternative = transliterate(getSecondNameElement().value);
+  return `${firstNameAlternative} ${secondNameAlternative}`;
 }
 
 function prepareBasicEmailName(fullName) {
