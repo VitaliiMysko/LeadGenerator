@@ -6,9 +6,6 @@ let state = {
 
 let listeners = new Set();
 
-// --------------------
-// SUBSCRIBE
-// --------------------
 export function subscribe(listener) {
   listeners.add(listener);
 
@@ -17,23 +14,14 @@ export function subscribe(listener) {
   };
 }
 
-// --------------------
-// NOTIFY
-// --------------------
 function notify() {
   listeners.forEach((fn) => fn(state));
 }
 
-// --------------------
-// GET STATE
-// --------------------
 export function getState() {
   return state;
 }
 
-// --------------------
-// UPDATE STATE
-// --------------------
 export async function setFilter(key, values) {
   state[key] = values;
 
@@ -41,9 +29,6 @@ export async function setFilter(key, values) {
   await saveToStorage();
 }
 
-// --------------------
-// STORAGE
-// --------------------
 async function saveToStorage() {
   return new Promise((resolve) => {
     chrome.storage.sync.set({ [STORAGE_KEY]: state }, resolve);
