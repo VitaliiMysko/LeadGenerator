@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.1] - 2026-04-15
+
+### Added
+
+- New **Filters tab** in the right panel
+- Multi-select filtering system based on:
+  - Company headquarters location
+- Tag-based selection UI:
+  - Selected values are displayed as removable tags
+  - Ability to remove selections individually
+- Search functionality within dropdown for faster option discovery.
+- Extended list of supported locations:
+  - Full list of European countries added for filtering
+- Persistent filter state using Chrome Storage
+
+### Changed
+
+- Improved interaction between UI and state via subscribe/notify pattern.
+
+### Improved
+
+- Better scalability for adding new filter types in the future.
+
 ## [3.3.0] - 2026-04-09
 
 ### Added
