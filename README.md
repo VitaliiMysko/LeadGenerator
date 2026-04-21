@@ -55,7 +55,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ## Tabs
 
-1. **Actual Experience** (default)
+### 1. Actual Experience (default)
    
    Displays a list of companies associated with the profile
    
@@ -74,7 +74,7 @@ This extension is a straightforward tool for extracting data about individuals d
      - Country
      - Industry (left panel)
 
-2. **Filters**
+### 2. Filters
 
    Provides advanced filtering for extracted company data
 
@@ -93,7 +93,7 @@ This extension is a straightforward tool for extracting data about individuals d
       - Stored locally via Chrome `storage`
       - Automatically restored on reload
 
-3. **Settings**
+### 3. Settings
 
    Provides control over extension behavior
    

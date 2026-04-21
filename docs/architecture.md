@@ -107,7 +107,7 @@ This allows UI components to automatically re-render when filters change.
 ```mermaid
 flowchart LR
     UI[Filter UI] --> Store[Filter Store]
-    Store --> Notify[notify()]
+    Store --> Notify[notify]
     Notify --> UIUpdate[UI Re-render]
     UIUpdate --> FilteredData[Filtered Company List]
 ```
@@ -185,7 +185,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ## 5. Project Structure
 
-src/
+```src/
  ├── content-scripts/
  │    ├── actions/
  │    ├── common/
@@ -208,6 +208,7 @@ src/
  │    ├── worker/
  ├── styles/
  └── utils/
+ ```
 
 ## 6. Data Flow Summary
 
