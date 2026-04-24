@@ -7,6 +7,8 @@ import {
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
 
+import { formatCompanySize } from "./company-details.js";
+
 export function createRadioCompanyList(experience) {
   experienceContainerElement.innerHTML = "";
 
@@ -18,6 +20,11 @@ export function createRadioCompanyList(experience) {
 
 function getRadioCompanyBlock(company, index) {
   const extraCompanyData = company.extraData;
+
+  extraCompanyData.companySize = formatCompanySize(
+    extraCompanyData.companySize,
+  );
+
   const radioCompanyBlock = document.createElement("div");
   radioCompanyBlock.classList.add("radio-company");
   radioCompanyBlock.setAttribute(`data-company-name`, company.companyName);
@@ -37,7 +44,7 @@ function getRadioCompanyBlock(company, index) {
     `data-company-size`,
     extraCompanyData.companySize
   );
-    radioCompanyBlock.setAttribute(
+  radioCompanyBlock.setAttribute(
     `data-company-revenue`,
     extraCompanyData.revenue
   );
@@ -117,12 +124,14 @@ function getCompanyJobRadioElement(company) {
   const jobElement = document.createElement("div");
   jobElement.classList.add("company-job");
   jobElement.textContent = company.jobPosition;
+  jobElement.title = "job position";
   return jobElement;
 }
 
 function getCompanyWebsiteRadioElement() {
   const websiteElement = document.createElement("div");
   websiteElement.classList.add("company-website");
+  websiteElement.title = "website";
   return websiteElement;
 }
 
@@ -130,6 +139,7 @@ function getCompanyLocationRadioElement(company) {
   const countryElement = document.createElement("div");
   countryElement.classList.add("company-location");
   countryElement.textContent = company.extraData.location;
+  countryElement.title = "location";
   return countryElement;
 }
 
@@ -137,6 +147,7 @@ function getCompanyIndustryRadioElement(company) {
   const industryElement = document.createElement("div");
   industryElement.classList.add("company-industry");
   industryElement.textContent = company.extraData.industry;
+  industryElement.title = "industry";
   return industryElement;
 }
 
@@ -144,5 +155,6 @@ function getCompanySizeRadioElement(company) {
   const sizeElement = document.createElement("div");
   sizeElement.classList.add("company-size");
   sizeElement.textContent = company.extraData.companySize;
+  sizeElement.title = "size";
   return sizeElement;
 }

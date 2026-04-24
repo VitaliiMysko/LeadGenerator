@@ -16,7 +16,7 @@ export async function initTransliteration() {
     ));
     settingsElement.checked = transliterationEnabled;
   } catch (error) {
-    console.error(error);
+    console.error("Transliteration failed:", error);
   }
 
   settingsElement.addEventListener("change", async (e) => {
@@ -29,7 +29,6 @@ export async function initTransliteration() {
 
       showAlert("Done", "success");
     } catch (error) {
-      console.error(error);
       showAlert("Failed", "error");
     }
   });

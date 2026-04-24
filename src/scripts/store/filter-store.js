@@ -2,6 +2,7 @@ const STORAGE_KEY = "filters";
 
 let state = {
   companyLocation: [],
+  companySize: [],
 };
 
 let listeners = new Set();

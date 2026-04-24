@@ -69,8 +69,8 @@ This extension is a straightforward tool for extracting data about individuals d
 
    - Selecting an entry updates:
 
-     - Job Position
-     - Company Name
+     - Job position
+     - Company name
      - Country
      - Industry (left panel)
 
@@ -79,7 +79,8 @@ This extension is a straightforward tool for extracting data about individuals d
    Provides advanced filtering for extracted company data
 
    ### Supported Filters
-   - **Company Location**
+   - **Company location**
+   - **Company size**
 
    ### Behavior
    - Multi-select dropdown
@@ -227,8 +228,8 @@ After installing the extension, configure it for optimal usage:
    - Preferences are stored locally via Chrome `storage`
 
 4. **Filters**
-   - Configure company filtering (location, industry)
-   - Filters persist across sessions
+   - Configure company filtering (location, size)
+   - Preferences are stored locally via Chrome `storage`
 
 5. **Email Features**
    - Email generation and validation is performed via secure backend
@@ -245,7 +246,7 @@ After installing the extension, configure it for optimal usage:
    - All fields are fully editable
 
 4. (Optional) Use Filters
-   - Narrow down company data by location or industry
+   - Narrow down company data by location or size
 
 5. (Optional) Use additional features:
    - Translate job title

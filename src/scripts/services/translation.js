@@ -41,7 +41,7 @@ function translateText(token) {
         console.error("Error translating:", data);
       }
     })
-    .catch((error) =>
-      console.error("Error query to translation service:", error)
-    );
+    .catch((error) => {
+      console.error("Error query to translation service:", error);
+    });
 }
