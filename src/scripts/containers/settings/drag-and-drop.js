@@ -32,7 +32,6 @@ export async function initDragAndDrop() {
       }
       showAlert("Done", "success");
     } catch (error) {
-      console.error(error);
       showAlert("Failed", "error");
     }
   });

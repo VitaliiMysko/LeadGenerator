@@ -205,13 +205,9 @@ async function manageCompanyDetailsBlock(radio) {
       companyIndustryElement.value = industry;
     }
 
-    const sizeNoFound = "No company size found";
-    if (!size || size !== companyDetails.size) {
-      size =
-        companyDetails.size === ""
-          ? sizeNoFound
-          : companyDetails.size;
-      parentDiv.setAttribute(`data-company-size`, companyDetails.size);
+    if (!size) {
+      size = formatCompanySize(companyDetails.size);
+      parentDiv.setAttribute(`data-company-size`, size);
     }
 
     const sizeTextElement = getSpanElement(size);
@@ -293,6 +289,40 @@ function getHostName(url) {
     console.error("Invalid URL:", error);
     return url;
   }
+}
+
+export function formatCompanySize(size) {
+  if (!size) return "unknown";
+
+  size = size
+    .toLowerCase()
+    .replace(/employees?/g, "")
+    .replace(/\+/g, "")
+    .trim();
+
+  if (size === "myself only") return "0-1";
+
+  if (size.includes("-")) return size;
+
+  if (size.includes("k")) {
+    size = size.replace("k", "");
+    size = parseFloat(size) * 1000 + 1;
+  } else {
+    size = parseInt(size, 10);
+  }
+
+  if (isNaN(size)) return "unknown";
+
+  if (size <= 1) return "0-1";
+  if (size <= 10) return "2-10";
+  if (size <= 50) return "11-50";
+  if (size <= 200) return "51-200";
+  if (size <= 500) return "201-500";
+  if (size <= 1000) return "501-1000";
+  if (size <= 5000) return "1001-5000";
+  if (size <= 10000) return "5001-10000";
+
+  return "10000+";
 }
 
 const companyDetailsCache = new Map();

@@ -66,7 +66,9 @@ generateEmailsBtnElement.addEventListener("click", async () => {
     try {
       const verifyEmailResult = await verifyEmailDirect(email);
       checkVerifyEmailResult(verifyEmailResult, emailData);
-    } catch (e) {}
+    } catch (error) {
+      console.error("Email verification failed:", error);
+    }
 
     if (emailData.ok) {
       emailData.email = email;
@@ -98,7 +100,9 @@ validateEmailsBtnElement.addEventListener("click", async () => {
     try {
       const verifyEmailResult = await verifyEmailDirect(emailElement.value);
       checkVerifyEmailResult(verifyEmailResult, emailData);
-    } catch (e) {}
+    } catch (error) {
+      console.error("Email verification failed:", error);
+    }
   }
 
   showMessage(emailData.message, emailData.ok);

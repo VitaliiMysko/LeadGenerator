@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - New **Filters tab** in the right panel
 - Multi-select filtering system based on:
   - Company headquarters location
+  - Company size
 - Tag-based selection UI:
   - Selected values are displayed as removable tags
   - Ability to remove selections individually

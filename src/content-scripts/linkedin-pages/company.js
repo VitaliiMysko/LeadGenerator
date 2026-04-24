@@ -51,11 +51,11 @@
       console.error("Error finding element:", error);
     })
     .then((element) => {
-      if (!data.size) {
+      // if (!data.size) {
         data.size =
           getDefinitionByTerm(descriptionList, "Company size") ||
           getDefinitionByTerm(descriptionList, "Розмір компанії");
-      }
+      // }
     })
     .catch((error) => {
       console.error("Error finding element:", error);

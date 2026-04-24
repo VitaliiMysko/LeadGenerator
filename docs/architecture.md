@@ -74,6 +74,7 @@ The filtering system is implemented as a **client-side module** responsible for 
 
 - `filter-store.js` – centralized state management
 - `location-filter.js` – handles location filtering UI and logic
+- `location-size.js` – handles size filtering UI and logic
 
 #### UI Behavior
 
@@ -86,7 +87,7 @@ The filtering system is implemented as a **client-side module** responsible for 
 - Supports **combined filtering (AND logic)**
   - Example:
     - Location = "Germany"
-    - !!! Industry = "IT Services"
+    - Size = "51-200"
     → Only items matching both conditions are displayed
 
 #### State Management

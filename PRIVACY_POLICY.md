@@ -19,9 +19,9 @@ The data collected includes, but is not limited to:
 - Name
 - Surname
 - Job position
-- Company name
 - LinkedIn profile link
 - (Optional) Email address
+- Company name
 - Country
 - Industry
 
@@ -41,6 +41,7 @@ The collected data is used solely to:
 
 - Display information within the extension UI
 - Allow users to copy data to their clipboard
+- Filter and refine displayed data within the extension UI based on user-selected criteria (e.g., location, size)
 
 The extension does not:
 
@@ -48,13 +49,30 @@ The extension does not:
 - Track user activity outside of LinkedIn
 - Monitor clipboard content after copying
 
+## 2.1 Data Filtering
+
+The extension provides filtering functionality to help users refine and organize extracted data.
+
+- Filters (e.g., company location, size) are applied **only to data already extracted**
+- Filtering is performed entirely **within the extension (client-side)**
+- No additional data is collected, requested, or transmitted when filters are used
+
+Filter selections are optional and exist solely to improve usability and data navigation.
+
 ## 3. Local Storage Usage
 
-The extension uses Chrome's `storage` permission to store **user preferences only**, such as:
+The extension uses Chrome's `storage` permission to store **user preferences and filter settings**, such as:
 
 - UI settings, enabling or disabling:
   - Drag-and-drop functionality
   - Individual's names transliteration
+- Selected filter values (e.g., company location, size)
+
+Filter settings:
+
+- Are used only to customize the user experience
+- Are applied locally to already extracted data
+- Do not trigger additional data collection or external requests
 
 This data:
 
@@ -69,6 +87,7 @@ The extension does not persistently store any collected or generated data.
 - Data exists temporarily in the UI or clipboard
 - Email validation and website checks are processed **in real-time**
 - No data is retained after processing
+- Filter settings may be stored locally as part of user preferences
 
 ## 5. No Third-Party Data Sharing
 
@@ -133,7 +152,7 @@ The extension requests the following permissions:
 - **activeTab, scripting** — to extract data from the current LinkedIn page upon user action
 - **tabs** — to manage background tab processing for company data
 - **identity** — for Google OAuth authentication (translation feature)
-- **storage** — to store user preferences locally
+- **storage** — to store user preferences and filter settings locally
 
 ## 10. Cookies
 
