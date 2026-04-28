@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.2] - 2026-04-28
+
+### Added
+
+- xxx
+
+### Changed
+
+- xxx
+
+### Improved
+
+- xxx
+
 ## [3.3.1] - 2026-04-28
 
 ### Added
@@ -13,18 +27,18 @@ All notable changes to this project will be documented in this file.
 - Tag-based selection UI:
   - Selected values are displayed as removable tags
   - Ability to remove selections individually
-- Search functionality within dropdown for faster option discovery.
+- Search functionality within dropdown for faster option discovery
 - Extended list of supported locations:
   - Full list of European countries added for filtering
 - Persistent filter state using Chrome Storage
 
 ### Changed
 
-- Improved interaction between UI and state via subscribe/notify pattern.
+- Improved interaction between UI and state via subscribe/notify pattern
 
 ### Improved
 
-- Better scalability for adding new filter types in the future.
+- Better scalability for adding new filter types in the future
 - Refactored background communication layer:
   - Added timeout handling and improved message reliability
   - Better handling of concurrent requests
