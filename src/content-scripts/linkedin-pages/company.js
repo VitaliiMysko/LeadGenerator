@@ -20,7 +20,7 @@
   });
 
   let descriptionList;
-  waitForElementWithTimeout(".org-page-details-module__card-spacing")
+  waitForElementWithTimeout(".org-page-details-module__card-spacing", 6000)
     .then((element) => {
       descriptionList = element.querySelector("dl");
       data.website =
@@ -51,11 +51,11 @@
       console.error("Error finding element:", error);
     })
     .then((element) => {
-      if (!data.size) {
+      // if (!data.size) {
         data.size =
           getDefinitionByTerm(descriptionList, "Company size") ||
           getDefinitionByTerm(descriptionList, "Розмір компанії");
-      }
+      // }
     })
     .catch((error) => {
       console.error("Error finding element:", error);

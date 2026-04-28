@@ -170,10 +170,11 @@ if (!window.leadGenerator.experienceDataInit) {
         const tooltip = await waitForElementById(
           tooltipId,
           (el) => el.querySelector("li"), // tooltip has to have <li>
-          600,
+          1000,
         );
         return tooltip;
-      } catch (e) {
+      } catch (error) {
+        console.error("Tooltip reading faled:", error);
         return "";
       }
     }

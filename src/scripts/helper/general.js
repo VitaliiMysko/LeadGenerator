@@ -6,6 +6,6 @@ export function showAppsVersion() {
   if (appVersionElement) {
     const environment = manifest.environment;
     const showEnvironment = environment ? ` (${environment})` : environment;
-    appVersionElement.textContent = `Version: ${manifest.version}${showEnvironment}`;
+    appVersionElement.textContent = `v ${manifest.version}${showEnvironment}`;
   }
 }

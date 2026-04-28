@@ -1,18 +1,27 @@
 # Lead Generator Extension
 
-This extension is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page.
+This extension is a straightforward tool for extracting data about individuals directly from LinkedIn Sales Navigator pages.
 
 ## Key Features
 
-- **Modern, User-Friendly Interface**: The application features a simple, modern layout with intuitive functionality
+- **Modern, User-Friendly Interface**: 
 
-- **Dynamic Tab Navigation**: The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
-  - Available tabs:
-    - **Actual Experience** – displays extracted company experience data
-    - **Settings** – allows customization of extension behavior
+   The application features a simple, modern layout with intuitive functionality
+
+- **Dynamic Tab Navigation**: 
+
+   The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
+
+   - Available tabs:
+
+      - **Actual Experience** – displays extracted company experience data
+      - **Filters** – allows filtering extracted company data
+      - **Settings** – allows customization of extension behavior
 
 - **Data Extraction**:
+
   - **"Get" Button**: Automatically populates:
+
     - Name
     - Surname
     - Job Position
@@ -23,94 +32,144 @@ This extension is a straightforward tool for extracting data about individuals d
 
     The "Email" field is not auto-filled.
 
-  - **"Copy" Button**: Copies data to clipboard in spreadsheet-friendly format
+  - **"Copy" Button**: 
+  
+      Copies data to clipboard in spreadsheet-friendly format
 
 ## UI Structure
 
-**Left Panel (Fixed):**
+### Left Panel (Fixed)
 
 - Always visible
 - Contains:
-  - Core data fields
-  - Main actions (**Get / Copy**)
+- Core data fields
+- Main actions (**Get / Copy**)
 - Fully editable inputs
 - Supports drag-and-drop (configurable via Settings)
-- Supports individual's names transliteration (configurable via Settings)
+- Supports names transliteration (configurable via Settings)
 
-**Right Panel (Dynamic):**
+### Right Panel (Dynamic)
 
 - Controlled via dropdown tab selector
 - Content updates dynamically without reloading the UI
 
-**Tabs:**
+## Tabs
 
-1. **Actual Experience:** (default)
-   - Displays a list of companies associated with the profile
+### 1. Actual Experience (default)
+   
+   Displays a list of companies associated with the profile
+   
    - Includes:
+
      - Job position
      - Website
      - Location
      - Industry
      - Company size
+
    - Selecting an entry updates:
-     - Job Position
-     - Company Name
+
+     - Job position
+     - Company name
      - Country
      - Industry (left panel)
 
-2. **Settings:**
-   - Provides control over extension behavior
-   - Available option:
-     - **Drag-and-drop Toggle**
-       - Enable / disable reordering of fields in the left panel
-       - State is persisted via Chrome `storage`
-     - **Transliteration Toggle**
-       - Enable / disable individual's names transliteration
-       - State is persisted via Chrome `storage`
+### 2. Filters
+
+   Provides advanced filtering for extracted company data
+
+   ### Supported Filters
+   - **Company location**
+   - **Company size**
+
+   ### Behavior
+   - Multi-select dropdown
+   - Selected values are displayed as **removable tags**
+   - Removing a tag restores the option back to the dropdown
+   - Filters can be combined
+
+   ### Architecture
+   - Powered by a lightweight **state manager**
+   - Filter state is:
+      - Stored locally via Chrome `storage`
+      - Automatically restored on reload
+
+### 3. Settings
+
+   Provides control over extension behavior
+   
+   Available option:
+   - **Drag-and-drop Toggle**
+      - Enable / disable reordering of fields in the left panel
+      - State persisted via Chrome `storage`
+   - **Transliteration Toggle**
+      - Enable / disable individual's names transliteration
+      - State persisted via Chrome `storage`
 
 ## Data Fields
 
-**Left Panel:**
+### Left Panel
 
-- **Name**: The individual's first name
-- **Surname**: The individual's last name
-- **Job Position**: The individual’s current job position
-- **Link**: The URL to the individual's LinkedIn profile
-- **Email**: The individual’s working email address
-- **Company Name**: The name of the company where the individual currently works
-- **Country**: Country of the current company location
-- **Industry**: Industry of the current company
+- **Name** - individual's first name
+- **Surname** - individual's last name
+- **Job Position** - current role
+- **Link** - LinkedIn profile URL
+- **Email** - working email address
+- **Company Name**: current company
+- **Country** - company location
+- **Industry** - company indutry
 
-Each field is editable to allow manual adjustments before saving.
+All fields are editable before copying.
 
 ## Additional Functionalities
 
-- **Drag-and-drop Field Reordering**:
-  - Reorder fields in the left panel
-  - Controlled via Settings
-  - State is persisted using Chrome `storage`
+### Drag-and-drop Field Reordering
 
-- **Translation Service**: A translation icon next to the "Job Position" field enables translation of job titles into English. This feature uses the Google Cloud Translation API and requires the user to be signed in through their Google account to activate
+- Reorder fields in the left panel
+- Controlled via Settings
+- State is persisted using Chrome `storage`
 
-- **Transliteration**: Transliterates the "Name" and "Surname" fields into Latin characters, ensuring proper representation of non-Latin scripts in saved data. This functionality can be configurabled and controlled via Settings
+### Translation Service
 
-- **Email Service**: When clicking on a person's company website, the extension generates a basic email address and copies it to the clipboard. An email icon next to the "Email" field enables to run generation and find the validated email using a secure backend powered by the [Emailable API](https://emailable.com/). The valid email address is inserted into the "Email" field. A tick icon enables users to validate entered email on demand
+- Translate job titles into English
+- Uses Google Cloud Translation API
+- Requires Google account authentication
+
+### Transliteration
+
+- Supports both **Latin and non-Latin (e.g., Cyrillic) names**
+- Converts names into Latin characters when enabled
+- Works:
+   - After data extraction
+   - After manual editing of fields
+- Fully configurable via Settings
+
+### Email Service
+
+- Generate and validate email addresses
+- Uses common patterns based on company domain
+- Validation powered by secure backend via [Emailable API](https://emailable.com/)
+
+Includes:
+
+- Auto-generation + validation
+- Manual validation via icon
 
 ## Network & Data Fetching Strategy
 
-Due to modern browser security restrictions, the extension operates under the following model:
+Due to browser security restrictions:
 
 - Runs only on:
   - `https://www.linkedin.com/*`
 
 **Important**
 
-- The extension does NOT directly fetch external websites from the browser context
+- The extension does NOT directly fetch external websites
 - All external requests are routed through a backend service
 
 ## Secure Architecture
 
-All sensitive and cross-origin operations are handled via a [Cloudflare Worker](https://developers.cloudflare.com/workers/).
+All sensitive operations are handled via a a [Cloudflare Worker](https://developers.cloudflare.com/workers/).
 
 Includes:
 
@@ -125,9 +184,9 @@ Benefits:
 
 ## Performance & Reliability Improvements
 
-- External requests are handled via backend proxy
-- Prevents failures under heavy load
-- Ensures consistent results across different environments
+- Backend proxy for external requests
+- Improved stability under load
+- Consistent behavior across environments
 
 ## Changelog
 
@@ -139,146 +198,84 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
 1. Go to the [Lead Generator extension page on the Chrome Web Store](Chrome_Web_Store_URL)
 2. Click **Add to Chrome**
-3. Confirm any permissions requested by the extension to complete the installation
-
-After installation, you can pin the extension to your toolbar for quick access by clicking the puzzle icon in the Chrome toolbar and selecting **Pin** next to **Lead Generator**.
+3. Confirm permissions
 
 ### Option 2: Install Locally from Source
 
-1. **Download the Extension:**
-   - Clone or download this repository as a `.zip` file to your local machine
-
-2. **Prepare for Installation:**
-   - Unzip the downloaded `.zip` file if necessary
-
-3. **Load the Extension in Chrome:**
-   - Open Chrome and navigate to `chrome://extensions/`
-   - Enable **Developer mode** (toggle switch in the upper right corner)
-   - Click **Load unpacked** and select the folder where the extension files are located
-
-4. **Pin the Extension (Optional):**
-   - To pin the extension, click on the puzzle icon in the Chrome toolbar, find **Lead Generator**, and click the pin icon
-
-5. **Permissions and Authorization:**
-   - The extension will prompt for certain permissions to function correctly on LinkedIn Sales Navigator pages
-   - Log in with your Google account if prompted to access the Google Translate feature
-
-6. **Start Using the Extension:**
-   - Navigate to a LinkedIn Sales Navigator profile page to begin using the **Get** and **Copy** buttons to collect data
-   - The extension runs only through `https://www.linkedin.com/sales/lead/*` page, others pages such as `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` use in the background mode
+1. Download or clone repository
+2. Unzip if needed
+3. Open `chrome://extensions/`
+4. Enable **Developer mode**
+5. Click **Load unpacked**
 
 > **Note:** This extension is optimized for LinkedIn Sales Navigator pages. Some permissions may need to be granted to ensure full functionality
 
 ## Configuration
 
-After installing the **Lead Generator** extension, follow these steps to configure it for optimal functionality:
+After installing the extension, configure it for optimal usage:
 
-1. **Permissions Configuration:**
-   - Ensure the extension has permission to access `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` or other LinkedIn pages (depending on future expansion)
-   - To adjust permissions manually, navigate to `chrome://extensions/`, find **Lead Generator**, and select **Details** to review and update permissions as needed
+1. **Permissions**
+   - Ensure access to `https://www.linkedin.com/*`
+   - Required for data extraction
 
-2. **Google Authentication (Optional):**
-   - To use the translation feature within the extension, sign in with your Google account
-   - This enables the **Google Translate API** to translate job titles from other languages into English
-   - You will be prompted to sign in the first time you attempt to use the translation feature
+2. **Google Authentication (Optional)**
+   - Required for translation feature
+   - Triggered on first use
 
-3. **Field Reordering:**
-   - Customize the order of the fields in the left panel using the drag-and-drop feature
-   - This allows you to set the order of data as it will appear when saved to the clipboard, optimizing it for export to spreadsheet software
+3. **Settings (via Settings Tab)**
+   - Enable / disable drag-and-drop
+   - Enable / disable transliteration
+   - Preferences are stored locally via Chrome `storage`
 
-4. **LinkedIn Page Access:**
-   - For the extension to operate correctly, navigate to a LinkedIn Sales Navigator profile page
-   - Click on the **Get** button to populate fields with the available information from the page
+4. **Filters**
+   - Configure company filtering (location, size)
+   - Preferences are stored locally via Chrome `storage`
 
-5. **Data Collection and Clipboard Usage:**
-   - All data collected remains in your local clipboard until you manually paste it into a document, spreadsheet, or other location. The extension does not store data persistently or transmit it to external servers
-
-6. **Optional Fields and Manual Entry:**
-   - If you need to add an email address, this can be done manually by typing into the "Email" field
-
-7. **Email Validation Behavior:**
-   - Validation is performed during the automatic generation of email addresses (by clicking the email icon). Each generated candidate is validated via the Emailable service using a secure backend, and the valid email is inserted into the "Email" field
-   - Manually entered email address is validated by clicking the tick icon, and the extension does notify you of its validity
-
-8. **Settings Tab:** You can configure behavior directly in the extension UI:
-
-- Enable / disable drag-and-drop functionality
-- Enable / disable individual's names transliteration
-- Preferences are saved locally using Chrome `storage`
+5. **Email Features**
+   - Email generation and validation is performed via secure backend
+   - No data is stored
 
 ## Usage
 
-1. **Navigating to LinkedIn Sales Navigator:**
-   - Open a profile page on LinkedIn Sales Navigator where you wish to gather information
+1. Open a LinkedIn Sales Navigator profile page
 
-2. **Extracting Data:**
-   - Click the **Get** button to automatically fill in fields with information from the LinkedIn Sales Navigator page (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) and the LinkedIn page (`https://www.linkedin.com/company/*`) on demand, including the individual's name, surname, job position, profile link, any manually added email address, company name, country of company location and company industry
+2. Click **Get**
+   - Extracts available profile and company data
 
-3. **Editing Fields:**
-   - All fields are editable. You can modify the values in any field to ensure accuracy before saving
+3. Review and edit fields (optional)
+   - All fields are fully editable
 
-4. **Saving Data to Clipboard:**
-   - Click the **Copy** button to save all field values to your clipboard. Data is formatted for easy pasting into spreadsheet software
+4. (Optional) Use Filters
+   - Narrow down company data by location or size
 
-5. **Reordering Fields (Optional):**
-   - You can rearrange the input fields by dragging them up or down in the left panel. The order you set determines how data is organized when saved to the clipboard. This feature can be enabled or disabled via Settings
+5. (Optional) Use additional features:
+   - Translate job title
+   - Enable transliteration
+   - Generate / validate email
 
-6. **Using Translation (Optional):**
-   - If the job position is in a language other than English, click the translation icon next to the "Job Position" field. Sign in with your Google account if prompted to enable translation through Google Translate
-
-7. **Transliteration (Optional):**
-   - Transliterates the "Name" and "Surname" fields into Latin characters. This feature can be enabled or disabled via Settings
-
-8. **Generating and Validating Emails (Optional):**
-   - Click the email icon next to the "Email" field to initiate automatic email generation
-   - The extension will try a series of common email formats and validate each via a secure backend using the Emailable API
-   - The valid email found will be populated into the "Email" field
-   - The email can be validated separately by clicking the tick icon
+6. Click **Copy**
+   - Data is copied in spreadsheet-ready format
 
 ## Permissions
 
 The "Lead generator" extension requires certain permissions to function effectively and ensure smooth operation:
 
-1. **activeTab**:
-   - Allows the extension to interact with the current tab and extract information from the LinkedIn Sales Navigator pages that you are viewing
+- **activeTab** - access current page
+- **scripting** - inject scripts
+- **identity** - Google authentication
+- **tabs** - tab interaction
+- **storage** - store user preferences
 
-2. **scripting**:
-   - Enables the extension to inject necessary scripts into the LinkedIn Sales Navigator page for data extraction
+### Host Permissions
 
-3. **identity**:
-   - Used for Google authentication when accessing Google services, such as the Google Translate API for translating job titles. This permission is only utilized if you activate the translation feature
-
-4. **tabs**:
-   - Used to enhance the processing of company-related data and improve the extension's functionality
-
-5. **storage**:
-   - Used to store user preferences locally
-
-6. **host_permissions**:
-   - Specific to LinkedIn pages. The extension is restricted to pages with the URL pattern `https://www.linkedin.com/sales/lead/*` as main, and `https://www.linkedin.com/sales/company/*` and `https://www.linkedin.com/company/*` on demand for gathering full information about person for the user. The extension does not interact with other LinkedIn pages
-   - `https://lead-generator-backend-worker.vitalij-musko.workers.dev` — to securely perform on-demand services such as email validation or website availability checks via a backend proxy owned by the developer. No personal data is stored, and requests are triggered only by user actions
+- `https://www.linkedin.com/*` – extract data
+- `https://lead-generator-backend-worker.vitalij-musko.workers.dev` – backend services
 
 ## Requirements
 
-To use the "Lead generator" extension, please ensure the following requirements are met:
-
-1. **Google Chrome Browser**:
-   - This extension is designed to work with Google Chrome. Please ensure you are using the latest version of Chrome for optimal performance
-
-2. **LinkedIn Sales Navigator Access**:
-   - A LinkedIn account with access to LinkedIn Sales Navigator (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`) is required, as the extension is tailored specifically for extracting information from Sales Navigator pages
-
-3. **LinkedIn Access**:
-
-- A LinkedIn account with access to `https://www.linkedin.com/company/*` is required, as the extension is tailored specifically for extracting information from Linkedin pages
-
-4. **Google Account (for Translation Feature)**:
-   - If you plan to use the Google Translate feature for job titles, you must be signed into your Google account to enable this functionality
-
-5. **Chrome Web Store Installation**:
-   - For easy updates and improved security, it’s recommended to install the extension from the official Chrome Web Store once it’s published
-
-These requirements ensure that the extension functions as intended and that you have access to all features available within the "Lead generator" tool.
+- Google Chrome
+- LinkedIn Sales Navigator access
+- (Optional) Google account for translation
 
 ## Privacy Policy
 

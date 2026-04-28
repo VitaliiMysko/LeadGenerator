@@ -85,12 +85,39 @@
             <div class="tab-option active" data-tab="experience">
               Actual experiece
             </div>
+            <div class="tab-option" data-tab="filters">Filters</div>
             <div class="tab-option" data-tab="settings">Settings</div>
           </div>
         </div>
         <div class="tabs-content">
           <div id="tab-experience" class="tab active">
             <div id="experience-container"></div>
+          </div>
+          <div id="tab-filters" class="tab">
+            <div class="tab-item-block">
+              <label>Company headquarters location:</label>
+              <div class="multi-select-tags" id="company-location-filter">
+                <div class="tags-container"></div>
+                <input
+                  type="text"
+                  class="multi-input"
+                  placeholder="Select location..."
+                />
+                <div class="dropdown"></div>
+              </div>
+            </div>
+            <div class="tab-item-block">
+              <label>Company size:</label>
+              <div class="multi-select-tags" id="company-size-filter">
+                <div class="tags-container"></div>
+                <input
+                  type="text"
+                  class="multi-input"
+                  placeholder="Select size..."
+                />
+                <div class="dropdown"></div>
+              </div>
+            </div>
           </div>
           <div id="tab-settings" class="tab">
             <div class="tab-item-block">
@@ -124,6 +151,10 @@
     <script
       type="module"
       src="src/scripts/containers/navigation/tab-selector.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/filters/company-location.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>

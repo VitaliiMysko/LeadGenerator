@@ -25,6 +25,7 @@ const companyDetailsByDefault = {
   size: "",
   status: 0,
   ok: false,
+  completeRequest: true,
 };
 
 export async function handlerCompanyDetails() {
@@ -150,8 +151,10 @@ async function manageCompanyDetailsBlock(radio) {
     sizeBlock.appendChild(sizeLoadingTextElement);
   }
 
+  let companyDetails;
+
   try {
-    let companyDetails = companyLinkElement
+    companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href, location, industry, size)
       : { ...companyDetailsByDefault };
 
@@ -170,13 +173,16 @@ async function manageCompanyDetailsBlock(radio) {
       addCopyByClick(websiteBlock, "span", basicEmail, "basic email");
       setValidationStyle(websiteBlock, companyDetails.ok);
     } else {
+      website = companyDetails.completeRequest
+        ? website
+        : companyDetails.website;
       websiteBlock.appendChild(websiteIconElement);
     }
 
     const locationNoFound = "No location found";
     if (!location || location !== companyDetails.location) {
       location =
-        companyDetails.location === ""
+        companyDetails.location === "" && companyDetails.completeRequest
           ? locationNoFound
           : companyDetails.location;
       parentDiv.setAttribute(`data-company-location`, companyDetails.location);
@@ -192,7 +198,7 @@ async function manageCompanyDetailsBlock(radio) {
     const industryNoFound = "No industry found";
     if (!industry || industry !== companyDetails.industry) {
       industry =
-        companyDetails.industry === ""
+        companyDetails.industry === "" && companyDetails.completeRequest
           ? industryNoFound
           : companyDetails.industry;
       parentDiv.setAttribute(`data-company-industry`, companyDetails.industry);
@@ -205,13 +211,11 @@ async function manageCompanyDetailsBlock(radio) {
       companyIndustryElement.value = industry;
     }
 
-    const sizeNoFound = "No company size found";
-    if (!size || size !== companyDetails.size) {
-      size =
-        companyDetails.size === ""
-          ? sizeNoFound
-          : companyDetails.size;
-      parentDiv.setAttribute(`data-company-size`, companyDetails.size);
+    if (size === "unknown") {
+      size = companyDetails.completeRequest
+        ? formatCompanySize(companyDetails.size)
+        : "";
+      parentDiv.setAttribute(`data-company-size`, size);
     }
 
     const sizeTextElement = getSpanElement(size);
@@ -236,7 +240,9 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.innerHTML = "Error loading website.";
     console.error("Error fetching website:", error);
   } finally {
-    websiteBlock.setAttribute("data-initialized", "true");
+    if (companyDetails.completeRequest) {
+      websiteBlock.setAttribute("data-initialized", "true");
+    }
     websiteBlock.classList.remove("loading");
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
@@ -295,6 +301,41 @@ function getHostName(url) {
   }
 }
 
+export function formatCompanySize(size) {
+  if (!size) return "unknown";
+
+  size = size
+    .toLowerCase()
+    .replace(/employees?/g, "")
+    .replace(/\+/g, "")
+    .trim();
+
+  if (size === "myself only") return "0-1";
+
+  if (size.includes("-")) return size;
+
+  if (size.includes("k")) {
+    size = size.replace("k", "");
+    size = parseFloat(size) * 1000 + 1;
+  } else {
+    size = parseInt(size, 10);
+  }
+
+  if (isNaN(size)) return "unknown";
+
+  if (size <= 1) return "0-1";
+  if (size <= 10) return "2-10";
+  if (size <= 50) return "11-50";
+  if (size <= 200) return "51-200";
+  if (size <= 500) return "201-500";
+  if (size <= 1000) return "501-1000";
+  if (size <= 5000) return "1001-5000";
+  if (size <= 10000) return "5001-10000";
+
+  return "10000+";
+}
+
+let currentRequestId = 0;
 const companyDetailsCache = new Map();
 
 async function getCompanyData(companylink, location, industry, size) {
@@ -307,6 +348,7 @@ async function getCompanyData(companylink, location, industry, size) {
   companyDetails.industry = industry;
   companyDetails.size = size;
   if (companylink) {
+    const requestId = ++currentRequestId;
     try {
       const response = await sendMessagePromise({
         action: "fetchSalesNavigatorCompanyPage",
@@ -317,7 +359,19 @@ async function getCompanyData(companylink, location, industry, size) {
       });
 
       if (response) {
-        companyDetails = response;
+        companyDetails.location = response.location;
+        companyDetails.industry = response.industry;
+        companyDetails.size = response.size;
+        companyDetails.website = response.website;
+
+        const websiteState = await getWebsiteState(response.website);
+        companyDetails.status = websiteState.status;
+        companyDetails.ok = websiteState.ok;
+      } else {
+        if (requestId !== currentRequestId) {
+          companyDetails.completeRequest = false;
+          return companyDetails;
+        }
       }
     } catch (error) {
       console.error("Error fetching company details data:", error);
@@ -327,11 +381,28 @@ async function getCompanyData(companylink, location, industry, size) {
   return companyDetails;
 }
 
+async function getWebsiteState(url) {
+  if (!url) {
+    return resolve({ status: 0, ok: false });
+  }
+
+  if (!url.startsWith("http")) {
+    url = "https://" + url;
+  }
+
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[3];
+
+  const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
+  const response = await fetch(workerUrl);
+  return await response.json();
+}
+
 function sendMessagePromise(message) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     chrome.runtime.sendMessage(message, (response) => {
       if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
+        resolve(null);
       } else {
         resolve(response);
       }
