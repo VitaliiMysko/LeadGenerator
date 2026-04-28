@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.1] - 2026-04-15
+## [3.3.1] - 2026-04-28
 
 ### Added
 
@@ -25,6 +25,9 @@ All notable changes to this project will be documented in this file.
 ### Improved
 
 - Better scalability for adding new filter types in the future.
+- Refactored background communication layer:
+  - Added timeout handling and improved message reliability
+  - Better handling of concurrent requests
 
 ## [3.3.0] - 2026-04-09
 

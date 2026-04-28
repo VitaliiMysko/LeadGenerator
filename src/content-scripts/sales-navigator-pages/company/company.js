@@ -20,7 +20,7 @@
   });
 
   let container;
-  waitForElementWithTimeout("._header_1808vy")
+  waitForElementWithTimeout("._header_1808vy", 6000)
     .then((element) => {
       container = element;
       data.website = container.querySelector(".view-website-link").href || "";

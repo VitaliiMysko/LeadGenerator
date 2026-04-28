@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: April 9, 2026
+**Last Updated**: April 28, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
