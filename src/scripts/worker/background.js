@@ -92,7 +92,7 @@ function fetchCompanyData(request, type) {
           console.warn("Timeout for tab:", request.url);
           cleanup();
           resolve(null);
-        }, 10000); // ⏱ 10s timeout
+        }, 12000); // ⏱ 12s timeout
 
         const onUpdated = (updatedTabId, info) => {
           if (updatedTabId === tabId && info.status === "complete") {
