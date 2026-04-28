@@ -20,7 +20,7 @@
   });
 
   let descriptionList;
-  waitForElementWithTimeout(".org-page-details-module__card-spacing")
+  waitForElementWithTimeout(".org-page-details-module__card-spacing", 6000)
     .then((element) => {
       descriptionList = element.querySelector("dl");
       data.website =

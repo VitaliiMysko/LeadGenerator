@@ -362,7 +362,18 @@ Using direct fetch calls from the popup provides:
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
 
-### 9.6 Summary
+
+### 9.6 Request Stability Improvements
+
+The background communication layer has been improved to ensure more reliable data fetching:
+
+- Introduced better handling of asynchronous message flows
+- Reduced race conditions when multiple requests are triggered rapidly (e.g., switching between companies)
+- Improved resilience against message timeouts in Chrome's service worker environment
+
+These improvements enhance overall data consistency and user experience without introducing additional complexity to the UI layer.
+
+### 9.7 Summary
 
 The background script is **not a default communication layer**, but a **specialized tool**.
 
