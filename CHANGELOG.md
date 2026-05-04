@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [3.3.2] - 2026-05-04
 
+### Added
+
+- "No results" message in the Actual Experience tab when no data was extracted or all companies are hidden by active filters
+- Left panel fields (job position, company name, country, industry, email) are cleared when "No results" is shown and restored from the first visible company when results return
+
 ### Changed
 
 - Renamed "Get" button to "Extract" across UI, source files, and documentation

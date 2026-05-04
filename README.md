@@ -56,9 +56,10 @@ This extension is a straightforward tool for extracting data about individuals d
 ## Tabs
 
 ### 1. Actual Experience (default)
-   
+
    Displays a list of companies associated with the profile
-   
+
+   - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
    - Includes:
 
      - Job position
