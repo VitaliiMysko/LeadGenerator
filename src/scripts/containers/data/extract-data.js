@@ -42,8 +42,8 @@ extractBtnElement.addEventListener("click", () => {
                 }
               }
             }
-            await handlerCompanyDetails();
             applyFilters();
+            await handlerCompanyDetails();
           },
         );
       },

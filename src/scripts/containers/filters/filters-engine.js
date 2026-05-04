@@ -62,14 +62,26 @@ export function applyFilters() {
   } else {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
-    if (wasNoResults && firstVisibleCompany) {
-      const radio = firstVisibleCompany.querySelector("input[type='radio']");
-      if (radio) radio.checked = true;
-      companyNameElement.value = firstVisibleCompany.dataset.companyName || "";
-      jobPositionElement.value = firstVisibleCompany.dataset.companyJobPosition || "";
-      companyCountryElement.value = (firstVisibleCompany.dataset.companyLocation || "").split(", ").pop();
-      companyIndustryElement.value = firstVisibleCompany.dataset.companyIndustry || "";
-      emailElement.value = "";
+
+    const checkedRadio = experienceContainerElement.querySelector("input[type='radio']:checked");
+    const checkedIsVisible = checkedRadio && checkedRadio.closest(".radio-company").style.display !== "none";
+
+    if (!checkedIsVisible && firstVisibleCompany) {
+      selectCompany(firstVisibleCompany);
+    } else if (wasNoResults && checkedIsVisible) {
+      selectCompany(checkedRadio.closest(".radio-company"));
     }
   }
+}
+
+function selectCompany(companyEl) {
+  const radio = companyEl.querySelector("input[type='radio']");
+  if (!radio) return;
+  radio.checked = true;
+  companyNameElement.value = companyEl.dataset.companyName || "";
+  jobPositionElement.value = companyEl.dataset.companyJobPosition || "";
+  companyCountryElement.value = (companyEl.dataset.companyLocation || "").split(", ").pop();
+  companyIndustryElement.value = companyEl.dataset.companyIndustry || "";
+  emailElement.value = "";
+  radio.dispatchEvent(new Event("change"));
 }
