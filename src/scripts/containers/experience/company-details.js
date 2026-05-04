@@ -46,6 +46,8 @@ async function addCompanyDetailsListener() {
 async function initCompanyDetails() {
   getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
+      const parentDiv = radio.closest(".radio-company");
+      if (parentDiv.style.display === "none") return;
       await manageCompanyDetailsBlock(radio);
     }
   });

@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file.
 - "No results" message in the Actual Experience tab when no data was extracted or all companies are hidden by active filters
 - Left panel fields (job position, company name, country, industry, email) are cleared when "No results" is shown and restored from the first visible company when results return
 
+### Fixed
+
+- First visible company is now automatically selected when the previously checked radio is hidden by an active filter
+- Background company detail fetch is now skipped for companies hidden by active filters at extraction time
+
 ### Changed
 
 - Renamed "Get" button to "Extract" across UI, source files, and documentation
