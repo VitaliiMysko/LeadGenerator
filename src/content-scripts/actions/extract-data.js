@@ -1,8 +1,8 @@
 if (!window.messageListenerAdded) {
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "getData") {
+    if (message.action === "extractData") {
       (async () => {
-        const data = await getData();
+        const data = await extractData();
         sendResponse({ data });
       })();
       return true;
@@ -23,7 +23,7 @@ if (!window.leadGenerator.experienceDataDeclared) {
   window.leadGenerator.experienceDataDeclared = true;
 }
 
-async function getData() {
+async function extractData() {
   let data = [];
   let personalData = [];
   let actualExperienceData = [];

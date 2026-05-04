@@ -20,7 +20,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Data Extraction**:
 
-  - **"Get" Button**: Automatically populates:
+  - **"Extract" Button**: Automatically populates:
 
     - Name
     - Surname
@@ -32,7 +32,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
     The "Email" field is not auto-filled.
 
-  - **"Copy" Button**: 
+  - **"Copy" Button**:
   
       Copies data to clipboard in spreadsheet-friendly format
 
@@ -239,7 +239,7 @@ After installing the extension, configure it for optimal usage:
 
 1. Open a LinkedIn Sales Navigator profile page
 
-2. Click **Get**
+2. Click **Extract**
    - Extracts available profile and company data
 
 3. Review and edit fields (optional)

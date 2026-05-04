@@ -60,7 +60,7 @@ Google Cloud Translation API is accessed client-side from the popup using an OAu
 
 ## Data Flow
 
-1. User clicks "Get" → popup sends message to content script on the active Sales Navigator lead page
+1. User clicks "Extract" → popup sends message to content script on the active Sales Navigator lead page
 2. Content script extracts profile data from DOM → returns to popup
 3. Popup sends message to `background.js` to open company pages in background tabs
 4. Background injects content scripts → extracts company data → returns to popup

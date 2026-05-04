@@ -2,19 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.2] - 2026-04-28
-
-### Added
-
-- xxx
+## [3.3.2] - 2026-05-04
 
 ### Changed
 
-- xxx
-
-### Improved
-
-- xxx
+- Renamed "Get" button to "Extract" across UI, source files, and documentation
 
 ## [3.3.1] - 2026-04-28
 

@@ -57,7 +57,7 @@ Used **only when necessary** for:
 
 Handles user-interaction logic related to core actions:
 
-- `get-data.js` – fetches and formats the data from the LinkedIn page when the "Get" button is clicked
+- `extract-data.js` – fetches and formats the data from the LinkedIn page when the "Extract" button is clicked
 - `copy-data.js` – copies the collected data to the clipboard
 
 ### 2.3 Filters (`src/scripts/filters`)
@@ -215,7 +215,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 1. User opens the popup
 
-2. On pressing "Get", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
 
 3. Data is returned and displayed in the popup
 

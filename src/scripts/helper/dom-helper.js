@@ -38,8 +38,8 @@ function getValidateEmailsBtnElement() {
   return document.getElementById("validete-emails-btn");
 }
 
-function getGetBtnElement() {
-  return document.getElementById("get-btn");
+function getExtractBtnElement() {
+  return document.getElementById("extract-btn");
 }
 
 function getCopyBtnElement() {
@@ -120,7 +120,7 @@ export const companyNameElement = getCompanyNameElement();
 export const companyIndustryElement = getCompanyIndustryElement();
 export const companyCountryElement = getCompanyCountryElement();
 export const translateBtnElement = getTranslateBtnElement();
-export const getBtnElement = getGetBtnElement();
+export const extractBtnElement = getExtractBtnElement();
 export const copyBtnElement = getCopyBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
