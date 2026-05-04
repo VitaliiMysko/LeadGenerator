@@ -81,6 +81,7 @@ The filtering system is implemented as a **client-side module** responsible for 
 - Multi-select dropdown with **tag-based selection**
 - Selected values are displayed as removable tags
 - Removing a tag reintroduces the option into the dropdown
+- Displays **"No results"** message when all companies are hidden by active filters or no data was extracted
 
 #### Filtering Logic
 

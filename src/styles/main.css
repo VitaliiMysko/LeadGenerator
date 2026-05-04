@@ -172,6 +172,12 @@ h3 {
 .radio-company {
   padding-bottom: 5px;
 }
+.no-results {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  padding: 10px 0;
+}
 .radio-company * {
   white-space: normal;
   word-break: break-word;
