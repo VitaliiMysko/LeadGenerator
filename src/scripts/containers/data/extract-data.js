@@ -1,5 +1,5 @@
 import {
-  getBtnElement,
+  extractBtnElement,
   experienceContainerElement,
 } from "../../helper/dom-helper.js";
 import { transliterateElement } from "../../services/transliteration.js";
@@ -7,7 +7,7 @@ import { createRadioCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 
-getBtnElement.addEventListener("click", () => {
+extractBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.scripting.executeScript(
       {
@@ -28,7 +28,7 @@ getBtnElement.addEventListener("click", () => {
 
         chrome.tabs.sendMessage(
           tabs[0].id,
-          { action: "getData" },
+          { action: "extractData" },
           async (results) => {
             experienceContainerElement.innerHTML = "";
             if (results) {
