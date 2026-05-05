@@ -59,6 +59,26 @@ button:hover {
 button:active {
   transform: scale(0.98);
 }
+button:disabled {
+  background-color: #a0c4f1;
+  cursor: not-allowed;
+  transform: none;
+}
+.button-row {
+  display: flex;
+  width: 100%;
+}
+.button-row button {
+  flex: 1;
+  width: auto;
+  margin: 3px 2px;
+}
+.buttons-divider {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 0 5px;
+  width: calc(100% - 10px);
+}
 a {
   color: #0056b3;
   text-decoration: none;

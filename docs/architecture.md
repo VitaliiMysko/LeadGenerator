@@ -59,6 +59,7 @@ Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn page when the "Extract" button is clicked
 - `copy-data.js` – copies the collected data to the clipboard
+- `storage-actions.js` – manages local storage of leads: Save (with duplicate/limit guards), Get (clipboard copy in tab-separated format with live counter), Clean (full reset)
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -151,6 +152,10 @@ The extension UI follows a lightweight SPA-like approach within the popup.
   - **Settings** – manages user preferences
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
+
+### 2.8 Local Storage (`chrome.storage.local`)
+
+Used exclusively for saved leads (key: `saved_leads`). Holds a list of up to 100 lead objects (name, surname, job position, link, email, company name, country, industry). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications.
 
 ## 3. Technologies Used
 

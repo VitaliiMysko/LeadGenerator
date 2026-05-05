@@ -2,10 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.3] - 2026-05-05
+
+### Changed
+
+- **Get button** — now copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly) instead of downloading a CSV file; paste directly into Excel or Google Sheets to populate rows
+
+### Fixed
+
+- **Save button** — now correctly enables after email is auto-filled by the email generation button
+
 ## [3.3.2] - 2026-05-04
 
 ### Added
 
+- **Save button** — saves current left-panel lead data to local storage; disabled when email is empty or storage is full (100 items); prevents duplicate entries by email
+- **Get button** — exports all saved leads as a CSV file; shows live item count in label (e.g. `Get (23/100)`)
+- **Clean button** — removes all saved leads from local storage and resets the counter
+- Horizontal divider separating Extract/Copy actions from the storage action group
 - "No results" message in the Actual Experience tab when no data was extracted or all companies are hidden by active filters
 - Left panel fields (job position, company name, country, industry, email) are cleared when "No results" is shown and restored from the first visible company when results return
 
@@ -16,6 +30,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Extract and Copy buttons are now displayed side by side in a single row
+- Save, Get, and Clean buttons are displayed side by side in a second row below the divider
 - Renamed "Get" button to "Extract" across UI, source files, and documentation
 
 ## [3.3.1] - 2026-04-28

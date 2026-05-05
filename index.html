@@ -15,8 +15,16 @@
     <div class="main-container">
       <div class="container">
         <h3>Lead generator</h3>
-        <button id="extract-btn">Extract</button>
-        <button id="copy-btn">Copy</button>
+        <div class="button-row">
+          <button id="extract-btn">Extract</button>
+          <button id="copy-btn">Copy</button>
+        </div>
+        <hr class="buttons-divider" />
+        <div class="button-row">
+          <button id="save-btn" disabled>Save</button>
+          <button id="get-storage-btn">Get (0/100)</button>
+          <button id="clean-btn">Clean</button>
+        </div>
         <div id="data-container">
           <div class="draggable-block">
             <span>Name: </span>
@@ -147,6 +155,10 @@
     <script
       type="module"
       src="src/scripts/containers/data/copy-data.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/data/storage-actions.js"
     ></script>
     <script
       type="module"
