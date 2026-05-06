@@ -66,7 +66,7 @@ All notable changes to this project will be documented in this file.
 - Ability to enable or disable drag-and-drop field reordering via Settings
 - Ability to enable or disable transliteration of personal names via Settings
 - Support for non-Latin characters (e.g., Cyrillic) in name and surname fields
-- "Company size" field of the selected company in the actual experience tab 
+- "Company size" field of the selected company in the actual experience tab
 
 ### Changed
 

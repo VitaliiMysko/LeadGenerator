@@ -58,7 +58,7 @@ Used **only when necessary** for:
 Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
-- `storage-actions.js` – manages local storage of leads: 
+- `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; prevents duplicate entries by email
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
   - **Clean** - full reset
@@ -92,7 +92,7 @@ The filtering system is implemented as a **client-side module** responsible for 
   - Example:
     - Location = "Germany"
     - Size = "51-200"
-    → Only items matching both conditions are displayed
+      → Only items matching both conditions are displayed
 
 #### State Management
 
@@ -217,7 +217,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    ├── worker/
  ├── styles/
  └── utils/
- ```
+```
 
 ## 6. Data Flow Summary
 
@@ -369,7 +369,6 @@ Using direct fetch calls from the popup provides:
 - Lower latency (no intermediate layer)
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
-
 
 ### 9.6 Request Stability Improvements
 
