@@ -58,8 +58,7 @@ Used **only when necessary** for:
 Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn page when the "Extract" button is clicked
-- `copy-data.js` – copies the collected data to the clipboard
-- `storage-actions.js` – manages local storage of leads: Save (with duplicate/limit guards), Get (clipboard copy in tab-separated format with live counter), Clean (full reset)
+- `storage-actions.js` – manages local storage of leads: Save (with duplicate/limit guards), Get (clipboard copy in tab-separated format with live counter, progress bar fill), Clean (full reset)
 
 ### 2.3 Filters (`src/scripts/filters`)
 

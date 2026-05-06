@@ -46,10 +46,6 @@ function getExtractBtnElement() {
   return document.getElementById("extract-btn");
 }
 
-function getCopyBtnElement() {
-  return document.getElementById("copy-btn");
-}
-
 function getSaveBtnElement() {
   return document.getElementById("save-btn");
 }
@@ -140,7 +136,6 @@ export const companyIndustryElement = getCompanyIndustryElement();
 export const companyCountryElement = getCompanyCountryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const extractBtnElement = getExtractBtnElement();
-export const copyBtnElement = getCopyBtnElement();
 export const saveBtnElement = getSaveBtnElement();
 export const storageExportBtnElement = getStorageExportBtnElement();
 export const cleanBtnElement = getCleanBtnElement();

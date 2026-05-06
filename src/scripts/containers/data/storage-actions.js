@@ -14,7 +14,7 @@ import {
 import { showAlert } from "../../output/alert.js";
 
 const STORAGE_KEY = "saved_leads";
-const MAX_ITEMS = 100;
+const MAX_ITEMS = 99;
 
 let currentCount = 0;
 
@@ -62,7 +62,10 @@ cleanBtnElement.addEventListener("click", async () => {
 });
 
 function updateUI() {
-  storageExportBtnElement.textContent = `Get (${currentCount}/${MAX_ITEMS})`;
+  const pct = (currentCount / MAX_ITEMS) * 100;
+  storageExportBtnElement.style.setProperty("--fill-pct", `${pct}%`);
+  storageExportBtnElement.querySelector(".get-counter-current").textContent =
+    currentCount;
   updateSaveBtnState();
 }
 

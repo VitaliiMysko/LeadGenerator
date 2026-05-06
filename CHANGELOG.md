@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.5] - 2026-05-06
+
+### Changed
+
+- **Get button counter** — replaced plain text counter with a styled fraction: current count sits top-left, max sits bottom-right, separated by a 45° diagonal line; "Get" label is left-aligned with the counter pushed to the right edge
+
+## [3.3.4] - 2026-05-06
+
+### Changed
+
+- **Button layout** — Extract and Save are now the only primary-row buttons; Get (progress bar, gray) and Clean (✕ icon, gray) are in the secondary row below the divider, styled to indicate lower priority
+- **Get button** — progress bar fill now uses a gray scale (`#6c757d` → `#ced4da`) to de-emphasise it relative to primary actions; exact count shown as tooltip on hover
+- **Clean button** — now an icon-only (✕) button with muted gray color
+- **Storage limit** — maximum saved leads reduced from 100 to 99
+
+### Removed
+
+- **Copy button** — removed from UI along with all related code (`copy-data.js`, `copyBtnElement`)
+
 ## [3.3.3] - 2026-05-05
 
 ### Changed
