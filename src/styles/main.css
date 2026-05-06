@@ -75,11 +75,11 @@ button:disabled {
 }
 .buttons-divider {
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 2px solid #ddd;
   margin: 0 5px;
   width: calc(100% - 10px);
 }
-#get-storage-btn {
+#get-storage-leads-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,22 +117,22 @@ button:disabled {
 .btn-progress {
   background: linear-gradient(
     to right,
-    #6c757d var(--fill-pct, 0%),
-    #ced4da var(--fill-pct, 0%)
+    #495057 var(--fill-pct, 0%),
+    #6c757d var(--fill-pct, 0%)
   );
 }
 .btn-progress:hover {
   background: linear-gradient(
     to right,
-    #495057 var(--fill-pct, 0%),
-    #adb5bd var(--fill-pct, 0%)
+    #333 var(--fill-pct, 0%),
+    #495057 var(--fill-pct, 0%)
   );
 }
-.btn-icon {
-  background-color: #adb5bd;
-}
-.btn-icon:hover {
+.btn-secondary {
   background-color: #6c757d;
+}
+.btn-secondary:hover {
+  background-color: #495057;
 }
 a {
   color: #0056b3;

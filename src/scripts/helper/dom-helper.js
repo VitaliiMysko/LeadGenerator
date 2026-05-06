@@ -50,8 +50,8 @@ function getSaveBtnElement() {
   return document.getElementById("save-btn");
 }
 
-function getStorageExportBtnElement() {
-  return document.getElementById("get-storage-btn");
+function getStorageLeadsBtnElement() {
+  return document.getElementById("get-storage-leads-btn");
 }
 
 function getCleanBtnElement() {
@@ -137,7 +137,7 @@ export const companyCountryElement = getCompanyCountryElement();
 export const translateBtnElement = getTranslateBtnElement();
 export const extractBtnElement = getExtractBtnElement();
 export const saveBtnElement = getSaveBtnElement();
-export const storageExportBtnElement = getStorageExportBtnElement();
+export const storageLeadsBtnElement = getStorageLeadsBtnElement();
 export const cleanBtnElement = getCleanBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();

@@ -1,6 +1,6 @@
 import {
   saveBtnElement,
-  storageExportBtnElement,
+  storageLeadsBtnElement,
   cleanBtnElement,
   emailElement,
   firstNameElement,
@@ -45,7 +45,7 @@ saveBtnElement.addEventListener("click", async () => {
   showAlert("Saved", "success");
 });
 
-storageExportBtnElement.addEventListener("click", async () => {
+storageLeadsBtnElement.addEventListener("click", async () => {
   const leads = await loadLeads();
   if (leads.length === 0) {
     showAlert("Nothing to copy", "error");
@@ -63,8 +63,8 @@ cleanBtnElement.addEventListener("click", async () => {
 
 function updateUI() {
   const pct = (currentCount / MAX_ITEMS) * 100;
-  storageExportBtnElement.style.setProperty("--fill-pct", `${pct}%`);
-  storageExportBtnElement.querySelector(".get-counter-current").textContent =
+  storageLeadsBtnElement.style.setProperty("--fill-pct", `${pct}%`);
+  storageLeadsBtnElement.querySelector(".get-counter-current").textContent =
     currentCount;
   updateSaveBtnState();
 }
