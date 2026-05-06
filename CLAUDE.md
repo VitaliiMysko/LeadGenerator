@@ -48,6 +48,8 @@ The extension has two execution environments:
 
 **New button/action logic** goes in `src/scripts/containers/data/`.
 
+**Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (max 99 items, email is the unique key). The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
+
 **New content scripts** go in `src/content-scripts/` and must be registered in `manifest.json` under `content_scripts`.
 
 ## External Services

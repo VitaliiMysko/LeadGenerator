@@ -20,7 +20,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Data Extraction**:
 
-  - **"Extract" Button**: Automatically populates:
+  - **"Extract" Button** (primary): Automatically populates all left-panel fields:
 
     - Name
     - Surname
@@ -32,9 +32,11 @@ This extension is a straightforward tool for extracting data about individuals d
 
     The "Email" field is not auto-filled.
 
-  - **"Copy" Button**:
-  
-      Copies data to clipboard in spreadsheet-friendly format
+  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when email is empty or the 99-item limit is reached. Prevents duplicate entries by email.
+
+- **Storage utility buttons** (below divider, secondary):
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
+  - **"Clean" Button**: Removes all saved leads from local storage and resets the counter.
 
 ## UI Structure
 
@@ -43,7 +45,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - Always visible
 - Contains:
 - Core data fields
-- Main actions (**Get / Copy**)
+- Main actions (**Extract / Save / Get / Clean**)
 - Fully editable inputs
 - Supports drag-and-drop (configurable via Settings)
 - Supports names transliteration (configurable via Settings)

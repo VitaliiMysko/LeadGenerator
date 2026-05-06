@@ -15,8 +15,22 @@
     <div class="main-container">
       <div class="container">
         <h3>Lead generator</h3>
-        <button id="extract-btn">Extract</button>
-        <button id="copy-btn">Copy</button>
+        <div class="button-row">
+          <button id="extract-btn">Extract</button>
+          <button id="save-btn" disabled>Save</button>
+        </div>
+        <hr class="buttons-divider" />
+        <div class="button-row">
+          <button id="get-storage-leads-btn" class="btn-progress">
+            <span>Get</span>
+            <span class="get-counter">
+              <span class="get-counter-current">0</span>
+              <span class="get-counter-slash"></span>
+              <span class="get-counter-max">99</span>
+            </span>
+          </button>
+          <button id="clean-btn" class="btn-secondary">Clean</button>
+        </div>
         <div id="data-container">
           <div class="draggable-block">
             <span>Name: </span>
@@ -146,7 +160,7 @@
     ></script>
     <script
       type="module"
-      src="src/scripts/containers/data/copy-data.js"
+      src="src/scripts/containers/data/storage-actions.js"
     ></script>
     <script
       type="module"

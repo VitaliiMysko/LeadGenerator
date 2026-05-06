@@ -57,8 +57,11 @@ Used **only when necessary** for:
 
 Handles user-interaction logic related to core actions:
 
-- `extract-data.js` – fetches and formats the data from the LinkedIn page when the "Extract" button is clicked
-- `copy-data.js` – copies the collected data to the clipboard
+- `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
+- `storage-actions.js` – manages local storage of leads:
+  - **Save** - saves current left-panel lead data; prevents duplicate entries by email
+  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
+  - **Clean** - full reset
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -89,7 +92,7 @@ The filtering system is implemented as a **client-side module** responsible for 
   - Example:
     - Location = "Germany"
     - Size = "51-200"
-    → Only items matching both conditions are displayed
+      → Only items matching both conditions are displayed
 
 #### State Management
 
@@ -152,12 +155,16 @@ The extension UI follows a lightweight SPA-like approach within the popup.
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
 
+### 2.8 Local Storage (`chrome.storage.local`)
+
+Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications.
+
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – no front-end frameworks are used
 - **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, individual's names transliteration settings)
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, individual's names transliteration settings) filters and leads
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
@@ -210,7 +217,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    ├── worker/
  ├── styles/
  └── utils/
- ```
+```
 
 ## 6. Data Flow Summary
 
@@ -362,7 +369,6 @@ Using direct fetch calls from the popup provides:
 - Lower latency (no intermediate layer)
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
-
 
 ### 9.6 Request Stability Improvements
 

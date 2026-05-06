@@ -2,10 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.2] - 2026-05-04
+## [3.3.2] - 2026-05-06
 
 ### Added
 
+- **Save button** — saves current left-panel lead data to local storage; prevents duplicate entries by email
+- **Get button** — copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly); shows live item count in label
+- **Clean button** — removes all saved leads from local storage and resets the counter
 - "No results" message in the Actual Experience tab when no data was extracted or all companies are hidden by active filters
 - Left panel fields (job position, company name, country, industry, email) are cleared when "No results" is shown and restored from the first visible company when results return
 
@@ -17,6 +20,12 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Renamed "Get" button to "Extract" across UI, source files, and documentation
+- Extract and Save buttons are now displayed side by side in a single row
+- Get and Clean buttons are displayed side by side in a second row below the divider
+
+### Removed
+
+- **Copy button** is removed
 
 ## [3.3.1] - 2026-04-28
 
@@ -57,7 +66,7 @@ All notable changes to this project will be documented in this file.
 - Ability to enable or disable drag-and-drop field reordering via Settings
 - Ability to enable or disable transliteration of personal names via Settings
 - Support for non-Latin characters (e.g., Cyrillic) in name and surname fields
-- "Company size" field of the selected company in the actual experience tab 
+- "Company size" field of the selected company in the actual experience tab
 
 ### Changed
 
