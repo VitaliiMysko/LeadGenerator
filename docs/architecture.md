@@ -76,8 +76,8 @@ The filtering system is implemented as a **client-side module** responsible for 
 #### Structure
 
 - `filter-store.js` – centralized state management
-- `location-filter.js` – handles location filtering UI and logic
-- `location-size.js` – handles size filtering UI and logic
+- `company-location.js` – handles location filtering UI and logic
+- `company-size.js` – handles size filtering UI and logic
 
 #### UI Behavior
 
@@ -159,6 +159,22 @@ This approach avoids unnecessary DOM re-creation and improves performance within
 
 Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications.
 
+### 2.9 Persistence Strategy
+
+The extension uses Chrome Storage APIs for lightweight client-side persistence:
+
+- `chrome.storage.sync`
+  - User preferences
+  - UI settings
+  - Filter state
+
+- `chrome.storage.local`
+  - Saved leads
+  - Temporary structured lead datasets
+
+No server-side persistence is used.
+All stored data remains on the user's device.
+
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – no front-end frameworks are used
@@ -183,7 +199,9 @@ Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects
 
 ## 5. Security & Privacy Considerations
 
-- **No personal or extracted profile data is stored**
+- Extracted lead data is not stored automatically
+- Leads may optionally be saved locally by the user using the Save feature (`chrome.storage.local`)
+- No extracted or saved data is transmitted to external servers
 - **User preferences (UI settings)** are stored locally using Chrome Storage API
 - **No cookies are set or read**
 - **Clipboard is used only temporarily**, initiated manually by the user
@@ -228,25 +246,29 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 3. Data is returned and displayed in the popup
 
 4. The user can:
-   - Copy the data via the "Copy" button
-   - Rearrange data using drag-and-drop
-   - Translate job title via the Google Translate API (if logged in via Google OAuth2)
-   - Trigger email generation:
-     - Extension sends company domain to backend
-     - Backend validates generated emails via Emailable
-     - Valid result is returned and inserted into form and clipboard
-   - Validate email separately via Emailable
+
+- Save current lead data locally
+- Copy all saved leads to clipboard in spreadsheet-compatible format
+- Clean all locally saved leads
+- Rearrange data using drag-and-drop
+- Translate job title via the Google Translate API (if logged in via Google OAuth2)
+- Trigger email generation:
+  - Extension sends company domain to backend
+  - Backend validates generated emails via Emailable
+  - Valid result is returned and inserted into form and clipboard
+- Validate email separately via Emailable
 
 5. No data is stored on servers; data only exists temporarily in memory or clipboard
 
 6. The user can configure extension behavior via the Settings tab:
-   - Toggle drag-and-drop functionality
-   - Toggle individual's names transliteration
-   - Preferences are persisted using Chrome Storage API
-   - Apply filters:
-     - Filter state is updated via the filter store
-     - UI automatically re-renders based on active filters
-     - Filtering is performed entirely in memory (no additional requests)
+
+- Toggle drag-and-drop functionality
+- Toggle individual's names transliteration
+- Preferences are persisted using Chrome Storage API
+- Apply filters:
+  - Filter state is updated via the filter store
+  - UI automatically re-renders based on active filters
+  - Filtering is performed entirely in memory (no additional requests)
 
 ```mermaid
 sequenceDiagram
