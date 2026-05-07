@@ -46,6 +46,8 @@ async function addCompanyDetailsListener() {
 async function initCompanyDetails() {
   getRadioButtonElements().forEach(async (radio) => {
     if (radio.checked) {
+      const parentDiv = radio.closest(".radio-company");
+      if (parentDiv.style.display === "none") return;
       await manageCompanyDetailsBlock(radio);
     }
   });
@@ -191,7 +193,7 @@ async function manageCompanyDetailsBlock(radio) {
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
-    if (radio.checked && location !== locationNoFound) {
+    if (radio.checked && location !== locationNoFound && parentDiv.style.display !== "none") {
       companyCountryElement.value = location.split(", ").pop();
     }
 
@@ -207,7 +209,7 @@ async function manageCompanyDetailsBlock(radio) {
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
-    if (radio.checked && industry !== industryNoFound) {
+    if (radio.checked && industry !== industryNoFound && parentDiv.style.display !== "none") {
       companyIndustryElement.value = industry;
     }
 

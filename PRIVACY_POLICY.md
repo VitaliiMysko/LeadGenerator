@@ -32,7 +32,7 @@ The **Email** field is not auto-filled by default. Email addresses may be:
 
 The **Country** and **Industry** fields refer to the selected company.
 
-All information is collected **only when the user explicitly clicks the "Get" button**.  
+All information is collected **only when the user explicitly clicks the "Extract" button**.  
 The extension does **not passively collect or scrape data**.
 
 ## 2. Data Use

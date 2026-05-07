@@ -172,6 +172,7 @@ function checkVerifyEmailResult(result, emailData) {
 
 function showEmail(email) {
   emailElement.value = email;
+  emailElement.dispatchEvent(new Event("input"));
   useTextChangeEffect(emailElement);
 }
 

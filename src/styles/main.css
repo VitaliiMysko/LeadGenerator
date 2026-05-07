@@ -59,6 +59,81 @@ button:hover {
 button:active {
   transform: scale(0.98);
 }
+button:disabled {
+  background-color: #a0c4f1;
+  cursor: not-allowed;
+  transform: none;
+}
+.button-row {
+  display: flex;
+  width: 100%;
+}
+.button-row button {
+  flex: 1;
+  width: auto;
+  margin: 3px 2px;
+}
+.buttons-divider {
+  border: none;
+  border-top: 2px solid #ddd;
+  margin: 0 5px;
+  width: calc(100% - 10px);
+}
+#get-storage-leads-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.get-counter {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  font-size: 8px;
+  line-height: 1;
+}
+.get-counter-current {
+  align-self: flex-start;
+}
+.get-counter-max {
+  align-self: flex-end;
+}
+.get-counter-slash {
+  display: block;
+  align-self: center;
+  width: 1px;
+  height: 12px;
+  background-color: currentColor;
+  transform: rotate(45deg);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+.btn-progress {
+  background: linear-gradient(
+    to right,
+    #495057 var(--fill-pct, 0%),
+    #6c757d var(--fill-pct, 0%)
+  );
+}
+.btn-progress:hover {
+  background: linear-gradient(
+    to right,
+    #333 var(--fill-pct, 0%),
+    #495057 var(--fill-pct, 0%)
+  );
+}
+.btn-secondary {
+  background-color: #6c757d;
+}
+.btn-secondary:hover {
+  background-color: #495057;
+}
 a {
   color: #0056b3;
   text-decoration: none;
@@ -171,6 +246,12 @@ h3 {
 }
 .radio-company {
   padding-bottom: 5px;
+}
+.no-results {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  padding: 10px 0;
 }
 .radio-company * {
   white-space: normal;

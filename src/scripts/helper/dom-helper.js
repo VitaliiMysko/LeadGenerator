@@ -38,12 +38,24 @@ function getValidateEmailsBtnElement() {
   return document.getElementById("validete-emails-btn");
 }
 
-function getGetBtnElement() {
-  return document.getElementById("get-btn");
+function getLinkElement() {
+  return document.getElementById("link");
 }
 
-function getCopyBtnElement() {
-  return document.getElementById("copy-btn");
+function getExtractBtnElement() {
+  return document.getElementById("extract-btn");
+}
+
+function getSaveBtnElement() {
+  return document.getElementById("save-btn");
+}
+
+function getStorageLeadsBtnElement() {
+  return document.getElementById("get-storage-leads-btn");
+}
+
+function getCleanBtnElement() {
+  return document.getElementById("clean-btn");
 }
 
 function getDataContainerElement() {
@@ -114,14 +126,19 @@ export function getDragAndDropSettingsElement() {
   return document.getElementById("drag-and-drop-settings");
 }
 
+export const firstNameElement = getFirstNameElement();
+export const secondNameElement = getSecondNameElement();
+export const linkElement = getLinkElement();
 export const jobPositionElement = getJobPositionElement();
 export const emailElement = getEmailElement();
 export const companyNameElement = getCompanyNameElement();
 export const companyIndustryElement = getCompanyIndustryElement();
 export const companyCountryElement = getCompanyCountryElement();
 export const translateBtnElement = getTranslateBtnElement();
-export const getBtnElement = getGetBtnElement();
-export const copyBtnElement = getCopyBtnElement();
+export const extractBtnElement = getExtractBtnElement();
+export const saveBtnElement = getSaveBtnElement();
+export const storageLeadsBtnElement = getStorageLeadsBtnElement();
+export const cleanBtnElement = getCleanBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
 export const experienceContainerElement = getExperienceContainerElement();
