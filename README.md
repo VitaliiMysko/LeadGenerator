@@ -4,24 +4,20 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ## Key Features
 
-- **Modern, User-Friendly Interface**: 
+- **Modern, User-Friendly Interface**:
 
-   The application features a simple, modern layout with intuitive functionality
+  The application features a simple, modern layout with intuitive functionality
 
-- **Dynamic Tab Navigation**: 
+- **Dynamic Tab Navigation**:
 
-   The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
-
-   - Available tabs:
-
-      - **Actual Experience** – displays extracted company experience data
-      - **Filters** – allows filtering extracted company data
-      - **Settings** – allows customization of extension behavior
+  The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
+  - Available tabs:
+    - **Actual Experience** – displays extracted company experience data
+    - **Filters** – allows filtering extracted company data
+    - **Settings** – allows customization of extension behavior
 
 - **Data Extraction**:
-
   - **"Extract" Button** (primary): Automatically populates all left-panel fields:
-
     - Name
     - Surname
     - Job Position
@@ -59,55 +55,57 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ### 1. Actual Experience (default)
 
-   Displays a list of companies associated with the profile
+Displays a list of companies associated with the profile
 
-   - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
-   - Includes:
+- Shows **"No results"** if no data was extracted or all entries are hidden by active filters
+- Includes:
+  - Job position
+  - Website
+  - Location
+  - Industry
+  - Company size
 
-     - Job position
-     - Website
-     - Location
-     - Industry
-     - Company size
-
-   - Selecting an entry updates:
-
-     - Job position
-     - Company name
-     - Country
-     - Industry (left panel)
+- Selecting an entry updates:
+  - Job position
+  - Company name
+  - Country
+  - Industry (left panel)
 
 ### 2. Filters
 
-   Provides advanced filtering for extracted company data
+Provides advanced filtering for extracted company data
 
-   ### Supported Filters
-   - **Company location**
-   - **Company size**
+### Supported Filters
 
-   ### Behavior
-   - Multi-select dropdown
-   - Selected values are displayed as **removable tags**
-   - Removing a tag restores the option back to the dropdown
-   - Filters can be combined
+- **Company location**
+- **Company size**
 
-   ### Architecture
-   - Powered by a lightweight **state manager**
-   - Filter state is:
-      - Stored locally via Chrome `storage`
-      - Automatically restored on reload
+### Behavior
+
+- Multi-select dropdown
+- Selected values are displayed as **removable tags**
+- Removing a tag restores the option back to the dropdown
+- Filters can be combined
+
+### Architecture
+
+- Powered by a lightweight **state manager**
+- Filter state is:
+  - Stored locally via Chrome `storage`
+  - Automatically restored on reload
 
 ### 3. Settings
 
-   Provides control over extension behavior
-   
-   Available option:
-   - **Drag-and-drop Toggle**
-      - Enable / disable reordering of fields in the left panel
-      - State persisted via Chrome `storage`
-   - **Transliteration Toggle**
-      - Enable / disable individual's names transliteration
-      - State persisted via Chrome `storage`
+Provides control over extension behavior
+
+Available option:
+
+- **Drag-and-drop Toggle**
+  - Enable / disable reordering of fields in the left panel
+  - State persisted via Chrome `storage`
+- **Transliteration Toggle**
+  - Enable / disable individual's names transliteration
+  - State persisted via Chrome `storage`
 
 ## Data Fields
 
@@ -143,8 +141,8 @@ All fields are editable before copying.
 - Supports both **Latin and non-Latin (e.g., Cyrillic) names**
 - Converts names into Latin characters when enabled
 - Works:
-   - After data extraction
-   - After manual editing of fields
+  - After data extraction
+  - After manual editing of fields
 - Fully configurable via Settings
 
 ### Email Service
@@ -167,7 +165,7 @@ Due to browser security restrictions:
 
 **Important**
 
-- The extension does NOT directly fetch external websites
+- The extension does not directly communicate with third-party services from the client
 - All external requests are routed through a backend service
 
 ## Secure Architecture
@@ -256,8 +254,14 @@ After installing the extension, configure it for optimal usage:
    - Enable transliteration
    - Generate / validate email
 
-6. Click **Copy**
-   - Data is copied in spreadsheet-ready format
+6. Click **Save**
+   - Saves current lead data locally
+
+7. Click **Get**
+   - Copies all saved leads in spreadsheet-ready format
+
+8. (Optional) Click **Clean**
+   - Removes all saved leads from local storage
 
 ## Permissions
 
@@ -267,7 +271,7 @@ The "Lead generator" extension requires certain permissions to function effectiv
 - **scripting** - inject scripts
 - **identity** - Google authentication
 - **tabs** - tab interaction
-- **storage** - store user preferences
+- **storage** - store user preferences, filter state, and user-saved lead data locally
 
 ### Host Permissions
 
@@ -284,9 +288,12 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 This extension:
 
-- Does **not** store personal data
 - Does **not** track users
-- Stores only **UI preferences locally** (via storage)
-- Sends data externally only when required (e.g., email validation)
+- Does **not** sell or share personal data
+- Stores user preferences and optionally user-saved lead data locally using Chrome Storage
+- Saves lead data only after explicit user interaction
+- Sends data externally only when required (e.g., email validation or website checks)
+
+Users maintain full control over locally stored data and may retrieve or remove it at any time.
 
 For full details, see [Privacy Policy](PRIVACY_POLICY.md).

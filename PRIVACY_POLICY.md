@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: April 28, 2026
+**Last Updated**: May 7, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -45,7 +45,8 @@ The collected data is used solely to:
 
 The extension does not:
 
-- Store collected profile data locally or remotely
+- Store collected profile data remotely
+- Automatically persist extracted data without user action
 - Track user activity outside of LinkedIn
 - Monitor clipboard content after copying
 
@@ -61,12 +62,13 @@ Filter selections are optional and exist solely to improve usability and data na
 
 ## 3. Local Storage Usage
 
-The extension uses Chrome's `storage` permission to store **user preferences and filter settings**, such as:
+The extension uses Chrome's `storage` permission to store:
 
-- UI settings, enabling or disabling:
+- User preferences and UI settings:
   - Drag-and-drop functionality
   - Individual's names transliteration
 - Selected filter values (e.g., company location, size)
+- User-saved lead data (only when explicitly saved by the user)
 
 Filter settings:
 
@@ -74,17 +76,23 @@ Filter settings:
 - Are applied locally to already extracted data
 - Do not trigger additional data collection or external requests
 
-This data:
+## 3.1 Saved leads data
 
-- Is stored locally on the user’s device
-- Does not include any personally identifiable information
-- Is not transmitted to external servers
+- Is stored locally on the user’s device using Chrome Storage
+- Is saved only after explicit user interaction (e.g., clicking the "Save" button)
+- Is never automatically transmitted to external servers
+- Can be retrieved, exported to clipboard, or permanently removed by the user at any time
 
 ## 4. Data Retention
 
-The extension does not persistently store any collected or generated data.
+The extension does not remotely persist collected or generated data.
 
-- Data exists temporarily in the UI or clipboard
+Extracted data may be temporarily stored locally on the user’s device only when explicitly saved by the user using built-in storage features.
+
+- Data may temporarily exist in:
+  - The extension UI
+  - Clipboard
+  - Local Chrome Storage (only after explicit user action)
 - Email validation and website checks are processed **in real-time**
 - No data is retained after processing
 - Filter settings may be stored locally as part of user preferences
@@ -126,10 +134,17 @@ This architecture ensures:
 You have full control over all data collected by the extension.
 
 - Data is collected only on user action
-- Data is stored only in the clipboard (temporarily)
+- Data may be temporarily copied to the clipboard
+- Data may optionally be stored locally on the user’s device using Chrome's extension storage APIs.
 - The extension does not access data after copying
 
 You are responsible for how copied data is used or stored.
+
+Users may:
+
+- Save lead data locally
+- Retrieve previously saved leads
+- Permanently remove saved leads at any time
 
 ## 8. Google Authentication
 
@@ -152,7 +167,7 @@ The extension requests the following permissions:
 - **activeTab, scripting** — to extract data from the current LinkedIn page upon user action
 - **tabs** — to manage background tab processing for company data
 - **identity** — for Google OAuth authentication (translation feature)
-- **storage** — to store user preferences and filter settings locally
+- **storage** — to store user preferences, filter settings, and user-saved lead data locally on the device
 
 ## 10. Cookies
 
