@@ -2,7 +2,7 @@ import { subscribe, getState } from "../../store/filter-store.js";
 import { initCompanyLocationFilter } from "./company-location.js";
 import { initCompanySizeFilter } from "./company-size.js";
 import {
-  experienceContainerElement,
+  tabExperienceElement,
   jobPositionElement,
   companyNameElement,
   companyCountryElement,
@@ -44,14 +44,14 @@ export function applyFilters() {
     }
   });
 
-  let noResultsEl = experienceContainerElement.querySelector(".no-results");
+  let noResultsEl = tabExperienceElement.querySelector(".no-results");
 
   if (visibleCount === 0) {
     if (!noResultsEl) {
       noResultsEl = document.createElement("div");
       noResultsEl.classList.add("no-results");
       noResultsEl.textContent = "No results";
-      experienceContainerElement.appendChild(noResultsEl);
+      tabExperienceElement.appendChild(noResultsEl);
     }
     noResultsEl.style.display = "block";
     jobPositionElement.value = "";
@@ -63,7 +63,7 @@ export function applyFilters() {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
 
-    const checkedRadio = experienceContainerElement.querySelector("input[type='radio']:checked");
+    const checkedRadio = tabExperienceElement.querySelector("input[type='radio']:checked");
     const checkedIsVisible = checkedRadio && checkedRadio.closest(".radio-company").style.display !== "none";
 
     if (!checkedIsVisible && firstVisibleCompany) {
