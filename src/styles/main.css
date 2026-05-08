@@ -239,11 +239,6 @@ h3 {
   background-color: #ddd;
   align-self: stretch;
 }
-#experience-container {
-  width: 183px; /* hard code */
-  display: flex;
-  flex-direction: column;
-}
 .radio-company {
   padding-bottom: 5px;
 }
@@ -283,6 +278,9 @@ h3 {
   display: inline-block;
   animation: dots 1.5s infinite;
 }
+.company-website.loading span {
+  flex: initial;
+}
 @keyframes dots {
   0% {
     content: "";
@@ -300,6 +298,7 @@ h3 {
 .company-website {
   display: flex;
   align-items: center;
+  overflow: hidden;
   padding: 5px;
   border-left: 1px solid #ccc;
   background-color: #f9f9f9;
@@ -319,6 +318,8 @@ h3 {
   margin-right: 5px;
 }
 .company-website span {
+  flex: 1;
+  min-width: 0;
   overflow: hidden; /* avoid overtext */
   text-overflow: ellipsis; /* three dots at the and if text too long */
   white-space: nowrap; /* in one line */
@@ -359,6 +360,7 @@ h3 {
 .no-valid {
   position: relative;
   padding-right: 10px;
+  box-sizing: border-box;
 }
 .valid::before {
   content: "";
@@ -441,11 +443,11 @@ h3 {
   flex: 1;
   display: flex;
   flex-direction: column;
-  width: 183px;
   overflow: hidden;
 }
 .tabs-content {
   flex: 1;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 0;
@@ -456,7 +458,7 @@ h3 {
 .tab {
   display: none;
   flex-direction: column;
-  width: 183px;
+  width: 100%;
 }
 .tab.active {
   display: flex;

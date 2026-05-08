@@ -66,8 +66,8 @@ function getAlertElement() {
   return document.getElementById("alert");
 }
 
-function getExperienceContainerElement() {
-  return document.getElementById("experience-container");
+function getTabExperienceElement() {
+  return document.getElementById("tab-experience");
 }
 
 function getAppVersionElement() {
@@ -75,7 +75,7 @@ function getAppVersionElement() {
 }
 
 export function getRadioButtonElements() {
-  return document.querySelectorAll("#experience-container input[type='radio']");
+  return document.querySelectorAll("#tab-experience input[type='radio']");
 }
 
 export function getCompanyNameElements() {
@@ -141,7 +141,7 @@ export const storageLeadsBtnElement = getStorageLeadsBtnElement();
 export const cleanBtnElement = getCleanBtnElement();
 export const dataContainerElement = getDataContainerElement();
 export const alertElement = getAlertElement();
-export const experienceContainerElement = getExperienceContainerElement();
+export const tabExperienceElement = getTabExperienceElement();
 export const appVersionElement = getAppVersionElement();
 export const generateEmailsBtnElement = getGenerateEmailsBtnElement();
 export const validateEmailsBtnElement = getValidateEmailsBtnElement();

@@ -4,17 +4,17 @@ import {
   companyIndustryElement,
   companyCountryElement,
   emailElement,
-  experienceContainerElement,
+  tabExperienceElement,
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize } from "./company-details.js";
 
 export function createRadioCompanyList(experience) {
-  experienceContainerElement.innerHTML = "";
+  tabExperienceElement.innerHTML = "";
 
   experience.forEach((company, index) => {
     const radioCompanyBlock = getRadioCompanyBlock(company, index);
-    experienceContainerElement.appendChild(radioCompanyBlock);
+    tabExperienceElement.appendChild(radioCompanyBlock);
   });
 }
 
