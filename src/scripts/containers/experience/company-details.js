@@ -150,7 +150,11 @@ async function manageCompanyDetailsBlock(item) {
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
-    if (item.classList.contains("active") && location !== locationNoFound && item.style.display !== "none") {
+    if (
+      item.classList.contains("active") &&
+      location !== locationNoFound &&
+      item.style.display !== "none"
+    ) {
       companyCountryElement.value = location.split(", ").pop();
     }
 
@@ -166,7 +170,11 @@ async function manageCompanyDetailsBlock(item) {
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
-    if (item.classList.contains("active") && industry !== industryNoFound && item.style.display !== "none") {
+    if (
+      item.classList.contains("active") &&
+      industry !== industryNoFound &&
+      item.style.display !== "none"
+    ) {
       companyIndustryElement.value = industry;
     }
 

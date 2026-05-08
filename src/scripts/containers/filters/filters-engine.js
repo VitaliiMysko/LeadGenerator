@@ -63,7 +63,9 @@ export function applyFilters() {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
 
-    const activeItem = tabExperienceElement.querySelector(".company-item.active");
+    const activeItem = tabExperienceElement.querySelector(
+      ".company-item.active",
+    );
     const activeIsVisible = activeItem && activeItem.style.display !== "none";
 
     if (!activeIsVisible && firstVisibleCompany) {

@@ -21,7 +21,9 @@ export function createCompanyList(experience) {
 function getCompanyBlock(company, index) {
   const extraCompanyData = company.extraData;
 
-  extraCompanyData.companySize = formatCompanySize(extraCompanyData.companySize);
+  extraCompanyData.companySize = formatCompanySize(
+    extraCompanyData.companySize,
+  );
 
   const companyBlock = document.createElement("div");
   companyBlock.classList.add("company-item");
@@ -51,12 +53,16 @@ function getCompanyBlock(company, index) {
 
     emailElement.value = "";
     companyNameElement.value = companyBlock.getAttribute("data-company-name");
-    jobPositionElement.value = companyBlock.getAttribute("data-company-job-position");
+    jobPositionElement.value = companyBlock.getAttribute(
+      "data-company-job-position",
+    );
     companyCountryElement.value = companyBlock
       .getAttribute("data-company-location")
       .split(", ")
       .pop();
-    companyIndustryElement.value = companyBlock.getAttribute("data-company-industry");
+    companyIndustryElement.value = companyBlock.getAttribute(
+      "data-company-industry",
+    );
   });
 
   companyBlock.appendChild(header);
