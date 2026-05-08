@@ -110,10 +110,9 @@ function getCompanyDetailsElement(company) {
   details.classList.add("company-details");
 
   details.appendChild(getCompanyWebsiteElement());
-  details.appendChild(getCompanyLocationElement(company));
   details.appendChild(getCompanyIndustryElement(company));
+  details.appendChild(getCompanyLocationElement(company));
   details.appendChild(getCompanySizeElement(company));
-
   return details;
 }
 

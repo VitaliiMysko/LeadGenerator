@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Replaced radio buttons in the Actual Experience tab with a clickable accordion.
+- Redesigned the company details section.
 
 ### Improved
 

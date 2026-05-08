@@ -285,17 +285,45 @@ h3 {
 }
 .company-details {
   display: none;
+  margin-top: 3px;
+  background: #f9f9f9;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  padding: 6px 6px 5px;
 }
 .company-item.active .company-details {
   display: block;
 }
 .company-location,
-.company-industry,
-.company-size {
-  padding: 5px;
-  border-left: 1px solid #ccc;
-  background-color: #f9f9f9;
-  margin-top: 5px;
+.company-size,
+.company-industry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  min-width: 0;
+  margin-top: 6px;
+}
+.company-location::before {
+  content: "Location";
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.company-size::before {
+  content: "Size";
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.company-industry::before {
+  content: "Industry";
+  font-size: 9px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 #version-container {
@@ -331,22 +359,15 @@ h3 {
   display: flex;
   align-items: center;
   overflow: hidden;
-  padding: 5px;
-  border-left: 1px solid #ccc;
-  background-color: #f9f9f9;
-  margin-top: 5px;
-}
-.company-item.active .company-website,
-.company-item.active .company-location,
-.company-item.active .company-industry,
-.company-item.active .company-size {
-  border-left: 2px solid #ccc;
-  background-color: #fdfdfd;
+  gap: 4px;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #e4e4e4;
 }
 .company-website img {
   width: 16px;
   height: 16px;
-  margin-right: 5px;
+  flex-shrink: 0;
 }
 .company-website span {
   flex: 1;
@@ -399,7 +420,7 @@ h3 {
   top: 0;
   right: 0;
   width: 10px;
-  height: 100%;
+  height: calc(100% - 5px);
   background: linear-gradient(to right, #f8faf8, #8cca8e);
 }
 .no-valid::before {
@@ -408,7 +429,7 @@ h3 {
   top: 0;
   right: 0;
   width: 10px;
-  height: 100%;
+  height: calc(100% - 5px);
   background: linear-gradient(to right, #faefee, #ca8c89);
 }
 .validation-success {
