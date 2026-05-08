@@ -361,10 +361,24 @@ h3 {
   color: #ccc;
   font-size: 9px;
 }
-.loading::after {
+.loading:not(.refresh-btn)::after {
   content: "";
   display: inline-block;
   animation: dots 1.5s infinite;
+}
+.company-location.loading,
+.company-industry.loading,
+.company-size.loading {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 2px;
+  column-gap: 0;
+}
+.company-location.loading::before,
+.company-industry.loading::before,
+.company-size.loading::before {
+  flex-basis: 100%;
 }
 .company-website.loading span {
   flex: initial;
