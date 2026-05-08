@@ -309,8 +309,12 @@ h3 {
   color: #888;
 }
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .company-details {
   display: none;
@@ -322,6 +326,19 @@ h3 {
 }
 .company-item.active .company-details {
   display: block;
+  animation: detailsReveal 0.2s ease-out;
+}
+@keyframes detailsReveal {
+  from {
+    opacity: 0;
+    transform: scaleY(0.6);
+    transform-origin: top center;
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+    transform-origin: top center;
+  }
 }
 .company-location,
 .company-size,
