@@ -103,7 +103,7 @@ export function getCompanySizeElements() {
 }
 
 export function getCompanyDomainElement() {
-  return document.querySelector("div.company-website.active > span");
+  return document.querySelector(".company-item.active .company-website > span");
 }
 
 export function getTabSelectorTriggerElement() {
