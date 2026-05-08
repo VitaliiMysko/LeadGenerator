@@ -283,6 +283,35 @@ h3 {
 .company-item.active .arrow {
   transform: rotate(0deg);
 }
+.refresh-btn {
+  display: none;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: #bbb;
+  font-size: 15px;
+  line-height: 1;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+}
+.refresh-btn:hover {
+  color: #555;
+}
+.company-item.active .refresh-btn {
+  display: flex;
+}
+.refresh-btn.loading {
+  animation: spin 0.8s linear infinite;
+  pointer-events: none;
+  color: #888;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 .company-details {
   display: none;
   margin-top: 3px;
@@ -325,7 +354,6 @@ h3 {
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
-
 #version-container {
   position: absolute;
   top: 5px;
