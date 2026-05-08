@@ -78,29 +78,6 @@ export function getCompanyItemElements() {
   return document.querySelectorAll("#tab-experience .company-item");
 }
 
-export function getCompanyNameElements() {
-  return document.querySelectorAll(".company-name");
-}
-
-export function getCompanyJobElements() {
-  return document.querySelectorAll(".company-job");
-}
-
-export function getCompanyWebsiteElements() {
-  return document.querySelectorAll(".company-website");
-}
-
-export function getCompanyLocationElements() {
-  return document.querySelectorAll(".company-location");
-}
-
-export function getCompanyIndustryElements() {
-  return document.querySelectorAll(".company-industry");
-}
-
-export function getCompanySizeElements() {
-  return document.querySelectorAll(".company-size");
-}
 
 export function getCompanyDomainElement() {
   return document.querySelector(".company-item.active .company-website > span");

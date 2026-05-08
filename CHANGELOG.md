@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Replaced radio buttons in the Actual Experience tab with a clickable accordion. Each company row shows its name and job position by default; a right-pointing arrow on the right indicates the item is expandable. Clicking a row expands it to reveal the full company details (website, location, industry, size) and collapses the previously active one.
+- Replaced radio buttons in the Actual Experience tab with a clickable accordion.
 
 ### Improved
 
