@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.3] - 2026-05-07
+## [3.3.3] - 2026-05-08
 
 ### Added
 
-- **Refresh button** (↻) in the company header of the Actual Experience tab. Visible only for the active company; clicking it clears the cached company data and re-fetches website, location, industry, and size from scratch. Spins while loading and is blocked during an in-flight request to prevent double-fetching.
+- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
 
 ### Changed
 
