@@ -7,7 +7,7 @@ import {
   tabExperienceElement,
 } from "../../helper/dom-helper.js";
 
-import { formatCompanySize } from "./company-details.js";
+import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
 
 export function createCompanyList(experience) {
   tabExperienceElement.innerHTML = "";
@@ -30,8 +30,11 @@ function getCompanyBlock(company, index) {
   companyBlock.setAttribute("data-company-name", company.companyName);
   companyBlock.setAttribute("data-company-job-position", company.jobPosition);
   companyBlock.setAttribute("data-company-location", extraCompanyData.location);
+  companyBlock.setAttribute("data-company-location-init", extraCompanyData.location);
   companyBlock.setAttribute("data-company-industry", extraCompanyData.industry);
+  companyBlock.setAttribute("data-company-industry-init", extraCompanyData.industry);
   companyBlock.setAttribute("data-company-size", extraCompanyData.companySize);
+  companyBlock.setAttribute("data-company-size-init", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-revenue", extraCompanyData.revenue);
 
   const header = getCompanyHeaderElement(company);
@@ -45,6 +48,18 @@ function getCompanyBlock(company, index) {
     companyIndustryElement.value = extraCompanyData.industry;
     companyCountryElement.value = extraCompanyData.location.split(", ").pop();
   }
+
+  const refreshBtn = header.querySelector(".refresh-btn");
+  refreshBtn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const websiteBlock = companyBlock.querySelector(".company-website");
+    if (refreshBtn.classList.contains("loading") || websiteBlock.classList.contains("loading")) return;
+    refreshBtn.classList.add("loading");
+    websiteBlock.classList.remove("valid");
+    websiteBlock.classList.remove("no-valid");
+    await refreshCompanyDetails(companyBlock);
+    refreshBtn.classList.remove("loading");
+  });
 
   header.addEventListener("click", () => {
     const allItems = tabExperienceElement.querySelectorAll(".company-item");
@@ -80,10 +95,16 @@ function getCompanyHeaderElement(company) {
   info.appendChild(getCompanyNameElement(company));
   info.appendChild(getCompanyJobElement(company));
 
+  const refreshBtn = document.createElement("div");
+  refreshBtn.classList.add("refresh-btn");
+  refreshBtn.title = "Refresh company data";
+  refreshBtn.textContent = "↻";
+
   const arrow = document.createElement("div");
   arrow.classList.add("arrow");
 
   header.appendChild(info);
+  header.appendChild(refreshBtn);
   header.appendChild(arrow);
   return header;
 }

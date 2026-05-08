@@ -27,6 +27,27 @@ export async function handlerCompanyDetails() {
   await addCompanyDetailsListener();
 }
 
+export async function refreshCompanyDetails(item) {
+  const companyLinkElement = item.querySelector("a");
+  if (companyLinkElement) {
+    companyDetailsCache.delete(companyLinkElement.href);
+  }
+
+  const websiteBlock = item.querySelector(".company-website");
+  websiteBlock.removeAttribute("data-initialized");
+
+  const locationInitValue = item.getAttribute("data-company-location-init");
+  const industryInitValue = item.getAttribute("data-company-industry-init");
+  const sizeInitValue = item.getAttribute("data-company-size-init");
+
+  item.setAttribute("data-company-location", locationInitValue);
+  item.setAttribute("data-company-industry", industryInitValue);
+  item.setAttribute("data-company-size", sizeInitValue);
+
+  await manageCompanyDetailsBlock(item);
+  fillEmailFromCache(emailElement.value);
+}
+
 async function addCompanyDetailsListener() {
   getCompanyItemElements().forEach(async (item) => {
     const header = item.querySelector(".company-header");
@@ -85,7 +106,7 @@ async function manageCompanyDetailsBlock(item) {
     industryBlock.innerHTML = "";
     industryBlock.classList.add("loading");
   }
-  if (!size) {
+  if (!size || size === "unknown") {
     sizeBlock.innerHTML = "";
     sizeBlock.classList.add("loading");
   }
@@ -105,7 +126,7 @@ async function manageCompanyDetailsBlock(item) {
     const industryLoadingTextElement = getSpanElement("Loading industry");
     industryBlock.appendChild(industryLoadingTextElement);
   }
-  if (!size) {
+  if (!size || size === "unknown") {
     const sizeLoadingTextElement = getSpanElement("Loading company size");
     sizeBlock.appendChild(sizeLoadingTextElement);
   }
@@ -322,7 +343,7 @@ async function getCompanyData(companylink, location, industry, size) {
         url: companylink,
         location: location,
         industry: industry,
-        size: size,
+        size: size === "unknown" ? "" : size,
       });
 
       if (response) {

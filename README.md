@@ -55,21 +55,26 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ### 1. Actual Experience (default)
 
-Displays a list of companies associated with the profile
+Displays a list of companies associated with the profile as an interactive accordion
 
+- Each row always shows: company **name** and **job position**
+- Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
-- Includes:
-  - Job position
-  - Website
-  - Location
+- Expanded company details include:
+  - Website (click to copy a basic email address)
   - Industry
+  - Location
   - Company size
 
-- Selecting an entry updates:
+- Active company header includes a **Refresh button (↻)** to re-fetch company data on demand
+  - Only visible for the currently active company
+  - Spins while loading; blocked during in-flight requests to prevent double-fetching
+
+- Selecting a company updates the left panel:
   - Job position
   - Company name
   - Country
-  - Industry (left panel)
+  - Industry
 
 ### 2. Filters
 

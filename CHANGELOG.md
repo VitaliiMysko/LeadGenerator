@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.3] - 2026-05-07
+## [3.3.3] - 2026-05-08
+
+### Added
+
+- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
 
 ### Changed
 

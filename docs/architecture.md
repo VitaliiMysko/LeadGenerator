@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: April 28, 2026
+**Last updated**: May 8, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -154,6 +154,19 @@ The extension UI follows a lightweight SPA-like approach within the popup.
   - **Settings** – manages user preferences
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
+
+#### Actual Experience Tab – Accordion Pattern
+
+The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-class-driven accordion:
+
+- Each company is rendered as a `.company-item` element containing:
+  - `.company-header` – always visible; holds company name, job position, expand arrow, and refresh button
+  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`
+- Only one `.company-item` can hold `.active` at a time; clicking a header removes `.active` from all siblings and adds it to the clicked item
+- **Company data loading** is handled by `company-details.js`:
+  - Uses a `companyDetailsCache` Map (keyed by company URL) to avoid redundant network fetches
+  - Marks a `.company-website` block with `data-initialized="true"` once data is loaded to skip re-fetching on re-expand
+- **Refresh button (↻)** in the active header: calls `refreshCompanyDetails(item)`, which clears the cache entry, resets `data-initialized`, restores original attribute values, and re-runs the fetch pipeline
 
 ### 2.8 Local Storage (`chrome.storage.local`)
 
