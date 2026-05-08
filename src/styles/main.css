@@ -239,7 +239,7 @@ h3 {
   background-color: #ddd;
   align-self: stretch;
 }
-.radio-company {
+.company-item {
   padding-bottom: 5px;
 }
 .no-results {
@@ -248,15 +248,48 @@ h3 {
   font-size: 12px;
   padding: 10px 0;
 }
-.radio-company * {
+.company-item * {
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
 }
-.company-name.active {
+.company-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 3px 2px;
+  border-radius: 3px;
+  gap: 6px;
+}
+.company-header:hover {
+  background-color: #efefef;
+}
+.company-header-info {
+  flex: 1;
+  min-width: 0;
+}
+.company-item.active .company-name {
   font-weight: 600;
 }
-.company-job,
+.company-job {
+  font-size: 11px;
+  color: #666;
+}
+.company-item .arrow {
+  transform: rotate(-90deg);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+.company-item.active .arrow {
+  transform: rotate(0deg);
+}
+.company-details {
+  display: none;
+}
+.company-item.active .company-details {
+  display: block;
+}
 .company-location,
 .company-industry,
 .company-size {
@@ -304,11 +337,10 @@ h3 {
   background-color: #f9f9f9;
   margin-top: 5px;
 }
-.company-job.active,
-.company-website.active,
-.company-location.active,
-.company-industry.active,
-.company-size.active {
+.company-item.active .company-website,
+.company-item.active .company-location,
+.company-item.active .company-industry,
+.company-item.active .company-size {
   border-left: 2px solid #ccc;
   background-color: #fdfdfd;
 }

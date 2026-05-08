@@ -74,8 +74,8 @@ function getAppVersionElement() {
   return document.getElementById("app-version");
 }
 
-export function getRadioButtonElements() {
-  return document.querySelectorAll("#tab-experience input[type='radio']");
+export function getCompanyItemElements() {
+  return document.querySelectorAll("#tab-experience .company-item");
 }
 
 export function getCompanyNameElements() {
