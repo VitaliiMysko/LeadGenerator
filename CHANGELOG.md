@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [3.3.3] - 2026-05-07
 
+### Changed
 
+- Replaced radio buttons in the Actual Experience tab with a clickable accordion
+- Redesigned the company details section
 
 ### Improved
 
-- The application was redesigned to avoid hard-coded values.
+- The application was redesigned to avoid hard-coded values
 
 ## [3.3.2] - 2026-05-06
 

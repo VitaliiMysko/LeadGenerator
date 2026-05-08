@@ -3,7 +3,7 @@ import {
   tabExperienceElement,
 } from "../../helper/dom-helper.js";
 import { transliterateElement } from "../../services/transliteration.js";
-import { createRadioCompanyList } from "../experience/actual-experience.js";
+import { createCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 
@@ -38,7 +38,7 @@ extractBtnElement.addEventListener("click", () => {
                   await populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
-                  createRadioCompanyList(element.value);
+                  createCompanyList(element.value);
                 }
               }
             }

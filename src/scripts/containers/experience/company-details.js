@@ -1,11 +1,5 @@
 import {
-  getRadioButtonElements,
-  getCompanyNameElements,
-  getCompanyJobElements,
-  getCompanyWebsiteElements,
-  getCompanyLocationElements,
-  getCompanyIndustryElements,
-  getCompanySizeElements,
+  getCompanyItemElements,
   emailElement,
   generateEmailsBtnElement,
   companyIndustryElement,
@@ -34,9 +28,10 @@ export async function handlerCompanyDetails() {
 }
 
 async function addCompanyDetailsListener() {
-  getRadioButtonElements().forEach(async (radio) => {
-    radio.addEventListener("change", async () => {
-      await manageCompanyDetailsBlock(radio);
+  getCompanyItemElements().forEach(async (item) => {
+    const header = item.querySelector(".company-header");
+    header.addEventListener("click", async () => {
+      await manageCompanyDetailsBlock(item);
       const pastedEmailWhileFindingWebsite = emailElement.value;
       fillEmailFromCache(pastedEmailWhileFindingWebsite);
     });
@@ -44,65 +39,27 @@ async function addCompanyDetailsListener() {
 }
 
 async function initCompanyDetails() {
-  getRadioButtonElements().forEach(async (radio) => {
-    if (radio.checked) {
-      const parentDiv = radio.closest(".radio-company");
-      if (parentDiv.style.display === "none") return;
-      await manageCompanyDetailsBlock(radio);
+  getCompanyItemElements().forEach(async (item) => {
+    if (item.classList.contains("active")) {
+      if (item.style.display === "none") return;
+      await manageCompanyDetailsBlock(item);
     }
   });
 }
 
-async function manageCompanyDetailsBlock(radio) {
-  getCompanyNameElements().forEach((label) => label.classList.remove("active"));
-  getCompanyJobElements().forEach((job) => job.classList.remove("active"));
-  getCompanyWebsiteElements().forEach((website) => {
-    website.classList.remove("active");
-    website.style.display = "none";
-  });
-  getCompanyLocationElements().forEach((country) => {
-    country.classList.remove("active");
-    country.style.display = "none";
-  });
-  getCompanyIndustryElements().forEach((industry) => {
-    industry.classList.remove("active");
-    industry.style.display = "none";
-  });
-  getCompanySizeElements().forEach((size) => {
-    size.classList.remove("active");
-    size.style.display = "none";
-  });
+async function manageCompanyDetailsBlock(item) {
+  let location = item.getAttribute("data-company-location");
+  let industry = item.getAttribute("data-company-industry");
+  let size = item.getAttribute("data-company-size");
 
-  const parentDiv = radio.closest(".radio-company");
+  const companyNameLabel = item.querySelector(".company-name");
 
-  let location = parentDiv.getAttribute("data-company-location");
-  let industry = parentDiv.getAttribute("data-company-industry");
-  let size = parentDiv.getAttribute("data-company-size");
+  const websiteBlock = item.querySelector(".company-website");
+  const locationBlock = item.querySelector(".company-location");
+  const industryBlock = item.querySelector(".company-industry");
+  const sizeBlock = item.querySelector(".company-size");
 
-  const companyNameLabel = parentDiv.querySelector(".company-name");
-  companyNameLabel.classList.add("active");
-
-  const companyJobElement = parentDiv.querySelector(".company-job");
-  companyJobElement.classList.add("active");
-
-  const websiteBlock = parentDiv.querySelector(".company-website");
-  websiteBlock.classList.add("active");
-
-  const locationBlock = parentDiv.querySelector(".company-location");
-  locationBlock.classList.add("active");
-
-  const industryBlock = parentDiv.querySelector(".company-industry");
-  industryBlock.classList.add("active");
-
-  const sizeBlock = parentDiv.querySelector(".company-size");
-  sizeBlock.classList.add("active");
-
-  const companyLinkElement = parentDiv.querySelector("a");
-
-  websiteBlock.style.display = "flex";
-  locationBlock.style.display = "flex";
-  industryBlock.style.display = "flex";
-  sizeBlock.style.display = "flex";
+  const companyLinkElement = item.querySelector("a");
 
   const generateEmailIcon = generateEmailsBtnElement.querySelector("img");
   const generateEmailIconByDefaultSrc = "assets/icons/generate-emails-16.png";
@@ -187,13 +144,17 @@ async function manageCompanyDetailsBlock(radio) {
         companyDetails.location === "" && companyDetails.completeRequest
           ? locationNoFound
           : companyDetails.location;
-      parentDiv.setAttribute(`data-company-location`, companyDetails.location);
+      item.setAttribute(`data-company-location`, companyDetails.location);
     }
 
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
-    if (radio.checked && location !== locationNoFound && parentDiv.style.display !== "none") {
+    if (
+      item.classList.contains("active") &&
+      location !== locationNoFound &&
+      item.style.display !== "none"
+    ) {
       companyCountryElement.value = location.split(", ").pop();
     }
 
@@ -203,13 +164,17 @@ async function manageCompanyDetailsBlock(radio) {
         companyDetails.industry === "" && companyDetails.completeRequest
           ? industryNoFound
           : companyDetails.industry;
-      parentDiv.setAttribute(`data-company-industry`, companyDetails.industry);
+      item.setAttribute(`data-company-industry`, companyDetails.industry);
     }
 
     const industryTextElement = getSpanElement(industry);
     industryBlock.appendChild(industryTextElement);
 
-    if (radio.checked && industry !== industryNoFound && parentDiv.style.display !== "none") {
+    if (
+      item.classList.contains("active") &&
+      industry !== industryNoFound &&
+      item.style.display !== "none"
+    ) {
       companyIndustryElement.value = industry;
     }
 
@@ -217,7 +182,7 @@ async function manageCompanyDetailsBlock(radio) {
       size = companyDetails.completeRequest
         ? formatCompanySize(companyDetails.size)
         : "";
-      parentDiv.setAttribute(`data-company-size`, size);
+      item.setAttribute(`data-company-size`, size);
     }
 
     const sizeTextElement = getSpanElement(size);
@@ -227,7 +192,7 @@ async function manageCompanyDetailsBlock(radio) {
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
 
-    if (companyNameLabel.classList.contains("active")) {
+    if (item.classList.contains("active")) {
       generateEmailsBtnElement.disabled = false;
       generateEmailIcon.src = generateEmailIconByDefaultSrc;
     }
