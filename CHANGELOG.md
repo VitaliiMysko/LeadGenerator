@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 - Replaced radio buttons in the Actual Experience tab with a clickable accordion
 - Redesigned the company details section
+- Left-panel data fields now use the same label style as the Actual Experience company details: small uppercase label above each input
 
 ### Improved
 

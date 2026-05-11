@@ -146,9 +146,6 @@ a:hover {
 a:active {
   color: #004494;
 }
-h3 {
-  margin: 10px;
-}
 .main-container {
   display: flex;
   width: 100%;
@@ -163,8 +160,7 @@ h3 {
   box-sizing: border-box;
   overflow: hidden;
 }
-#job-position-block,
-#email-block {
+.field-input-wrap {
   position: relative;
 }
 #job-position {
@@ -200,8 +196,19 @@ h3 {
 }
 .draggable-block {
   width: 100%;
-  padding-top: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  min-width: 0;
+  margin-top: 6px;
   cursor: default;
+}
+.draggable-block > span {
+  font-size: 9px;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 .draggable-block.enabled {
   cursor: move;
@@ -353,21 +360,21 @@ h3 {
 .company-location::before {
   content: "Location";
   font-size: 9px;
-  color: #aaa;
+  color: #495057;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .company-size::before {
   content: "Size";
   font-size: 9px;
-  color: #aaa;
+  color: #495057;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 .company-industry::before {
   content: "Industry";
   font-size: 9px;
-  color: #aaa;
+  color: #495057;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
