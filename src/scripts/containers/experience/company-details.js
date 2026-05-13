@@ -84,7 +84,7 @@ async function manageCompanyDetailsBlock(item) {
 
   if (websiteBlock.getAttribute("data-initialized") === "true") {
     const websiteText = websiteBlock.querySelector("span")?.textContent;
-    generateEmailsBtnElement.disabled = websiteText === "No website found";
+    generateEmailsBtnElement.disabled = !isValidDomain(websiteText);
     return;
   } else {
     generateEmailsBtnElement.disabled = true;
@@ -209,7 +209,7 @@ async function manageCompanyDetailsBlock(item) {
     websiteBlock.appendChild(editWebsiteDomainElement);
 
     if (item.classList.contains("active")) {
-      generateEmailsBtnElement.disabled = website === "No website found";
+      generateEmailsBtnElement.disabled = !isValidDomain(website);
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
@@ -267,6 +267,10 @@ function getEditWebsiteDomainElement() {
   wrapperDiv._icon = editWebsiteElement;
 
   return wrapperDiv;
+}
+
+function isValidDomain(value) {
+  return /^[\w.-]+\.[a-zA-Z]{2,}$/.test(value?.trim());
 }
 
 function getHostName(url) {
