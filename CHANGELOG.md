@@ -18,6 +18,10 @@ All notable changes to this project will be documented in this file.
 
 - The application was redesigned to avoid hard-coded values
 
+### Fixed
+
+- Drag-and-drop reordering now works when dropping anywhere on a field block (label, input, buttons), not just on the narrow gaps between child elements
+
 ## [3.3.2] - 2026-05-06
 
 ### Added

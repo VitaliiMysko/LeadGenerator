@@ -18,20 +18,19 @@ const handleDragOver = function (event) {
 
 const handleDrop = function (event) {
   event.preventDefault();
-  if (event.target.classList.contains("draggable-block")) {
-    if (dragged !== event.target) {
-      const draggedIndex = Array.from(dataContainerElement.children).indexOf(
-        dragged,
-      );
-      const targetIndex = Array.from(dataContainerElement.children).indexOf(
-        event.target,
-      );
+  const dropTarget = event.target.closest(".draggable-block");
+  if (dropTarget && dragged !== dropTarget) {
+    const draggedIndex = Array.from(dataContainerElement.children).indexOf(
+      dragged,
+    );
+    const targetIndex = Array.from(dataContainerElement.children).indexOf(
+      dropTarget,
+    );
 
-      if (draggedIndex > targetIndex) {
-        dataContainerElement.insertBefore(dragged, event.target);
-      } else {
-        dataContainerElement.insertBefore(dragged, event.target.nextSibling);
-      }
+    if (draggedIndex > targetIndex) {
+      dataContainerElement.insertBefore(dragged, dropTarget);
+    } else {
+      dataContainerElement.insertBefore(dragged, dropTarget.nextSibling);
     }
   }
 };
