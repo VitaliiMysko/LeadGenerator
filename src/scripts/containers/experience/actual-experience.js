@@ -6,12 +6,14 @@ import {
   emailElement,
   tabExperienceElement,
   openCompanyLinkedinBtnElement,
+  generateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
 
 export function createCompanyList(experience) {
   tabExperienceElement.innerHTML = "";
+  generateEmailsBtnElement.disabled = true;
 
   experience.forEach((company, index) => {
     const companyBlock = getCompanyBlock(company, index);
