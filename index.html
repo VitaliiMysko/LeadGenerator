@@ -77,9 +77,18 @@
               </button>
             </div>
           </div>
-          <div class="draggable-block">
+          <div class="draggable-block" id="company-name-block">
             <span>Company name</span>
-            <input type="text" id="company-name" value="" />
+            <div class="field-input-wrap">
+              <input type="text" id="company-name" value="" />
+              <button id="open-company-linkedin-btn" disabled>
+                <img
+                  src="assets/icons/linkedin-16.png"
+                  alt="LinkedIn icon"
+                  title="Open company LinkedIn page"
+                />
+              </button>
+            </div>
           </div>
           <div class="draggable-block">
             <span>Country</span>
@@ -171,6 +180,10 @@
     <script
       type="module"
       src="src/scripts/containers/filters/company-location.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/data/open-company-linkedin.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>

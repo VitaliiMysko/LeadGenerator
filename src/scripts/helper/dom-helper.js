@@ -38,6 +38,10 @@ function getValidateEmailsBtnElement() {
   return document.getElementById("validete-emails-btn");
 }
 
+function getOpenCompanyLinkedinBtnElement() {
+  return document.getElementById("open-company-linkedin-btn");
+}
+
 function getLinkElement() {
   return document.getElementById("link");
 }
@@ -122,3 +126,4 @@ export const tabExperienceElement = getTabExperienceElement();
 export const appVersionElement = getAppVersionElement();
 export const generateEmailsBtnElement = getGenerateEmailsBtnElement();
 export const validateEmailsBtnElement = getValidateEmailsBtnElement();
+export const openCompanyLinkedinBtnElement = getOpenCompanyLinkedinBtnElement();
