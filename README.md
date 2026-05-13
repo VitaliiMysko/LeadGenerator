@@ -121,7 +121,7 @@ Available option:
 - **Job Position** - current role
 - **Link** - LinkedIn profile URL
 - **Email** - working email address
-- **Company Name**: current company
+- **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location
 - **Industry** - company indutry
 

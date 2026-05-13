@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 8, 2026
+**Last updated**: May 13, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -58,6 +58,7 @@ Used **only when necessary** for:
 Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
+- `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; prevents duplicate entries by email
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
