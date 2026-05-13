@@ -5,6 +5,7 @@ import {
   companyCountryElement,
   emailElement,
   tabExperienceElement,
+  openCompanyLinkedinBtnElement,
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
@@ -36,6 +37,7 @@ function getCompanyBlock(company, index) {
   companyBlock.setAttribute("data-company-size", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-size-init", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-revenue", extraCompanyData.revenue);
+  companyBlock.setAttribute("data-company-link", company.companylink || "");
 
   const header = getCompanyHeaderElement(company);
   const details = getCompanyDetailsElement(company);
@@ -47,6 +49,7 @@ function getCompanyBlock(company, index) {
     emailElement.value = "";
     companyIndustryElement.value = extraCompanyData.industry;
     companyCountryElement.value = extraCompanyData.location.split(", ").pop();
+    setLinkedinBtn(company.companylink);
   }
 
   const refreshBtn = header.querySelector(".refresh-btn");
@@ -78,6 +81,7 @@ function getCompanyBlock(company, index) {
     companyIndustryElement.value = companyBlock.getAttribute(
       "data-company-industry",
     );
+    setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
   });
 
   companyBlock.appendChild(header);
@@ -172,4 +176,9 @@ function getCompanySizeElement(company) {
   sizeEl.textContent = company.extraData.companySize;
   sizeEl.title = "size";
   return sizeEl;
+}
+
+function setLinkedinBtn(link) {
+  openCompanyLinkedinBtnElement.disabled = !link;
+  openCompanyLinkedinBtnElement.dataset.href = link || "";
 }

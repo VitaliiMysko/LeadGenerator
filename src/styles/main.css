@@ -60,7 +60,7 @@ button:active {
 }
 button:disabled {
   background-color: #a0c4f1;
-  cursor: not-allowed;
+  cursor: default;
   transform: none;
 }
 .button-row {
@@ -163,7 +163,8 @@ a:active {
 .field-input-wrap {
   position: relative;
 }
-#job-position {
+#job-position,
+#company-name {
   padding-right: 24px;
 }
 #email {
@@ -185,7 +186,8 @@ a:active {
 }
 #translate-btn,
 #generate-emails-btn,
-#validete-emails-btn {
+#validete-emails-btn,
+#open-company-linkedin-btn {
   position: absolute;
   right: 0;
   width: 20px;
@@ -193,6 +195,12 @@ a:active {
   background-color: transparent;
   cursor: pointer;
   padding: 0;
+}
+#open-company-linkedin-btn:disabled {
+  cursor: default;
+}
+#open-company-linkedin-btn:disabled img {
+  filter: grayscale(100%) opacity(0.5);
 }
 .draggable-block {
   width: 100%;
