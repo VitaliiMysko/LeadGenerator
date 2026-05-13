@@ -158,8 +158,8 @@ All fields are editable before copying.
 
 Includes:
 
-- Auto-generation + validation
-- Manual validation via icon
+- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise
+- Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
 ## Network & Data Fetching Strategy
 

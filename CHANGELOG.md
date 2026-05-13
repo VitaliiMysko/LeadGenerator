@@ -19,6 +19,11 @@ All notable changes to this project will be documented in this file.
 
 - The application was redesigned to avoid hard-coded values
 
+### Improved
+
+- **Generate Emails** button is now disabled by default, when no company is active or available (filtered out), and when the active company has no website; enabled only when a valid website is detected
+- **Validate Email** button is now disabled by default; enabled reactively as soon as the email field contains a valid email address
+
 ### Fixed
 
 - Drag-and-drop reordering now works when dropping anywhere on a field block (label, input, buttons), not just on the narrow gaps between child elements
