@@ -48,8 +48,10 @@ Used **only when necessary** for:
 - Chrome APIs:
   - `tabs`
   - `scripting`
+  - `action` (icon override)
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
+- On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
 
 🚫 **Not used for external HTTP requests**
 

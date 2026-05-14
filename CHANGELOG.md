@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
 - **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link.
+- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance.
 
 ### Changed
 
