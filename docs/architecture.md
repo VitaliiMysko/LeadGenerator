@@ -48,8 +48,10 @@ Used **only when necessary** for:
 - Chrome APIs:
   - `tabs`
   - `scripting`
+  - `action` (icon override)
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
+- On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
 
 🚫 **Not used for external HTTP requests**
 
@@ -58,6 +60,7 @@ Used **only when necessary** for:
 Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
+- `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; prevents duplicate entries by email
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
