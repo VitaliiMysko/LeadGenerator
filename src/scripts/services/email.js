@@ -90,6 +90,10 @@ generateEmailsBtnElement.addEventListener("click", async () => {
   showMessage(emailData.message, emailData.ok);
 });
 
+emailElement.addEventListener("input", () => {
+  validateEmailsBtnElement.disabled = !emailElement.checkValidity();
+});
+
 validateEmailsBtnElement.addEventListener("click", async () => {
   const emailData = { ...emailDataByDefault };
 

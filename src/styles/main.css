@@ -196,9 +196,13 @@ a:active {
   cursor: pointer;
   padding: 0;
 }
+#generate-emails-btn:disabled,
+#validete-emails-btn:disabled,
 #open-company-linkedin-btn:disabled {
   cursor: default;
 }
+#generate-emails-btn:disabled img,
+#validete-emails-btn:disabled img,
 #open-company-linkedin-btn:disabled img {
   filter: grayscale(100%) opacity(0.5);
 }

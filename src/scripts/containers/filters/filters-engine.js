@@ -8,6 +8,7 @@ import {
   companyCountryElement,
   companyIndustryElement,
   emailElement,
+  generateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 export function initFilters() {
@@ -59,6 +60,7 @@ export function applyFilters() {
     companyCountryElement.value = "";
     companyIndustryElement.value = "";
     emailElement.value = "";
+    generateEmailsBtnElement.disabled = true;
   } else {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";

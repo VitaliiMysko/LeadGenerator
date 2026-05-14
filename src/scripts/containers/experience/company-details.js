@@ -82,17 +82,12 @@ async function manageCompanyDetailsBlock(item) {
 
   const companyLinkElement = item.querySelector("a");
 
-  const generateEmailIcon = generateEmailsBtnElement.querySelector("img");
-  const generateEmailIconByDefaultSrc = "assets/icons/generate-emails-16.png";
-  const generateEmailIconGreySrc = "assets/icons/generate-emails-grey-16.png";
-
   if (websiteBlock.getAttribute("data-initialized") === "true") {
-    generateEmailsBtnElement.disabled = false;
-    generateEmailIcon.src = generateEmailIconByDefaultSrc;
+    const websiteText = websiteBlock.querySelector("span")?.textContent;
+    generateEmailsBtnElement.disabled = !isValidDomain(websiteText);
     return;
   } else {
     generateEmailsBtnElement.disabled = true;
-    generateEmailIcon.src = generateEmailIconGreySrc;
   }
 
   websiteBlock.innerHTML = "";
@@ -214,8 +209,7 @@ async function manageCompanyDetailsBlock(item) {
     websiteBlock.appendChild(editWebsiteDomainElement);
 
     if (item.classList.contains("active")) {
-      generateEmailsBtnElement.disabled = false;
-      generateEmailIcon.src = generateEmailIconByDefaultSrc;
+      generateEmailsBtnElement.disabled = !isValidDomain(website);
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
@@ -273,6 +267,10 @@ function getEditWebsiteDomainElement() {
   wrapperDiv._icon = editWebsiteElement;
 
   return wrapperDiv;
+}
+
+function isValidDomain(value) {
+  return /^[\w.-]+\.[a-zA-Z]{2,}$/.test(value?.trim());
 }
 
 function getHostName(url) {

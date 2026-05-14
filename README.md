@@ -121,7 +121,7 @@ Available option:
 - **Job Position** - current role
 - **Link** - LinkedIn profile URL
 - **Email** - working email address
-- **Company Name**: current company
+- **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location
 - **Industry** - company indutry
 
@@ -158,8 +158,8 @@ All fields are editable before copying.
 
 Includes:
 
-- Auto-generation + validation
-- Manual validation via icon
+- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise
+- Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
 ## Network & Data Fetching Strategy
 
