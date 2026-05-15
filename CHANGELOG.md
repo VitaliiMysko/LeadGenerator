@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry.
 - Replaced radio buttons in the Actual Experience tab with a clickable accordion
 - Redesigned the company details section
 - Left-panel data fields now use the same label style as the Actual Experience company details: small uppercase label above each input
