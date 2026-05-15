@@ -10,11 +10,23 @@ import {
   companyNameElement,
   companyCountryElement,
   companyIndustryElement,
+  dataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 
 const STORAGE_KEY = "saved_leads";
 const MAX_ITEMS = 99;
+
+const INPUT_ID_TO_LEAD_KEY = {
+  "first-name": "firstName",
+  "second-name": "surname",
+  "job-position": "jobPosition",
+  "link": "link",
+  "email": "email",
+  "company-name": "companyName",
+  "company-country": "country",
+  "company-industry": "industry",
+};
 
 let currentCount = 0;
 
@@ -24,20 +36,29 @@ let currentCount = 0;
   updateUI();
 })();
 
-emailElement.addEventListener("input", updateSaveBtnState);
+[
+  firstNameElement,
+  secondNameElement,
+  jobPositionElement,
+  linkElement,
+  emailElement,
+  companyNameElement,
+  companyCountryElement,
+  companyIndustryElement,
+].forEach((el) => el.addEventListener("input", updateSaveBtnState));
 
 saveBtnElement.addEventListener("click", async () => {
-  const email = emailElement.value.trim();
-  if (!email || currentCount >= MAX_ITEMS) return;
+  if (isAllFieldsEmpty() || currentCount >= MAX_ITEMS) return;
 
   const leads = await loadLeads();
+  const newLead = collectCurrentData();
 
-  if (leads.some((lead) => lead.email.toLowerCase() === email.toLowerCase())) {
+  if (isDuplicate(leads, newLead)) {
     showAlert("Already saved", "error");
     return;
   }
 
-  leads.push(collectCurrentData());
+  leads.push(newLead);
   await saveLeads(leads);
 
   currentCount = leads.length;
@@ -69,9 +90,39 @@ function updateUI() {
   updateSaveBtnState();
 }
 
+function isAllFieldsEmpty() {
+  return [
+    firstNameElement,
+    secondNameElement,
+    jobPositionElement,
+    linkElement,
+    emailElement,
+    companyNameElement,
+    companyCountryElement,
+    companyIndustryElement,
+  ].every((el) => !el.value.trim());
+}
+
 function updateSaveBtnState() {
-  const email = emailElement.value.trim();
-  saveBtnElement.disabled = !email || currentCount >= MAX_ITEMS;
+  saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_ITEMS;
+}
+
+function isDuplicate(leads, newLead) {
+  return leads.some((lead) => {
+    if (newLead.email) {
+      return lead.email.toLowerCase() === newLead.email.toLowerCase();
+    }
+    return (
+      !lead.email &&
+      lead.firstName === newLead.firstName &&
+      lead.surname === newLead.surname &&
+      lead.jobPosition === newLead.jobPosition &&
+      lead.link === newLead.link &&
+      lead.companyName === newLead.companyName &&
+      lead.country === newLead.country &&
+      lead.industry === newLead.industry
+    );
+  });
 }
 
 function collectCurrentData() {
@@ -87,20 +138,16 @@ function collectCurrentData() {
   };
 }
 
+function getFieldOrder() {
+  return Array.from(dataContainerElement.querySelectorAll(".draggable-block"))
+    .map((block) => block.querySelector("input")?.id)
+    .filter((id) => id && INPUT_ID_TO_LEAD_KEY[id]);
+}
+
 async function copyLeadsToClipboard(leads) {
+  const fieldOrder = getFieldOrder();
   const rows = leads.map((lead) =>
-    [
-      lead.firstName,
-      lead.surname,
-      lead.jobPosition,
-      lead.link,
-      lead.email,
-      lead.companyName,
-      lead.country,
-      lead.industry,
-    ]
-      .map((v) => v || "")
-      .join("\t"),
+    fieldOrder.map((id) => lead[INPUT_ID_TO_LEAD_KEY[id]] || "").join("\t"),
   );
 
   await navigator.clipboard.writeText(rows.join("\n"));

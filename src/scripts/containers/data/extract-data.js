@@ -1,9 +1,9 @@
 import {
   extractBtnElement,
-  experienceContainerElement,
+  tabExperienceElement,
 } from "../../helper/dom-helper.js";
 import { transliterateElement } from "../../services/transliteration.js";
-import { createRadioCompanyList } from "../experience/actual-experience.js";
+import { createCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 
@@ -24,13 +24,13 @@ extractBtnElement.addEventListener("click", () => {
         const loadindElement = document.createElement("div");
         loadindElement.textContent = "Loading";
         loadindElement.classList.add("loading");
-        experienceContainerElement.appendChild(loadindElement);
+        tabExperienceElement.appendChild(loadindElement);
 
         chrome.tabs.sendMessage(
           tabs[0].id,
           { action: "extractData" },
           async (results) => {
-            experienceContainerElement.innerHTML = "";
+            tabExperienceElement.innerHTML = "";
             if (results) {
               const data = results.data;
               for (const element of data) {
@@ -38,7 +38,7 @@ extractBtnElement.addEventListener("click", () => {
                   await populateGeneralData(element.value);
                 }
                 if (element.category === "actualExperienceData") {
-                  createRadioCompanyList(element.value);
+                  createCompanyList(element.value);
                 }
               }
             }
