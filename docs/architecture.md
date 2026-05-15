@@ -63,7 +63,7 @@ Handles user-interaction logic related to core actions:
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; prevents duplicate entries by email
-  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
+  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
   - **Clean** - full reset
 
 ### 2.3 Filters (`src/scripts/filters`)
@@ -181,7 +181,8 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 
 - `chrome.storage.sync`
   - User preferences
-  - UI settings
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle)
+  - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
   - Filter state
 
 - `chrome.storage.local`
@@ -196,7 +197,7 @@ All stored data remains on the user's device.
 - **Vanilla JavaScript** – no front-end frameworks are used
 - **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, individual's names transliteration settings) filters and leads
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, individual's names transliteration settings) filters and leads
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
@@ -279,6 +280,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 6. The user can configure extension behavior via the Settings tab:
 
 - Toggle drag-and-drop functionality
+- Toggle remember field order (saves and restores left-panel field sequence)
 - Toggle individual's names transliteration
 - Preferences are persisted using Chrome Storage API
 - Apply filters:

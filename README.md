@@ -28,10 +28,9 @@ This extension is a straightforward tool for extracting data about individuals d
 
     The "Email" field is not auto-filled.
 
+- **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when email is empty or the 99-item limit is reached. Prevents duplicate entries by email.
-
-- **Storage utility buttons** (below divider, secondary):
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter.
 
 ## UI Structure
@@ -108,6 +107,10 @@ Available option:
 - **Drag-and-drop Toggle**
   - Enable / disable reordering of fields in the left panel
   - State persisted via Chrome `storage`
+- **Remember field order Toggle**
+  - When enabled, saves the current field order to storage after each drag-and-drop reorder
+  - Order is automatically restored the next time the extension is opened
+  - State persisted via Chrome `storage`
 - **Transliteration Toggle**
   - Enable / disable individual's names transliteration
   - State persisted via Chrome `storage`
@@ -133,7 +136,7 @@ All fields are editable before copying.
 
 - Reorder fields in the left panel
 - Controlled via Settings
-- State is persisted using Chrome `storage`
+- Field order can be persisted and restored on next open via the **Remember field order** setting
 
 ### Translation Service
 

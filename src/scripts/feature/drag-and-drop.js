@@ -2,6 +2,11 @@ import { dataContainerElement } from "../helper/dom-helper.js";
 
 let dragged;
 let initialized = false;
+let onDropCallback = null;
+
+export function setOnDropCallback(fn) {
+  onDropCallback = fn;
+}
 
 const handleDragStart = function (event) {
   dragged = event.target;
@@ -32,6 +37,8 @@ const handleDrop = function (event) {
     } else {
       dataContainerElement.insertBefore(dragged, dropTarget.nextSibling);
     }
+
+    if (onDropCallback) onDropCallback();
   }
 };
 
