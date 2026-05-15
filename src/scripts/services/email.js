@@ -91,7 +91,7 @@ generateEmailsBtnElement.addEventListener("click", async () => {
 });
 
 emailElement.addEventListener("input", () => {
-  validateEmailsBtnElement.disabled = !emailElement.checkValidity();
+  validateEmailsBtnElement.disabled = !emailElement.value.trim() || !emailElement.checkValidity();
 });
 
 validateEmailsBtnElement.addEventListener("click", async () => {
