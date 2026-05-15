@@ -62,7 +62,7 @@ Handles user-interaction logic related to core actions:
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
-  - **Save** - saves current left-panel lead data; prevents duplicate entries by email
+  - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
   - **Clean** - full reset
 
