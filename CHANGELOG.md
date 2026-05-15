@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.3] - 2026-05-15
+
+### Added
+
+- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
+- **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link.
+- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance.
+- **Remember field order** setting: when enabled, the left-panel field order is saved to storage after each drag-and-drop reorder and automatically restored the next time the extension is opened.
+
+### Changed
+
+- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry.
+- Replaced radio buttons in the Actual Experience tab with a clickable accordion
+- Redesigned the company details section
+- Left-panel data fields now use the same label style as the Actual Experience company details: small uppercase label above each input
+
+### Improved
+
+- The application was redesigned to avoid hard-coded values
+- **Generate Emails** button is now disabled by default, when no company is active or available (filtered out), and when the active company has no website; enabled only when a valid website is detected
+- **Validate Email** button is now disabled by default; enabled reactively as soon as the email field contains a valid email address
+- **Get** button now copies leads in the current left-panel field order; if the user has reordered fields via drag-and-drop, the clipboard output reflects that order
+
+### Fixed
+
+- Drag-and-drop reordering now works when dropping anywhere on a field block (label, input, buttons), not just on the narrow gaps between child elements
+
 ## [3.3.2] - 2026-05-06
 
 ### Added

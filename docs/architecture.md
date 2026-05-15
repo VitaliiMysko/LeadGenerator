@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: April 28, 2026
+**Last updated**: May 15, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -48,8 +48,10 @@ Used **only when necessary** for:
 - Chrome APIs:
   - `tabs`
   - `scripting`
+  - `action` (icon override)
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
+- On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
 
 🚫 **Not used for external HTTP requests**
 
@@ -58,9 +60,10 @@ Used **only when necessary** for:
 Handles user-interaction logic related to core actions:
 
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
+- `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
-  - **Save** - saves current left-panel lead data; prevents duplicate entries by email
-  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill
+  - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
+  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
   - **Clean** - full reset
 
 ### 2.3 Filters (`src/scripts/filters`)
@@ -76,8 +79,8 @@ The filtering system is implemented as a **client-side module** responsible for 
 #### Structure
 
 - `filter-store.js` – centralized state management
-- `location-filter.js` – handles location filtering UI and logic
-- `location-size.js` – handles size filtering UI and logic
+- `company-location.js` – handles location filtering UI and logic
+- `company-size.js` – handles size filtering UI and logic
 
 #### UI Behavior
 
@@ -155,16 +158,46 @@ The extension UI follows a lightweight SPA-like approach within the popup.
 
 This approach avoids unnecessary DOM re-creation and improves performance within the constrained popup environment.
 
+#### Actual Experience Tab – Accordion Pattern
+
+The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-class-driven accordion:
+
+- Each company is rendered as a `.company-item` element containing:
+  - `.company-header` – always visible; holds company name, job position, expand arrow, and refresh button
+  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`
+- Only one `.company-item` can hold `.active` at a time; clicking a header removes `.active` from all siblings and adds it to the clicked item
+- **Company data loading** is handled by `company-details.js`:
+  - Uses a `companyDetailsCache` Map (keyed by company URL) to avoid redundant network fetches
+  - Marks a `.company-website` block with `data-initialized="true"` once data is loaded to skip re-fetching on re-expand
+- **Refresh button (↻)** in the active header: calls `refreshCompanyDetails(item)`, which clears the cache entry, resets `data-initialized`, restores original attribute values, and re-runs the fetch pipeline
+
 ### 2.8 Local Storage (`chrome.storage.local`)
 
 Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications.
+
+### 2.9 Persistence Strategy
+
+The extension uses Chrome Storage APIs for lightweight client-side persistence:
+
+- `chrome.storage.sync`
+  - User preferences
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle)
+  - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
+  - Filter state
+
+- `chrome.storage.local`
+  - Saved leads
+  - Temporary structured lead datasets
+
+No server-side persistence is used.
+All stored data remains on the user's device.
 
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – no front-end frameworks are used
 - **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
 - **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, individual's names transliteration settings) filters and leads
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, individual's names transliteration settings) filters and leads
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
@@ -183,7 +216,9 @@ Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects
 
 ## 5. Security & Privacy Considerations
 
-- **No personal or extracted profile data is stored**
+- Extracted lead data is not stored automatically
+- Leads may optionally be saved locally by the user using the Save feature (`chrome.storage.local`)
+- No extracted or saved data is transmitted to external servers
 - **User preferences (UI settings)** are stored locally using Chrome Storage API
 - **No cookies are set or read**
 - **Clipboard is used only temporarily**, initiated manually by the user
@@ -228,25 +263,30 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 3. Data is returned and displayed in the popup
 
 4. The user can:
-   - Copy the data via the "Copy" button
-   - Rearrange data using drag-and-drop
-   - Translate job title via the Google Translate API (if logged in via Google OAuth2)
-   - Trigger email generation:
-     - Extension sends company domain to backend
-     - Backend validates generated emails via Emailable
-     - Valid result is returned and inserted into form and clipboard
-   - Validate email separately via Emailable
+
+- Save current lead data locally
+- Copy all saved leads to clipboard in spreadsheet-compatible format
+- Clean all locally saved leads
+- Rearrange data using drag-and-drop
+- Translate job title via the Google Translate API (if logged in via Google OAuth2)
+- Trigger email generation:
+  - Extension sends company domain to backend
+  - Backend validates generated emails via Emailable
+  - Valid result is returned and inserted into form and clipboard
+- Validate email separately via Emailable
 
 5. No data is stored on servers; data only exists temporarily in memory or clipboard
 
 6. The user can configure extension behavior via the Settings tab:
-   - Toggle drag-and-drop functionality
-   - Toggle individual's names transliteration
-   - Preferences are persisted using Chrome Storage API
-   - Apply filters:
-     - Filter state is updated via the filter store
-     - UI automatically re-renders based on active filters
-     - Filtering is performed entirely in memory (no additional requests)
+
+- Toggle drag-and-drop functionality
+- Toggle remember field order (saves and restores left-panel field sequence)
+- Toggle individual's names transliteration
+- Preferences are persisted using Chrome Storage API
+- Apply filters:
+  - Filter state is updated via the filter store
+  - UI automatically re-renders based on active filters
+  - Filtering is performed entirely in memory (no additional requests)
 
 ```mermaid
 sequenceDiagram

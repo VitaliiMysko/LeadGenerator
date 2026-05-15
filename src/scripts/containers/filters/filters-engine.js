@@ -2,12 +2,13 @@ import { subscribe, getState } from "../../store/filter-store.js";
 import { initCompanyLocationFilter } from "./company-location.js";
 import { initCompanySizeFilter } from "./company-size.js";
 import {
-  experienceContainerElement,
+  tabExperienceElement,
   jobPositionElement,
   companyNameElement,
   companyCountryElement,
   companyIndustryElement,
   emailElement,
+  generateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 export function initFilters() {
@@ -19,7 +20,7 @@ export function initFilters() {
 export function applyFilters() {
   const { companyLocation, companySize } = getState();
 
-  const companies = document.querySelectorAll(".radio-company");
+  const companies = document.querySelectorAll(".company-item");
 
   let visibleCount = 0;
   let firstVisibleCompany = null;
@@ -44,14 +45,14 @@ export function applyFilters() {
     }
   });
 
-  let noResultsEl = experienceContainerElement.querySelector(".no-results");
+  let noResultsEl = tabExperienceElement.querySelector(".no-results");
 
   if (visibleCount === 0) {
     if (!noResultsEl) {
       noResultsEl = document.createElement("div");
       noResultsEl.classList.add("no-results");
       noResultsEl.textContent = "No results";
-      experienceContainerElement.appendChild(noResultsEl);
+      tabExperienceElement.appendChild(noResultsEl);
     }
     noResultsEl.style.display = "block";
     jobPositionElement.value = "";
@@ -59,29 +60,26 @@ export function applyFilters() {
     companyCountryElement.value = "";
     companyIndustryElement.value = "";
     emailElement.value = "";
+    generateEmailsBtnElement.disabled = true;
   } else {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
 
-    const checkedRadio = experienceContainerElement.querySelector("input[type='radio']:checked");
-    const checkedIsVisible = checkedRadio && checkedRadio.closest(".radio-company").style.display !== "none";
+    const activeItem = tabExperienceElement.querySelector(
+      ".company-item.active",
+    );
+    const activeIsVisible = activeItem && activeItem.style.display !== "none";
 
-    if (!checkedIsVisible && firstVisibleCompany) {
+    if (!activeIsVisible && firstVisibleCompany) {
       selectCompany(firstVisibleCompany);
-    } else if (wasNoResults && checkedIsVisible) {
-      selectCompany(checkedRadio.closest(".radio-company"));
+    } else if (wasNoResults && activeIsVisible) {
+      selectCompany(activeItem);
     }
   }
 }
 
 function selectCompany(companyEl) {
-  const radio = companyEl.querySelector("input[type='radio']");
-  if (!radio) return;
-  radio.checked = true;
-  companyNameElement.value = companyEl.dataset.companyName || "";
-  jobPositionElement.value = companyEl.dataset.companyJobPosition || "";
-  companyCountryElement.value = (companyEl.dataset.companyLocation || "").split(", ").pop();
-  companyIndustryElement.value = companyEl.dataset.companyIndustry || "";
   emailElement.value = "";
-  radio.dispatchEvent(new Event("change"));
+  const header = companyEl.querySelector(".company-header");
+  if (header) header.click();
 }

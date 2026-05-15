@@ -4,135 +4,168 @@ import {
   companyIndustryElement,
   companyCountryElement,
   emailElement,
-  experienceContainerElement,
+  tabExperienceElement,
+  openCompanyLinkedinBtnElement,
+  generateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
-import { formatCompanySize } from "./company-details.js";
+import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
 
-export function createRadioCompanyList(experience) {
-  experienceContainerElement.innerHTML = "";
+export function createCompanyList(experience) {
+  tabExperienceElement.innerHTML = "";
+  generateEmailsBtnElement.disabled = true;
 
   experience.forEach((company, index) => {
-    const radioCompanyBlock = getRadioCompanyBlock(company, index);
-    experienceContainerElement.appendChild(radioCompanyBlock);
+    const companyBlock = getCompanyBlock(company, index);
+    tabExperienceElement.appendChild(companyBlock);
   });
 }
 
-function getRadioCompanyBlock(company, index) {
+function getCompanyBlock(company, index) {
   const extraCompanyData = company.extraData;
 
   extraCompanyData.companySize = formatCompanySize(
     extraCompanyData.companySize,
   );
 
-  const radioCompanyBlock = document.createElement("div");
-  radioCompanyBlock.classList.add("radio-company");
-  radioCompanyBlock.setAttribute(`data-company-name`, company.companyName);
-  radioCompanyBlock.setAttribute(
-    `data-company-job-position`,
-    company.jobPosition
-  );
-  radioCompanyBlock.setAttribute(
-    `data-company-location`,
-    extraCompanyData.location
-  );
-  radioCompanyBlock.setAttribute(
-    `data-company-industry`,
-    extraCompanyData.industry
-  );
-  radioCompanyBlock.setAttribute(
-    `data-company-size`,
-    extraCompanyData.companySize
-  );
-  radioCompanyBlock.setAttribute(
-    `data-company-revenue`,
-    extraCompanyData.revenue
+  extraCompanyData.companySize = formatCompanySize(
+    extraCompanyData.companySize,
   );
 
-  const radioItem = getCompanyRadioElement(company);
-  const companyLabeRadiolElement = getCompanyLabelRadioElement(company);
-  const companyJobRadioElement = getCompanyJobRadioElement(company);
-  const companyWebsiteRadioElement = getCompanyWebsiteRadioElement();
-  const companyLocationRadioElement = getCompanyLocationRadioElement(company);
-  const companyIndustryRadioElement = getCompanyIndustryRadioElement(company);
-  const companySizeRadioElement = getCompanySizeRadioElement(company);
+  const companyBlock = document.createElement("div");
+  companyBlock.classList.add("company-item");
+  companyBlock.setAttribute("data-company-name", company.companyName);
+  companyBlock.setAttribute("data-company-job-position", company.jobPosition);
+  companyBlock.setAttribute("data-company-location", extraCompanyData.location);
+  companyBlock.setAttribute("data-company-location-init", extraCompanyData.location);
+  companyBlock.setAttribute("data-company-industry", extraCompanyData.industry);
+  companyBlock.setAttribute("data-company-industry-init", extraCompanyData.industry);
+  companyBlock.setAttribute("data-company-size", extraCompanyData.companySize);
+  companyBlock.setAttribute("data-company-size-init", extraCompanyData.companySize);
+  companyBlock.setAttribute("data-company-revenue", extraCompanyData.revenue);
+  companyBlock.setAttribute("data-company-link", company.companylink || "");
+
+  const header = getCompanyHeaderElement(company);
+  const details = getCompanyDetailsElement(company);
 
   if (index === 0) {
-    radioItem.checked = true;
+    companyBlock.classList.add("active");
     companyNameElement.value = company.companyName;
     jobPositionElement.value = company.jobPosition;
     emailElement.value = "";
     companyIndustryElement.value = extraCompanyData.industry;
     companyCountryElement.value = extraCompanyData.location.split(", ").pop();
+    setLinkedinBtn(company.companylink);
   }
 
-  radioItem.addEventListener("change", () => {
-    if (radioItem.checked) {
-      const parentDiv = radioItem.closest(".radio-company");
-      emailElement.value = "";
-      companyNameElement.value = parentDiv.getAttribute("data-company-name");
-      jobPositionElement.value = parentDiv.getAttribute(
-        "data-company-job-position"
-      );
-      companyCountryElement.value = parentDiv
-        .getAttribute("data-company-location")
-        .split(", ")
-        .pop();
-      companyIndustryElement.value = parentDiv.getAttribute(
-        "data-company-industry"
-      );
-    }
+  const refreshBtn = header.querySelector(".refresh-btn");
+  refreshBtn.addEventListener("click", async (e) => {
+    e.stopPropagation();
+    const websiteBlock = companyBlock.querySelector(".company-website");
+    if (refreshBtn.classList.contains("loading") || websiteBlock.classList.contains("loading")) return;
+    refreshBtn.classList.add("loading");
+    websiteBlock.classList.remove("valid");
+    websiteBlock.classList.remove("no-valid");
+    await refreshCompanyDetails(companyBlock);
+    refreshBtn.classList.remove("loading");
   });
 
-  radioCompanyBlock.appendChild(radioItem);
-  radioCompanyBlock.appendChild(companyLabeRadiolElement);
-  radioCompanyBlock.appendChild(companyJobRadioElement);
-  radioCompanyBlock.appendChild(companyWebsiteRadioElement);
-  radioCompanyBlock.appendChild(companyLocationRadioElement);
-  radioCompanyBlock.appendChild(companyIndustryRadioElement);
-  radioCompanyBlock.appendChild(companySizeRadioElement);
-  return radioCompanyBlock;
+  header.addEventListener("click", () => {
+    const allItems = tabExperienceElement.querySelectorAll(".company-item");
+    allItems.forEach((item) => item.classList.remove("active"));
+    companyBlock.classList.add("active");
+
+    emailElement.value = "";
+    companyNameElement.value = companyBlock.getAttribute("data-company-name");
+    jobPositionElement.value = companyBlock.getAttribute(
+      "data-company-job-position",
+    );
+    companyCountryElement.value = companyBlock
+      .getAttribute("data-company-location")
+      .split(", ")
+      .pop();
+    companyIndustryElement.value = companyBlock.getAttribute(
+      "data-company-industry",
+    );
+    setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
+  });
+
+  companyBlock.appendChild(header);
+  companyBlock.appendChild(details);
+  return companyBlock;
 }
 
-function getCompanyRadioElement(company) {
-  const radioItem = document.createElement("input");
-  radioItem.type = "radio";
-  radioItem.name = "options";
-  radioItem.id = `radio-company-${company.id}`;
-  radioItem.value = company.id;
-  return radioItem;
+function getCompanyHeaderElement(company) {
+  const header = document.createElement("div");
+  header.classList.add("company-header");
+
+  const info = document.createElement("div");
+  info.classList.add("company-header-info");
+
+  info.appendChild(getCompanyNameElement(company));
+  info.appendChild(getCompanyJobElement(company));
+
+  const refreshBtn = document.createElement("div");
+  refreshBtn.classList.add("refresh-btn");
+  refreshBtn.title = "Refresh company data";
+  refreshBtn.textContent = "↻";
+
+  const arrow = document.createElement("div");
+  arrow.classList.add("arrow");
+
+  header.appendChild(info);
+  header.appendChild(refreshBtn);
+  header.appendChild(arrow);
+  return header;
 }
 
-function getCompanyLabelRadioElement(company) {
-  const label = document.createElement("label");
-  label.setAttribute("for", `radio-company-${company.id}`);
-  label.classList.add("company-name");
+function getCompanyNameElement(company) {
+  const nameEl = document.createElement("div");
+  nameEl.classList.add("company-name");
 
-  if (company.companylink != "") {
+  if (company.companylink !== "") {
     const link = document.createElement("a");
     link.href = company.companylink;
     link.textContent = company.companyName;
-
-    label.appendChild(link);
+    nameEl.appendChild(link);
   } else {
-    label.textContent = company.companyName;
+    nameEl.textContent = company.companyName;
   }
-  return label;
+  return nameEl;
 }
 
-function getCompanyJobRadioElement(company) {
-  const jobElement = document.createElement("div");
-  jobElement.classList.add("company-job");
-  jobElement.textContent = company.jobPosition;
-  jobElement.title = "job position";
-  return jobElement;
+function getCompanyJobElement(company) {
+  const jobEl = document.createElement("div");
+  jobEl.classList.add("company-job");
+  jobEl.textContent = company.jobPosition;
+  jobEl.title = "job position";
+  return jobEl;
 }
 
-function getCompanyWebsiteRadioElement() {
-  const websiteElement = document.createElement("div");
-  websiteElement.classList.add("company-website");
-  websiteElement.title = "website";
-  return websiteElement;
+function getCompanyDetailsElement(company) {
+  const details = document.createElement("div");
+  details.classList.add("company-details");
+
+  details.appendChild(getCompanyWebsiteElement());
+  details.appendChild(getCompanyIndustryElement(company));
+  details.appendChild(getCompanyLocationElement(company));
+  details.appendChild(getCompanySizeElement(company));
+  return details;
+}
+
+function getCompanyWebsiteElement() {
+  const websiteEl = document.createElement("div");
+  websiteEl.classList.add("company-website");
+  websiteEl.title = "website";
+  return websiteEl;
+}
+
+function getCompanyLocationElement(company) {
+  const locationEl = document.createElement("div");
+  locationEl.classList.add("company-location");
+  locationEl.textContent = company.extraData.location;
+  locationEl.title = "location";
+  return locationEl;
 }
 
 function getCompanyLocationRadioElement(company) {
@@ -143,18 +176,23 @@ function getCompanyLocationRadioElement(company) {
   return countryElement;
 }
 
-function getCompanyIndustryRadioElement(company) {
-  const industryElement = document.createElement("div");
-  industryElement.classList.add("company-industry");
-  industryElement.textContent = company.extraData.industry;
-  industryElement.title = "industry";
-  return industryElement;
+function getCompanyIndustryElement(company) {
+  const industryEl = document.createElement("div");
+  industryEl.classList.add("company-industry");
+  industryEl.textContent = company.extraData.industry;
+  industryEl.title = "industry";
+  return industryEl;
 }
 
-function getCompanySizeRadioElement(company) {
-  const sizeElement = document.createElement("div");
-  sizeElement.classList.add("company-size");
-  sizeElement.textContent = company.extraData.companySize;
-  sizeElement.title = "size";
-  return sizeElement;
+function getCompanySizeElement(company) {
+  const sizeEl = document.createElement("div");
+  sizeEl.classList.add("company-size");
+  sizeEl.textContent = company.extraData.companySize;
+  sizeEl.title = "size";
+  return sizeEl;
+}
+
+function setLinkedinBtn(link) {
+  openCompanyLinkedinBtnElement.disabled = !link;
+  openCompanyLinkedinBtnElement.dataset.href = link || "";
 }

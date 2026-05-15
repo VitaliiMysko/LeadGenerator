@@ -14,7 +14,7 @@
     </div>
     <div class="main-container">
       <div class="container">
-        <h3>Lead generator</h3>
+        <h3>LEAD GENERATOR</h3>
         <div class="button-row">
           <button id="extract-btn">Extract</button>
           <button id="save-btn" disabled>Save</button>
@@ -33,56 +33,69 @@
         </div>
         <div id="data-container">
           <div class="draggable-block">
-            <span>Name: </span>
+            <span>Name</span>
             <input type="text" id="first-name" value="" />
           </div>
           <div class="draggable-block">
-            <span>Surname: </span>
+            <span>Surname</span>
             <input type="text" id="second-name" value="" />
           </div>
           <div class="draggable-block" id="job-position-block">
-            <span>Job position: </span>
-            <input type="text" id="job-position" value="" />
-            <button id="translate-btn">
-              <img
-                src="assets/icons/google-translate-16.png"
-                alt="Translate icon"
-                title="Translate"
-              />
-            </button>
+            <span>Job position</span>
+            <div class="field-input-wrap">
+              <input type="text" id="job-position" value="" />
+              <button id="translate-btn">
+                <img
+                  src="assets/icons/google-translate-16.png"
+                  alt="Translate icon"
+                  title="Translate"
+                />
+              </button>
+            </div>
           </div>
           <div class="draggable-block">
-            <span>Link: </span>
+            <span>Link</span>
             <input type="text" id="link" value="" />
           </div>
           <div class="draggable-block" id="email-block">
-            <span>Email: </span>
-            <input type="email" id="email" value="" />
-            <button id="validete-emails-btn" style="right: 23px">
-              <img
-                src="assets/icons/validate-email-16.png"
-                alt="Validate email icon"
-                title="Validate email"
-              />
-            </button>
-            <button id="generate-emails-btn">
-              <img
-                src="assets/icons/generate-emails-16.png"
-                alt="Generate emails icon"
-                title="Generate emails"
-              />
-            </button>
+            <span>Email</span>
+            <div class="field-input-wrap">
+              <input type="email" id="email" value="" />
+              <button id="validete-emails-btn" style="right: 23px" disabled>
+                <img
+                  src="assets/icons/validate-email-16.png"
+                  alt="Validate email icon"
+                  title="Validate email"
+                />
+              </button>
+              <button id="generate-emails-btn" disabled>
+                <img
+                  src="assets/icons/generate-emails-16.png"
+                  alt="Generate emails icon"
+                  title="Generate emails"
+                />
+              </button>
+            </div>
+          </div>
+          <div class="draggable-block" id="company-name-block">
+            <span>Company name</span>
+            <div class="field-input-wrap">
+              <input type="text" id="company-name" value="" />
+              <button id="open-company-linkedin-btn" disabled>
+                <img
+                  src="assets/icons/linkedin-16.png"
+                  alt="LinkedIn icon"
+                  title="Open company LinkedIn page"
+                />
+              </button>
+            </div>
           </div>
           <div class="draggable-block">
-            <span>Company name: </span>
-            <input type="text" id="company-name" value="" />
-          </div>
-          <div class="draggable-block">
-            <span>Country:</span>
+            <span>Country</span>
             <input type="text" id="company-country" value="" />
           </div>
           <div class="draggable-block">
-            <span>Industry:</span>
+            <span>Industry</span>
             <input type="text" id="company-industry" value="" />
           </div>
         </div>
@@ -104,9 +117,7 @@
           </div>
         </div>
         <div class="tabs-content">
-          <div id="tab-experience" class="tab active">
-            <div id="experience-container"></div>
-          </div>
+          <div id="tab-experience" class="tab active"></div>
           <div id="tab-filters" class="tab">
             <div class="tab-item-block">
               <label>Company headquarters location:</label>
@@ -148,6 +159,13 @@
                 title="Enable / disable individual's names transliteration"
               />Transliteration
             </div>
+            <div class="tab-item-block">
+              <input
+                id="field-order-settings"
+                type="checkbox"
+                title="Remember and restore the last field order after reopening the extension"
+              />Remember field order
+            </div>
           </div>
         </div>
       </div>
@@ -157,6 +175,10 @@
     <script
       type="module"
       src="src/scripts/containers/data/extract-data.js"
+    ></script>
+    <script
+      type="module"
+      src="src/scripts/containers/data/open-company-linkedin.js"
     ></script>
     <script
       type="module"
