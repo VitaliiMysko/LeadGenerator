@@ -205,7 +205,7 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
 ### Option 1: Install from the Chrome Web Store
 
-1. Go to the [Lead Generator extension page on the Chrome Web Store](Chrome_Web_Store_URL)
+1. Go to the [Lead Generator extension page on the Chrome Web Store](https://chromewebstore.google.com/detail/negmangnhbhanhajjpcjgecieghmdldm)
 2. Click **Add to Chrome**
 3. Confirm permissions
 
