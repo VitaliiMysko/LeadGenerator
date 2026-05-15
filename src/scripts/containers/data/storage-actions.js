@@ -10,11 +10,23 @@ import {
   companyNameElement,
   companyCountryElement,
   companyIndustryElement,
+  dataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 
 const STORAGE_KEY = "saved_leads";
 const MAX_ITEMS = 99;
+
+const INPUT_ID_TO_LEAD_KEY = {
+  "first-name": "firstName",
+  "second-name": "surname",
+  "job-position": "jobPosition",
+  "link": "link",
+  "email": "email",
+  "company-name": "companyName",
+  "company-country": "country",
+  "company-industry": "industry",
+};
 
 let currentCount = 0;
 
@@ -87,20 +99,16 @@ function collectCurrentData() {
   };
 }
 
+function getFieldOrder() {
+  return Array.from(dataContainerElement.querySelectorAll(".draggable-block"))
+    .map((block) => block.querySelector("input")?.id)
+    .filter((id) => id && INPUT_ID_TO_LEAD_KEY[id]);
+}
+
 async function copyLeadsToClipboard(leads) {
+  const fieldOrder = getFieldOrder();
   const rows = leads.map((lead) =>
-    [
-      lead.firstName,
-      lead.surname,
-      lead.jobPosition,
-      lead.link,
-      lead.email,
-      lead.companyName,
-      lead.country,
-      lead.industry,
-    ]
-      .map((v) => v || "")
-      .join("\t"),
+    fieldOrder.map((id) => lead[INPUT_ID_TO_LEAD_KEY[id]] || "").join("\t"),
   );
 
   await navigator.clipboard.writeText(rows.join("\n"));
