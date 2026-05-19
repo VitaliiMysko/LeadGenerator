@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.3.4] - 2026-05-19
 
+### Added
+
+- **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
+
 ### Fixed
 
 - **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
