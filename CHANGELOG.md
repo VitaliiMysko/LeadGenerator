@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
 
+### Changed
+
+- **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page.
+
 ### Fixed
 
 - **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
