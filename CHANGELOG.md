@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.3.4] - 2026-05-19
 
+### Fixed
+
+- **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
+
 ## [3.3.3] - 2026-05-15
 
 ### Added
