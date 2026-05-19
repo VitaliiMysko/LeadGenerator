@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
+- **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found".
 
 ## [3.3.3] - 2026-05-15
 
