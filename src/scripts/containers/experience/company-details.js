@@ -217,6 +217,9 @@ async function manageCompanyDetailsBlock(item) {
       onSave: (newValue) => {
         const newBasicEmail = getBasicEmail.bind(null, newValue);
         addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
+        if (item.classList.contains("active")) {
+          generateEmailsBtnElement.disabled = !isValidDomain(newValue);
+        }
       },
     });
   } catch (error) {
