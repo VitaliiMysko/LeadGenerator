@@ -5,6 +5,7 @@ import {
   companyIndustryElement,
   companyCountryElement,
 } from "../../helper/dom-helper.js";
+import { updateSaveBtnState } from "../data/storage-actions.js";
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 import {
   addCopyByClick,
@@ -229,6 +230,7 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
     sizeBlock.classList.remove("loading");
+    updateSaveBtnState();
   }
 }
 

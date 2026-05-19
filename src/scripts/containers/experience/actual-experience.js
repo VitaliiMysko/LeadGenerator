@@ -10,18 +10,19 @@ import {
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
+import { updateSaveBtnState } from "../data/storage-actions.js";
 
 export function createCompanyList(experience) {
   tabExperienceElement.innerHTML = "";
   generateEmailsBtnElement.disabled = true;
 
-  experience.forEach((company, index) => {
-    const companyBlock = getCompanyBlock(company, index);
+  experience.forEach((company) => {
+    const companyBlock = getCompanyBlock(company);
     tabExperienceElement.appendChild(companyBlock);
   });
 }
 
-function getCompanyBlock(company, index) {
+function getCompanyBlock(company) {
   const extraCompanyData = company.extraData;
 
   extraCompanyData.companySize = formatCompanySize(
@@ -43,16 +44,6 @@ function getCompanyBlock(company, index) {
 
   const header = getCompanyHeaderElement(company);
   const details = getCompanyDetailsElement(company);
-
-  if (index === 0) {
-    companyBlock.classList.add("active");
-    companyNameElement.value = company.companyName;
-    jobPositionElement.value = company.jobPosition;
-    emailElement.value = "";
-    companyIndustryElement.value = extraCompanyData.industry;
-    companyCountryElement.value = extraCompanyData.location.split(", ").pop();
-    setLinkedinBtn(company.companylink);
-  }
 
   const refreshBtn = header.querySelector(".refresh-btn");
   refreshBtn.addEventListener("click", async (e) => {
@@ -84,6 +75,7 @@ function getCompanyBlock(company, index) {
       "data-company-industry",
     );
     setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
+    updateSaveBtnState();
   });
 
   companyBlock.appendChild(header);

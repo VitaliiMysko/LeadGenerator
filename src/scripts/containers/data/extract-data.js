@@ -6,6 +6,7 @@ import { transliterateElement } from "../../services/transliteration.js";
 import { createCompanyList } from "../experience/actual-experience.js";
 import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
+import { updateSaveBtnState } from "./storage-actions.js";
 
 extractBtnElement.addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -36,6 +37,7 @@ extractBtnElement.addEventListener("click", () => {
               for (const element of data) {
                 if (element.category === "personalData") {
                   await populateGeneralData(element.value);
+                  updateSaveBtnState();
                 }
                 if (element.category === "actualExperienceData") {
                   createCompanyList(element.value);

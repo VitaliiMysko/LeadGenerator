@@ -103,7 +103,7 @@ function isAllFieldsEmpty() {
   ].every((el) => !el.value.trim());
 }
 
-function updateSaveBtnState() {
+export function updateSaveBtnState() {
   saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_ITEMS;
 }
 
