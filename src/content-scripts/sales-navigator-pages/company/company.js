@@ -2,22 +2,16 @@
   const waitForElementWithTimeout =
     window.leadGenerator.waitForElementWithTimeout;
 
+  const initData = window.leadGeneratorInitData || {};
+
   data = {
     url: window.location.href,
     website: "",
-    location: "",
-    industry: "",
-    size: "",
+    location: initData.location || "",
+    industry: initData.industry || "",
+    size: initData.size || "",
     error: "",
   };
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.action === "initSalesNavigatorCompanyData") {
-      data.location = message.data.location || "";
-      data.industry = message.data.industry || "";
-      data.size = message.data.size || "";
-    }
-  });
 
   let container;
   waitForElementWithTimeout("._header_1808vy", 6000)
@@ -124,11 +118,6 @@
   }
 
   const sendMessageAndCloseTab = (data) => {
-    chrome.runtime.sendMessage(
-      { action: "salesNavigatorCompanyPageContent", data },
-      () => {
-        chrome.runtime.sendMessage({ action: "closeTab" });
-      },
-    );
+    chrome.runtime.sendMessage({ action: "salesNavigatorCompanyPageContent", data });
   };
 })();

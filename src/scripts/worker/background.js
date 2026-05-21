@@ -124,36 +124,37 @@ function fetchCompanyData(request, type) {
         }, 12000); // ⏱ 12s timeout
 
         const onUpdated = (updatedTabId, info) => {
-          if (updatedTabId === tabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files:
-                  type === "sales"
-                    ? [
-                        "src/utils/mutation-observer.js",
-                        "src/content-scripts/sales-navigator-pages/company/company.js",
-                      ]
-                    : [
-                        "src/utils/mutation-observer.js",
-                        "src/content-scripts/linkedin-pages/company.js",
-                      ],
-              },
-              () => {
-                chrome.tabs.sendMessage(tabId, {
-                  action:
+          if (updatedTabId !== tabId || info.status !== "complete") return;
+
+          chrome.scripting.executeScript(
+            {
+              target: { tabId },
+              func: (initData) => { window.leadGeneratorInitData = initData; },
+              args: [{ location: request.location, industry: request.industry, size: request.size }],
+            },
+            () => {
+              if (chrome.runtime.lastError) return;
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files:
                     type === "sales"
-                      ? "initSalesNavigatorCompanyData"
-                      : "initLinkedinCompanyData",
-                  data: {
-                    location: request.location,
-                    industry: request.industry,
-                    size: request.size,
-                  },
-                });
-              }
-            );
-          }
+                      ? [
+                          "src/utils/mutation-observer.js",
+                          "src/content-scripts/sales-navigator-pages/company/company.js",
+                        ]
+                      : [
+                          "src/utils/mutation-observer.js",
+                          "src/content-scripts/linkedin-pages/company.js",
+                        ],
+                },
+                () => {
+                  if (chrome.runtime.lastError) return;
+                  chrome.tabs.onUpdated.removeListener(onUpdated);
+                }
+              );
+            }
+          );
         };
 
         const onMessage = (response, sender) => {
@@ -169,7 +170,6 @@ function fetchCompanyData(request, type) {
 
           clearTimeout(timeout);
           cleanup();
-
           resolve(response.data || null);
         };
 
