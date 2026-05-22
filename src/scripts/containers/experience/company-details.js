@@ -110,6 +110,7 @@ async function manageCompanyDetailsBlock(item) {
     sizeBlock.classList.add("loading");
   }
   membersBlock.innerHTML = "";
+  membersBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
   const editWebsiteDomainElement = getEditWebsiteDomainElement();
@@ -119,17 +120,18 @@ async function manageCompanyDetailsBlock(item) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   if (!location) {
-    const countryLoadingTextElement = getSpanElement("Loading country");
+    const countryLoadingTextElement = getSpanElement("Loading");
     locationBlock.appendChild(countryLoadingTextElement);
   }
   if (!industry) {
-    const industryLoadingTextElement = getSpanElement("Loading industry");
+    const industryLoadingTextElement = getSpanElement("Loading");
     industryBlock.appendChild(industryLoadingTextElement);
   }
   if (!size || size === "unknown") {
-    const sizeLoadingTextElement = getSpanElement("Loading company size");
+    const sizeLoadingTextElement = getSpanElement("Loading");
     sizeBlock.appendChild(sizeLoadingTextElement);
   }
+  membersBlock.appendChild(getSpanElement("Loading"));
 
   let companyDetails;
 
@@ -142,6 +144,7 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.innerHTML = "";
     industryBlock.innerHTML = "";
     sizeBlock.innerHTML = "";
+    membersBlock.innerHTML = "";
 
     let website = "No website found";
     if (companyDetails.website) {
@@ -211,7 +214,10 @@ async function manageCompanyDetailsBlock(item) {
     const sizeTextElement = getSpanElement(size);
     sizeBlock.appendChild(sizeTextElement);
 
-    const membersTextElement = getSpanElement(companyDetails.members || "");
+    const membersValue = companyDetails.members
+      ? Number(companyDetails.members).toLocaleString()
+      : "unknown";
+    const membersTextElement = getSpanElement(membersValue);
     membersBlock.appendChild(membersTextElement);
 
     const websiteElement = getSpanElement(website);
@@ -273,6 +279,7 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
     sizeBlock.classList.remove("loading");
+    membersBlock.classList.remove("loading");
     updateSaveBtnState();
   }
 }
@@ -345,24 +352,6 @@ export function formatCompanySize(size) {
   if (size === "myself only") return "0-1";
 
   if (size.includes("-")) return size;
-
-  if (size.includes("k")) {
-    size = size.replace("k", "");
-    size = parseFloat(size) * 1000 + 1;
-  } else {
-    size = parseInt(size, 10);
-  }
-
-  if (isNaN(size)) return "unknown";
-
-  if (size <= 1) return "0-1";
-  if (size <= 10) return "2-10";
-  if (size <= 50) return "11-50";
-  if (size <= 200) return "51-200";
-  if (size <= 500) return "201-500";
-  if (size <= 1000) return "501-1000";
-  if (size <= 5000) return "1001-5000";
-  if (size <= 10000) return "5001-10000";
 
   return "10000+";
 }

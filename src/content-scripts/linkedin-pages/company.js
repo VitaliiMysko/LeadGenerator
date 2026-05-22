@@ -15,7 +15,7 @@
   };
 
   let descriptionList;
-  waitForElementWithTimeout(".org-page-details-module__card-spacing", 6000)
+  waitForElementWithTimeout(".org-page-details-module__card-spacing", 8000)
     .then((element) => {
       descriptionList = element.querySelector("dl");
       data.website =
@@ -74,7 +74,7 @@
         if (firstDd?.tagName.toLowerCase() === "dd") {
           const secondDd = firstDd.nextElementSibling;
           if (secondDd?.tagName.toLowerCase() === "dd") {
-            const match = secondDd.textContent.trim().match(/(\d[\d,]*)\s+associated members/i);
+            const match = secondDd.textContent.trim().match(/(\d[\d,]*)\s+associated members?/i);
             return match ? match[1].replace(/,/g, "") : "";
           }
         }
