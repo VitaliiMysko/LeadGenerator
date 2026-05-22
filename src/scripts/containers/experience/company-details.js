@@ -19,6 +19,7 @@ const companyDetailsByDefault = {
   location: "",
   industry: "",
   size: "",
+  members: "",
   status: 0,
   ok: false,
   completeRequest: true,
@@ -81,6 +82,7 @@ async function manageCompanyDetailsBlock(item) {
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
+  const membersBlock = item.querySelector(".company-members");
 
   const companyLinkElement = item.querySelector("a");
 
@@ -107,6 +109,7 @@ async function manageCompanyDetailsBlock(item) {
     sizeBlock.innerHTML = "";
     sizeBlock.classList.add("loading");
   }
+  membersBlock.innerHTML = "";
 
   const websiteIconElement = getWebsiteIconElement();
   const editWebsiteDomainElement = getEditWebsiteDomainElement();
@@ -207,6 +210,9 @@ async function manageCompanyDetailsBlock(item) {
 
     const sizeTextElement = getSpanElement(size);
     sizeBlock.appendChild(sizeTextElement);
+
+    const membersTextElement = getSpanElement(companyDetails.members || "");
+    membersBlock.appendChild(membersTextElement);
 
     const websiteElement = getSpanElement(website);
     websiteBlock.appendChild(websiteElement);
@@ -373,6 +379,7 @@ async function getCompanyData(companylink, location, industry, size) {
   companyDetails.location = location;
   companyDetails.industry = industry;
   companyDetails.size = size;
+  companyDetails.members = "";
   if (companylink) {
     const requestId = ++currentRequestId;
     const publicCompanyUrl = companylink.replace("/sales/", "/");
@@ -389,6 +396,7 @@ async function getCompanyData(companylink, location, industry, size) {
         companyDetails.location = response.location;
         companyDetails.industry = response.industry;
         companyDetails.size = response.size;
+        companyDetails.members = response.members || "";
         companyDetails.website = response.website;
 
         const websiteState = await getWebsiteState(response.website);

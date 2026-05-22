@@ -82,6 +82,7 @@ function handleCompanyRequest(request, sendResponse) {
         location: request.location || "",
         industry: request.industry || "",
         size: request.size || "",
+        members: "",
         error: true,
       };
     });
