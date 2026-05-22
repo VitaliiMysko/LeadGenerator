@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page.
 - **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed.
 - **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed.
+- **Loading text** is now displayed in a lighter color across all loading states
 
 ### Fixed
 

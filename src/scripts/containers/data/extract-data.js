@@ -24,7 +24,7 @@ extractBtnElement.addEventListener("click", () => {
       () => {
         const loadindElement = document.createElement("div");
         loadindElement.textContent = "Loading";
-        loadindElement.classList.add("loading");
+        loadindElement.classList.add("loading", "loading-text");
         tabExperienceElement.appendChild(loadindElement);
 
         chrome.tabs.sendMessage(
