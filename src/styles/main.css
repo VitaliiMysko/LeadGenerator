@@ -499,26 +499,25 @@ a:active {
 .valid,
 .no-valid {
   position: relative;
-  padding-right: 10px;
+  padding-right: 12px;
   box-sizing: border-box;
 }
-.valid::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 10px;
-  height: calc(100% - 5px);
-  background: linear-gradient(to right, #f8faf8, #8cca8e);
-}
+.valid::before,
 .no-valid::before {
   content: "";
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 50%;
+  right: 2px;
+  transform: translateY(-50%);
   width: 10px;
-  height: calc(100% - 5px);
-  background: linear-gradient(to right, #faefee, #ca8c89);
+  height: 10px;
+  border-radius: 50%;
+}
+.valid::before {
+  background: radial-gradient(circle at 35% 35%, #f8faf8, #8cca8e);
+}
+.no-valid::before {
+  background: radial-gradient(circle at 35% 35%, #faefee, #ca8c89);
 }
 .validation-success {
   background-color: #dbf5dc;
