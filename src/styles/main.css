@@ -412,6 +412,14 @@ a:active {
   display: inline-block;
   animation: dots 1.5s infinite;
 }
+.company-website.loading span,
+.company-location.loading span,
+.company-industry.loading span,
+.company-size.loading span,
+.loading-text,
+#email.loading {
+  color: #aaa;
+}
 .company-location.loading,
 .company-industry.loading,
 .company-size.loading {
