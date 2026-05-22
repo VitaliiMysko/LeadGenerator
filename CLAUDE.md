@@ -24,7 +24,7 @@ Every task must include updates to all relevant `.md` files: `CHANGELOG.md`, `RE
 The extension has two execution environments:
 
 ### Content Scripts (`src/content-scripts/`)
-- Injected directly into LinkedIn pages (`sales/lead/*`, `sales/company/*`, `company/*`)
+- Injected directly into LinkedIn pages (`sales/lead/*`, `company/*`)
 - Extract DOM data and return it via Chrome messaging
 - Must **not** make external network requests (CORS restriction)
 

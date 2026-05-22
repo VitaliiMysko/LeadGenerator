@@ -8,7 +8,7 @@ This document provides a high-level overview of the architectural structure of t
 
 The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from:
 
-- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`)
 - **LinkedIn company pages** (`https://www.linkedin.com/company/*`)
 
 The extension operates **only within LinkedIn domains** (`https://www.linkedin.com/*`).
@@ -26,7 +26,6 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - Injected into:
   - `https://www.linkedin.com/sales/lead/*`
-  - `https://www.linkedin.com/sales/company/*`
   - `https://www.linkedin.com/company/*`
 - Responsible for extracting public data from the DOM via messaging
 - Do **not perform external network requests**
@@ -258,7 +257,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 1. User opens the popup
 
-2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page; additional company data is fetched from `https://www.linkedin.com/company/*` in the background
 
 3. Data is returned and displayed in the popup
 
@@ -319,7 +318,6 @@ sequenceDiagram
 ],
 "host_permissions": [
   "https://www.linkedin.com/sales/lead/*",
-  "https://www.linkedin.com/sales/company/*",
   "https://www.linkedin.com/company/*",
   "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
 ]
