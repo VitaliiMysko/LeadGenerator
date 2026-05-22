@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.3.4] - 2026-05-19
+## [3.3.4] - 2026-05-22
 
 ### Added
 
@@ -11,11 +11,15 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page.
+- **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed.
+- **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed.
 
 ### Fixed
 
 - **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
 - **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found".
+- **Website Icon** link updates correctly after a manual domain edit.
+- **Website validation** runs automatically after saving a domain edit; invalid-pattern domains show a warning and a red circle without a backend call.
 
 ## [3.3.3] - 2026-05-15
 
