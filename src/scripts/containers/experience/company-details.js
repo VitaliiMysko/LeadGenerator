@@ -12,6 +12,7 @@ import {
   setValidationStyle,
   useTextChangeEffect,
 } from "../../helper/dom-action.js";
+import { showAlert } from "../../output/alert.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -142,6 +143,7 @@ async function manageCompanyDetailsBlock(item) {
     let website = "No website found";
     if (companyDetails.website) {
       const websiteLinkElement = getWebsiteLinkElement(companyDetails.website);
+      websiteIconElement.classList.remove("disabled");
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
       website = getHostName(companyDetails.website);
@@ -152,6 +154,7 @@ async function manageCompanyDetailsBlock(item) {
       website = companyDetails.completeRequest
         ? website
         : companyDetails.website;
+      websiteIconElement.classList.add("disabled");
       websiteBlock.appendChild(websiteIconElement);
     }
 
@@ -214,11 +217,42 @@ async function manageCompanyDetailsBlock(item) {
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
-      onSave: (newValue) => {
+      onSave: async (newValue) => {
+        const valid = isValidDomain(newValue);
+        const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
+
+        const iconImg = websiteBlock.querySelector("img");
+        const existingLink = websiteBlock.querySelector("a");
+
+        if (valid) {
+          if (existingLink) {
+            existingLink.href = fullUrl;
+          } else if (iconImg) {
+            const linkEl = getWebsiteLinkElement(fullUrl);
+            iconImg.replaceWith(linkEl);
+            linkEl.appendChild(iconImg);
+          }
+          iconImg?.classList.remove("disabled");
+        } else {
+          if (existingLink) existingLink.removeAttribute("href");
+          iconImg?.classList.add("disabled");
+        }
+
         const newBasicEmail = getBasicEmail.bind(null, newValue);
         addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
+
         if (item.classList.contains("active")) {
-          generateEmailsBtnElement.disabled = !isValidDomain(newValue);
+          generateEmailsBtnElement.disabled = !valid;
+        }
+
+        websiteBlock.classList.remove("valid", "no-valid");
+
+        if (!valid) {
+          showAlert("Invalid domain format.", "error");
+          setValidationStyle(websiteBlock, false);
+        } else {
+          const state = await getWebsiteState(fullUrl);
+          setValidationStyle(websiteBlock, state.ok);
         }
       },
     });
@@ -241,6 +275,7 @@ function getWebsiteIconElement() {
   const websiteIconElement = document.createElement("img");
   websiteIconElement.src = "assets/icons/www-16.png";
   websiteIconElement.alt = "Website Icon";
+  websiteIconElement.classList.add("disabled");
   return websiteIconElement;
 }
 
@@ -375,7 +410,7 @@ async function getCompanyData(companylink, location, industry, size) {
 
 async function getWebsiteState(url) {
   if (!url) {
-    return resolve({ status: 0, ok: false });
+    return { status: 0, ok: false };
   }
 
   if (!url.startsWith("http")) {

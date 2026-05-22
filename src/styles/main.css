@@ -457,6 +457,11 @@ a:active {
   height: 16px;
   flex-shrink: 0;
 }
+.company-website img.disabled {
+  filter: grayscale(100%) opacity(0.5);
+  pointer-events: none;
+  cursor: default;
+}
 .company-website span {
   flex: 1;
   min-width: 0;
@@ -518,6 +523,14 @@ a:active {
 }
 .no-valid::before {
   background: radial-gradient(circle at 35% 35%, #faefee, #ca8c89);
+}
+.valid:has(.editing-domain),
+.no-valid:has(.editing-domain) {
+  padding-right: 0;
+}
+.valid:has(.editing-domain)::before,
+.no-valid:has(.editing-domain)::before {
+  display: none;
 }
 .validation-success {
   background-color: #dbf5dc;
