@@ -340,10 +340,11 @@ async function getCompanyData(companylink, location, industry, size) {
   companyDetails.size = size;
   if (companylink) {
     const requestId = ++currentRequestId;
+    const publicCompanyUrl = companylink.replace("/sales/", "/");
     try {
       const response = await sendMessagePromise({
-        action: "fetchSalesNavigatorCompanyPage",
-        url: companylink,
+        action: "fetchLinkedinCompanyPage",
+        url: `${publicCompanyUrl}/about`,
         location: location,
         industry: industry,
         size: size === "unknown" ? "" : size,
@@ -382,7 +383,7 @@ async function getWebsiteState(url) {
   }
 
   const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[3];
+  const worker = manifest.host_permissions[2];
 
   const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
   const response = await fetch(workerUrl);

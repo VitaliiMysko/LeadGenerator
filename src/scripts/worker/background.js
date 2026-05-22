@@ -50,13 +50,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === "fetchSalesNavigatorCompanyPage") {
-    handleCompanyRequest(request, sendResponse, "sales");
-    return true;
-  }
-
   if (request.action === "fetchLinkedinCompanyPage") {
-    handleCompanyRequest(request, sendResponse, "linkedin");
+    handleCompanyRequest(request, sendResponse);
     return true;
   }
 });
@@ -64,8 +59,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // -----------------------------
 // CORE HANDLER
 // -----------------------------
-function handleCompanyRequest(request, sendResponse, type) {
-  const key = `${type}:${request.url}`;
+function handleCompanyRequest(request, sendResponse) {
+  const key = request.url;
 
   // 🔁 reuse ongoing request
   if (activeRequests.has(key)) {
@@ -73,7 +68,7 @@ function handleCompanyRequest(request, sendResponse, type) {
     return;
   }
 
-  const promise = fetchCompanyData(request, type)
+  const promise = fetchCompanyData(request)
     .then((result) => {
       activeRequests.delete(key);
       return result;
@@ -99,7 +94,7 @@ function handleCompanyRequest(request, sendResponse, type) {
 // -----------------------------
 // FETCH COMPANY DATA
 // -----------------------------
-function fetchCompanyData(request, type) {
+function fetchCompanyData(request) {
   return new Promise((resolve) => {
     chrome.tabs.create(
       {
@@ -124,52 +119,42 @@ function fetchCompanyData(request, type) {
         }, 12000); // ⏱ 12s timeout
 
         const onUpdated = (updatedTabId, info) => {
-          if (updatedTabId === tabId && info.status === "complete") {
-            chrome.scripting.executeScript(
-              {
-                target: { tabId },
-                files:
-                  type === "sales"
-                    ? [
-                        "src/utils/mutation-observer.js",
-                        "src/content-scripts/sales-navigator-pages/company/company.js",
-                      ]
-                    : [
-                        "src/utils/mutation-observer.js",
-                        "src/content-scripts/linkedin-pages/company.js",
-                      ],
-              },
-              () => {
-                chrome.tabs.sendMessage(tabId, {
-                  action:
-                    type === "sales"
-                      ? "initSalesNavigatorCompanyData"
-                      : "initLinkedinCompanyData",
-                  data: {
-                    location: request.location,
-                    industry: request.industry,
-                    size: request.size,
-                  },
-                });
-              }
-            );
-          }
+          if (updatedTabId !== tabId || info.status !== "complete") return;
+
+          chrome.scripting.executeScript(
+            {
+              target: { tabId },
+              func: (initData) => { window.leadGeneratorInitData = initData; },
+              args: [{ location: request.location, industry: request.industry, size: request.size }],
+            },
+            () => {
+              if (chrome.runtime.lastError) return;
+              chrome.scripting.executeScript(
+                {
+                  target: { tabId },
+                  files: [
+                    "src/utils/mutation-observer.js",
+                    "src/content-scripts/linkedin-pages/company.js",
+                  ],
+                },
+                () => {
+                  if (chrome.runtime.lastError) return;
+                  chrome.tabs.onUpdated.removeListener(onUpdated);
+                }
+              );
+            }
+          );
         };
 
         const onMessage = (response, sender) => {
           if (!sender.tab || sender.tab.id !== tabId) return;
 
-          const isValid =
-            (type === "sales" &&
-              response.action === "salesNavigatorCompanyPageContent") ||
-            (type === "linkedin" &&
-              response.action === "linkedinCompanyPageContent");
+          const isValid = response.action === "linkedinCompanyPageContent";
 
           if (!isValid) return;
 
           clearTimeout(timeout);
           cleanup();
-
           resolve(response.data || null);
         };
 

@@ -7,7 +7,6 @@
   "permissions": ["activeTab", "scripting", "identity", "tabs", "storage"],
   "host_permissions": [
     "https://www.linkedin.com/sales/lead/*",
-    "https://www.linkedin.com/sales/company/*",
     "https://www.linkedin.com/company/*",
     "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
   ],
