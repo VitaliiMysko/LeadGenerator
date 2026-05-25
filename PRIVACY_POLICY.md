@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: May 15, 2026
+**Last Updated**: May 25, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -9,7 +9,7 @@ Thank you for using the **Lead Generator** extension. This privacy policy explai
 
 The "Lead Generator" extension allows users to collect publicly available information from LinkedIn profiles, specifically from:
 
-- LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`)
 - LinkedIn company pages (`https://www.linkedin.com/company/*`)
 
 The extension operates **only within LinkedIn domains** and does not run on other websites.
@@ -68,6 +68,7 @@ The extension uses Chrome's `storage` permission to store:
   - Drag-and-drop functionality
   - Left-panel field order (when "Remember field order" is enabled)
   - Individual's names transliteration
+  - Default country fallback (when "Country by default" is enabled)
 - Selected filter values (e.g., company location, size)
 - User-saved lead data (only when explicitly saved by the user)
 

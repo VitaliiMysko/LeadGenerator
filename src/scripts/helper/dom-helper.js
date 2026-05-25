@@ -82,8 +82,6 @@ export function getCompanyItemElements() {
   return document.querySelectorAll("#tab-experience .company-item");
 }
 
-
-
 export function getCompanyDomainElement() {
   return document.querySelector(".company-item.active .company-website > span");
 }

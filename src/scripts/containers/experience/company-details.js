@@ -5,18 +5,23 @@ import {
   companyIndustryElement,
   companyCountryElement,
 } from "../../helper/dom-helper.js";
+import { updateSaveBtnState } from "../data/storage-actions.js";
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
 import {
   addCopyByClick,
   setValidationStyle,
   useTextChangeEffect,
 } from "../../helper/dom-action.js";
+import { showAlert } from "../../output/alert.js";
+import { extractCountry } from "../filters/company-location.js";
+import { getDefaultCountry } from "../settings/country-by-default.js";
 
 const companyDetailsByDefault = {
   website: "",
   location: "",
   industry: "",
   size: "",
+  members: "",
   status: 0,
   ok: false,
   completeRequest: true,
@@ -79,6 +84,7 @@ async function manageCompanyDetailsBlock(item) {
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
+  const membersBlock = item.querySelector(".company-members");
 
   const companyLinkElement = item.querySelector("a");
 
@@ -105,6 +111,8 @@ async function manageCompanyDetailsBlock(item) {
     sizeBlock.innerHTML = "";
     sizeBlock.classList.add("loading");
   }
+  membersBlock.innerHTML = "";
+  membersBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
   const editWebsiteDomainElement = getEditWebsiteDomainElement();
@@ -114,17 +122,18 @@ async function manageCompanyDetailsBlock(item) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   if (!location) {
-    const countryLoadingTextElement = getSpanElement("Loading country");
+    const countryLoadingTextElement = getSpanElement("Loading");
     locationBlock.appendChild(countryLoadingTextElement);
   }
   if (!industry) {
-    const industryLoadingTextElement = getSpanElement("Loading industry");
+    const industryLoadingTextElement = getSpanElement("Loading");
     industryBlock.appendChild(industryLoadingTextElement);
   }
   if (!size || size === "unknown") {
-    const sizeLoadingTextElement = getSpanElement("Loading company size");
+    const sizeLoadingTextElement = getSpanElement("Loading");
     sizeBlock.appendChild(sizeLoadingTextElement);
   }
+  membersBlock.appendChild(getSpanElement("Loading"));
 
   let companyDetails;
 
@@ -137,10 +146,12 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.innerHTML = "";
     industryBlock.innerHTML = "";
     sizeBlock.innerHTML = "";
+    membersBlock.innerHTML = "";
 
     let website = "No website found";
     if (companyDetails.website) {
       const websiteLinkElement = getWebsiteLinkElement(companyDetails.website);
+      websiteIconElement.classList.remove("disabled");
       websiteLinkElement.appendChild(websiteIconElement);
       websiteBlock.appendChild(websiteLinkElement);
       website = getHostName(companyDetails.website);
@@ -151,6 +162,7 @@ async function manageCompanyDetailsBlock(item) {
       website = companyDetails.completeRequest
         ? website
         : companyDetails.website;
+      websiteIconElement.classList.add("disabled");
       websiteBlock.appendChild(websiteIconElement);
     }
 
@@ -163,6 +175,11 @@ async function manageCompanyDetailsBlock(item) {
       item.setAttribute(`data-company-location`, companyDetails.location);
     }
 
+    if (location === locationNoFound) {
+      const defaultCountry = getDefaultCountry();
+      if (defaultCountry) location = defaultCountry;
+    }
+
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
@@ -171,7 +188,7 @@ async function manageCompanyDetailsBlock(item) {
       location !== locationNoFound &&
       item.style.display !== "none"
     ) {
-      companyCountryElement.value = location.split(", ").pop();
+      companyCountryElement.value = extractCountry(location) || getDefaultCountry();
     }
 
     const industryNoFound = "No industry found";
@@ -204,6 +221,12 @@ async function manageCompanyDetailsBlock(item) {
     const sizeTextElement = getSpanElement(size);
     sizeBlock.appendChild(sizeTextElement);
 
+    const membersValue = companyDetails.members
+      ? Number(companyDetails.members).toLocaleString()
+      : "unknown";
+    const membersTextElement = getSpanElement(membersValue);
+    membersBlock.appendChild(membersTextElement);
+
     const websiteElement = getSpanElement(website);
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
@@ -213,9 +236,43 @@ async function manageCompanyDetailsBlock(item) {
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
-      onSave: (newValue) => {
+      onSave: async (newValue) => {
+        const valid = isValidDomain(newValue);
+        const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
+
+        const iconImg = websiteBlock.querySelector("img");
+        const existingLink = websiteBlock.querySelector("a");
+
+        if (valid) {
+          if (existingLink) {
+            existingLink.href = fullUrl;
+          } else if (iconImg) {
+            const linkEl = getWebsiteLinkElement(fullUrl);
+            iconImg.replaceWith(linkEl);
+            linkEl.appendChild(iconImg);
+          }
+          iconImg?.classList.remove("disabled");
+        } else {
+          if (existingLink) existingLink.removeAttribute("href");
+          iconImg?.classList.add("disabled");
+        }
+
         const newBasicEmail = getBasicEmail.bind(null, newValue);
         addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
+
+        if (item.classList.contains("active")) {
+          generateEmailsBtnElement.disabled = !valid;
+        }
+
+        websiteBlock.classList.remove("valid", "no-valid");
+
+        if (!valid) {
+          showAlert("Invalid domain format.", "error");
+          setValidationStyle(websiteBlock, false);
+        } else {
+          const state = await getWebsiteState(fullUrl);
+          setValidationStyle(websiteBlock, state.ok);
+        }
       },
     });
   } catch (error) {
@@ -229,6 +286,8 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
     sizeBlock.classList.remove("loading");
+    membersBlock.classList.remove("loading");
+    updateSaveBtnState();
   }
 }
 
@@ -236,6 +295,7 @@ function getWebsiteIconElement() {
   const websiteIconElement = document.createElement("img");
   websiteIconElement.src = "assets/icons/www-16.png";
   websiteIconElement.alt = "Website Icon";
+  websiteIconElement.classList.add("disabled");
   return websiteIconElement;
 }
 
@@ -290,35 +350,19 @@ function getHostName(url) {
 export function formatCompanySize(size) {
   if (!size) return "unknown";
 
-  size = size
-    .toLowerCase()
-    .replace(/employees?/g, "")
-    .replace(/\+/g, "")
-    .trim();
+  if (/myself only/i.test(size)) return "0-1";
 
-  if (size === "myself only") return "0-1";
-
-  if (size.includes("-")) return size;
-
-  if (size.includes("k")) {
-    size = size.replace("k", "");
-    size = parseFloat(size) * 1000 + 1;
-  } else {
-    size = parseInt(size, 10);
+  const rangeMatch = size.match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)/);
+  if (rangeMatch) {
+    return `${rangeMatch[1].replace(/,/g, "")}-${rangeMatch[2].replace(/,/g, "")}`;
   }
 
-  if (isNaN(size)) return "unknown";
+  const plusMatch = size.match(/(\d[\d,]*)\s*\+/);
+  if (plusMatch) {
+    return `${plusMatch[1].replace(/,/g, "")}+`;
+  }
 
-  if (size <= 1) return "0-1";
-  if (size <= 10) return "2-10";
-  if (size <= 50) return "11-50";
-  if (size <= 200) return "51-200";
-  if (size <= 500) return "201-500";
-  if (size <= 1000) return "501-1000";
-  if (size <= 5000) return "1001-5000";
-  if (size <= 10000) return "5001-10000";
-
-  return "10000+";
+  return "unknown";
 }
 
 let currentRequestId = 0;
@@ -333,12 +377,14 @@ async function getCompanyData(companylink, location, industry, size) {
   companyDetails.location = location;
   companyDetails.industry = industry;
   companyDetails.size = size;
+  companyDetails.members = "";
   if (companylink) {
     const requestId = ++currentRequestId;
+    const publicCompanyUrl = companylink.replace("/sales/", "/");
     try {
       const response = await sendMessagePromise({
-        action: "fetchSalesNavigatorCompanyPage",
-        url: companylink,
+        action: "fetchLinkedinCompanyPage",
+        url: `${publicCompanyUrl}/about`,
         location: location,
         industry: industry,
         size: size === "unknown" ? "" : size,
@@ -348,6 +394,7 @@ async function getCompanyData(companylink, location, industry, size) {
         companyDetails.location = response.location;
         companyDetails.industry = response.industry;
         companyDetails.size = response.size;
+        companyDetails.members = response.members || "";
         companyDetails.website = response.website;
 
         const websiteState = await getWebsiteState(response.website);
@@ -369,7 +416,7 @@ async function getCompanyData(companylink, location, industry, size) {
 
 async function getWebsiteState(url) {
   if (!url) {
-    return resolve({ status: 0, ok: false });
+    return { status: 0, ok: false };
   }
 
   if (!url.startsWith("http")) {
@@ -377,7 +424,7 @@ async function getWebsiteState(url) {
   }
 
   const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[3];
+  const worker = manifest.host_permissions[2];
 
   const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
   const response = await fetch(workerUrl);

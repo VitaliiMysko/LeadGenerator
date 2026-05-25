@@ -10,23 +10,22 @@ import {
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
+import { updateSaveBtnState } from "../data/storage-actions.js";
+import { extractCountry } from "../filters/company-location.js";
+import { getDefaultCountry } from "../settings/country-by-default.js";
 
 export function createCompanyList(experience) {
   tabExperienceElement.innerHTML = "";
   generateEmailsBtnElement.disabled = true;
 
-  experience.forEach((company, index) => {
-    const companyBlock = getCompanyBlock(company, index);
+  experience.forEach((company) => {
+    const companyBlock = getCompanyBlock(company);
     tabExperienceElement.appendChild(companyBlock);
   });
 }
 
-function getCompanyBlock(company, index) {
+function getCompanyBlock(company) {
   const extraCompanyData = company.extraData;
-
-  extraCompanyData.companySize = formatCompanySize(
-    extraCompanyData.companySize,
-  );
 
   extraCompanyData.companySize = formatCompanySize(
     extraCompanyData.companySize,
@@ -47,16 +46,6 @@ function getCompanyBlock(company, index) {
 
   const header = getCompanyHeaderElement(company);
   const details = getCompanyDetailsElement(company);
-
-  if (index === 0) {
-    companyBlock.classList.add("active");
-    companyNameElement.value = company.companyName;
-    jobPositionElement.value = company.jobPosition;
-    emailElement.value = "";
-    companyIndustryElement.value = extraCompanyData.industry;
-    companyCountryElement.value = extraCompanyData.location.split(", ").pop();
-    setLinkedinBtn(company.companylink);
-  }
 
   const refreshBtn = header.querySelector(".refresh-btn");
   refreshBtn.addEventListener("click", async (e) => {
@@ -80,14 +69,14 @@ function getCompanyBlock(company, index) {
     jobPositionElement.value = companyBlock.getAttribute(
       "data-company-job-position",
     );
-    companyCountryElement.value = companyBlock
-      .getAttribute("data-company-location")
-      .split(", ")
-      .pop();
+    companyCountryElement.value =
+      extractCountry(companyBlock.getAttribute("data-company-location")) ||
+      getDefaultCountry();
     companyIndustryElement.value = companyBlock.getAttribute(
       "data-company-industry",
     );
     setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
+    updateSaveBtnState();
   });
 
   companyBlock.appendChild(header);
@@ -149,7 +138,7 @@ function getCompanyDetailsElement(company) {
   details.appendChild(getCompanyWebsiteElement());
   details.appendChild(getCompanyIndustryElement(company));
   details.appendChild(getCompanyLocationElement(company));
-  details.appendChild(getCompanySizeElement(company));
+  details.appendChild(getCompanySizeRowElement(company));
   return details;
 }
 
@@ -168,14 +157,6 @@ function getCompanyLocationElement(company) {
   return locationEl;
 }
 
-function getCompanyLocationRadioElement(company) {
-  const countryElement = document.createElement("div");
-  countryElement.classList.add("company-location");
-  countryElement.textContent = company.extraData.location;
-  countryElement.title = "location";
-  return countryElement;
-}
-
 function getCompanyIndustryElement(company) {
   const industryEl = document.createElement("div");
   industryEl.classList.add("company-industry");
@@ -184,12 +165,27 @@ function getCompanyIndustryElement(company) {
   return industryEl;
 }
 
+function getCompanySizeRowElement(company) {
+  const rowEl = document.createElement("div");
+  rowEl.classList.add("company-size-row");
+  rowEl.appendChild(getCompanySizeElement(company));
+  rowEl.appendChild(getCompanyMembersElement());
+  return rowEl;
+}
+
 function getCompanySizeElement(company) {
   const sizeEl = document.createElement("div");
   sizeEl.classList.add("company-size");
   sizeEl.textContent = company.extraData.companySize;
   sizeEl.title = "size";
   return sizeEl;
+}
+
+function getCompanyMembersElement() {
+  const membersEl = document.createElement("div");
+  membersEl.classList.add("company-members");
+  membersEl.title = "members";
+  return membersEl;
 }
 
 function setLinkedinBtn(link) {

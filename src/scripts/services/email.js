@@ -115,7 +115,7 @@ validateEmailsBtnElement.addEventListener("click", async () => {
 
 async function verifyEmailDirect(email) {
   const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[3];
+  const worker = manifest.host_permissions[2];
   const workerUrl = `${worker}?email=${encodeURIComponent(email)}`;
 
   let emailVerificationResponse;
@@ -141,6 +141,7 @@ async function verifyEmailDirect(email) {
 
 function startLoadingEffect() {
   emailElement.disabled = true;
+  emailElement.classList.add("loading");
   let dots = "";
   emailElement.value = "Loading";
 
@@ -153,6 +154,7 @@ function startLoadingEffect() {
 function stopLoadingEffect() {
   clearInterval(loadingInterval);
   emailElement.disabled = false;
+  emailElement.classList.remove("loading");
 }
 
 function checkVerifyEmailResult(result, emailData) {

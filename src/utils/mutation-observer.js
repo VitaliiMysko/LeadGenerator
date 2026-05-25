@@ -2,28 +2,30 @@ window.leadGenerator = window.leadGenerator || {};
 
 const waitForElementWithTimeout = (selector, timeout = 4000) => {
   return new Promise((resolve, reject) => {
+    const existing = document.querySelector(selector);
+    if (existing) {
+      resolve(existing);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(`Selector "${selector}" has not been found for ${timeout} ms.`));
+    }, timeout);
+
     const observer = new MutationObserver((mutations, obs) => {
       const element = document.querySelector(selector);
       if (element) {
-        resolve(element);
+        clearTimeout(timer);
         obs.disconnect();
+        resolve(element);
       }
     });
 
     observer.observe(document.body, {
       childList: true,
-      // attributes: true,
-      // subtree: true
+      subtree: true
     });
-
-    setTimeout(() => {
-      observer.disconnect();
-      reject(
-        new Error(
-          `Selector "${selector}" has not been found for ${timeout} ms.`
-        )
-      );
-    }, timeout);
   });
 };
 
@@ -43,7 +45,7 @@ const waitForElementById = (id, conditionFn = () => true, timeout = 3000) => {
 
     const timer = setTimeout(() => {
       observer.disconnect();
-      reject(`Element #${id} did not appear in ${timeout}ms`);
+      reject(new Error(`Element #${id} did not appear in ${timeout}ms`));
     }, timeout);
 
     check();
