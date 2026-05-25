@@ -343,17 +343,19 @@ function getHostName(url) {
 export function formatCompanySize(size) {
   if (!size) return "unknown";
 
-  size = size
-    .toLowerCase()
-    .replace(/employees?/g, "")
-    .replace(/\+/g, "")
-    .trim();
+  if (/myself only/i.test(size)) return "0-1";
 
-  if (size === "myself only") return "0-1";
+  const rangeMatch = size.match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)/);
+  if (rangeMatch) {
+    return `${rangeMatch[1].replace(/,/g, "")}-${rangeMatch[2].replace(/,/g, "")}`;
+  }
 
-  if (size.includes("-")) return size;
+  const plusMatch = size.match(/(\d[\d,]*)\s*\+/);
+  if (plusMatch) {
+    return `${plusMatch[1].replace(/,/g, "")}+`;
+  }
 
-  return "10000+";
+  return "unknown";
 }
 
 let currentRequestId = 0;

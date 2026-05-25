@@ -73,9 +73,9 @@
         const firstDd = dt.nextElementSibling;
         if (firstDd?.tagName.toLowerCase() === "dd") {
           const secondDd = firstDd.nextElementSibling;
-          if (secondDd?.tagName.toLowerCase() === "dd") {
-            const match = secondDd.textContent.trim().match(/(\d[\d,]*)\s+associated members?/i);
-            return match ? match[1].replace(/,/g, "") : "";
+          if (secondDd?.tagName.toLowerCase() === "dd" && secondDd.querySelector("a")) {
+            const match = secondDd.textContent.trim().match(/^(\d[\d,\s]*)/);
+            return match ? match[1].replace(/[,\s]/g, "") : "";
           }
         }
       }
