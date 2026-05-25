@@ -26,11 +26,11 @@
       console.error("Error finding element:", error);
     })
     .then((element) => {
-      if (!data.location) {
+      // if (!data.location) {
         data.location =
           getDefinitionByTerm(descriptionList, "Headquarters") ||
           getDefinitionByTerm(descriptionList, "Штаб-квартира");
-      }
+      // }
     })
     .catch((error) => {
       console.error("Error finding element:", error);

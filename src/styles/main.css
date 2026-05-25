@@ -723,6 +723,27 @@ a:active {
   display: block;
 }
 
+.single-select {
+  position: relative;
+  border-radius: 6px;
+  padding: 5px;
+  margin-top: 5px;
+  background: #fdfdfd;
+}
+.single-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+}
+.single-select.open .dropdown {
+  display: block;
+}
+.option.selected {
+  color: #0056b3;
+  font-weight: 500;
+}
+
 .option {
   padding: 6px 10px;
   cursor: pointer;

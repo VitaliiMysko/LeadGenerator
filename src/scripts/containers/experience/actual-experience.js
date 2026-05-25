@@ -12,6 +12,7 @@ import {
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { extractCountry } from "../filters/company-location.js";
+import { getDefaultCountry } from "../settings/country-by-default.js";
 
 export function createCompanyList(experience) {
   tabExperienceElement.innerHTML = "";
@@ -68,9 +69,9 @@ function getCompanyBlock(company) {
     jobPositionElement.value = companyBlock.getAttribute(
       "data-company-job-position",
     );
-    companyCountryElement.value = extractCountry(
-      companyBlock.getAttribute("data-company-location"),
-    );
+    companyCountryElement.value =
+      extractCountry(companyBlock.getAttribute("data-company-location")) ||
+      getDefaultCountry();
     companyIndustryElement.value = companyBlock.getAttribute(
       "data-company-industry",
     );

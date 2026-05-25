@@ -14,6 +14,7 @@ import {
 } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
+import { getDefaultCountry } from "../settings/country-by-default.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -182,7 +183,7 @@ async function manageCompanyDetailsBlock(item) {
       location !== locationNoFound &&
       item.style.display !== "none"
     ) {
-      companyCountryElement.value = extractCountry(location);
+      companyCountryElement.value = extractCountry(location) || getDefaultCountry();
     }
 
     const industryNoFound = "No industry found";
@@ -390,7 +391,7 @@ async function getCompanyData(companylink, location, industry, size) {
         companyDetails.size = response.size;
         companyDetails.members = response.members || "";
         companyDetails.website = response.website;
-
+        
         const websiteState = await getWebsiteState(response.website);
         companyDetails.status = websiteState.status;
         companyDetails.ok = websiteState.ok;
