@@ -192,24 +192,3 @@ function setLinkedinBtn(link) {
   openCompanyLinkedinBtnElement.disabled = !link;
   openCompanyLinkedinBtnElement.dataset.href = link || "";
 }
-
-function getCompanyIndustryElement(company) {
-  const industryEl = document.createElement("div");
-  industryEl.classList.add("company-industry");
-  industryEl.textContent = company.extraData.industry;
-  industryEl.title = "industry";
-  return industryEl;
-}
-
-function getCompanySizeElement(company) {
-  const sizeEl = document.createElement("div");
-  sizeEl.classList.add("company-size");
-  sizeEl.textContent = company.extraData.companySize;
-  sizeEl.title = "size";
-  return sizeEl;
-}
-
-function setLinkedinBtn(link) {
-  openCompanyLinkedinBtnElement.disabled = !link;
-  openCompanyLinkedinBtnElement.dataset.href = link || "";
-}
