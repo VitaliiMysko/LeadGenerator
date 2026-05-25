@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 15, 2026
+**Last updated**: May 25, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -8,7 +8,7 @@ This document provides a high-level overview of the architectural structure of t
 
 The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from:
 
-- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/sales/company/*`)
+- **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`)
 - **LinkedIn company pages** (`https://www.linkedin.com/company/*`)
 
 The extension operates **only within LinkedIn domains** (`https://www.linkedin.com/*`).
@@ -26,7 +26,6 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - Injected into:
   - `https://www.linkedin.com/sales/lead/*`
-  - `https://www.linkedin.com/sales/company/*`
   - `https://www.linkedin.com/company/*`
 - Responsible for extracting public data from the DOM via messaging
 - Do **not perform external network requests**
@@ -164,7 +163,7 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
 
 - Each company is rendered as a `.company-item` element containing:
   - `.company-header` – always visible; holds company name, job position, expand arrow, and refresh button
-  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`
+  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`; contains website, industry, location, company size, and members count
 - Only one `.company-item` can hold `.active` at a time; clicking a header removes `.active` from all siblings and adds it to the clicked item
 - **Company data loading** is handled by `company-details.js`:
   - Uses a `companyDetailsCache` Map (keyed by company URL) to avoid redundant network fetches
@@ -181,7 +180,7 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 
 - `chrome.storage.sync`
   - User preferences
-  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle)
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country)
   - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
   - Filter state
 
@@ -258,7 +257,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 1. User opens the popup
 
-2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page and `https://www.linkedin.com/sales/company/*`, `https://www.linkedin.com/company/*` in the background mode
+2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page; additional company data is fetched from `https://www.linkedin.com/company/*` in the background
 
 3. Data is returned and displayed in the popup
 
@@ -319,7 +318,6 @@ sequenceDiagram
 ],
 "host_permissions": [
   "https://www.linkedin.com/sales/lead/*",
-  "https://www.linkedin.com/sales/company/*",
   "https://www.linkedin.com/company/*",
   "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
 ]

@@ -1,7 +1,7 @@
 import { setFilter, getState, subscribe } from "../../store/filter-store.js";
 
 let selected = new Set();
-const allOptions = [
+export const allOptions = [
   "Albania",
   "Andorra",
   "Armenia",
@@ -52,6 +52,13 @@ const allOptions = [
   "Ukraine",
   "United Kingdom",
 ];
+
+export function extractCountry(location) {
+  if (!location) return "";
+  const lastPart = location.split(", ").pop();
+  if (allOptions.includes(lastPart)) return lastPart;
+  return allOptions.find((country) => location.includes(country)) || "";
+}
 
 export function initCompanyLocationFilter() {
   const container = document.getElementById("company-location-filter");

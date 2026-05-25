@@ -62,7 +62,7 @@ saveBtnElement.addEventListener("click", async () => {
   await saveLeads(leads);
 
   currentCount = leads.length;
-  updateUI();
+  updateUI(true);
   showAlert("Saved", "success");
 });
 
@@ -78,15 +78,20 @@ storageLeadsBtnElement.addEventListener("click", async () => {
 cleanBtnElement.addEventListener("click", async () => {
   await saveLeads([]);
   currentCount = 0;
-  updateUI();
+  updateUI(true);
   showAlert("Cleared", "success");
 });
 
-function updateUI() {
+function updateUI(animate = false) {
   const pct = (currentCount / MAX_ITEMS) * 100;
   storageLeadsBtnElement.style.setProperty("--fill-pct", `${pct}%`);
-  storageLeadsBtnElement.querySelector(".get-counter-current").textContent =
-    currentCount;
+  const counterEl = storageLeadsBtnElement.querySelector(".get-counter-current");
+  counterEl.textContent = currentCount;
+  if (animate) {
+    counterEl.classList.remove("pop");
+    void counterEl.offsetWidth;
+    counterEl.classList.add("pop");
+  }
   updateSaveBtnState();
 }
 
@@ -103,7 +108,7 @@ function isAllFieldsEmpty() {
   ].every((el) => !el.value.trim());
 }
 
-function updateSaveBtnState() {
+export function updateSaveBtnState() {
   saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_ITEMS;
 }
 

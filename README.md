@@ -64,6 +64,7 @@ Displays a list of companies associated with the profile as an interactive accor
   - Industry
   - Location
   - Company size
+  - Members (associated LinkedIn members count)
 
 - Active company header includes a **Refresh button (↻)** to re-fetch company data on demand
   - Only visible for the currently active company
@@ -114,6 +115,10 @@ Available option:
 - **Transliteration Toggle**
   - Enable / disable individual's names transliteration
   - State persisted via Chrome `storage`
+- **Country by default Toggle**
+  - When enabled, reveals a searchable country picker
+  - The selected country is used as a fallback for the **Country** field when the company's location cannot be mapped to a known country
+  - State and selected country persisted via Chrome `storage`
 
 ## Data Fields
 
