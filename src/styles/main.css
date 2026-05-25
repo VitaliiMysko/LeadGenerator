@@ -667,7 +667,6 @@ a:active {
 /* ----------MULTI SELECTING / TAGS ---------- */
 .multi-select-tags {
   position: relative;
-  /* border: 1px solid #ccc; */
   border-radius: 6px;
   padding: 5px;
   margin-top: 5px;
@@ -729,12 +728,14 @@ a:active {
   padding: 5px;
   margin-top: 5px;
   background: #fdfdfd;
+  box-sizing: border-box;
 }
 .single-input {
   border: none;
   outline: none;
   width: 100%;
   background: transparent;
+  box-sizing: border-box;
 }
 .single-select.open .dropdown {
   display: block;

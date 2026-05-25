@@ -175,6 +175,11 @@ async function manageCompanyDetailsBlock(item) {
       item.setAttribute(`data-company-location`, companyDetails.location);
     }
 
+    if (location === locationNoFound) {
+      const defaultCountry = getDefaultCountry();
+      if (defaultCountry) location = defaultCountry;
+    }
+
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
@@ -391,7 +396,7 @@ async function getCompanyData(companylink, location, industry, size) {
         companyDetails.size = response.size;
         companyDetails.members = response.members || "";
         companyDetails.website = response.website;
-        
+
         const websiteState = await getWebsiteState(response.website);
         companyDetails.status = websiteState.status;
         companyDetails.ok = websiteState.ok;
