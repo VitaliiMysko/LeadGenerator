@@ -13,6 +13,7 @@ import {
   useTextChangeEffect,
 } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
+import { extractCountry } from "../filters/company-location.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -181,7 +182,7 @@ async function manageCompanyDetailsBlock(item) {
       location !== locationNoFound &&
       item.style.display !== "none"
     ) {
-      companyCountryElement.value = location.split(", ").pop();
+      companyCountryElement.value = extractCountry(location);
     }
 
     const industryNoFound = "No industry found";
