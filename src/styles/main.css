@@ -371,13 +371,24 @@ a:active {
 }
 .company-location,
 .company-size,
-.company-industry {
+.company-industry,
+.company-members {
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: 12px;
   min-width: 0;
   margin-top: 6px;
+}
+.company-size-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.company-size-row .company-size,
+.company-size-row .company-members {
+  margin-top: 0;
+  flex: 1;
 }
 .company-location::before {
   content: "Location";
@@ -400,6 +411,13 @@ a:active {
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
+.company-members::before {
+  content: "Members";
+  font-size: 9px;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
 #version-container {
   position: absolute;
   top: 5px;
@@ -416,13 +434,15 @@ a:active {
 .company-location.loading span,
 .company-industry.loading span,
 .company-size.loading span,
+.company-members.loading span,
 .loading-text,
 #email.loading {
   color: #aaa;
 }
 .company-location.loading,
 .company-industry.loading,
-.company-size.loading {
+.company-size.loading,
+.company-members.loading {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
@@ -431,7 +451,8 @@ a:active {
 }
 .company-location.loading::before,
 .company-industry.loading::before,
-.company-size.loading::before {
+.company-size.loading::before,
+.company-members.loading::before {
   flex-basis: 100%;
 }
 .company-website.loading span {

@@ -137,7 +137,7 @@ function getCompanyDetailsElement(company) {
   details.appendChild(getCompanyWebsiteElement());
   details.appendChild(getCompanyIndustryElement(company));
   details.appendChild(getCompanyLocationElement(company));
-  details.appendChild(getCompanySizeElement(company));
+  details.appendChild(getCompanySizeRowElement(company));
   return details;
 }
 
@@ -164,12 +164,27 @@ function getCompanyIndustryElement(company) {
   return industryEl;
 }
 
+function getCompanySizeRowElement(company) {
+  const rowEl = document.createElement("div");
+  rowEl.classList.add("company-size-row");
+  rowEl.appendChild(getCompanySizeElement(company));
+  rowEl.appendChild(getCompanyMembersElement());
+  return rowEl;
+}
+
 function getCompanySizeElement(company) {
   const sizeEl = document.createElement("div");
   sizeEl.classList.add("company-size");
   sizeEl.textContent = company.extraData.companySize;
   sizeEl.title = "size";
   return sizeEl;
+}
+
+function getCompanyMembersElement() {
+  const membersEl = document.createElement("div");
+  membersEl.classList.add("company-members");
+  membersEl.title = "members";
+  return membersEl;
 }
 
 function setLinkedinBtn(link) {

@@ -64,6 +64,7 @@ Displays a list of companies associated with the profile as an interactive accor
   - Industry
   - Location
   - Company size
+  - Members (associated LinkedIn members count)
 
 - Active company header includes a **Refresh button (↻)** to re-fetch company data on demand
   - Only visible for the currently active company

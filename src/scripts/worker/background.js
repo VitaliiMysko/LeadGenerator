@@ -82,6 +82,7 @@ function handleCompanyRequest(request, sendResponse) {
         location: request.location || "",
         industry: request.industry || "",
         size: request.size || "",
+        members: "",
         error: true,
       };
     });
@@ -116,7 +117,7 @@ function fetchCompanyData(request) {
           console.warn("Timeout for tab:", request.url);
           cleanup();
           resolve(null);
-        }, 12000); // ⏱ 12s timeout
+        }, 10000); // ⏱ 10s timeout
 
         const onUpdated = (updatedTabId, info) => {
           if (updatedTabId !== tabId || info.status !== "complete") return;

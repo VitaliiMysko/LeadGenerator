@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
+- **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page.
 
 ### Changed
 

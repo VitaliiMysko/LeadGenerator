@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 15, 2026
+**Last updated**: May 22, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -163,7 +163,7 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
 
 - Each company is rendered as a `.company-item` element containing:
   - `.company-header` – always visible; holds company name, job position, expand arrow, and refresh button
-  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`
+  - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`; contains website, industry, location, company size, and members count
 - Only one `.company-item` can hold `.active` at a time; clicking a header removes `.active` from all siblings and adds it to the clicked item
 - **Company data loading** is handled by `company-details.js`:
   - Uses a `companyDetailsCache` Map (keyed by company URL) to avoid redundant network fetches

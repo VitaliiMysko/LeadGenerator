@@ -19,6 +19,7 @@ const companyDetailsByDefault = {
   location: "",
   industry: "",
   size: "",
+  members: "",
   status: 0,
   ok: false,
   completeRequest: true,
@@ -81,6 +82,7 @@ async function manageCompanyDetailsBlock(item) {
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
+  const membersBlock = item.querySelector(".company-members");
 
   const companyLinkElement = item.querySelector("a");
 
@@ -107,6 +109,8 @@ async function manageCompanyDetailsBlock(item) {
     sizeBlock.innerHTML = "";
     sizeBlock.classList.add("loading");
   }
+  membersBlock.innerHTML = "";
+  membersBlock.classList.add("loading");
 
   const websiteIconElement = getWebsiteIconElement();
   const editWebsiteDomainElement = getEditWebsiteDomainElement();
@@ -116,17 +120,18 @@ async function manageCompanyDetailsBlock(item) {
   websiteBlock.appendChild(websiteLoadingTextElement);
 
   if (!location) {
-    const countryLoadingTextElement = getSpanElement("Loading country");
+    const countryLoadingTextElement = getSpanElement("Loading");
     locationBlock.appendChild(countryLoadingTextElement);
   }
   if (!industry) {
-    const industryLoadingTextElement = getSpanElement("Loading industry");
+    const industryLoadingTextElement = getSpanElement("Loading");
     industryBlock.appendChild(industryLoadingTextElement);
   }
   if (!size || size === "unknown") {
-    const sizeLoadingTextElement = getSpanElement("Loading company size");
+    const sizeLoadingTextElement = getSpanElement("Loading");
     sizeBlock.appendChild(sizeLoadingTextElement);
   }
+  membersBlock.appendChild(getSpanElement("Loading"));
 
   let companyDetails;
 
@@ -139,6 +144,7 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.innerHTML = "";
     industryBlock.innerHTML = "";
     sizeBlock.innerHTML = "";
+    membersBlock.innerHTML = "";
 
     let website = "No website found";
     if (companyDetails.website) {
@@ -208,6 +214,12 @@ async function manageCompanyDetailsBlock(item) {
     const sizeTextElement = getSpanElement(size);
     sizeBlock.appendChild(sizeTextElement);
 
+    const membersValue = companyDetails.members
+      ? Number(companyDetails.members).toLocaleString()
+      : "unknown";
+    const membersTextElement = getSpanElement(membersValue);
+    membersBlock.appendChild(membersTextElement);
+
     const websiteElement = getSpanElement(website);
     websiteBlock.appendChild(websiteElement);
     websiteBlock.appendChild(editWebsiteDomainElement);
@@ -267,6 +279,7 @@ async function manageCompanyDetailsBlock(item) {
     locationBlock.classList.remove("loading");
     industryBlock.classList.remove("loading");
     sizeBlock.classList.remove("loading");
+    membersBlock.classList.remove("loading");
     updateSaveBtnState();
   }
 }
@@ -330,35 +343,19 @@ function getHostName(url) {
 export function formatCompanySize(size) {
   if (!size) return "unknown";
 
-  size = size
-    .toLowerCase()
-    .replace(/employees?/g, "")
-    .replace(/\+/g, "")
-    .trim();
+  if (/myself only/i.test(size)) return "0-1";
 
-  if (size === "myself only") return "0-1";
-
-  if (size.includes("-")) return size;
-
-  if (size.includes("k")) {
-    size = size.replace("k", "");
-    size = parseFloat(size) * 1000 + 1;
-  } else {
-    size = parseInt(size, 10);
+  const rangeMatch = size.match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)/);
+  if (rangeMatch) {
+    return `${rangeMatch[1].replace(/,/g, "")}-${rangeMatch[2].replace(/,/g, "")}`;
   }
 
-  if (isNaN(size)) return "unknown";
+  const plusMatch = size.match(/(\d[\d,]*)\s*\+/);
+  if (plusMatch) {
+    return `${plusMatch[1].replace(/,/g, "")}+`;
+  }
 
-  if (size <= 1) return "0-1";
-  if (size <= 10) return "2-10";
-  if (size <= 50) return "11-50";
-  if (size <= 200) return "51-200";
-  if (size <= 500) return "201-500";
-  if (size <= 1000) return "501-1000";
-  if (size <= 5000) return "1001-5000";
-  if (size <= 10000) return "5001-10000";
-
-  return "10000+";
+  return "unknown";
 }
 
 let currentRequestId = 0;
@@ -373,6 +370,7 @@ async function getCompanyData(companylink, location, industry, size) {
   companyDetails.location = location;
   companyDetails.industry = industry;
   companyDetails.size = size;
+  companyDetails.members = "";
   if (companylink) {
     const requestId = ++currentRequestId;
     const publicCompanyUrl = companylink.replace("/sales/", "/");
@@ -389,6 +387,7 @@ async function getCompanyData(companylink, location, industry, size) {
         companyDetails.location = response.location;
         companyDetails.industry = response.industry;
         companyDetails.size = response.size;
+        companyDetails.members = response.members || "";
         companyDetails.website = response.website;
 
         const websiteState = await getWebsiteState(response.website);
