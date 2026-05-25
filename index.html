@@ -166,6 +166,23 @@
                 title="Remember and restore the last field order after reopening the extension"
               />Remember field order
             </div>
+            <div class="tab-item-block">
+              <input
+                id="country-by-default-settings"
+                type="checkbox"
+                title="Use a fixed default country when location cannot be determined"
+              />Country by default
+            </div>
+            <div class="tab-item-block" id="country-by-default-wrapper" style="display:none">
+              <div class="single-select" id="country-by-default-select">
+                <input
+                  type="text"
+                  class="single-input"
+                  placeholder="Type or select country..."
+                />
+                <div class="dropdown"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

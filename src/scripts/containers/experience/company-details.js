@@ -14,6 +14,7 @@ import {
 } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
+import { getDefaultCountry } from "../settings/country-by-default.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -174,6 +175,11 @@ async function manageCompanyDetailsBlock(item) {
       item.setAttribute(`data-company-location`, companyDetails.location);
     }
 
+    if (location === locationNoFound) {
+      const defaultCountry = getDefaultCountry();
+      if (defaultCountry) location = defaultCountry;
+    }
+
     const locationTextElement = getSpanElement(location);
     locationBlock.appendChild(locationTextElement);
 
@@ -182,7 +188,7 @@ async function manageCompanyDetailsBlock(item) {
       location !== locationNoFound &&
       item.style.display !== "none"
     ) {
-      companyCountryElement.value = extractCountry(location);
+      companyCountryElement.value = extractCountry(location) || getDefaultCountry();
     }
 
     const industryNoFound = "No industry found";

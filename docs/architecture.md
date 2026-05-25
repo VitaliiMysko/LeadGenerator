@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 22, 2026
+**Last updated**: May 25, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -180,7 +180,7 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 
 - `chrome.storage.sync`
   - User preferences
-  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle)
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country)
   - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
   - Filter state
 
