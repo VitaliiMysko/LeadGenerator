@@ -53,6 +53,13 @@ const allOptions = [
   "United Kingdom",
 ];
 
+export function extractCountry(location) {
+  if (!location) return "";
+  const lastPart = location.split(", ").pop();
+  if (allOptions.includes(lastPart)) return lastPart;
+  return allOptions.find((country) => location.includes(country)) || lastPart;
+}
+
 export function initCompanyLocationFilter() {
   const container = document.getElementById("company-location-filter");
   if (!container) return;
