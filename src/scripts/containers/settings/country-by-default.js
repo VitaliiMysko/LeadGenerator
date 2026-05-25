@@ -5,7 +5,6 @@ let enabled = false;
 let country = "";
 
 export function getDefaultCountry() {
-  console.log("LG==getDefaultCountry==>", enabled, country)
   return enabled ? country : "";
 }
 
