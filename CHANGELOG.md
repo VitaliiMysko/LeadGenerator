@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
 - **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page.
+- **Country by default** setting: when enabled, a country picker appears in Settings; the selected country is used as a fallback when a company's location cannot be mapped to a known country.
 
 ### Changed
 

@@ -115,6 +115,10 @@ Available option:
 - **Transliteration Toggle**
   - Enable / disable individual's names transliteration
   - State persisted via Chrome `storage`
+- **Country by default Toggle**
+  - When enabled, reveals a searchable country picker
+  - The selected country is used as a fallback for the **Country** field when the company's location cannot be mapped to a known country
+  - State and selected country persisted via Chrome `storage`
 
 ## Data Fields
 

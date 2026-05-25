@@ -68,6 +68,7 @@ The extension uses Chrome's `storage` permission to store:
   - Drag-and-drop functionality
   - Left-panel field order (when "Remember field order" is enabled)
   - Individual's names transliteration
+  - Default country fallback (when "Country by default" is enabled)
 - Selected filter values (e.g., company location, size)
 - User-saved lead data (only when explicitly saved by the user)
 
