@@ -196,7 +196,7 @@ a:active {
 }
 #translate-btn,
 #generate-emails-btn,
-#validete-emails-btn,
+#validate-emails-btn,
 #open-company-linkedin-btn {
   position: absolute;
   right: 0;
@@ -207,12 +207,12 @@ a:active {
   padding: 0;
 }
 #generate-emails-btn:disabled,
-#validete-emails-btn:disabled,
+#validate-emails-btn:disabled,
 #open-company-linkedin-btn:disabled {
   cursor: default;
 }
 #generate-emails-btn:disabled img,
-#validete-emails-btn:disabled img,
+#validate-emails-btn:disabled img,
 #open-company-linkedin-btn:disabled img {
   filter: grayscale(100%) opacity(0.5);
 }
