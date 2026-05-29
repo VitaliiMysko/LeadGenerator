@@ -383,13 +383,13 @@ async function getCompanyData(companylink, location, industry, size) {
     const requestId = ++currentRequestId;
     const publicCompanyUrl = companylink.replace("/sales/", "/");
     try {
-      const response = await sendMessagePromise({
+      const response = await chrome.runtime.sendMessage({
         action: "fetchLinkedinCompanyPage",
         url: `${publicCompanyUrl}/about`,
         location: location,
         industry: industry,
         size: size === "unknown" ? "" : size,
-      });
+      }).catch(() => null);
 
       if (response) {
         companyDetails.location = response.location;
@@ -427,18 +427,6 @@ async function getWebsiteState(url) {
   const workerUrl = `${getWorkerUrl()}?url=${encodeURIComponent(url)}`;
   const response = await fetch(workerUrl);
   return await response.json();
-}
-
-function sendMessagePromise(message) {
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage(message, (response) => {
-      if (chrome.runtime.lastError) {
-        resolve(null);
-      } else {
-        resolve(response);
-      }
-    });
-  });
 }
 
 function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {

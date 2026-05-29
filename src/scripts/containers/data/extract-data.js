@@ -8,56 +8,49 @@ import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
 
-getExtractBtnElement().addEventListener("click", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.scripting.executeScript(
-      {
-        target: { tabId: tabs[0].id },
-        files: [
-          "src/utils/mutation-observer.js",
-          "src/content-scripts/common/constants.js",
-          "src/content-scripts/sales-navigator-pages/lead/lead.js",
-          "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",
-          "src/content-scripts/actions/extract-data.js",
-        ],
-      },
-      () => {
-        const loadingElement = document.createElement("div");
-        loadingElement.textContent = "Loading";
-        loadingElement.classList.add("loading", "loading-text");
-        getTabExperienceElement().appendChild(loadingElement);
+getExtractBtnElement().addEventListener("click", async () => {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          { action: "extractData" },
-          async (results) => {
-            getTabExperienceElement().innerHTML = "";
-            if (results) {
-              const data = results.data;
-              for (const element of data) {
-                if (element.category === "personalData") {
-                  await populateGeneralData(element.value);
-                  updateSaveBtnState();
-                }
-                if (element.category === "actualExperienceData") {
-                  createCompanyList(element.value);
-                }
-              }
-            }
-            applyFilters();
-            await handlerCompanyDetails();
-          },
-        );
-      },
-    );
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: [
+      "src/utils/mutation-observer.js",
+      "src/content-scripts/common/constants.js",
+      "src/content-scripts/sales-navigator-pages/lead/lead.js",
+      "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",
+      "src/content-scripts/actions/extract-data.js",
+    ],
   });
+
+  const loadingElement = document.createElement("div");
+  loadingElement.textContent = "Loading";
+  loadingElement.classList.add("loading", "loading-text");
+  getTabExperienceElement().appendChild(loadingElement);
+
+  const results = await chrome.tabs.sendMessage(tab.id, { action: "extractData" });
+
+  getTabExperienceElement().innerHTML = "";
+
+  if (results) {
+    for (const element of results.data) {
+      if (element.category === "personalData") {
+        await populateGeneralData(element.value);
+        updateSaveBtnState();
+      }
+      if (element.category === "actualExperienceData") {
+        createCompanyList(element.value);
+      }
+    }
+  }
+
+  applyFilters();
+  await handlerCompanyDetails();
 });
 
 async function populateGeneralData(items) {
   for (const item of items) {
     const inputElement = document.querySelector(`#${item.inputId}`);
-    const value = item.value;
-    inputElement.value = value;
+    inputElement.value = item.value;
 
     if (item.inputId === "first-name" || item.inputId === "second-name") {
       await transliterateElement(inputElement);
