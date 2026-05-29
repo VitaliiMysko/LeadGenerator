@@ -15,6 +15,7 @@ import {
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
+import { getWorkerUrl } from "../../../constants/config.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -423,10 +424,7 @@ async function getWebsiteState(url) {
     url = "https://" + url;
   }
 
-  const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[2];
-
-  const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
+  const workerUrl = `${getWorkerUrl()}?url=${encodeURIComponent(url)}`;
   const response = await fetch(workerUrl);
   return await response.json();
 }
