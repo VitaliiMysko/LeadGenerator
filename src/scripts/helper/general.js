@@ -1,7 +1,8 @@
-import { appVersionElement } from "./dom-helper.js";
+import { getAppVersionElement } from "./dom-helper.js";
 
 export function showAppsVersion() {
   const manifest = chrome.runtime.getManifest();
+  const appVersionElement = getAppVersionElement();
 
   if (appVersionElement) {
     const environment = manifest.environment;

@@ -1,9 +1,9 @@
 import {
   getCompanyItemElements,
-  emailElement,
-  generateEmailsBtnElement,
-  companyIndustryElement,
-  companyCountryElement,
+  getEmailElement,
+  getGenerateEmailsBtnElement,
+  getCompanyIndustryElement,
+  getCompanyCountryElement,
 } from "../../helper/dom-helper.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
@@ -51,7 +51,7 @@ export async function refreshCompanyDetails(item) {
   item.setAttribute("data-company-size", sizeInitValue);
 
   await manageCompanyDetailsBlock(item);
-  fillEmailFromCache(emailElement.value);
+  fillEmailFromCache(getEmailElement().value);
 }
 
 async function addCompanyDetailsListener() {
@@ -59,7 +59,7 @@ async function addCompanyDetailsListener() {
     const header = item.querySelector(".company-header");
     header.addEventListener("click", async () => {
       await manageCompanyDetailsBlock(item);
-      const pastedEmailWhileFindingWebsite = emailElement.value;
+      const pastedEmailWhileFindingWebsite = getEmailElement().value;
       fillEmailFromCache(pastedEmailWhileFindingWebsite);
     });
   });
@@ -91,10 +91,10 @@ async function manageCompanyDetailsBlock(item) {
 
   if (websiteBlock.getAttribute("data-initialized") === "true") {
     const websiteText = websiteBlock.querySelector("span")?.textContent;
-    generateEmailsBtnElement.disabled = !isValidDomain(websiteText);
+    getGenerateEmailsBtnElement().disabled = !isValidDomain(websiteText);
     return;
   } else {
-    generateEmailsBtnElement.disabled = true;
+    getGenerateEmailsBtnElement().disabled = true;
   }
 
   websiteBlock.innerHTML = "";
@@ -189,7 +189,7 @@ async function manageCompanyDetailsBlock(item) {
       location !== locationNoFound &&
       item.style.display !== "none"
     ) {
-      companyCountryElement.value = extractCountry(location) || getDefaultCountry();
+      getCompanyCountryElement().value = extractCountry(location) || getDefaultCountry();
     }
 
     const industryNoFound = "No industry found";
@@ -209,7 +209,7 @@ async function manageCompanyDetailsBlock(item) {
       industry !== industryNoFound &&
       item.style.display !== "none"
     ) {
-      companyIndustryElement.value = industry;
+      getCompanyIndustryElement().value = industry;
     }
 
     if (size === "unknown") {
@@ -233,7 +233,7 @@ async function manageCompanyDetailsBlock(item) {
     websiteBlock.appendChild(editWebsiteDomainElement);
 
     if (item.classList.contains("active")) {
-      generateEmailsBtnElement.disabled = !isValidDomain(website);
+      getGenerateEmailsBtnElement().disabled = !isValidDomain(website);
     }
 
     editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
@@ -262,7 +262,7 @@ async function manageCompanyDetailsBlock(item) {
         addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
 
         if (item.classList.contains("active")) {
-          generateEmailsBtnElement.disabled = !valid;
+          getGenerateEmailsBtnElement().disabled = !valid;
         }
 
         websiteBlock.classList.remove("valid", "no-valid");

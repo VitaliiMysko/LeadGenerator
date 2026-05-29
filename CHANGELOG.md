@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Removed all module-level cached DOM element exports from `dom-helper.js`; every function is now an exported getter called at use-site, eliminating the risk of stale references captured at module load time; all 14 consumer files updated accordingly
+- Renamed internal builder functions in `actual-experience.js` from `getCompany*Element` to `createCompany*Element` to distinguish DOM builders from DOM getters
 - Extracted shared constants into `src/constants/`: `countries.js`, `company-sizes.js`, and `config.js`; removed inline arrays from filter components
 - Replaced fragile `manifest.host_permissions[2]` index access with `getWorkerUrl()` from `src/constants/config.js` in `email.js` and `company-details.js`
 - Replaced local `MAX_ITEMS = 99` constant in `storage-actions.js` with `MAX_SAVED_LEADS` from `src/constants/config.js`; the Get button label now reads its max from the same constant at runtime
