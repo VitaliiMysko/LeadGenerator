@@ -13,9 +13,9 @@ import {
   dataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
+import { MAX_SAVED_LEADS } from "../../../constants/config.js";
 
 const STORAGE_KEY = "saved_leads";
-const MAX_ITEMS = 99;
 
 const INPUT_ID_TO_LEAD_KEY = {
   "first-name": "firstName",
@@ -33,6 +33,7 @@ let currentCount = 0;
 (async () => {
   const leads = await loadLeads();
   currentCount = leads.length;
+  storageLeadsBtnElement.querySelector(".get-counter-max").textContent = MAX_SAVED_LEADS;
   updateUI();
 })();
 
@@ -48,7 +49,7 @@ let currentCount = 0;
 ].forEach((el) => el.addEventListener("input", updateSaveBtnState));
 
 saveBtnElement.addEventListener("click", async () => {
-  if (isAllFieldsEmpty() || currentCount >= MAX_ITEMS) return;
+  if (isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS) return;
 
   const leads = await loadLeads();
   const newLead = collectCurrentData();
@@ -83,7 +84,7 @@ cleanBtnElement.addEventListener("click", async () => {
 });
 
 function updateUI(animate = false) {
-  const pct = (currentCount / MAX_ITEMS) * 100;
+  const pct = (currentCount / MAX_SAVED_LEADS) * 100;
   storageLeadsBtnElement.style.setProperty("--fill-pct", `${pct}%`);
   const counterEl = storageLeadsBtnElement.querySelector(".get-counter-current");
   counterEl.textContent = currentCount;
@@ -109,7 +110,7 @@ function isAllFieldsEmpty() {
 }
 
 export function updateSaveBtnState() {
-  saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_ITEMS;
+  saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS;
 }
 
 function isDuplicate(leads, newLead) {

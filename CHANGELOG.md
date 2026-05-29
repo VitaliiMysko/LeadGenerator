@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Extracted shared constants into `src/constants/`: `countries.js`, `company-sizes.js`, and `config.js`; removed inline arrays from filter components
+- Replaced fragile `manifest.host_permissions[2]` index access with `getWorkerUrl()` from `src/constants/config.js` in `email.js` and `company-details.js`
+- Replaced local `MAX_ITEMS = 99` constant in `storage-actions.js` with `MAX_SAVED_LEADS` from `src/constants/config.js`; the Get button label now reads its max from the same constant at runtime
 - Renamed `id="validete-emails-btn"` to `id="validate-emails-btn"` in HTML and updated `dom-helper.js` to match
 - Fixed incorrect validation message `"Email is not corrent"` → `"Email is not correct"` in `email.js`
 - Removed always-true dead condition `!initials !== ""` from the `{initials}` email template; condition is now `initials.length >= 2`

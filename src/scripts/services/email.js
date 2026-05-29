@@ -12,6 +12,7 @@ import {
   useValidationEffect,
 } from "../helper/dom-action.js";
 import { showAlert } from "../output/alert.js";
+import { getWorkerUrl } from "../../constants/config.js";
 
 const emailCache = new Map();
 const emailDataByDefault = {
@@ -114,9 +115,7 @@ validateEmailsBtnElement.addEventListener("click", async () => {
 });
 
 async function verifyEmailDirect(email) {
-  const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[2];
-  const workerUrl = `${worker}?email=${encodeURIComponent(email)}`;
+  const workerUrl = `${getWorkerUrl()}?email=${encodeURIComponent(email)}`;
 
   let emailVerificationResponse;
   try {
