@@ -35,7 +35,7 @@ function getGenerateEmailsBtnElement() {
 }
 
 function getValidateEmailsBtnElement() {
-  return document.getElementById("validete-emails-btn");
+  return document.getElementById("validate-emails-btn");
 }
 
 function getOpenCompanyLinkedinBtnElement() {

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2026-05-29
+
+### Changed
+
+- Renamed `id="validete-emails-btn"` to `id="validate-emails-btn"` in HTML and updated `dom-helper.js` to match
+- Fixed incorrect validation message `"Email is not corrent"` → `"Email is not correct"` in `email.js`
+- Removed always-true dead condition `!initials !== ""` from the `{initials}` email template; condition is now `initials.length >= 2`
+- Removed duplicate `input` event listener in `company-location.js` and `company-size.js` that caused the filter dropdown to re-render twice per keystroke
+- Removed commented-out `{first}_{last}` and `{first}_{lastPart2}` email templates
+- Renamed `loadindElement` → `loadingElement` in `extract-data.js`
+- Replaced loose `==` with strict `===` for string comparisons in `extract-data.js`
+
 ## [3.3.4] - 2026-05-25
 
 ### Added

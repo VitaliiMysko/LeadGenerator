@@ -98,7 +98,7 @@ validateEmailsBtnElement.addEventListener("click", async () => {
   const emailData = { ...emailDataByDefault };
 
   if (!emailElement.checkValidity()) {
-    emailData.message = "Email is not corrent";
+    emailData.message = "Email is not correct";
   } else {
     emailElement.value = emailElement.value.toLocaleLowerCase();
     try {
