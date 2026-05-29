@@ -44,7 +44,7 @@ getExtractBtnElement().addEventListener("click", async () => {
   }
 
   applyFilters();
-  await handlerCompanyDetails();
+  handlerCompanyDetails();
 });
 
 async function populateGeneralData(items) {
