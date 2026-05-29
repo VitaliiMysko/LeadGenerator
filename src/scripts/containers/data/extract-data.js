@@ -22,10 +22,10 @@ extractBtnElement.addEventListener("click", () => {
         ],
       },
       () => {
-        const loadindElement = document.createElement("div");
-        loadindElement.textContent = "Loading";
-        loadindElement.classList.add("loading", "loading-text");
-        tabExperienceElement.appendChild(loadindElement);
+        const loadingElement = document.createElement("div");
+        loadingElement.textContent = "Loading";
+        loadingElement.classList.add("loading", "loading-text");
+        tabExperienceElement.appendChild(loadingElement);
 
         chrome.tabs.sendMessage(
           tabs[0].id,
@@ -59,7 +59,7 @@ async function populateGeneralData(items) {
     const value = item.value;
     inputElement.value = value;
 
-    if (item.inputId == "first-name" || item.inputId == "second-name") {
+    if (item.inputId === "first-name" || item.inputId === "second-name") {
       await transliterateElement(inputElement);
     }
   }

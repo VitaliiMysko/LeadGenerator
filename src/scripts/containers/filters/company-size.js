@@ -84,11 +84,6 @@ export function initCompanySizeFilter() {
     renderDropdown();
   }
 
-  input.addEventListener("input", (e) => {
-    const filter = e.target.value.toLowerCase();
-    renderDropdown(filter);
-  });
-
   subscribe(render);
 
   render();
