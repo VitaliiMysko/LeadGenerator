@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Converted all `.then()` chains and callback-style async patterns to `async/await` with `try/catch`: `extract-data.js` (three-level nested Chrome API callbacks), `translation.js` (`sendMessage` callback + `fetch` chain), `dom-action.js` (clipboard), `company.js` content script (broken `.then().catch()` repetition replaced with single `try/catch/finally`), `background.js` (`handleCompanyRequest` refactored into `async` + extracted `resolveCompanyData`), and `company-details.js` (local `sendMessagePromise` wrapper removed in favour of the native MV3 `chrome.runtime.sendMessage` Promise API)
 - Added `src/scripts/utils/chrome-storage.js` with typed `syncGet`, `syncSet`, `localGet`, `localSet` wrappers; deleted `settings/common.js`; migrated `filter-store.js`, `storage-actions.js`, and all settings files to use the unified utility — no raw `chrome.storage` callback patterns remain in popup code
 - Extracted reusable `initMultiSelectFilter` factory into `src/scripts/components/multi-select-filter.js`; `company-location.js` and `company-size.js` reduced from ~90 lines each to thin wrappers (~15 lines each) that delegate all shared open/close/search/tag/subscribe logic to the component
 - Removed all module-level cached DOM element exports from `dom-helper.js`; every function is now an exported getter called at use-site, eliminating the risk of stale references captured at module load time; all 14 consumer files updated accordingly

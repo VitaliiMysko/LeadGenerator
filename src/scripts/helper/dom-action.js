@@ -8,7 +8,7 @@ export const addCopyByClick = (
 ) => {
   element.classList.add("copy");
 
-  element.addEventListener("click", (event) => {
+  element.addEventListener("click", async (event) => {
     const target = event.target;
     if (
       target.tagName === "IMG" ||
@@ -28,14 +28,12 @@ export const addCopyByClick = (
     }
 
     if (dataCopy !== "") {
-      navigator.clipboard
-        .writeText(dataCopy)
-        .then(() => {
-          showAlert(`Copy ${alertInfoDetails}`, "success");
-        })
-        .catch((err) => {
-          showAlert(`Copy ${alertInfoDetails} failed!`, "error");
-        });
+      try {
+        await navigator.clipboard.writeText(dataCopy);
+        showAlert(`Copy ${alertInfoDetails}`, "success");
+      } catch {
+        showAlert(`Copy ${alertInfoDetails} failed!`, "error");
+      }
     }
   });
 };
