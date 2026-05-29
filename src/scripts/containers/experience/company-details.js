@@ -26,7 +26,7 @@ import {
 
 export { formatCompanySize };
 
-export async function handlerCompanyDetails() {
+export function handlerCompanyDetails() {
   initCompanyDetails();
   addCompanyDetailsListeners();
 }
