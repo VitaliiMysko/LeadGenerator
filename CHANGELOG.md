@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Added `src/scripts/utils/chrome-storage.js` with typed `syncGet`, `syncSet`, `localGet`, `localSet` wrappers; deleted `settings/common.js`; migrated `filter-store.js`, `storage-actions.js`, and all settings files to use the unified utility — no raw `chrome.storage` callback patterns remain in popup code
 - Extracted reusable `initMultiSelectFilter` factory into `src/scripts/components/multi-select-filter.js`; `company-location.js` and `company-size.js` reduced from ~90 lines each to thin wrappers (~15 lines each) that delegate all shared open/close/search/tag/subscribe logic to the component
 - Removed all module-level cached DOM element exports from `dom-helper.js`; every function is now an exported getter called at use-site, eliminating the risk of stale references captured at module load time; all 14 consumer files updated accordingly
 - Renamed internal builder functions in `actual-experience.js` from `getCompany*Element` to `createCompany*Element` to distinguish DOM builders from DOM getters

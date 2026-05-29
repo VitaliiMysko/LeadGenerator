@@ -14,6 +14,7 @@ import {
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 import { MAX_SAVED_LEADS } from "../../../constants/config.js";
+import { localGet, localSet } from "../../utils/chrome-storage.js";
 
 const STORAGE_KEY = "saved_leads";
 
@@ -166,15 +167,9 @@ async function copyLeadsToClipboard(leads) {
 }
 
 async function loadLeads() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(STORAGE_KEY, (data) => {
-      resolve(data[STORAGE_KEY] || []);
-    });
-  });
+  return localGet(STORAGE_KEY, []);
 }
 
 async function saveLeads(leads) {
-  return new Promise((resolve) => {
-    chrome.storage.local.set({ [STORAGE_KEY]: leads }, resolve);
-  });
+  return localSet(STORAGE_KEY, leads);
 }

@@ -2,7 +2,7 @@ import {
   enableDragAndDrop,
   disableDragAndDrop,
 } from "../../feature/drag-and-drop.js";
-import { getFromStorage, setToStorage } from "./common.js";
+import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { showAlert } from "../../output/alert.js";
 
 export async function initDragAndDrop() {
@@ -10,7 +10,7 @@ export async function initDragAndDrop() {
   if (settingsElement == null) return;
 
   try {
-    const dragAndDropEnabled = !!(await getFromStorage("dragAndDropEnabled"));
+    const dragAndDropEnabled = !!(await syncGet("dragAndDropEnabled"));
     settingsElement.checked = dragAndDropEnabled;
     if (dragAndDropEnabled) {
       enableDragAndDrop();
@@ -24,7 +24,7 @@ export async function initDragAndDrop() {
   settingsElement.addEventListener("change", async (e) => {
     const enabled = e.target.checked;
     try {
-      await setToStorage("dragAndDropEnabled", enabled);
+      await syncSet("dragAndDropEnabled", enabled);
       if (enabled) {
         enableDragAndDrop();
       } else {
