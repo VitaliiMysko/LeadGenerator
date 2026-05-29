@@ -1,7 +1,7 @@
-import { getFromStorage } from "../containers/settings/common.js";
+import { syncGet } from "../utils/chrome-storage.js";
 
 export async function transliterateElement(inputElement) {
-  const transliterationEnabled = !!(await getFromStorage(
+  const transliterationEnabled = !!(await syncGet(
     "transliterationEnabled",
   ));
 
