@@ -24,8 +24,6 @@ import {
   getEditWebsiteDomainElement,
 } from "../../features/website-domain-editor.js";
 
-export { formatCompanySize };
-
 export function handlerCompanyDetails() {
   initCompanyDetails();
   addCompanyDetailsListeners();
