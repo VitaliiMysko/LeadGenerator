@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Extracted reusable `initMultiSelectFilter` factory into `src/scripts/components/multi-select-filter.js`; `company-location.js` and `company-size.js` reduced from ~90 lines each to thin wrappers (~15 lines each) that delegate all shared open/close/search/tag/subscribe logic to the component
 - Removed all module-level cached DOM element exports from `dom-helper.js`; every function is now an exported getter called at use-site, eliminating the risk of stale references captured at module load time; all 14 consumer files updated accordingly
 - Renamed internal builder functions in `actual-experience.js` from `getCompany*Element` to `createCompany*Element` to distinguish DOM builders from DOM getters
 - Extracted shared constants into `src/constants/`: `countries.js`, `company-sizes.js`, and `config.js`; removed inline arrays from filter components
