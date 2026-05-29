@@ -1,12 +1,12 @@
 import {
-  jobPositionElement,
-  companyNameElement,
-  companyIndustryElement,
-  companyCountryElement,
-  emailElement,
-  tabExperienceElement,
-  openCompanyLinkedinBtnElement,
-  generateEmailsBtnElement,
+  getJobPositionElement,
+  getCompanyNameElement,
+  getCompanyIndustryElement,
+  getCompanyCountryElement,
+  getEmailElement,
+  getTabExperienceElement,
+  getOpenCompanyLinkedinBtnElement,
+  getGenerateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 import { formatCompanySize, refreshCompanyDetails } from "./company-details.js";
@@ -15,12 +15,12 @@ import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
 
 export function createCompanyList(experience) {
-  tabExperienceElement.innerHTML = "";
-  generateEmailsBtnElement.disabled = true;
+  getTabExperienceElement().innerHTML = "";
+  getGenerateEmailsBtnElement().disabled = true;
 
   experience.forEach((company) => {
     const companyBlock = getCompanyBlock(company);
-    tabExperienceElement.appendChild(companyBlock);
+    getTabExperienceElement().appendChild(companyBlock);
   });
 }
 
@@ -60,19 +60,19 @@ function getCompanyBlock(company) {
   });
 
   header.addEventListener("click", () => {
-    const allItems = tabExperienceElement.querySelectorAll(".company-item");
+    const allItems = getTabExperienceElement().querySelectorAll(".company-item");
     allItems.forEach((item) => item.classList.remove("active"));
     companyBlock.classList.add("active");
 
-    emailElement.value = "";
-    companyNameElement.value = companyBlock.getAttribute("data-company-name");
-    jobPositionElement.value = companyBlock.getAttribute(
+    getEmailElement().value = "";
+    getCompanyNameElement().value = companyBlock.getAttribute("data-company-name");
+    getJobPositionElement().value = companyBlock.getAttribute(
       "data-company-job-position",
     );
-    companyCountryElement.value =
+    getCompanyCountryElement().value =
       extractCountry(companyBlock.getAttribute("data-company-location")) ||
       getDefaultCountry();
-    companyIndustryElement.value = companyBlock.getAttribute(
+    getCompanyIndustryElement().value = companyBlock.getAttribute(
       "data-company-industry",
     );
     setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
@@ -91,8 +91,8 @@ function getCompanyHeaderElement(company) {
   const info = document.createElement("div");
   info.classList.add("company-header-info");
 
-  info.appendChild(getCompanyNameElement(company));
-  info.appendChild(getCompanyJobElement(company));
+  info.appendChild(createCompanyNameElement(company));
+  info.appendChild(createCompanyJobElement(company));
 
   const refreshBtn = document.createElement("div");
   refreshBtn.classList.add("refresh-btn");
@@ -108,7 +108,7 @@ function getCompanyHeaderElement(company) {
   return header;
 }
 
-function getCompanyNameElement(company) {
+function createCompanyNameElement(company) {
   const nameEl = document.createElement("div");
   nameEl.classList.add("company-name");
 
@@ -123,7 +123,7 @@ function getCompanyNameElement(company) {
   return nameEl;
 }
 
-function getCompanyJobElement(company) {
+function createCompanyJobElement(company) {
   const jobEl = document.createElement("div");
   jobEl.classList.add("company-job");
   jobEl.textContent = company.jobPosition;
@@ -135,21 +135,21 @@ function getCompanyDetailsElement(company) {
   const details = document.createElement("div");
   details.classList.add("company-details");
 
-  details.appendChild(getCompanyWebsiteElement());
-  details.appendChild(getCompanyIndustryElement(company));
-  details.appendChild(getCompanyLocationElement(company));
-  details.appendChild(getCompanySizeRowElement(company));
+  details.appendChild(createCompanyWebsiteElement());
+  details.appendChild(createCompanyIndustryElement(company));
+  details.appendChild(createCompanyLocationElement(company));
+  details.appendChild(createCompanySizeRowElement(company));
   return details;
 }
 
-function getCompanyWebsiteElement() {
+function createCompanyWebsiteElement() {
   const websiteEl = document.createElement("div");
   websiteEl.classList.add("company-website");
   websiteEl.title = "website";
   return websiteEl;
 }
 
-function getCompanyLocationElement(company) {
+function createCompanyLocationElement(company) {
   const locationEl = document.createElement("div");
   locationEl.classList.add("company-location");
   locationEl.textContent = company.extraData.location;
@@ -157,7 +157,7 @@ function getCompanyLocationElement(company) {
   return locationEl;
 }
 
-function getCompanyIndustryElement(company) {
+function createCompanyIndustryElement(company) {
   const industryEl = document.createElement("div");
   industryEl.classList.add("company-industry");
   industryEl.textContent = company.extraData.industry;
@@ -165,15 +165,15 @@ function getCompanyIndustryElement(company) {
   return industryEl;
 }
 
-function getCompanySizeRowElement(company) {
+function createCompanySizeRowElement(company) {
   const rowEl = document.createElement("div");
   rowEl.classList.add("company-size-row");
-  rowEl.appendChild(getCompanySizeElement(company));
-  rowEl.appendChild(getCompanyMembersElement());
+  rowEl.appendChild(createCompanySizeElement(company));
+  rowEl.appendChild(createCompanyMembersElement());
   return rowEl;
 }
 
-function getCompanySizeElement(company) {
+function createCompanySizeElement(company) {
   const sizeEl = document.createElement("div");
   sizeEl.classList.add("company-size");
   sizeEl.textContent = company.extraData.companySize;
@@ -181,7 +181,7 @@ function getCompanySizeElement(company) {
   return sizeEl;
 }
 
-function getCompanyMembersElement() {
+function createCompanyMembersElement() {
   const membersEl = document.createElement("div");
   membersEl.classList.add("company-members");
   membersEl.title = "members";
@@ -189,6 +189,6 @@ function getCompanyMembersElement() {
 }
 
 function setLinkedinBtn(link) {
-  openCompanyLinkedinBtnElement.disabled = !link;
-  openCompanyLinkedinBtnElement.dataset.href = link || "";
+  getOpenCompanyLinkedinBtnElement().disabled = !link;
+  getOpenCompanyLinkedinBtnElement().dataset.href = link || "";
 }

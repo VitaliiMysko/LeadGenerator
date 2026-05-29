@@ -1,15 +1,15 @@
 import {
-  translateBtnElement,
-  jobPositionElement,
+  getTranslateBtnElement,
+  getJobPositionElement,
 } from "../helper/dom-helper.js";
 
 import { useTextChangeEffect } from "../helper/dom-action.js";
 
-translateBtnElement.addEventListener("click", () => {
+getTranslateBtnElement().addEventListener("click", () => {
   chrome.runtime.sendMessage({ action: "getAuthToken" }, (response) => {
     if (response.success) {
       translateText(response.token);
-      useTextChangeEffect(jobPositionElement);
+      useTextChangeEffect(getJobPositionElement());
     } else {
       console.error("Error authorization:", response.error);
     }
@@ -18,6 +18,7 @@ translateBtnElement.addEventListener("click", () => {
 
 function translateText(token) {
   const url = "https://translation.googleapis.com/language/translate/v2";
+  const jobPositionElement = getJobPositionElement();
 
   fetch(url, {
     method: "POST",
@@ -34,7 +35,7 @@ function translateText(token) {
     .then((data) => {
       if (data && data.data && data.data.translations) {
         const translations = data.data.translations;
-        jobPositionElement.value = translations[0].translatedText
+        getJobPositionElement().value = translations[0].translatedText
           .replace(/^([a-z])/, (match) => match.toUpperCase())
           .replace(/&amp;/g, "&");
       } else {

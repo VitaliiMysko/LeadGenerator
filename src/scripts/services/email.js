@@ -1,10 +1,10 @@
 import {
   getFirstNameElement,
   getSecondNameElement,
-  generateEmailsBtnElement,
-  validateEmailsBtnElement,
+  getGenerateEmailsBtnElement,
+  getValidateEmailsBtnElement,
   getCompanyDomainElement,
-  emailElement,
+  getEmailElement,
 } from "../helper/dom-helper.js";
 import { emailTemplates } from "../helper/emails-generation.js";
 import {
@@ -40,7 +40,7 @@ export function fillEmailFromCache(pastedEmailWhileFindingWebsite) {
   showEmail(email);
 }
 
-generateEmailsBtnElement.addEventListener("click", async () => {
+getGenerateEmailsBtnElement().addEventListener("click", async () => {
   const domain = getWebsiteDomain();
 
   if (emailCache.has(domain)) {
@@ -91,11 +91,14 @@ generateEmailsBtnElement.addEventListener("click", async () => {
   showMessage(emailData.message, emailData.ok);
 });
 
-emailElement.addEventListener("input", () => {
-  validateEmailsBtnElement.disabled = !emailElement.value.trim() || !emailElement.checkValidity();
+getEmailElement().addEventListener("input", () => {
+  const emailElement = getEmailElement();
+  getValidateEmailsBtnElement().disabled =
+    !emailElement.value.trim() || !emailElement.checkValidity();
 });
 
-validateEmailsBtnElement.addEventListener("click", async () => {
+getValidateEmailsBtnElement().addEventListener("click", async () => {
+  const emailElement = getEmailElement();
   const emailData = { ...emailDataByDefault };
 
   if (!emailElement.checkValidity()) {
@@ -139,6 +142,7 @@ async function verifyEmailDirect(email) {
 }
 
 function startLoadingEffect() {
+  const emailElement = getEmailElement();
   emailElement.disabled = true;
   emailElement.classList.add("loading");
   let dots = "";
@@ -146,11 +150,12 @@ function startLoadingEffect() {
 
   loadingInterval = setInterval(() => {
     dots = dots.length < 3 ? dots + "." : "";
-    emailElement.value = "Loading" + dots;
+    getEmailElement().value = "Loading" + dots;
   }, 500);
 }
 
 function stopLoadingEffect() {
+  const emailElement = getEmailElement();
   clearInterval(loadingInterval);
   emailElement.disabled = false;
   emailElement.classList.remove("loading");
@@ -176,6 +181,7 @@ function checkVerifyEmailResult(result, emailData) {
 }
 
 function showEmail(email) {
+  const emailElement = getEmailElement();
   emailElement.value = email;
   emailElement.dispatchEvent(new Event("input"));
   useTextChangeEffect(emailElement);

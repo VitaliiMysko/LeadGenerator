@@ -1,4 +1,4 @@
-import { dataContainerElement } from "../helper/dom-helper.js";
+import { getDataContainerElement } from "../helper/dom-helper.js";
 
 let dragged;
 let initialized = false;
@@ -25,17 +25,17 @@ const handleDrop = function (event) {
   event.preventDefault();
   const dropTarget = event.target.closest(".draggable-block");
   if (dropTarget && dragged !== dropTarget) {
-    const draggedIndex = Array.from(dataContainerElement.children).indexOf(
+    const draggedIndex = Array.from(getDataContainerElement().children).indexOf(
       dragged,
     );
-    const targetIndex = Array.from(dataContainerElement.children).indexOf(
+    const targetIndex = Array.from(getDataContainerElement().children).indexOf(
       dropTarget,
     );
 
     if (draggedIndex > targetIndex) {
-      dataContainerElement.insertBefore(dragged, dropTarget);
+      getDataContainerElement().insertBefore(dragged, dropTarget);
     } else {
-      dataContainerElement.insertBefore(dragged, dropTarget.nextSibling);
+      getDataContainerElement().insertBefore(dragged, dropTarget.nextSibling);
     }
 
     if (onDropCallback) onDropCallback();

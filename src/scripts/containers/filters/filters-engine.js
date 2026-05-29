@@ -2,13 +2,13 @@ import { subscribe, getState } from "../../store/filter-store.js";
 import { initCompanyLocationFilter } from "./company-location.js";
 import { initCompanySizeFilter } from "./company-size.js";
 import {
-  tabExperienceElement,
-  jobPositionElement,
-  companyNameElement,
-  companyCountryElement,
-  companyIndustryElement,
-  emailElement,
-  generateEmailsBtnElement,
+  getTabExperienceElement,
+  getJobPositionElement,
+  getCompanyNameElement,
+  getCompanyCountryElement,
+  getCompanyIndustryElement,
+  getEmailElement,
+  getGenerateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
 export function initFilters() {
@@ -45,27 +45,27 @@ export function applyFilters() {
     }
   });
 
-  let noResultsEl = tabExperienceElement.querySelector(".no-results");
+  let noResultsEl = getTabExperienceElement().querySelector(".no-results");
 
   if (visibleCount === 0) {
     if (!noResultsEl) {
       noResultsEl = document.createElement("div");
       noResultsEl.classList.add("no-results");
       noResultsEl.textContent = "No results";
-      tabExperienceElement.appendChild(noResultsEl);
+      getTabExperienceElement().appendChild(noResultsEl);
     }
     noResultsEl.style.display = "block";
-    jobPositionElement.value = "";
-    companyNameElement.value = "";
-    companyCountryElement.value = "";
-    companyIndustryElement.value = "";
-    emailElement.value = "";
-    generateEmailsBtnElement.disabled = true;
+    getJobPositionElement().value = "";
+    getCompanyNameElement().value = "";
+    getCompanyCountryElement().value = "";
+    getCompanyIndustryElement().value = "";
+    getEmailElement().value = "";
+    getGenerateEmailsBtnElement().disabled = true;
   } else {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
 
-    const activeItem = tabExperienceElement.querySelector(
+    const activeItem = getTabExperienceElement().querySelector(
       ".company-item.active",
     );
     const activeIsVisible = activeItem && activeItem.style.display !== "none";
@@ -79,7 +79,7 @@ export function applyFilters() {
 }
 
 function selectCompany(companyEl) {
-  emailElement.value = "";
+  getEmailElement().value = "";
   const header = companyEl.querySelector(".company-header");
   if (header) header.click();
 }

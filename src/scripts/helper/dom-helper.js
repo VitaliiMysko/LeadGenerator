@@ -6,82 +6,81 @@ export function getSecondNameElement() {
   return document.getElementById("second-name");
 }
 
-function getJobPositionElement() {
+export function getJobPositionElement() {
   return document.getElementById("job-position");
 }
 
-function getEmailElement() {
+export function getEmailElement() {
   return document.getElementById("email");
 }
 
-function getCompanyNameElement() {
+export function getCompanyNameElement() {
   return document.getElementById("company-name");
 }
 
-function getCompanyIndustryElement() {
+export function getCompanyIndustryElement() {
   return document.querySelector("#company-industry");
 }
 
-function getCompanyCountryElement() {
+export function getCompanyCountryElement() {
   return document.querySelector("#company-country");
 }
 
-function getTranslateBtnElement() {
+export function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
 
-function getGenerateEmailsBtnElement() {
+export function getGenerateEmailsBtnElement() {
   return document.getElementById("generate-emails-btn");
 }
 
-function getValidateEmailsBtnElement() {
+export function getValidateEmailsBtnElement() {
   return document.getElementById("validate-emails-btn");
 }
 
-function getOpenCompanyLinkedinBtnElement() {
+export function getOpenCompanyLinkedinBtnElement() {
   return document.getElementById("open-company-linkedin-btn");
 }
 
-function getLinkElement() {
+export function getLinkElement() {
   return document.getElementById("link");
 }
 
-function getExtractBtnElement() {
+export function getExtractBtnElement() {
   return document.getElementById("extract-btn");
 }
 
-function getSaveBtnElement() {
+export function getSaveBtnElement() {
   return document.getElementById("save-btn");
 }
 
-function getStorageLeadsBtnElement() {
+export function getStorageLeadsBtnElement() {
   return document.getElementById("get-storage-leads-btn");
 }
 
-function getCleanBtnElement() {
+export function getCleanBtnElement() {
   return document.getElementById("clean-btn");
 }
 
-function getDataContainerElement() {
+export function getDataContainerElement() {
   return document.getElementById("data-container");
 }
 
-function getAlertElement() {
+export function getAlertElement() {
   return document.getElementById("alert");
 }
 
-function getTabExperienceElement() {
+export function getTabExperienceElement() {
   return document.getElementById("tab-experience");
 }
 
-function getAppVersionElement() {
+export function getAppVersionElement() {
   return document.getElementById("app-version");
 }
 
 export function getCompanyItemElements() {
   return document.querySelectorAll("#tab-experience .company-item");
 }
-
 
 export function getCompanyDomainElement() {
   return document.querySelector(".company-item.active .company-website > span");
@@ -106,24 +105,3 @@ export function getTabElements() {
 export function getDragAndDropSettingsElement() {
   return document.getElementById("drag-and-drop-settings");
 }
-
-export const firstNameElement = getFirstNameElement();
-export const secondNameElement = getSecondNameElement();
-export const linkElement = getLinkElement();
-export const jobPositionElement = getJobPositionElement();
-export const emailElement = getEmailElement();
-export const companyNameElement = getCompanyNameElement();
-export const companyIndustryElement = getCompanyIndustryElement();
-export const companyCountryElement = getCompanyCountryElement();
-export const translateBtnElement = getTranslateBtnElement();
-export const extractBtnElement = getExtractBtnElement();
-export const saveBtnElement = getSaveBtnElement();
-export const storageLeadsBtnElement = getStorageLeadsBtnElement();
-export const cleanBtnElement = getCleanBtnElement();
-export const dataContainerElement = getDataContainerElement();
-export const alertElement = getAlertElement();
-export const tabExperienceElement = getTabExperienceElement();
-export const appVersionElement = getAppVersionElement();
-export const generateEmailsBtnElement = getGenerateEmailsBtnElement();
-export const validateEmailsBtnElement = getValidateEmailsBtnElement();
-export const openCompanyLinkedinBtnElement = getOpenCompanyLinkedinBtnElement();

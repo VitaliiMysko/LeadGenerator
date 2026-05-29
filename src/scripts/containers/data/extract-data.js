@@ -1,6 +1,6 @@
 import {
-  extractBtnElement,
-  tabExperienceElement,
+  getExtractBtnElement,
+  getTabExperienceElement,
 } from "../../helper/dom-helper.js";
 import { transliterateElement } from "../../services/transliteration.js";
 import { createCompanyList } from "../experience/actual-experience.js";
@@ -8,7 +8,7 @@ import { handlerCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
 
-extractBtnElement.addEventListener("click", () => {
+getExtractBtnElement().addEventListener("click", () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.scripting.executeScript(
       {
@@ -25,13 +25,13 @@ extractBtnElement.addEventListener("click", () => {
         const loadingElement = document.createElement("div");
         loadingElement.textContent = "Loading";
         loadingElement.classList.add("loading", "loading-text");
-        tabExperienceElement.appendChild(loadingElement);
+        getTabExperienceElement().appendChild(loadingElement);
 
         chrome.tabs.sendMessage(
           tabs[0].id,
           { action: "extractData" },
           async (results) => {
-            tabExperienceElement.innerHTML = "";
+            getTabExperienceElement().innerHTML = "";
             if (results) {
               const data = results.data;
               for (const element of data) {
