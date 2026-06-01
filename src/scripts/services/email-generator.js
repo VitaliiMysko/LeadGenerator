@@ -2,7 +2,7 @@ import {
   getFirstNameElement,
   getSecondNameElement,
 } from "../helper/dom-helper.js";
-import { emailTemplates } from "../helper/emails-generation.js";
+import { emailTemplates } from "../../constants/email-templates.js";
 
 export function getBasicEmail(hostName) {
   const emailName = prepareEmailName(getFullName());

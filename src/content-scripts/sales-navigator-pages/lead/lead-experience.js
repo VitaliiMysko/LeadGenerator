@@ -11,12 +11,12 @@ if (!window.leadGenerator.experienceDataInit) {
 
       for (const experienceComponent of experienceComponents) {
         let companyName = "";
-        let companylink = "";
+        let companyLink = "";
         let jobPosition = "";
 
         const companyDataElement = experienceComponent.children[0].children[1];
 
-        companylink = getCompanyLink(companyDataElement);
+        companyLink = getCompanyLink(companyDataElement);
         companyName = getCompanyName(companyDataElement);
 
         const jobPositionElement = getJobPositionElement(companyDataElement);
@@ -30,12 +30,12 @@ if (!window.leadGenerator.experienceDataInit) {
           const actualPositionElement = companyDataElement.children[2];
 
           if (isActualJobPosition(actualPositionElement)) {
-            if (companyName != "" && jobPosition != "") {
+            if (companyName !== "" && jobPosition !== "") {
               actualExperienceData.push({
                 id: ++id,
                 companyName: companyName,
                 jobPosition: jobPosition,
-                companylink: companylink,
+                companyLink: companyLink,
                 extraData: await getTooltipCompanyData(experienceComponent),
               });
             }
@@ -43,12 +43,12 @@ if (!window.leadGenerator.experienceDataInit) {
             break;
           }
         } else {
-          const multiPositionCompanyComponent =
+          const positionsList =
             experienceComponent.querySelector("ul");
 
-          if (multiPositionCompanyComponent) {
+          if (positionsList) {
             const positionComponents =
-              multiPositionCompanyComponent.querySelectorAll(":scope > li");
+              positionsList.querySelectorAll(":scope > li");
 
             let hasActualJobPosition = false;
             let extraData = "";
@@ -68,7 +68,7 @@ if (!window.leadGenerator.experienceDataInit) {
                 positionComponent.children[1].children[1];
 
               if (isActualJobPosition(actualPositionElement)) {
-                if (companyName != "" && jobPosition != "") {
+                if (companyName !== "" && jobPosition !== "") {
                   hasActualJobPosition = true;
                   if (!extraData) {
                     extraData =
@@ -79,7 +79,7 @@ if (!window.leadGenerator.experienceDataInit) {
                     id: ++id,
                     companyName: companyName,
                     jobPosition: jobPosition,
-                    companylink: companylink,
+                    companyLink: companyLink,
                     extraData: extraData,
                   });
                 }

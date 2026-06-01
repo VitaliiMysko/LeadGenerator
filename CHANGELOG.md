@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Moved `src/scripts/feature/drag-and-drop.js` → `src/scripts/features/drag-and-drop.js` (consistent plural naming); moved `src/scripts/helper/emails-generation.js` → `src/constants/email-templates.js` (it is data, not a helper utility)
+- Fixed destructuring bug in `lead.js` `getFirstName` — `let [firstName] = ... : ""` would return `undefined` for single-word names; replaced with `fullName.split(" ")[0] || ""`; simplified `getSecondName` accordingly
+- Fixed loose `!=` → `!==` in `lead-experience.js` (both push conditions)
+- Renamed `companylink` → `companyLink` throughout `lead-experience.js` and `actual-experience.js`; renamed `multiPositionCompanyComponent` → `positionsList`; renamed `setLinkedinBtn` → `setLinkedInBtn`
+- Renamed `getlinkedinProfileUrl`, `getlinkedinProfileUrlThroughSaleQL`, `getlinkedinProfileUrlThroughSalesNavigatorPage` to proper camelCase in `lead.js`
+- Changed `let listeners` → `const listeners` in `filter-store.js`
+- Added null guard before `useTextChangeEffect(dataElement)` in `dom-action.js`
+- Cached `getTabExperienceElement()` in `applyFilters` to avoid repeated DOM queries
+- Fixed typo "Actual experiece" → "Actual experience" in `index.html`; moved inline `style="right: 23px"` from validate button to `.validate-emails-btn` CSS class
+- Updated `docs/architecture.md`: full directory tree reflecting post-refactoring structure, corrected `sale-navigator-pages` typo, added `features/` and `constants/` entries, updated extensibility notes; last-updated date to 2026-05-30
 - Renamed `handlerCompanyDetails` → `setupCompanyDetails`; renamed `addCopyByClick` → `addCopyOnClickListener`; renamed event parameter `element` → `event` in `tab-selector.js`; renamed loop variables `f` → `filter` in `filters-engine.js` and `p` → `part` in `email-generator.js`; renamed `label` → `opt`/`tab` in `tab-selector.js` forEach callbacks
 - Removed implicit global variables `getPersonalData` and `getActualExperienceData` from `content-scripts/actions/extract-data.js`; functions are now called directly via `window.leadGenerator.*`; also simplified `extractData` to return the array directly
 - Fixed undeclared `data` variable (implicit global) in `company.js` → `const data`

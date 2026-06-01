@@ -19,7 +19,7 @@ export const addCopyOnClickListener = (
 
     const dataElement = element.querySelector(dataCopySelector);
 
-    useTextChangeEffect(dataElement);
+    if (dataElement) useTextChangeEffect(dataElement);
 
     let dataCopy = getTextOnDemand();
 

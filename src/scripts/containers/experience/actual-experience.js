@@ -43,7 +43,7 @@ function getCompanyBlock(company) {
   companyBlock.setAttribute("data-company-size", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-size-init", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-revenue", extraCompanyData.revenue);
-  companyBlock.setAttribute("data-company-link", company.companylink || "");
+  companyBlock.setAttribute("data-company-link", company.companyLink || "");
 
   const header = getCompanyHeaderElement(company);
   const details = getCompanyDetailsElement(company);
@@ -76,7 +76,7 @@ function getCompanyBlock(company) {
     getCompanyIndustryElement().value = companyBlock.getAttribute(
       "data-company-industry",
     );
-    setLinkedinBtn(companyBlock.getAttribute("data-company-link"));
+    setLinkedInBtn(companyBlock.getAttribute("data-company-link"));
     updateSaveBtnState();
   });
 
@@ -113,9 +113,9 @@ function createCompanyNameElement(company) {
   const nameEl = document.createElement("div");
   nameEl.classList.add("company-name");
 
-  if (company.companylink !== "") {
+  if (company.companyLink !== "") {
     const link = document.createElement("a");
-    link.href = company.companylink;
+    link.href = company.companyLink;
     link.textContent = company.companyName;
     nameEl.appendChild(link);
   } else {
@@ -189,7 +189,7 @@ function createCompanyMembersElement() {
   return membersEl;
 }
 
-function setLinkedinBtn(link) {
+function setLinkedInBtn(link) {
   getOpenCompanyLinkedinBtnElement().disabled = !link;
   getOpenCompanyLinkedinBtnElement().dataset.href = link || "";
 }

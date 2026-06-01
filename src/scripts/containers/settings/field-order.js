@@ -1,4 +1,4 @@
-import { setOnDropCallback } from "../../feature/drag-and-drop.js";
+import { setOnDropCallback } from "../../features/drag-and-drop.js";
 import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { getDataContainerElement } from "../../helper/dom-helper.js";
 

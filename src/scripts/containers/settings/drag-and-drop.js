@@ -1,7 +1,7 @@
 import {
   enableDragAndDrop,
   disableDragAndDrop,
-} from "../../feature/drag-and-drop.js";
+} from "../../features/drag-and-drop.js";
 import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { showAlert } from "../../output/alert.js";
 
