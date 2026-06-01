@@ -4,7 +4,7 @@
 
   const initData = window.leadGeneratorInitData || {};
 
-  data = {
+  const data = {
     url: window.location.href,
     website: "",
     location: initData.location || "",

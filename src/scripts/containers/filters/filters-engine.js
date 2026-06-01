@@ -31,11 +31,11 @@ export function applyFilters() {
 
     const matchLocation =
       companyLocation.length === 0 ||
-      companyLocation.some((f) => loc.toLowerCase().includes(f.toLowerCase()));
+      companyLocation.some((filter) => loc.toLowerCase().includes(filter.toLowerCase()));
 
     const matchSize =
       companySize.length === 0 ||
-      companySize.some((f) => size.toLowerCase().includes(f.toLowerCase()));
+      companySize.some((filter) => size.toLowerCase().includes(filter.toLowerCase()));
 
     const visible = matchLocation && matchSize;
     company.style.display = visible ? "block" : "none";
