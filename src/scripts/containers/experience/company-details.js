@@ -6,7 +6,8 @@ import {
   getCompanyCountryElement,
 } from "../../helper/dom-helper.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
-import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
+import { fillEmailFromCache } from "../../services/email.js";
+import { getBasicEmail } from "../../services/email-generator.js";
 import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
