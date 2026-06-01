@@ -33,7 +33,7 @@ if (!window.leadGenerator.personalDataInit) {
 
     function handleFullName(str) {
       const hasCyrillic = /\p{Script=Cyrillic}/u.test(str);
-      if(hasCyrillic){
+      if (hasCyrillic) {
         return str
         .trim()
         .split(/\s+/)
@@ -95,7 +95,7 @@ if (!window.leadGenerator.personalDataInit) {
 
     async function getlinkedinProfileUrl() {
       let linkProfileUrl = getlinkedinProfileUrlThroughSaleQL();
-      if (linkProfileUrl == "") {
+      if (linkProfileUrl === "") {
         linkProfileUrl = await getlinkedinProfileUrlThroughSalesNavigatorPage();
       }
       return linkProfileUrl;

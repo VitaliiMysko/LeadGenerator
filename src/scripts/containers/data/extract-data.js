@@ -4,7 +4,7 @@ import {
 } from "../../helper/dom-helper.js";
 import { transliterateElement } from "../../services/transliteration.js";
 import { createCompanyList } from "../experience/actual-experience.js";
-import { handlerCompanyDetails } from "../experience/company-details.js";
+import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
 
@@ -44,7 +44,7 @@ getExtractBtnElement().addEventListener("click", async () => {
   }
 
   applyFilters();
-  handlerCompanyDetails();
+  setupCompanyDetails();
 });
 
 async function populateGeneralData(items) {

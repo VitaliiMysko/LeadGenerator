@@ -8,7 +8,7 @@ import {
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { fillEmailFromCache } from "../../services/email.js";
 import { getBasicEmail } from "../../services/email-generator.js";
-import { addCopyByClick, setValidationStyle } from "../../helper/dom-action.js";
+import { addCopyOnClickListener, setValidationStyle } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
@@ -25,7 +25,7 @@ import {
   getEditWebsiteDomainElement,
 } from "../../features/website-domain-editor.js";
 
-export function handlerCompanyDetails() {
+export function setupCompanyDetails() {
   initCompanyDetails();
   addCompanyDetailsListeners();
 }
@@ -162,7 +162,7 @@ async function handleDomainSave(newValue, websiteBlock, item) {
     iconImg?.classList.add("disabled");
   }
 
-  addCopyByClick(websiteBlock, "span", getBasicEmail.bind(null, newValue), "basic email");
+  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, newValue), "basic email");
 
   if (item.classList.contains("active")) {
     getGenerateEmailsBtnElement().disabled = !valid;
@@ -188,7 +188,7 @@ function renderWebsite(websiteBlock, websiteIconElement, companyDetails) {
     websiteIconElement.classList.remove("disabled");
     linkEl.appendChild(websiteIconElement);
     websiteBlock.appendChild(linkEl);
-    addCopyByClick(websiteBlock, "span", getBasicEmail.bind(null, hostname), "basic email");
+    addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, hostname), "basic email");
     setValidationStyle(websiteBlock, companyDetails.ok);
     return hostname;
   }

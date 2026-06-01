@@ -32,10 +32,10 @@ const removeHandleDocumentClick = () => {
 };
 
 options.forEach((option) => {
-  option.addEventListener("click", (element) => {
-    getTabOptionElements().forEach((label) => label.classList.remove("active"));
-    getTabElements().forEach((label) => label.classList.remove("active"));
-    element.target.classList.add("active");
+  option.addEventListener("click", (event) => {
+    getTabOptionElements().forEach((opt) => opt.classList.remove("active"));
+    getTabElements().forEach((tab) => tab.classList.remove("active"));
+    event.target.classList.add("active");
 
     const selectedTabBlock = document.getElementById("selected-tab");
     selectedTabBlock.textContent = "";
@@ -47,7 +47,7 @@ options.forEach((option) => {
 
     dropdown.style.display = "none";
 
-    const selectedTabName = element.target.getAttribute("data-tab");
+    const selectedTabName = event.target.getAttribute("data-tab");
     const selectedTabElement = document.getElementById(
       `tab-${selectedTabName}`,
     );

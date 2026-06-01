@@ -1,6 +1,6 @@
 import { showAlert } from "../output/alert.js";
 
-export const addCopyByClick = (
+export const addCopyOnClickListener = (
   element,
   dataCopySelector,
   getTextOnDemand = () => "",

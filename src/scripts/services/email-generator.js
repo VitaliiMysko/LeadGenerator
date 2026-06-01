@@ -58,8 +58,8 @@ function collectEmails(emails, hostName, fullName) {
   const lastParts = parts.slice(1);
   const last = lastParts.join(".");
   const initials =
-    parts.length <= 3 && !parts.some((p) => p.includes("-"))
-      ? parts.map((p) => p[0]).join("")
+    parts.length <= 3 && !parts.some((part) => part.includes("-"))
+      ? parts.map((part) => part[0]).join("")
       : "";
   const initialLastPart1 = last.length > 1 ? last[0] : "";
   const initialFirst = rawFirst[0];
