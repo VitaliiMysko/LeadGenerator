@@ -206,6 +206,9 @@ a:active {
   cursor: pointer;
   padding: 0;
 }
+#validate-emails-btn {
+  right: 23px;
+}
 #generate-emails-btn:disabled,
 #validate-emails-btn:disabled,
 #open-company-linkedin-btn:disabled {

@@ -7,7 +7,7 @@ let state = {
   companySize: [],
 };
 
-let listeners = new Set();
+const listeners = new Set();
 
 export function subscribe(listener) {
   listeners.add(listener);

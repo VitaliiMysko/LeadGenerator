@@ -45,14 +45,15 @@ export function applyFilters() {
     }
   });
 
-  let noResultsEl = getTabExperienceElement().querySelector(".no-results");
+  const tabExperienceEl = getTabExperienceElement();
+  let noResultsEl = tabExperienceEl.querySelector(".no-results");
 
   if (visibleCount === 0) {
     if (!noResultsEl) {
       noResultsEl = document.createElement("div");
       noResultsEl.classList.add("no-results");
       noResultsEl.textContent = "No results";
-      getTabExperienceElement().appendChild(noResultsEl);
+      tabExperienceEl.appendChild(noResultsEl);
     }
     noResultsEl.style.display = "block";
     getJobPositionElement().value = "";
@@ -65,7 +66,7 @@ export function applyFilters() {
     const wasNoResults = noResultsEl && noResultsEl.style.display !== "none";
     if (noResultsEl) noResultsEl.style.display = "none";
 
-    const activeItem = getTabExperienceElement().querySelector(
+    const activeItem = tabExperienceEl.querySelector(
       ".company-item.active",
     );
     const activeIsVisible = activeItem && activeItem.style.display !== "none";
