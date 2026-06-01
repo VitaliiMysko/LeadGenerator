@@ -206,7 +206,7 @@ a:active {
   cursor: pointer;
   padding: 0;
 }
-.validate-emails-btn {
+#validate-emails-btn {
   right: 23px;
 }
 #generate-emails-btn:disabled,

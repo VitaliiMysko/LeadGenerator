@@ -268,7 +268,8 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    │         ├── field-order.js
  │    │         └── transliteration.js
  │    ├── features/
- │    │    └── website-domain-editor.js (inline contentEditable domain editing)
+ │    │    ├── drag-and-drop.js          (drag-and-drop field reordering)
+ │    │    └── website-domain-editor.js  (inline contentEditable domain editing)
  │    ├── helper/
  │    │    ├── dom-action.js            (copy, validation, text effects)
  │    │    ├── dom-helper.js            (DOM getter functions)
