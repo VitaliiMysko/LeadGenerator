@@ -206,13 +206,15 @@ a:active {
   cursor: pointer;
   padding: 0;
 }
-#validate-emails-btn{
+#validate-emails-btn {
   right: 23px;
 }
+#generate-emails-btn:disabled,
 #validate-emails-btn:disabled,
 #open-company-linkedin-btn:disabled {
   cursor: default;
 }
+#generate-emails-btn:disabled img,
 #validate-emails-btn:disabled img,
 #open-company-linkedin-btn:disabled img {
   filter: grayscale(100%) opacity(0.5);
