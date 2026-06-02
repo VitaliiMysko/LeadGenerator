@@ -2,76 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
-## [4.0.0] - 2026-05-29
+## [3.3.5] - 2026-05-29
 
-### Changed
+### Improved
 
-- Moved `src/scripts/feature/drag-and-drop.js` → `src/scripts/features/drag-and-drop.js` (consistent plural naming); moved `src/scripts/helper/emails-generation.js` → `src/constants/email-templates.js` (it is data, not a helper utility)
-- Fixed destructuring bug in `lead.js` `getFirstName` — `let [firstName] = ... : ""` would return `undefined` for single-word names; replaced with `fullName.split(" ")[0] || ""`; simplified `getSecondName` accordingly
-- Fixed loose `!=` → `!==` in `lead-experience.js` (both push conditions)
-- Renamed `companylink` → `companyLink` throughout `lead-experience.js` and `actual-experience.js`; renamed `multiPositionCompanyComponent` → `positionsList`; renamed `setLinkedinBtn` → `setLinkedInBtn`
-- Renamed `getlinkedinProfileUrl`, `getlinkedinProfileUrlThroughSaleQL`, `getlinkedinProfileUrlThroughSalesNavigatorPage` to proper camelCase in `lead.js`
-- Changed `let listeners` → `const listeners` in `filter-store.js`
-- Added null guard before `useTextChangeEffect(dataElement)` in `dom-action.js`
-- Cached `getTabExperienceElement()` in `applyFilters` to avoid repeated DOM queries
-- Fixed typo "Actual experiece" → "Actual experience" in `index.html`; moved inline `style="right: 23px"` from validate button to `.validate-emails-btn` CSS class
-- Updated `docs/architecture.md`: full directory tree reflecting post-refactoring structure, corrected `sale-navigator-pages` typo, added `features/` and `constants/` entries, updated extensibility notes; last-updated date to 2026-05-30
-- Renamed `handlerCompanyDetails` → `setupCompanyDetails`; renamed `addCopyByClick` → `addCopyOnClickListener`; renamed event parameter `element` → `event` in `tab-selector.js`; renamed loop variables `f` → `filter` in `filters-engine.js` and `p` → `part` in `email-generator.js`; renamed `label` → `opt`/`tab` in `tab-selector.js` forEach callbacks
-- Removed implicit global variables `getPersonalData` and `getActualExperienceData` from `content-scripts/actions/extract-data.js`; functions are now called directly via `window.leadGenerator.*`; also simplified `extractData` to return the array directly
-- Fixed undeclared `data` variable (implicit global) in `company.js` → `const data`
-- Fixed `==` → `===` and added missing space in `if(hasCyrillic)` in `lead.js`
-- Split `email.js` (288 lines) into three focused modules: `email-validator.js` (API call, result parser, `emailDataByDefault`), `email-generator.js` (`generateEmails`, `getBasicEmail`, name/template logic; renamed `getEmails` → `collectEmails`), and `email.js` (UI handlers, cache, loading effect, `fillEmailFromCache`); `company-details.js` updated to import `getBasicEmail` from its new location
-- Split `company-details.js` (539 lines) into three focused modules: `src/scripts/services/company-data.js` (fetching, caching, domain utilities), `src/scripts/features/website-domain-editor.js` (inline `contentEditable` domain editing), and a trimmed `company-details.js` (orchestration and rendering only); also extracted loading-state helpers into named functions; `actual-experience.js` updated to import `formatCompanySize` from its new location
-- Converted all `.then()` chains and callback-style async patterns to `async/await` with `try/catch`: `extract-data.js` (three-level nested Chrome API callbacks), `translation.js` (`sendMessage` callback + `fetch` chain), `dom-action.js` (clipboard), `company.js` content script (broken `.then().catch()` repetition replaced with single `try/catch/finally`), `background.js` (`handleCompanyRequest` refactored into `async` + extracted `resolveCompanyData`), and `company-details.js` (local `sendMessagePromise` wrapper removed in favour of the native MV3 `chrome.runtime.sendMessage` Promise API)
-- Added `src/scripts/utils/chrome-storage.js` with typed `syncGet`, `syncSet`, `localGet`, `localSet` wrappers; deleted `settings/common.js`; migrated `filter-store.js`, `storage-actions.js`, and all settings files to use the unified utility — no raw `chrome.storage` callback patterns remain in popup code
-- Extracted reusable `initMultiSelectFilter` factory into `src/scripts/components/multi-select-filter.js`; `company-location.js` and `company-size.js` reduced from ~90 lines each to thin wrappers (~15 lines each) that delegate all shared open/close/search/tag/subscribe logic to the component
-- Removed all module-level cached DOM element exports from `dom-helper.js`; every function is now an exported getter called at use-site, eliminating the risk of stale references captured at module load time; all 14 consumer files updated accordingly
-- Renamed internal builder functions in `actual-experience.js` from `getCompany*Element` to `createCompany*Element` to distinguish DOM builders from DOM getters
-- Extracted shared constants into `src/constants/`: `countries.js`, `company-sizes.js`, and `config.js`; removed inline arrays from filter components
-- Replaced fragile `manifest.host_permissions[2]` index access with `getWorkerUrl()` from `src/constants/config.js` in `email.js` and `company-details.js`
-- Replaced local `MAX_ITEMS = 99` constant in `storage-actions.js` with `MAX_SAVED_LEADS` from `src/constants/config.js`; the Get button label now reads its max from the same constant at runtime
-- Renamed `id="validete-emails-btn"` to `id="validate-emails-btn"` in HTML and updated `dom-helper.js` to match
-- Fixed incorrect validation message `"Email is not corrent"` → `"Email is not correct"` in `email.js`
-- Removed always-true dead condition `!initials !== ""` from the `{initials}` email template; condition is now `initials.length >= 2`
-- Removed duplicate `input` event listener in `company-location.js` and `company-size.js` that caused the filter dropdown to re-render twice per keystroke
-- Removed commented-out `{first}_{last}` and `{first}_{lastPart2}` email templates
-- Renamed `loadindElement` → `loadingElement` in `extract-data.js`
-- Replaced loose `==` with strict `===` for string comparisons in `extract-data.js`
+- The quality and reliability of the application by the complex refactoring
 
 ## [3.3.4] - 2026-05-25
 
 ### Added
 
-- **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
-- **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page.
-- **Country by default** setting: when enabled, a country picker appears in Settings; the selected country is used as a fallback when a company's location cannot be mapped to a known country.
+- **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load
+- **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page
+- **Country by default** setting: when enabled, a country picker appears in Settings; the selected country is used as a fallback when a company's location cannot be mapped to a known country
 
 ### Changed
 
-- **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page.
-- **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed.
-- **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed.
+- **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page
+- **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed
+- **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed
 - **Loading text** is now displayed in a lighter color across all loading states
 
 ### Fixed
 
-- **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
-- **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found".
-- **Website Icon** link updates correctly after a manual domain edit.
-- **Website validation** runs automatically after saving a domain edit; invalid-pattern domains show a warning and a red circle without a backend call.
+- **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it
+- **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found"
+- **Website Icon** link updates correctly after a manual domain edit
+- **Website validation** runs automatically after saving a domain edit; invalid-pattern domains show a warning and a red circle without a backend call
 
 ## [3.3.3] - 2026-05-15
 
 ### Added
 
-- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
-- **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link.
-- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance.
-- **Remember field order** setting: when enabled, the left-panel field order is saved to storage after each drag-and-drop reorder and automatically restored the next time the extension is opened.
+- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch
+- **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link
+- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance
+- **Remember field order** setting: when enabled, the left-panel field order is saved to storage after each drag-and-drop reorder and automatically restored the next time the extension is opened
 
 ### Changed
 
-- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry.
+- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry
 - Replaced radio buttons in the Actual Experience tab with a clickable accordion
 - Redesigned the company details section
 - Left-panel data fields now use the same label style as the Actual Experience company details: small uppercase label above each input
