@@ -22,7 +22,7 @@ function applyFieldOrder(order) {
 
 export async function initFieldOrder() {
   const settingsElement = document.getElementById("field-order-settings");
-  const enabled = !!(await syncGet("fieldOrderEnabled"));
+  const enabled = await syncGet("fieldOrderEnabled", true);
   const savedOrder = await syncGet("fieldOrder");
 
   settingsElement.checked = enabled;
