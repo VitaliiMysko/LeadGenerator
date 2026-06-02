@@ -1,3 +1,5 @@
+import { syncGet, syncSet } from "../utils/chrome-storage.js";
+
 const STORAGE_KEY = "filters";
 
 let state = {
@@ -5,7 +7,7 @@ let state = {
   companySize: [],
 };
 
-let listeners = new Set();
+const listeners = new Set();
 
 export function subscribe(listener) {
   listeners.add(listener);
@@ -25,24 +27,11 @@ export function getState() {
 
 export async function setFilter(key, values) {
   state[key] = values;
-
   notify();
-  await saveToStorage();
-}
-
-async function saveToStorage() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.set({ [STORAGE_KEY]: state }, resolve);
-  });
+  await syncSet(STORAGE_KEY, state);
 }
 
 export async function loadFilters() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(STORAGE_KEY, (data) => {
-      if (data[STORAGE_KEY]) {
-        state = data[STORAGE_KEY];
-      }
-      resolve();
-    });
-  });
+  const saved = await syncGet(STORAGE_KEY);
+  if (saved) state = saved;
 }

@@ -59,37 +59,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // -----------------------------
 // CORE HANDLER
 // -----------------------------
-function handleCompanyRequest(request, sendResponse) {
+async function handleCompanyRequest(request, sendResponse) {
   const key = request.url;
 
-  // 🔁 reuse ongoing request
   if (activeRequests.has(key)) {
-    activeRequests.get(key).then(sendResponse);
+    sendResponse(await activeRequests.get(key));
     return;
   }
 
-  const promise = fetchCompanyData(request)
-    .then((result) => {
-      activeRequests.delete(key);
-      return result;
-    })
-    .catch((error) => {
-      console.error("Background error:", error);
-      activeRequests.delete(key);
-
-      return {
-        website: "",
-        location: request.location || "",
-        industry: request.industry || "",
-        size: request.size || "",
-        members: "",
-        error: true,
-      };
-    });
-
+  const promise = resolveCompanyData(request, key);
   activeRequests.set(key, promise);
+  sendResponse(await promise);
+}
 
-  promise.then(sendResponse);
+async function resolveCompanyData(request, key) {
+  try {
+    const result = await fetchCompanyData(request);
+    activeRequests.delete(key);
+    return result;
+  } catch (error) {
+    console.error("Background error:", error);
+    activeRequests.delete(key);
+    return {
+      website: "",
+      location: request.location || "",
+      industry: request.industry || "",
+      size: request.size || "",
+      members: "",
+      error: true,
+    };
+  }
 }
 
 // -----------------------------
