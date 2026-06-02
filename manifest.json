@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lead generator",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "environment": "local",
   "description": "Lead generator is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page.",
   "permissions": ["activeTab", "scripting", "identity", "tabs", "storage"],
