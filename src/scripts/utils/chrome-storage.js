@@ -1,6 +1,8 @@
-export function syncGet(key) {
+export function syncGet(key, defaultValue = undefined) {
   return new Promise((resolve) => {
-    chrome.storage.sync.get(key, (data) => resolve(data[key]));
+    chrome.storage.sync.get(key, (data) => {
+      resolve(key in data ? data[key] : defaultValue);
+    });
   });
 }
 

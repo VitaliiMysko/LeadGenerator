@@ -1,6 +1,7 @@
 import { setOnDropCallback } from "../../features/drag-and-drop.js";
 import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { getDataContainerElement } from "../../helper/dom-helper.js";
+import { showAlert } from "../../output/alert.js";
 
 function getFieldOrder() {
   return Array.from(getDataContainerElement().querySelectorAll(".draggable-block"))
@@ -22,7 +23,7 @@ function applyFieldOrder(order) {
 
 export async function initFieldOrder() {
   const settingsElement = document.getElementById("field-order-settings");
-  const enabled = !!(await syncGet("fieldOrderEnabled"));
+  const enabled = await syncGet("fieldOrderEnabled", true);
   const savedOrder = await syncGet("fieldOrder");
 
   settingsElement.checked = enabled;
@@ -38,6 +39,15 @@ export async function initFieldOrder() {
   });
 
   settingsElement.addEventListener("change", async (e) => {
-    await syncSet("fieldOrderEnabled", e.target.checked);
+    const isEnabled = e.target.checked;
+    try {
+      await syncSet("fieldOrderEnabled", isEnabled);
+      if (isEnabled) {
+        await syncSet("fieldOrder", getFieldOrder());
+      }
+      showAlert("Done", "success");
+    } catch (error) {
+      showAlert("Failed", "error");
+    }
   });
 }
