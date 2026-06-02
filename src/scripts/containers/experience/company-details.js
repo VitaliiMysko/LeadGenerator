@@ -1,74 +1,65 @@
 import {
   getCompanyItemElements,
-  emailElement,
-  generateEmailsBtnElement,
-  companyIndustryElement,
-  companyCountryElement,
+  getEmailElement,
+  getGenerateEmailsBtnElement,
+  getCompanyIndustryElement,
+  getCompanyCountryElement,
 } from "../../helper/dom-helper.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
-import { getBasicEmail, fillEmailFromCache } from "../../services/email.js";
-import {
-  addCopyByClick,
-  setValidationStyle,
-  useTextChangeEffect,
-} from "../../helper/dom-action.js";
+import { fillEmailFromCache } from "../../services/email.js";
+import { getBasicEmail } from "../../services/email-generator.js";
+import { addCopyOnClickListener, setValidationStyle } from "../../helper/dom-action.js";
 import { showAlert } from "../../output/alert.js";
 import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
+import {
+  getCompanyData,
+  getWebsiteState,
+  formatCompanySize,
+  isValidDomain,
+  getHostName,
+  clearCompanyCache,
+} from "../../services/company-data.js";
+import {
+  editWebsiteDomain,
+  getEditWebsiteDomainElement,
+} from "../../features/website-domain-editor.js";
 
-const companyDetailsByDefault = {
-  website: "",
-  location: "",
-  industry: "",
-  size: "",
-  members: "",
-  status: 0,
-  ok: false,
-  completeRequest: true,
-};
-
-export async function handlerCompanyDetails() {
-  await initCompanyDetails();
-  await addCompanyDetailsListener();
+export function setupCompanyDetails() {
+  initCompanyDetails();
+  addCompanyDetailsListeners();
 }
 
 export async function refreshCompanyDetails(item) {
   const companyLinkElement = item.querySelector("a");
   if (companyLinkElement) {
-    companyDetailsCache.delete(companyLinkElement.href);
+    clearCompanyCache(companyLinkElement.href);
   }
 
   const websiteBlock = item.querySelector(".company-website");
   websiteBlock.removeAttribute("data-initialized");
 
-  const locationInitValue = item.getAttribute("data-company-location-init");
-  const industryInitValue = item.getAttribute("data-company-industry-init");
-  const sizeInitValue = item.getAttribute("data-company-size-init");
-
-  item.setAttribute("data-company-location", locationInitValue);
-  item.setAttribute("data-company-industry", industryInitValue);
-  item.setAttribute("data-company-size", sizeInitValue);
+  item.setAttribute("data-company-location", item.getAttribute("data-company-location-init"));
+  item.setAttribute("data-company-industry", item.getAttribute("data-company-industry-init"));
+  item.setAttribute("data-company-size", item.getAttribute("data-company-size-init"));
 
   await manageCompanyDetailsBlock(item);
-  fillEmailFromCache(emailElement.value);
+  fillEmailFromCache(getEmailElement().value);
 }
 
-async function addCompanyDetailsListener() {
-  getCompanyItemElements().forEach(async (item) => {
-    const header = item.querySelector(".company-header");
-    header.addEventListener("click", async () => {
+function addCompanyDetailsListeners() {
+  getCompanyItemElements().forEach((item) => {
+    item.querySelector(".company-header").addEventListener("click", async () => {
       await manageCompanyDetailsBlock(item);
-      const pastedEmailWhileFindingWebsite = emailElement.value;
-      fillEmailFromCache(pastedEmailWhileFindingWebsite);
+      fillEmailFromCache(getEmailElement().value);
     });
   });
 }
 
-async function initCompanyDetails() {
-  getCompanyItemElements().forEach(async (item) => {
-    if (item.classList.contains("active")) {
-      if (item.style.display === "none") return;
-      await manageCompanyDetailsBlock(item);
+function initCompanyDetails() {
+  getCompanyItemElements().forEach((item) => {
+    if (item.classList.contains("active") && item.style.display !== "none") {
+      manageCompanyDetailsBlock(item);
     }
   });
 }
@@ -78,476 +69,251 @@ async function manageCompanyDetailsBlock(item) {
   let industry = item.getAttribute("data-company-industry");
   let size = item.getAttribute("data-company-size");
 
-  const companyNameLabel = item.querySelector(".company-name");
-
   const websiteBlock = item.querySelector(".company-website");
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
   const membersBlock = item.querySelector(".company-members");
-
   const companyLinkElement = item.querySelector("a");
 
   if (websiteBlock.getAttribute("data-initialized") === "true") {
-    const websiteText = websiteBlock.querySelector("span")?.textContent;
-    generateEmailsBtnElement.disabled = !isValidDomain(websiteText);
+    getGenerateEmailsBtnElement().disabled = !isValidDomain(
+      websiteBlock.querySelector("span")?.textContent,
+    );
     return;
-  } else {
-    generateEmailsBtnElement.disabled = true;
   }
 
-  websiteBlock.innerHTML = "";
-  websiteBlock.classList.add("loading");
+  getGenerateEmailsBtnElement().disabled = true;
+  showLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock, location, industry, size });
 
-  if (!location) {
-    locationBlock.innerHTML = "";
-    locationBlock.classList.add("loading");
-  }
-  if (!industry) {
-    industryBlock.innerHTML = "";
-    industryBlock.classList.add("loading");
-  }
-  if (!size || size === "unknown") {
-    sizeBlock.innerHTML = "";
-    sizeBlock.classList.add("loading");
-  }
-  membersBlock.innerHTML = "";
-  membersBlock.classList.add("loading");
-
-  const websiteIconElement = getWebsiteIconElement();
-  const editWebsiteDomainElement = getEditWebsiteDomainElement();
-  const websiteLoadingTextElement = getSpanElement("Loading website");
+  const websiteIconElement = createWebsiteIconElement();
+  const editDomainElement = getEditWebsiteDomainElement();
 
   websiteBlock.appendChild(websiteIconElement);
-  websiteBlock.appendChild(websiteLoadingTextElement);
-
-  if (!location) {
-    const countryLoadingTextElement = getSpanElement("Loading");
-    locationBlock.appendChild(countryLoadingTextElement);
-  }
-  if (!industry) {
-    const industryLoadingTextElement = getSpanElement("Loading");
-    industryBlock.appendChild(industryLoadingTextElement);
-  }
-  if (!size || size === "unknown") {
-    const sizeLoadingTextElement = getSpanElement("Loading");
-    sizeBlock.appendChild(sizeLoadingTextElement);
-  }
-  membersBlock.appendChild(getSpanElement("Loading"));
+  websiteBlock.appendChild(createSpanElement("Loading website"));
 
   let companyDetails;
 
   try {
     companyDetails = companyLinkElement
       ? await getCompanyData(companyLinkElement.href, location, industry, size)
-      : { ...companyDetailsByDefault };
+      : { website: "", location: "", industry: "", size: "", members: "", ok: false, completeRequest: true };
 
-    websiteBlock.innerHTML = "";
-    locationBlock.innerHTML = "";
-    industryBlock.innerHTML = "";
-    sizeBlock.innerHTML = "";
-    membersBlock.innerHTML = "";
+    clearLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock });
 
-    let website = "No website found";
-    if (companyDetails.website) {
-      const websiteLinkElement = getWebsiteLinkElement(companyDetails.website);
-      websiteIconElement.classList.remove("disabled");
-      websiteLinkElement.appendChild(websiteIconElement);
-      websiteBlock.appendChild(websiteLinkElement);
-      website = getHostName(companyDetails.website);
-      const basicEmail = getBasicEmail.bind(null, website);
-      addCopyByClick(websiteBlock, "span", basicEmail, "basic email");
-      setValidationStyle(websiteBlock, companyDetails.ok);
-    } else {
-      website = companyDetails.completeRequest
-        ? website
-        : companyDetails.website;
-      websiteIconElement.classList.add("disabled");
-      websiteBlock.appendChild(websiteIconElement);
+    const website = renderWebsite(websiteBlock, websiteIconElement, companyDetails);
+    location = renderLocation(locationBlock, item, companyDetails, location);
+    industry = renderIndustry(industryBlock, item, companyDetails, industry);
+    size = renderSize(sizeBlock, item, companyDetails, size);
+    renderMembers(membersBlock, companyDetails);
+
+    websiteBlock.appendChild(createSpanElement(website));
+    websiteBlock.appendChild(editDomainElement);
+
+    const isActiveAndVisible = item.classList.contains("active") && item.style.display !== "none";
+
+    if (isActiveAndVisible) {
+      getGenerateEmailsBtnElement().disabled = !isValidDomain(website);
+
+      if (location !== "No location found") {
+        getCompanyCountryElement().value = extractCountry(location) || getDefaultCountry();
+      }
+      if (industry !== "No industry found") {
+        getCompanyIndustryElement().value = industry;
+      }
     }
 
-    const locationNoFound = "No location found";
-    if (!location || location !== companyDetails.location) {
-      location =
-        companyDetails.location === "" && companyDetails.completeRequest
-          ? locationNoFound
-          : companyDetails.location;
-      item.setAttribute(`data-company-location`, companyDetails.location);
-    }
-
-    if (location === locationNoFound) {
-      const defaultCountry = getDefaultCountry();
-      if (defaultCountry) location = defaultCountry;
-    }
-
-    const locationTextElement = getSpanElement(location);
-    locationBlock.appendChild(locationTextElement);
-
-    if (
-      item.classList.contains("active") &&
-      location !== locationNoFound &&
-      item.style.display !== "none"
-    ) {
-      companyCountryElement.value = extractCountry(location) || getDefaultCountry();
-    }
-
-    const industryNoFound = "No industry found";
-    if (!industry || industry !== companyDetails.industry) {
-      industry =
-        companyDetails.industry === "" && companyDetails.completeRequest
-          ? industryNoFound
-          : companyDetails.industry;
-      item.setAttribute(`data-company-industry`, companyDetails.industry);
-    }
-
-    const industryTextElement = getSpanElement(industry);
-    industryBlock.appendChild(industryTextElement);
-
-    if (
-      item.classList.contains("active") &&
-      industry !== industryNoFound &&
-      item.style.display !== "none"
-    ) {
-      companyIndustryElement.value = industry;
-    }
-
-    if (size === "unknown") {
-      size = companyDetails.completeRequest
-        ? formatCompanySize(companyDetails.size)
-        : "";
-      item.setAttribute(`data-company-size`, size);
-    }
-
-    const sizeTextElement = getSpanElement(size);
-    sizeBlock.appendChild(sizeTextElement);
-
-    const membersValue = companyDetails.members
-      ? Number(companyDetails.members).toLocaleString()
-      : "unknown";
-    const membersTextElement = getSpanElement(membersValue);
-    membersBlock.appendChild(membersTextElement);
-
-    const websiteElement = getSpanElement(website);
-    websiteBlock.appendChild(websiteElement);
-    websiteBlock.appendChild(editWebsiteDomainElement);
-
-    if (item.classList.contains("active")) {
-      generateEmailsBtnElement.disabled = !isValidDomain(website);
-    }
-
-    editWebsiteDomain(websiteElement, editWebsiteDomainElement, {
+    const websiteSpan = websiteBlock.querySelector("span");
+    editWebsiteDomain(websiteSpan, editDomainElement, {
       onSave: async (newValue) => {
-        const valid = isValidDomain(newValue);
-        const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
-
-        const iconImg = websiteBlock.querySelector("img");
-        const existingLink = websiteBlock.querySelector("a");
-
-        if (valid) {
-          if (existingLink) {
-            existingLink.href = fullUrl;
-          } else if (iconImg) {
-            const linkEl = getWebsiteLinkElement(fullUrl);
-            iconImg.replaceWith(linkEl);
-            linkEl.appendChild(iconImg);
-          }
-          iconImg?.classList.remove("disabled");
-        } else {
-          if (existingLink) existingLink.removeAttribute("href");
-          iconImg?.classList.add("disabled");
-        }
-
-        const newBasicEmail = getBasicEmail.bind(null, newValue);
-        addCopyByClick(websiteBlock, "span", newBasicEmail, "basic email");
-
-        if (item.classList.contains("active")) {
-          generateEmailsBtnElement.disabled = !valid;
-        }
-
-        websiteBlock.classList.remove("valid", "no-valid");
-
-        if (!valid) {
-          showAlert("Invalid domain format.", "error");
-          setValidationStyle(websiteBlock, false);
-        } else {
-          const state = await getWebsiteState(fullUrl);
-          setValidationStyle(websiteBlock, state.ok);
-        }
+        await handleDomainSave(newValue, websiteBlock, item);
       },
     });
   } catch (error) {
     websiteBlock.innerHTML = "Error loading website.";
     console.error("Error fetching website:", error);
   } finally {
-    if (companyDetails.completeRequest) {
+    if (companyDetails?.completeRequest) {
       websiteBlock.setAttribute("data-initialized", "true");
     }
-    websiteBlock.classList.remove("loading");
-    locationBlock.classList.remove("loading");
-    industryBlock.classList.remove("loading");
-    sizeBlock.classList.remove("loading");
-    membersBlock.classList.remove("loading");
+    removeLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock });
     updateSaveBtnState();
   }
 }
 
-function getWebsiteIconElement() {
-  const websiteIconElement = document.createElement("img");
-  websiteIconElement.src = "assets/icons/www-16.png";
-  websiteIconElement.alt = "Website Icon";
+async function handleDomainSave(newValue, websiteBlock, item) {
+  const valid = isValidDomain(newValue);
+  const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
+
+  const iconImg = websiteBlock.querySelector("img");
+  const existingLink = websiteBlock.querySelector("a");
+
+  if (valid) {
+    if (existingLink) {
+      existingLink.href = fullUrl;
+    } else if (iconImg) {
+      const linkEl = createWebsiteLinkElement(fullUrl);
+      iconImg.replaceWith(linkEl);
+      linkEl.appendChild(iconImg);
+    }
+    iconImg?.classList.remove("disabled");
+  } else {
+    if (existingLink) existingLink.removeAttribute("href");
+    iconImg?.classList.add("disabled");
+  }
+
+  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, newValue), "basic email");
+
+  if (item.classList.contains("active")) {
+    getGenerateEmailsBtnElement().disabled = !valid;
+  }
+
+  websiteBlock.classList.remove("valid", "no-valid");
+
+  if (!valid) {
+    showAlert("Invalid domain format.", "error");
+    setValidationStyle(websiteBlock, false);
+  } else {
+    const state = await getWebsiteState(fullUrl);
+    setValidationStyle(websiteBlock, state.ok);
+  }
+}
+
+function renderWebsite(websiteBlock, websiteIconElement, companyDetails) {
+  const fallback = companyDetails.completeRequest ? "No website found" : "";
+
+  if (companyDetails.website) {
+    const hostname = getHostName(companyDetails.website);
+    const linkEl = createWebsiteLinkElement(companyDetails.website);
+    websiteIconElement.classList.remove("disabled");
+    linkEl.appendChild(websiteIconElement);
+    websiteBlock.appendChild(linkEl);
+    addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, hostname), "basic email");
+    setValidationStyle(websiteBlock, companyDetails.ok);
+    return hostname;
+  }
+
   websiteIconElement.classList.add("disabled");
-  return websiteIconElement;
+  websiteBlock.appendChild(websiteIconElement);
+  return fallback;
 }
 
-function getSpanElement(text) {
-  const spanElement = document.createElement("span");
-  spanElement.textContent = text;
-  spanElement.title = text;
-  return spanElement;
-}
+function renderLocation(locationBlock, item, companyDetails, prevLocation) {
+  const noFound = "No location found";
+  let location = prevLocation;
 
-function getWebsiteLinkElement(websiteData) {
-  const websiteLinkElement = document.createElement("a");
-  websiteLinkElement.href = websiteData;
-  websiteLinkElement.target = "_blank";
-  return websiteLinkElement;
-}
-
-function getEditWebsiteDomainElement() {
-  const wrapperDiv = document.createElement("div");
-  wrapperDiv.classList.add("edit-website-domain-wrapper");
-
-  const editWebsiteElement = document.createElement("img");
-  editWebsiteElement.classList.add("edit-website-domain-icon");
-  editWebsiteElement.src = "assets/icons/edit-website-domain-16.png";
-  editWebsiteElement.alt = "Edit website domain";
-  editWebsiteElement.title = "Edit website domain";
-
-  wrapperDiv.appendChild(editWebsiteElement);
-  wrapperDiv._icon = editWebsiteElement;
-
-  return wrapperDiv;
-}
-
-function isValidDomain(value) {
-  return /^[\w.-]+\.[a-zA-Z]{2,}$/.test(value?.trim());
-}
-
-function getHostName(url) {
-  const fullUrl = url.includes("://") ? url : `http://${url}`;
-
-  try {
-    const hostname = new URL(fullUrl).hostname;
-    const cleanHostname = hostname.replace(/^www\./, "");
-
-    return cleanHostname;
-  } catch (error) {
-    console.error("Invalid URL:", error);
-    return url;
-  }
-}
-
-export function formatCompanySize(size) {
-  if (!size) return "unknown";
-
-  if (/myself only/i.test(size)) return "0-1";
-
-  const rangeMatch = size.match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)/);
-  if (rangeMatch) {
-    return `${rangeMatch[1].replace(/,/g, "")}-${rangeMatch[2].replace(/,/g, "")}`;
+  if (!prevLocation || prevLocation !== companyDetails.location) {
+    location =
+      companyDetails.location === "" && companyDetails.completeRequest
+        ? noFound
+        : companyDetails.location;
+    item.setAttribute("data-company-location", companyDetails.location);
   }
 
-  const plusMatch = size.match(/(\d[\d,]*)\s*\+/);
-  if (plusMatch) {
-    return `${plusMatch[1].replace(/,/g, "")}+`;
+  if (location === noFound) {
+    const defaultCountry = getDefaultCountry();
+    if (defaultCountry) location = defaultCountry;
   }
 
-  return "unknown";
+  locationBlock.appendChild(createSpanElement(location));
+  return location;
 }
 
-let currentRequestId = 0;
-const companyDetailsCache = new Map();
+function renderIndustry(industryBlock, item, companyDetails, prevIndustry) {
+  const noFound = "No industry found";
+  let industry = prevIndustry;
 
-async function getCompanyData(companylink, location, industry, size) {
-  if (companyDetailsCache.has(companylink)) {
-    return companyDetailsCache.get(companylink);
+  if (!prevIndustry || prevIndustry !== companyDetails.industry) {
+    industry =
+      companyDetails.industry === "" && companyDetails.completeRequest
+        ? noFound
+        : companyDetails.industry;
+    item.setAttribute("data-company-industry", companyDetails.industry);
   }
 
-  let companyDetails = { ...companyDetailsByDefault };
-  companyDetails.location = location;
-  companyDetails.industry = industry;
-  companyDetails.size = size;
-  companyDetails.members = "";
-  if (companylink) {
-    const requestId = ++currentRequestId;
-    const publicCompanyUrl = companylink.replace("/sales/", "/");
-    try {
-      const response = await sendMessagePromise({
-        action: "fetchLinkedinCompanyPage",
-        url: `${publicCompanyUrl}/about`,
-        location: location,
-        industry: industry,
-        size: size === "unknown" ? "" : size,
-      });
-
-      if (response) {
-        companyDetails.location = response.location;
-        companyDetails.industry = response.industry;
-        companyDetails.size = response.size;
-        companyDetails.members = response.members || "";
-        companyDetails.website = response.website;
-
-        const websiteState = await getWebsiteState(response.website);
-        companyDetails.status = websiteState.status;
-        companyDetails.ok = websiteState.ok;
-      } else {
-        if (requestId !== currentRequestId) {
-          companyDetails.completeRequest = false;
-          return companyDetails;
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching company details data:", error);
-    }
-  }
-  companyDetailsCache.set(companylink, companyDetails);
-  return companyDetails;
+  industryBlock.appendChild(createSpanElement(industry));
+  return industry;
 }
 
-async function getWebsiteState(url) {
-  if (!url) {
-    return { status: 0, ok: false };
+function renderSize(sizeBlock, item, companyDetails, prevSize) {
+  let size = prevSize;
+
+  if (size === "unknown") {
+    size = companyDetails.completeRequest
+      ? formatCompanySize(companyDetails.size)
+      : "";
+    item.setAttribute("data-company-size", size);
   }
 
-  if (!url.startsWith("http")) {
-    url = "https://" + url;
+  sizeBlock.appendChild(createSpanElement(size));
+  return size;
+}
+
+function renderMembers(membersBlock, companyDetails) {
+  const value = companyDetails.members
+    ? Number(companyDetails.members).toLocaleString()
+    : "unknown";
+  membersBlock.appendChild(createSpanElement(value));
+}
+
+function showLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock, location, industry, size }) {
+  websiteBlock.innerHTML = "";
+  websiteBlock.classList.add("loading");
+
+  if (!location) {
+    locationBlock.innerHTML = "";
+    locationBlock.classList.add("loading");
+    locationBlock.appendChild(createSpanElement("Loading"));
   }
-
-  const manifest = chrome.runtime.getManifest();
-  const worker = manifest.host_permissions[2];
-
-  const workerUrl = `${worker}?url=${encodeURIComponent(url)}`;
-  const response = await fetch(workerUrl);
-  return await response.json();
+  if (!industry) {
+    industryBlock.innerHTML = "";
+    industryBlock.classList.add("loading");
+    industryBlock.appendChild(createSpanElement("Loading"));
+  }
+  if (!size || size === "unknown") {
+    sizeBlock.innerHTML = "";
+    sizeBlock.classList.add("loading");
+    sizeBlock.appendChild(createSpanElement("Loading"));
+  }
+  membersBlock.innerHTML = "";
+  membersBlock.classList.add("loading");
+  membersBlock.appendChild(createSpanElement("Loading"));
 }
 
-function sendMessagePromise(message) {
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage(message, (response) => {
-      if (chrome.runtime.lastError) {
-        resolve(null);
-      } else {
-        resolve(response);
-      }
-    });
-  });
+function clearLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock }) {
+  websiteBlock.innerHTML = "";
+  locationBlock.innerHTML = "";
+  industryBlock.innerHTML = "";
+  sizeBlock.innerHTML = "";
+  membersBlock.innerHTML = "";
 }
 
-function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
-  if (!(element instanceof HTMLElement)) return;
+function removeLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock }) {
+  websiteBlock.classList.remove("loading");
+  locationBlock.classList.remove("loading");
+  industryBlock.classList.remove("loading");
+  sizeBlock.classList.remove("loading");
+  membersBlock.classList.remove("loading");
+}
 
-  const iconElement = controlEditElement._icon;
-  const previousValueKey = "data-previous-value";
-  const isEditingKey = "data-is-editing";
+function createWebsiteIconElement() {
+  const img = document.createElement("img");
+  img.src = "assets/icons/www-16.png";
+  img.alt = "Website Icon";
+  img.classList.add("disabled");
+  return img;
+}
 
-  const Icons = {
-    edit: {
-      src: "assets/icons/edit-website-domain-16.png",
-      alt: "Edit website domain",
-      title: "Edit website domain",
-    },
-  };
+function createSpanElement(text) {
+  const span = document.createElement("span");
+  span.textContent = text;
+  span.title = text;
+  return span;
+}
 
-  const updateIcon = () => {
-    iconElement.src = Icons.edit.src;
-    iconElement.alt = Icons.edit.alt;
-    iconElement.title = Icons.edit.title;
-  };
-
-  const isEditing = () => element.getAttribute(isEditingKey) === "true";
-
-  const startEditing = () => {
-    if (isEditing()) return;
-    element.setAttribute(previousValueKey, element.textContent.trim());
-    element.setAttribute(isEditingKey, "true");
-    element.setAttribute("spellcheck", "false");
-    element.contentEditable = "true";
-    element.classList.add("editing-domain");
-    element.focus();
-
-    controlEditElement.style.display = "none";
-
-    document.addEventListener("click", handleDocumentClick);
-  };
-
-  const stopEditing = (shouldSave = true) => {
-    if (!isEditing()) return;
-
-    const previousValue = element.getAttribute(previousValueKey);
-    const newValue = element.textContent.trim();
-
-    element.contentEditable = "false";
-    element.classList.remove("editing-domain");
-    element.removeAttribute(isEditingKey);
-    updateIcon();
-    element.title = newValue;
-
-    controlEditElement.style.display = "inline-flex";
-
-    if (shouldSave) {
-      if (!newValue) {
-        element.textContent = previousValue;
-        element.title = previousValue;
-        return;
-      }
-
-      if (newValue !== previousValue && typeof onSave === "function") {
-        onSave(newValue);
-      }
-    } else {
-      element.textContent = previousValue;
-      element.title = previousValue;
-    }
-
-    useTextChangeEffect(element);
-
-    document.removeEventListener("click", handleDocumentClick);
-  };
-
-  const finishEditing = () => stopEditing(true);
-  const cancelEditing = () => stopEditing(false);
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      finishEditing();
-    } else if (e.key === "Escape" || e.key === "Tab") {
-      e.preventDefault();
-      cancelEditing();
-    }
-  };
-
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const text = e.clipboardData?.getData("text/plain");
-    document.execCommand("insertText", false, text);
-  };
-
-  const handleControlClick = () => {
-    if (!isEditing()) startEditing();
-  };
-
-  const handleDocumentClick = (e) => {
-    if (
-      isEditing() &&
-      !element.contains(e.target) &&
-      !controlEditElement.contains(e.target)
-    ) {
-      finishEditing();
-    }
-  };
-
-  controlEditElement.addEventListener("click", handleControlClick);
-  element.addEventListener("keydown", handleKeyDown);
-  element.addEventListener("paste", handlePaste);
+function createWebsiteLinkElement(url) {
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  return a;
 }

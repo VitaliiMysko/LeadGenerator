@@ -2,40 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.5] - 2026-05-29
+
+### Improved
+
+- The quality and reliability of the application by the complex refactoring
+
 ## [3.3.4] - 2026-05-25
 
 ### Added
 
-- **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load.
-- **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page.
-- **Country by default** setting: when enabled, a country picker appears in Settings; the selected country is used as a fallback when a company's location cannot be mapped to a known country.
+- **Get button counter** briefly scales up when the counter changes (Save or Clean), providing visual feedback that the count updated. The animation does not play on initial load
+- **Members field** shows the associated members count next to company size, extracted from the LinkedIn company page
+- **Country by default** setting: when enabled, a country picker appears in Settings; the selected country is used as a fallback when a company's location cannot be mapped to a known country
 
 ### Changed
 
-- **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page.
-- **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed.
-- **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed.
+- **LinkedIn button** now opens the official LinkedIn company page instead of the Sales Navigator company page, in a background tab so the user stays on the current page
+- **Company data** is now fetched exclusively from the official LinkedIn company page; the `sales/company/*` host permission has been removed
+- **Website Icon** is disabled by default and becomes clickable only when a valid website is confirmed
 - **Loading text** is now displayed in a lighter color across all loading states
 
 ### Fixed
 
-- **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it.
-- **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found".
-- **Website Icon** link updates correctly after a manual domain edit.
-- **Website validation** runs automatically after saving a domain edit; invalid-pattern domains show a warning and a red circle without a backend call.
+- **Save button** is now enabled automatically after lead data is populated via extraction or company-details fetch, without requiring a manual field edit to trigger it
+- **Generate Emails button** is now enabled after the user manually edits the website domain, including when the original value was "No website found"
+- **Website Icon** link updates correctly after a manual domain edit
+- **Website validation** runs automatically after saving a domain edit; invalid-pattern domains show a warning and a red circle without a backend call
 
 ## [3.3.3] - 2026-05-15
 
 ### Added
 
-- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch.
-- **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link.
-- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance.
-- **Remember field order** setting: when enabled, the left-panel field order is saved to storage after each drag-and-drop reorder and automatically restored the next time the extension is opened.
+- **Refresh button** (↻) in the company header of the Actual Experience tab re-fetches website, location, industry, and size from scratch
+- **LinkedIn button** next to the Company name field opens the selected company's LinkedIn page in a new browser tab; the button is disabled (and shown in gray) when the selected company has no LinkedIn link
+- **Development mode indicator**: extension toolbar icon is rendered in greyscale in the local environment, making it easy to distinguish a local development build from production at a glance
+- **Remember field order** setting: when enabled, the left-panel field order is saved to storage after each drag-and-drop reorder and automatically restored the next time the extension is opened
 
 ### Changed
 
-- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry.
+- **Save button** no longer requires the Email field to be filled; any lead with at least one non-empty field can be saved. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry
 - Replaced radio buttons in the Actual Experience tab with a clickable accordion
 - Redesigned the company details section
 - Left-panel data fields now use the same label style as the Actual Experience company details: small uppercase label above each input
