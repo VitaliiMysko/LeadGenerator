@@ -1,21 +1,22 @@
 import {
-  saveBtnElement,
-  storageLeadsBtnElement,
-  cleanBtnElement,
-  emailElement,
-  firstNameElement,
-  secondNameElement,
-  jobPositionElement,
-  linkElement,
-  companyNameElement,
-  companyCountryElement,
-  companyIndustryElement,
-  dataContainerElement,
+  getSaveBtnElement,
+  getStorageLeadsBtnElement,
+  getCleanBtnElement,
+  getEmailElement,
+  getFirstNameElement,
+  getSecondNameElement,
+  getJobPositionElement,
+  getLinkElement,
+  getCompanyNameElement,
+  getCompanyCountryElement,
+  getCompanyIndustryElement,
+  getDataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
+import { MAX_SAVED_LEADS } from "../../../constants/config.js";
+import { localGet, localSet } from "../../utils/chrome-storage.js";
 
 const STORAGE_KEY = "saved_leads";
-const MAX_ITEMS = 99;
 
 const INPUT_ID_TO_LEAD_KEY = {
   "first-name": "firstName",
@@ -33,22 +34,23 @@ let currentCount = 0;
 (async () => {
   const leads = await loadLeads();
   currentCount = leads.length;
+  getStorageLeadsBtnElement().querySelector(".get-counter-max").textContent = MAX_SAVED_LEADS;
   updateUI();
 })();
 
 [
-  firstNameElement,
-  secondNameElement,
-  jobPositionElement,
-  linkElement,
-  emailElement,
-  companyNameElement,
-  companyCountryElement,
-  companyIndustryElement,
-].forEach((el) => el.addEventListener("input", updateSaveBtnState));
+  getFirstNameElement,
+  getSecondNameElement,
+  getJobPositionElement,
+  getLinkElement,
+  getEmailElement,
+  getCompanyNameElement,
+  getCompanyCountryElement,
+  getCompanyIndustryElement,
+].forEach((getter) => getter().addEventListener("input", updateSaveBtnState));
 
-saveBtnElement.addEventListener("click", async () => {
-  if (isAllFieldsEmpty() || currentCount >= MAX_ITEMS) return;
+getSaveBtnElement().addEventListener("click", async () => {
+  if (isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS) return;
 
   const leads = await loadLeads();
   const newLead = collectCurrentData();
@@ -66,7 +68,7 @@ saveBtnElement.addEventListener("click", async () => {
   showAlert("Saved", "success");
 });
 
-storageLeadsBtnElement.addEventListener("click", async () => {
+getStorageLeadsBtnElement().addEventListener("click", async () => {
   const leads = await loadLeads();
   if (leads.length === 0) {
     showAlert("Nothing to copy", "error");
@@ -75,7 +77,7 @@ storageLeadsBtnElement.addEventListener("click", async () => {
   await copyLeadsToClipboard(leads);
 });
 
-cleanBtnElement.addEventListener("click", async () => {
+getCleanBtnElement().addEventListener("click", async () => {
   await saveLeads([]);
   currentCount = 0;
   updateUI(true);
@@ -83,7 +85,8 @@ cleanBtnElement.addEventListener("click", async () => {
 });
 
 function updateUI(animate = false) {
-  const pct = (currentCount / MAX_ITEMS) * 100;
+  const storageLeadsBtnElement = getStorageLeadsBtnElement();
+  const pct = (currentCount / MAX_SAVED_LEADS) * 100;
   storageLeadsBtnElement.style.setProperty("--fill-pct", `${pct}%`);
   const counterEl = storageLeadsBtnElement.querySelector(".get-counter-current");
   counterEl.textContent = currentCount;
@@ -95,21 +98,25 @@ function updateUI(animate = false) {
   updateSaveBtnState();
 }
 
-function isAllFieldsEmpty() {
+function getInputElements() {
   return [
-    firstNameElement,
-    secondNameElement,
-    jobPositionElement,
-    linkElement,
-    emailElement,
-    companyNameElement,
-    companyCountryElement,
-    companyIndustryElement,
-  ].every((el) => !el.value.trim());
+    getFirstNameElement(),
+    getSecondNameElement(),
+    getJobPositionElement(),
+    getLinkElement(),
+    getEmailElement(),
+    getCompanyNameElement(),
+    getCompanyCountryElement(),
+    getCompanyIndustryElement(),
+  ];
+}
+
+function isAllFieldsEmpty() {
+  return getInputElements().every((el) => !el.value.trim());
 }
 
 export function updateSaveBtnState() {
-  saveBtnElement.disabled = isAllFieldsEmpty() || currentCount >= MAX_ITEMS;
+  getSaveBtnElement().disabled = isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS;
 }
 
 function isDuplicate(leads, newLead) {
@@ -132,19 +139,19 @@ function isDuplicate(leads, newLead) {
 
 function collectCurrentData() {
   return {
-    firstName: firstNameElement.value,
-    surname: secondNameElement.value,
-    jobPosition: jobPositionElement.value,
-    link: linkElement.value,
-    email: emailElement.value.trim(),
-    companyName: companyNameElement.value,
-    country: companyCountryElement.value,
-    industry: companyIndustryElement.value,
+    firstName: getFirstNameElement().value,
+    surname: getSecondNameElement().value,
+    jobPosition: getJobPositionElement().value,
+    link: getLinkElement().value,
+    email: getEmailElement().value.trim(),
+    companyName: getCompanyNameElement().value,
+    country: getCompanyCountryElement().value,
+    industry: getCompanyIndustryElement().value,
   };
 }
 
 function getFieldOrder() {
-  return Array.from(dataContainerElement.querySelectorAll(".draggable-block"))
+  return Array.from(getDataContainerElement().querySelectorAll(".draggable-block"))
     .map((block) => block.querySelector("input")?.id)
     .filter((id) => id && INPUT_ID_TO_LEAD_KEY[id]);
 }
@@ -160,15 +167,9 @@ async function copyLeadsToClipboard(leads) {
 }
 
 async function loadLeads() {
-  return new Promise((resolve) => {
-    chrome.storage.local.get(STORAGE_KEY, (data) => {
-      resolve(data[STORAGE_KEY] || []);
-    });
-  });
+  return localGet(STORAGE_KEY, []);
 }
 
 async function saveLeads(leads) {
-  return new Promise((resolve) => {
-    chrome.storage.local.set({ [STORAGE_KEY]: leads }, resolve);
-  });
+  return localSet(STORAGE_KEY, leads);
 }

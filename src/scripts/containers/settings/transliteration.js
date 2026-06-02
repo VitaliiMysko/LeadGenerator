@@ -1,4 +1,4 @@
-import { getFromStorage, setToStorage } from "./common.js";
+import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { transliterateElement } from "../../services/transliteration.js";
 import { showAlert } from "../../output/alert.js";
 import {
@@ -11,7 +11,7 @@ export async function initTransliteration() {
   if (settingsElement == null) return;
 
   try {
-    const transliterationEnabled = !!(await getFromStorage(
+    const transliterationEnabled = !!(await syncGet(
       "transliterationEnabled",
     ));
     settingsElement.checked = transliterationEnabled;
@@ -22,7 +22,7 @@ export async function initTransliteration() {
   settingsElement.addEventListener("change", async (e) => {
     const enabled = e.target.checked;
     try {
-      await setToStorage("transliterationEnabled", enabled);
+      await syncSet("transliterationEnabled", enabled);
 
       await transliterateElement(getFirstNameElement());
       await transliterateElement(getSecondNameElement());

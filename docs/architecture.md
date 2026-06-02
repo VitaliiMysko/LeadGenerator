@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 25, 2026
+**Last updated**: May 30, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -229,28 +229,70 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 ## 5. Project Structure
 
 ```src/
+ ├── constants/                        (shared config and data)
+ │    ├── company-sizes.js             (COMPANY_SIZES array)
+ │    ├── config.js                    (MAX_SAVED_LEADS, getWorkerUrl)
+ │    ├── countries.js                 (EUROPEAN_COUNTRIES array)
+ │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
  │    ├── actions/
+ │    │    └── extract-data.js         (message listener, data orchestrator)
  │    ├── common/
+ │    │    └── constants.js            (company status suffixes, Dutch surnames)
  │    ├── linkedin-pages/
- │    ├── sale-navigator-pages/
- │          ├── company/
- │          ├── lead/
+ │    │    └── company.js              (LinkedIn company About page scraper)
+ │    └── sales-navigator-pages/
+ │         └── lead/
+ │              ├── lead.js            (personal data extraction)
+ │              └── lead-experience.js (job experience extraction)
  ├── scripts/
+ │    ├── components/
+ │    │    └── multi-select-filter.js  (reusable multi-select dropdown)
  │    ├── containers/
- │          ├── data/
- │          ├── experience/
- │          ├── filters/
- │          ├── navigation/
- │          ├── settings/
- │    ├── feature/
+ │    │    ├── data/
+ │    │    │    ├── extract-data.js    (Extract button handler)
+ │    │    │    ├── open-company-linkedin.js
+ │    │    │    └── storage-actions.js (Save/Get/Clean)
+ │    │    ├── experience/
+ │    │    │    ├── actual-experience.js (company list renderer)
+ │    │    │    └── company-details.js   (orchestration and rendering)
+ │    │    ├── filters/
+ │    │    │    ├── company-location.js
+ │    │    │    ├── company-size.js
+ │    │    │    └── filters-engine.js
+ │    │    ├── navigation/
+ │    │    │    └── tab-selector.js
+ │    │    └── settings/
+ │    │         ├── country-by-default.js
+ │    │         ├── drag-and-drop.js
+ │    │         ├── field-order.js
+ │    │         └── transliteration.js
+ │    ├── features/
+ │    │    ├── drag-and-drop.js          (drag-and-drop field reordering)
+ │    │    └── website-domain-editor.js  (inline contentEditable domain editing)
  │    ├── helper/
+ │    │    ├── dom-action.js            (copy, validation, text effects)
+ │    │    ├── dom-helper.js            (DOM getter functions)
+ │    │    └── general.js              (version display)
  │    ├── output/
+ │    │    └── alert.js                (toast notifications)
  │    ├── services/
+ │    │    ├── company-data.js         (company fetch, cache, domain utils)
+ │    │    ├── email-generator.js      (email address generation logic)
+ │    │    ├── email-validator.js      (Cloudflare Worker email validation)
+ │    │    ├── email.js                (email UI handlers, cache)
+ │    │    ├── translation.js          (Google Translate integration)
+ │    │    └── transliteration.js      (Cyrillic/German name handling)
  │    ├── store/
- │    ├── worker/
+ │    │    └── filter-store.js         (pub/sub state manager)
+ │    ├── utils/
+ │    │    └── chrome-storage.js       (syncGet, syncSet, localGet, localSet)
+ │    └── worker/
+ │         └── background.js           (service worker)
  ├── styles/
+ │    └── main.css
  └── utils/
+      └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
 ## 6. Data Flow Summary
@@ -328,12 +370,15 @@ sequenceDiagram
 The modular directory structure allows easy scaling:
 
 - New button logic can be added inside `containers/data/`
+- New standalone UI features (e.g. inline editors, pickers) belong in `features/`
+- New shared data or configuration belongs in `constants/`
 - Background tasks can be isolated under `worker/`
 - Any new content scripts should go under `content-scripts/`
 - The tab-based UI allows easy addition of new functional modules
 - New tabs can be added without restructuring the core layout
 - New filters can be added inside `filters/` using the same pattern:
-  - UI module + state integration via filter-store
+  - Thin wrapper calling `initMultiSelectFilter` from `components/multi-select-filter.js`
+  - Add the new filter key to `filter-store.js` state and to `filters-engine.js`
 - The filter system is designed to support scalable multi-criteria filtering
 
 ## 9. Background Script Usage Strategy

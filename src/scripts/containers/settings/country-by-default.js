@@ -1,4 +1,4 @@
-import { getFromStorage, setToStorage } from "./common.js";
+import { syncGet, syncSet } from "../../utils/chrome-storage.js";
 import { allOptions } from "../filters/company-location.js";
 
 let enabled = false;
@@ -15,8 +15,8 @@ export async function initCountryByDefault() {
   const inputEl = selectEl.querySelector(".single-input");
   const dropdownEl = selectEl.querySelector(".dropdown");
 
-  enabled = !!(await getFromStorage("countryByDefaultEnabled"));
-  country = (await getFromStorage("countryByDefault")) || "";
+  enabled = !!(await syncGet("countryByDefaultEnabled"));
+  country = (await syncGet("countryByDefault")) || "";
 
   toggleEl.checked = enabled;
   inputEl.value = country;
@@ -24,12 +24,12 @@ export async function initCountryByDefault() {
 
   toggleEl.addEventListener("change", async (e) => {
     enabled = e.target.checked;
-    await setToStorage("countryByDefaultEnabled", enabled);
+    await syncSet("countryByDefaultEnabled", enabled);
     wrapperEl.style.display = enabled ? "" : "none";
     if (!enabled) {
       country = "";
       inputEl.value = "";
-      await setToStorage("countryByDefault", "");
+      await syncSet("countryByDefault", "");
     }
   });
 
@@ -63,7 +63,7 @@ export async function initCountryByDefault() {
           country = opt;
           inputEl.value = opt;
           selectEl.classList.remove("open");
-          await setToStorage("countryByDefault", opt);
+          await syncSet("countryByDefault", opt);
         });
         dropdownEl.appendChild(el);
       });

@@ -16,7 +16,7 @@ if (!window.leadGenerator.personalDataInit) {
       generalData.push({ inputId: "job-position", value: getJobPosition() });
       generalData.push({
         inputId: "link",
-        value: await getlinkedinProfileUrl(),
+        value: await getLinkedInProfileUrl(),
       });
       generalData.push({ inputId: "email", value: "" });
       generalData.push({ inputId: "company-name", value: "" });
@@ -33,7 +33,7 @@ if (!window.leadGenerator.personalDataInit) {
 
     function handleFullName(str) {
       const hasCyrillic = /\p{Script=Cyrillic}/u.test(str);
-      if(hasCyrillic){
+      if (hasCyrillic) {
         return str
         .trim()
         .split(/\s+/)
@@ -73,14 +73,12 @@ if (!window.leadGenerator.personalDataInit) {
     }
 
     function getFirstName(fullName) {
-      let [firstName] = fullName.includes(" ") ? fullName.split(" ") : "";
-      return firstName;
+      return fullName.split(" ")[0] || "";
     }
 
     function getSecondName(fullName) {
-      let [, ...remainingWords] = fullName.split(" ");
-      let secondName =
-        remainingWords.length > 0 ? remainingWords.join(" ") : "";
+      const parts = fullName.split(" ");
+      let secondName = parts.length > 1 ? parts.slice(1).join(" ") : "";
 
       if (secondName.includes("'")) {
         secondName = secondName.replace(/'\w/g, (match) => match.toUpperCase());
@@ -93,15 +91,15 @@ if (!window.leadGenerator.personalDataInit) {
       return "";
     }
 
-    async function getlinkedinProfileUrl() {
-      let linkProfileUrl = getlinkedinProfileUrlThroughSaleQL();
-      if (linkProfileUrl == "") {
-        linkProfileUrl = await getlinkedinProfileUrlThroughSalesNavigatorPage();
+    async function getLinkedInProfileUrl() {
+      let linkProfileUrl = getLinkedInProfileUrlDirect();
+      if (linkProfileUrl === "") {
+        linkProfileUrl = await getLinkedInProfileUrlViaSalesNavigator();
       }
       return linkProfileUrl;
     }
 
-    function getlinkedinProfileUrlThroughSaleQL() {
+    function getLinkedInProfileUrlDirect() {
       const xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
       const result = document.evaluate(
         xpath,
@@ -117,7 +115,7 @@ if (!window.leadGenerator.personalDataInit) {
       return linkProfileUrl.trim().split("?")[0];
     }
 
-    async function getlinkedinProfileUrlThroughSalesNavigatorPage() {
+    async function getLinkedInProfileUrlViaSalesNavigator() {
       const actionsMenuElement = getActionsMenuElement();
       if (!actionsMenuElement) return "";
       actionsMenuElement.click();
