@@ -31,7 +31,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the 99-item limit is reached. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
   - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
-  - **"Clean" Button**: Removes all saved leads from local storage and resets the counter.
+  - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
 

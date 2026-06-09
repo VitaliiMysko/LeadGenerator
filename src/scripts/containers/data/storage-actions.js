@@ -13,6 +13,7 @@ import {
   getDataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
+import { showConfirm } from "../../output/confirm.js";
 import { MAX_SAVED_LEADS } from "../../../constants/config.js";
 import { localGet, localSet } from "../../utils/chrome-storage.js";
 
@@ -78,6 +79,7 @@ getStorageLeadsBtnElement().addEventListener("click", async () => {
 });
 
 getCleanBtnElement().addEventListener("click", async () => {
+  if (!await showConfirm("Are you sure you want to clear all saved leads?")) return;
   await saveLeads([]);
   currentCount = 0;
   updateUI(true);
@@ -95,6 +97,7 @@ function updateUI(animate = false) {
     void counterEl.offsetWidth;
     counterEl.classList.add("pop");
   }
+  getCleanBtnElement().disabled = currentCount === 0;
   updateSaveBtnState();
 }
 
