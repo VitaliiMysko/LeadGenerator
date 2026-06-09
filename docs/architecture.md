@@ -220,8 +220,7 @@ All stored data remains on the user's device.
 - **User preferences (UI settings)** are stored locally using Chrome Storage API
 - **No cookies are set or read**
 - **Clipboard is used only temporarily**, initiated manually by the user
-- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored
-- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker
+- **All secret keys (Google Translate API, Emailable API)** are stored only in the Cloudflare Worker — never exposed to the client
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
@@ -309,7 +308,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 - Copy all saved leads to clipboard in spreadsheet-compatible format
 - Clean all locally saved leads
 - Rearrange data using drag-and-drop
-- Translate job title via the Google Translate API (if logged in via Google OAuth2)
+- Translate job title via the Google Translate API
 - Trigger email generation:
   - Extension sends company domain to backend
   - Backend validates generated emails via Emailable
@@ -354,7 +353,6 @@ sequenceDiagram
 "permissions": [
   "activeTab",
   "scripting",
-  "identity",
   "tabs",
   "storage"
 ],

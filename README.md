@@ -294,7 +294,6 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 - Google Chrome
 - LinkedIn Sales Navigator access
-- (Optional) Google account for translation
 
 ## Privacy Policy
 

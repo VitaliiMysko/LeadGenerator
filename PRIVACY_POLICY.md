@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: May 25, 2026
+**Last Updated**: June 9, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -107,10 +107,11 @@ However, certain operations require **temporary processing via a secure backend*
 
 - Email validation
 - Website availability checks
+- Job title translation
 
 In such cases:
 
-- Only minimal required data (e.g., email or domain) is sent
+- Only minimal required data (e.g., email, domain, or job title text) is sent
 - Data is processed in real-time
 - No data is stored, logged, or reused
 
@@ -123,6 +124,7 @@ This includes:
 
 - Email validation (via **Emailable API**)
 - Website availability checks
+- Job title translation (via **Google Cloud Translation API**)
 
 This architecture ensures:
 
@@ -130,6 +132,7 @@ This architecture ensures:
 - No CORS restrictions affect functionality
 - All requests are securely proxied
 - No user-identifiable data is stored or persisted
+- No Google account or authentication is required from the user
 
 ## 7. User Control and Responsibility
 
@@ -148,19 +151,14 @@ Users may:
 - Retrieve previously saved leads
 - Permanently remove saved leads at any time
 
-## 8. Google Authentication
+## 8. Translation Service
 
-If you use the translation feature, you will be prompted to sign in with your Google account via OAuth2.
+The translation feature (job title translation) is performed via the secure Cloudflare Worker backend using a server-side Google Cloud Translation API key.
 
-This is used solely for:
-
-- Accessing the **Google Translate API**
-
-The extension:
-
-- Does not store your Google credentials
-- Does not access other Google account data
-- Uses authentication only during active sessions
+- No Google account or authentication is required from the user
+- Only the job title text is sent to the backend for translation
+- The text is translated in real-time and not stored or logged
+- The API key is stored exclusively in the Cloudflare Worker and is never exposed to the client
 
 ## 9. Permissions Justification
 
@@ -168,7 +166,6 @@ The extension requests the following permissions:
 
 - **activeTab, scripting** — to extract data from the current LinkedIn page upon user action
 - **tabs** — to manage background tab processing for company data
-- **identity** — for Google OAuth authentication (translation feature)
 - **storage** — to store user preferences, filter settings, and user-saved lead data locally on the device
 
 ## 10. Cookies
