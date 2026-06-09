@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **Clean button confirmation**: clicking Clean now shows a custom in-page confirmation dialog (OK / Cancel) before clearing saved leads
-- **Microsoft Edge support for translation**: the Translate button now works in Edge via `chrome.identity.launchWebAuthFlow`; Chrome continues to use `chrome.identity.getAuthToken` (silent, cached token)
+- **Microsoft Edge support for translation**: translation is now routed through the Cloudflare Worker backend using a server-side Google API key; `chrome.identity` and OAuth2 are no longer required, so the feature works identically in Chrome and Edge
 
 ### Changed
 

@@ -51,10 +51,6 @@ Used **only when necessary** for:
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
 - On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
-- **OAuth2 token acquisition** for Google Translate:
-  - Chrome: `chrome.identity.getAuthToken()` — silent, uses the browser's cached Google session
-  - Edge: `chrome.identity.launchWebAuthFlow()` — opens a web-based OAuth2 popup; browser is detected via `self.navigator.userAgent`
-
 🚫 **Not used for external HTTP requests**
 
 #### ▸ `src/scripts/containers/data/`
@@ -198,8 +194,8 @@ All stored data remains on the user's device.
 
 - **Vanilla JavaScript** – no front-end frameworks are used
 - **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
-- **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, individual's names transliteration settings) filters and leads
+- **Google Cloud Translate API** – accessed via the Cloudflare Worker backend using a server-side API key
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, transliteration settings), filters, and leads
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
@@ -213,8 +209,8 @@ All stored data remains on the user's device.
 
 - Optional
 - Used to translate non-English job titles into English
-- Requires Google account authentication via OAuth2
-- Translation is performed client-side during the session
+- Accessed via the Cloudflare Worker backend using a server-side API key — no client-side authentication required
+- Works identically in Chrome and Edge
 
 ## 5. Security & Privacy Considerations
 

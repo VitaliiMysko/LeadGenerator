@@ -36,22 +36,6 @@ const activeRequests = new Map();
 // MAIN MESSAGE LISTENER
 // -----------------------------
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "getAuthToken") {
-    const isEdge = /Edg\//.test(self.navigator.userAgent);
-    if (isEdge) {
-      getAuthTokenViaWebAuthFlow(sendResponse);
-    } else {
-      chrome.identity.getAuthToken({ interactive: true }, (token) => {
-        if (chrome.runtime.lastError) {
-          sendResponse({ success: false, error: chrome.runtime.lastError.message });
-        } else {
-          sendResponse({ success: true, token });
-        }
-      });
-    }
-    return true;
-  }
-
   if (request.action === "fetchLinkedinCompanyPage") {
     handleCompanyRequest(request, sendResponse);
     return true;
@@ -167,37 +151,3 @@ function fetchCompanyData(request) {
   });
 }
 
-// -----------------------------
-// EDGE AUTH FALLBACK
-// -----------------------------
-function getAuthTokenViaWebAuthFlow(sendResponse) {
-  const { client_id, scopes } = chrome.runtime.getManifest().oauth2;
-  const redirectUrl = chrome.identity.getRedirectURL();
-
-  const authUrl = new URL("https://accounts.google.com/o/oauth2/auth");
-  authUrl.searchParams.set("client_id", client_id);
-  authUrl.searchParams.set("redirect_uri", redirectUrl);
-  authUrl.searchParams.set("response_type", "token");
-  authUrl.searchParams.set("scope", scopes.join(" "));
-
-  chrome.identity.launchWebAuthFlow({ url: authUrl.toString(), interactive: true }, (responseUrl) => {
-    if (chrome.runtime.lastError || !responseUrl) {
-      sendResponse({
-        success: false,
-        error: chrome.runtime.lastError?.message ?? "Auth cancelled",
-      });
-      return;
-    }
-    try {
-      const params = new URLSearchParams(new URL(responseUrl).hash.slice(1));
-      const token = params.get("access_token");
-      if (token) {
-        sendResponse({ success: true, token });
-      } else {
-        sendResponse({ success: false, error: "No access token in response" });
-      }
-    } catch (e) {
-      sendResponse({ success: false, error: e.message });
-    }
-  });
-}
