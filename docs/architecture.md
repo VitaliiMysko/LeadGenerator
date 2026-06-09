@@ -51,6 +51,9 @@ Used **only when necessary** for:
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
 - On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
+- **OAuth2 token acquisition** for Google Translate:
+  - Chrome: `chrome.identity.getAuthToken()` — silent, uses the browser's cached Google session
+  - Edge: `chrome.identity.launchWebAuthFlow()` — opens a web-based OAuth2 popup; browser is detected via `self.navigator.userAgent`
 
 🚫 **Not used for external HTTP requests**
 
