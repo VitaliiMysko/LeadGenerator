@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 30, 2026
+**Last updated**: June 9, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -63,7 +63,7 @@ Handles user-interaction logic related to core actions:
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
-  - **Clean** - full reset
+  - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -275,7 +275,8 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    │    ├── dom-helper.js            (DOM getter functions)
  │    │    └── general.js              (version display)
  │    ├── output/
- │    │    └── alert.js                (toast notifications)
+ │    │    ├── alert.js                (toast notifications)
+ │    │    └── confirm.js              (in-page confirmation dialog)
  │    ├── services/
  │    │    ├── company-data.js         (company fetch, cache, domain utils)
  │    │    ├── email-generator.js      (email address generation logic)

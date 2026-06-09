@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.6] - 2026-06-09
+
+### Added
+
+- **Clean button confirmation**: clicking Clean now shows a custom in-page confirmation dialog (OK / Cancel) before clearing saved leads
+
+### Changed
+
+- **Clean button** is now disabled when there are no saved leads (counter equals 0)
+
 ## [3.3.5] - 2026-05-29
 
 ### Improved

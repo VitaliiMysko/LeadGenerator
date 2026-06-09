@@ -143,6 +143,9 @@ button:disabled {
 .btn-secondary:hover {
   background-color: #495057;
 }
+.btn-secondary:disabled {
+  background-color: #b0b7be;
+}
 a {
   color: #0056b3;
   text-decoration: none;
@@ -563,6 +566,31 @@ a:active {
 .valid:has(.editing-domain)::before,
 .no-valid:has(.editing-domain)::before {
   display: none;
+}
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.confirm-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 14px 10px;
+  width: 220px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+.confirm-box p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  text-align: center;
+  color: #333;
+}
+.confirm-box .button-row button {
+  margin: 0 2px;
 }
 .validation-success {
   background-color: #dbf5dc;
