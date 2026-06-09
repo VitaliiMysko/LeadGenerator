@@ -146,8 +146,8 @@ All fields are editable before copying.
 ### Translation Service
 
 - Translate job titles into English
-- Uses Google Cloud Translation API
-- Requires Google account authentication
+- Uses Google Cloud Translation API via the Cloudflare Worker backend
+- No Google account authentication required
 
 ### Transliteration
 
@@ -232,9 +232,8 @@ After installing the extension, configure it for optimal usage:
    - Ensure access to `https://www.linkedin.com/*`
    - Required for data extraction
 
-2. **Google Authentication (Optional)**
-   - Required for translation feature
-   - Triggered on first use
+2. **Translation**
+   - No authentication required — handled server-side via the Cloudflare Worker
 
 3. **Settings (via Settings Tab)**
    - Enable / disable drag-and-drop
@@ -295,7 +294,6 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 - Google Chrome
 - LinkedIn Sales Navigator access
-- (Optional) Google account for translation
 
 ## Privacy Policy
 
