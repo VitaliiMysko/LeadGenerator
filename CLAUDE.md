@@ -30,6 +30,10 @@ Tests live in `tests/` and import from `src/utils/` (pure utility modules with n
 
 **What not to test:** content scripts, DOM manipulation, Chrome API wrappers, and `fetch`-based services — these require a real browser environment and are verified manually.
 
+### CI/CD
+
+Tests run automatically on GitHub Actions on every push to `master` and every PR targeting `master` (`.github/workflows/test.yml`). The `master` branch is protected — a PR cannot be merged until the `test` check passes. Never bypass this check.
+
 ## Documentation
 
 Every task must include updates to all relevant `.md` files: `CHANGELOG.md`, `README.md`, `docs/architecture.md`, and `CLAUDE.md` if the architecture or workflow changes. `CHANGELOG.md` follows the existing versioning format.

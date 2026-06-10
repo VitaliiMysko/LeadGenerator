@@ -220,6 +220,12 @@ npm test
 
 Jest runs all files under `tests/`. The suite covers pure business logic only — no DOM, no Chrome APIs, no network calls.
 
+### CI/CD
+
+A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite automatically on every push to `master` and on every pull request targeting `master`.
+
+The `master` branch is protected: a PR cannot be merged until the `test` check passes. This is enforced via a classic branch protection rule in the repository settings.
+
 ### Adding new tests
 
 Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and should have a corresponding file in `tests/`. Logic that is tightly coupled to DOM or Chrome APIs is not unit-tested — verify it manually in the browser.
