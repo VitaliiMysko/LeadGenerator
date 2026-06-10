@@ -308,7 +308,6 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 - **activeTab** - access current page
 - **scripting** - inject scripts
-- **identity** - Google authentication
 - **tabs** - tab interaction
 - **storage** - store user preferences, filter state, and user-saved lead data locally
 
