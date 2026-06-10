@@ -1,8 +1,8 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 9, 2026
+**Last updated**: June 10, 2026
 
-This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
+This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
 ## 1. Overview
 
@@ -193,9 +193,9 @@ All stored data remains on the user's device.
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – no front-end frameworks are used
-- **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
+- **WebExtensions API (MV3)** – used for background workers, clipboard operations, and storage; compatible with Chrome, Edge, and Firefox 128+ via the `chrome.*` namespace
 - **Google Cloud Translate API** – accessed via the Cloudflare Worker backend using a server-side API key
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, transliteration settings), filters, and leads
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, transliteration settings), filters, and leads; `storage.sync` syncs via Google account on Chrome/Edge and via Firefox Sync on Firefox
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services

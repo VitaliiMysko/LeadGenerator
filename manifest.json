@@ -3,6 +3,12 @@
   "name": "Lead generator",
   "version": "3.3.6",
   "environment": "local",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "lead-generator@future-processing.com",
+      "strict_min_version": "128.0"
+    }
+  },
   "description": "Lead generator is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page.",
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "host_permissions": [
