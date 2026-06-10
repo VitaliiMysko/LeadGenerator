@@ -210,7 +210,7 @@ All stored data remains on the user's device.
 - Optional
 - Used to translate non-English job titles into English
 - Accessed via the Cloudflare Worker backend using a server-side API key — no client-side authentication required
-- Works identically in Chrome and Edge
+- Works identically in Chrome, Edge, Firefox
 
 ## 5. Security & Privacy Considerations
 
