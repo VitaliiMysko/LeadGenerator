@@ -202,6 +202,28 @@ Benefits:
 - Improved stability under load
 - Consistent behavior across environments
 
+## Development & Testing
+
+### Prerequisites
+
+Install dev dependencies (Jest) once after cloning:
+
+```
+npm install
+```
+
+### Running tests
+
+```
+npm test
+```
+
+Jest runs all files under `tests/`. The suite covers pure business logic only — no DOM, no Chrome APIs, no network calls.
+
+### Adding new tests
+
+Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and should have a corresponding file in `tests/`. Logic that is tightly coupled to DOM or Chrome APIs is not unit-tested — verify it manually in the browser.
+
 ## Changelog
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.

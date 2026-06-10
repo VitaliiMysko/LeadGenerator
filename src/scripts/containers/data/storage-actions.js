@@ -16,6 +16,7 @@ import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
 import { MAX_SAVED_LEADS } from "../../../constants/config.js";
 import { localGet, localSet } from "../../utils/chrome-storage.js";
+import { isDuplicate } from "../../../utils/lead-utils.js";
 
 const STORAGE_KEY = "saved_leads";
 
@@ -120,24 +121,6 @@ function isAllFieldsEmpty() {
 
 export function updateSaveBtnState() {
   getSaveBtnElement().disabled = isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS;
-}
-
-function isDuplicate(leads, newLead) {
-  return leads.some((lead) => {
-    if (newLead.email) {
-      return lead.email.toLowerCase() === newLead.email.toLowerCase();
-    }
-    return (
-      !lead.email &&
-      lead.firstName === newLead.firstName &&
-      lead.surname === newLead.surname &&
-      lead.jobPosition === newLead.jobPosition &&
-      lead.link === newLead.link &&
-      lead.companyName === newLead.companyName &&
-      lead.country === newLead.country &&
-      lead.industry === newLead.industry
-    );
-  });
 }
 
 function collectCurrentData() {

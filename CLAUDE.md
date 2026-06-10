@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development
 
-This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build system, transpiler, or package manager.
+This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build system or transpiler.
 
 **To load the extension locally:**
 1. Open `chrome://extensions/`
@@ -13,7 +13,22 @@ This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build sy
 
 **To apply changes:** click the reload icon on the extension card in `chrome://extensions/`, then reopen the popup.
 
-There are no lint, test, or build commands — the source is deployed as-is.
+There are no lint or build commands — the source is deployed as-is.
+
+### Tests
+
+The project uses **Jest** for unit testing pure logic. Install once after cloning, then run:
+
+```
+npm install
+npm test
+```
+
+Tests live in `tests/` and import from `src/utils/` (pure utility modules with no DOM or Chrome API dependencies).
+
+**When to add a test:** any new pure function (no DOM, no `chrome.*`, no `fetch`) should have a test. Extract it to `src/utils/` first, import it back in the original module, then test the utility directly.
+
+**What not to test:** content scripts, DOM manipulation, Chrome API wrappers, and `fetch`-based services — these require a real browser environment and are verified manually.
 
 ## Documentation
 
