@@ -31,7 +31,7 @@ This extension is a straightforward tool for extracting data about individuals d
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the 99-item limit is reached. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
   - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
-  - **"Clean" Button**: Removes all saved leads from local storage and resets the counter.
+  - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
 
@@ -146,8 +146,8 @@ All fields are editable before copying.
 ### Translation Service
 
 - Translate job titles into English
-- Uses Google Cloud Translation API
-- Requires Google account authentication
+- Uses Google Cloud Translation API via the Cloudflare Worker backend
+- No Google account authentication required
 
 ### Transliteration
 
@@ -206,21 +206,48 @@ Benefits:
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
+## Browser Compatibility
+
+| Browser | Support | Minimum version |
+|---|---|---|
+| Chrome | Full | any current |
+| Microsoft Edge | Full | any current |
+| Firefox | Full | 128.0 |
+| Safari | Not supported | — |
+
 ## Installation
 
-### Option 1: Install from the Chrome Web Store
+### Chrome / Edge
+
+#### Option 1: Install from the Chrome Web Store
 
 1. Go to the [Lead Generator extension page on the Chrome Web Store](https://chromewebstore.google.com/detail/negmangnhbhanhajjpcjgecieghmdldm)
 2. Click **Add to Chrome**
 3. Confirm permissions
 
-### Option 2: Install Locally from Source
+#### Option 2: Install Locally from Source
 
 1. Download or clone repository
 2. Unzip if needed
 3. Open `chrome://extensions/`
 4. Enable **Developer mode**
 5. Click **Load unpacked**
+
+### Firefox
+
+#### Option 1: Install Temporarily (for development)
+
+1. Download or clone repository
+2. Open `about:debugging` in Firefox
+3. Click **This Firefox**
+4. Click **Load Temporary Add-on…**
+5. Select `manifest.json` from the repository root
+
+> Temporary add-ons are removed when Firefox is closed.
+
+#### Option 2: Install Permanently (signed package)
+
+The extension must be signed via [Firefox Add-ons (AMO)](https://addons.mozilla.org/) or Mozilla's self-distribution signing service before it can be installed permanently.
 
 > **Note:** This extension is optimized for LinkedIn Sales Navigator pages. Some permissions may need to be granted to ensure full functionality
 
@@ -232,9 +259,8 @@ After installing the extension, configure it for optimal usage:
    - Ensure access to `https://www.linkedin.com/*`
    - Required for data extraction
 
-2. **Google Authentication (Optional)**
-   - Required for translation feature
-   - Triggered on first use
+2. **Translation**
+   - No authentication required — handled server-side via the Cloudflare Worker
 
 3. **Settings (via Settings Tab)**
    - Enable / disable drag-and-drop
@@ -295,7 +321,6 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 - Google Chrome
 - LinkedIn Sales Navigator access
-- (Optional) Google account for translation
 
 ## Privacy Policy
 

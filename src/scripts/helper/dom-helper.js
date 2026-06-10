@@ -70,6 +70,10 @@ export function getAlertElement() {
   return document.getElementById("alert");
 }
 
+export function getConfirmDialogElement() {
+  return document.getElementById("confirm-dialog");
+}
+
 export function getTabExperienceElement() {
   return document.getElementById("tab-experience");
 }
