@@ -291,10 +291,40 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  ├── styles/
  │    └── main.css
  └── utils/
+      ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
+      ├── lead-utils.js                (isDuplicate — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
-## 6. Data Flow Summary
+## 6. Testing
+
+The project uses **Jest** with native ES module support.
+
+### Running tests
+
+```
+npm install   # once after cloning
+npm test
+```
+
+### Scope
+
+Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. They are extracted into `src/utils/` so they can be imported in Node.js without mocking the browser environment.
+
+| Test file | Module under test | What it covers |
+|---|---|---|
+| `tests/email-utils.test.js` | `src/utils/email-utils.js` | `prepareEmailName`, `collectEmails` |
+| `tests/email-validator.test.js` | `src/scripts/services/email-validator.js` | `parseVerifyResult` |
+| `tests/company-data.test.js` | `src/scripts/services/company-data.js` | `isValidDomain`, `getHostName`, `formatCompanySize` |
+| `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
+| `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
+| `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
+
+### What is not tested
+
+Content scripts, DOM manipulation, Chrome API wrappers (`chrome.storage`, `chrome.runtime`), and `fetch`-based services are not unit-tested. They depend on a real browser environment and are verified manually by loading the extension.
+
+## 7. Data Flow Summary
 
 1. User opens the popup
 
@@ -347,7 +377,7 @@ sequenceDiagram
     BG-->>UI: Result
 ```
 
-## 7. Permissions Summary
+## 8. Permissions Summary
 
 ```json
 "permissions": [
@@ -363,7 +393,7 @@ sequenceDiagram
 ]
 ```
 
-## 8. Extensibility Notes
+## 9. Extensibility Notes
 
 The modular directory structure allows easy scaling:
 
@@ -379,7 +409,7 @@ The modular directory structure allows easy scaling:
   - Add the new filter key to `filter-store.js` state and to `filters-engine.js`
 - The filter system is designed to support scalable multi-criteria filtering
 
-## 9. Background Script Usage Strategy
+## 10. Background Script Usage Strategy
 
 In the current architecture of the extension, the `background.js` (service worker) is **used selectively** and only for scenarios where it provides clear technical value.
 
@@ -467,7 +497,7 @@ The background script is **not a default communication layer**, but a **speciali
 
 > It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
 
-## 10. Related Documents
+## 11. Related Documents
 
 - [`README.md`](../README.md) – Installation and usage instructions
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled

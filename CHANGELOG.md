@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.7] - 2026-06-10
+
+### Added
+
+- **Unit test suite**: Jest-based tests covering pure business logic
+
 ## [3.3.6] - 2026-06-10
 
 ### Added
