@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.6] - 2026-06-10
+
+### Added
+
+- **Clean button confirmation**: clicking Clean now shows a custom in-page confirmation dialog (OK / Cancel) before clearing saved leads
+- Translation is now routed through the Cloudflare Worker backend using a server-side Google API key; `chrome.identity` and OAuth2 are no longer required
+- **Microsoft Edge support**
+- **Firefox support**
+
+### Changed
+
+- **Clean button** is now disabled when there are no saved leads (counter equals 0)
+
 ## [3.3.5] - 2026-05-29
 
 ### Improved

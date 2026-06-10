@@ -57,8 +57,7 @@ The extension has two execution environments:
 All sensitive operations route through the Cloudflare Worker backend (URL in `manifest.json` host_permissions):
 - Email validation via Emailable API
 - Website availability checks
-
-Google Cloud Translation API is accessed client-side from the popup using an OAuth2 token obtained via `chrome.identity` — no token is ever stored.
+- Job title translation via Google Cloud Translation API (server-side API key stored in the Worker — never exposed to the client)
 
 ## Data Flow
 

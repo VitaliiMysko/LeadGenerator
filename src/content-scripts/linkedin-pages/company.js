@@ -71,23 +71,6 @@
     return "";
   }
 
-  function getMembersCount(dlElement, termText) {
-    const terms = dlElement.querySelectorAll("dt");
-    for (let dt of terms) {
-      if (dt.textContent.trim() === termText) {
-        const firstDd = dt.nextElementSibling;
-        if (firstDd?.tagName.toLowerCase() === "dd") {
-          const secondDd = firstDd.nextElementSibling;
-          if (secondDd?.tagName.toLowerCase() === "dd" && secondDd.querySelector("a")) {
-            const match = secondDd.textContent.trim().match(/^(\d[\d,\s]*)/);
-            return match ? match[1].replace(/[,\s]/g, "") : "";
-          }
-        }
-      }
-    }
-    return "";
-  }
-
   function getDefinitionByTerm(dlElement, termText) {
     const terms = dlElement.querySelectorAll("dt");
     for (const dt of terms) {

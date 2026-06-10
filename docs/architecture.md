@@ -1,8 +1,8 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: May 30, 2026
+**Last updated**: June 10, 2026
 
-This document provides a high-level overview of the architectural structure of the **Lead Generator** Chrome Extension. It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
+This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
 ## 1. Overview
 
@@ -51,7 +51,6 @@ Used **only when necessary** for:
 - Managing background tab processing (e.g., opening company pages)
 - Coordinating data extraction from secondary pages
 - On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
-
 🚫 **Not used for external HTTP requests**
 
 #### ▸ `src/scripts/containers/data/`
@@ -63,7 +62,7 @@ Handles user-interaction logic related to core actions:
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
-  - **Clean** - full reset
+  - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -194,9 +193,9 @@ All stored data remains on the user's device.
 ## 3. Technologies Used
 
 - **Vanilla JavaScript** – no front-end frameworks are used
-- **Chrome Extension APIs** – used for background workers, clipboard operations, and storage
-- **OAuth2 (Google)** – used for authenticated access to Google Translate API during translations
-- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, individual's names transliteration settings) filters and leads
+- **WebExtensions API (MV3)** – used for background workers, clipboard operations, and storage; compatible with Chrome, Edge, and Firefox 128+ via the `chrome.*` namespace
+- **Google Cloud Translate API** – accessed via the Cloudflare Worker backend using a server-side API key
+- **Chrome Storage API** – used to persist user preferences (e.g., drag-and-drop, field order, transliteration settings), filters, and leads; `storage.sync` syncs via Google account on Chrome/Edge and via Firefox Sync on Firefox
 - **Cloudflare Workers (Backend layer)** - used for handling external requests and cross-origin operations
 
 ## 4. Third-Party Services
@@ -210,8 +209,8 @@ All stored data remains on the user's device.
 
 - Optional
 - Used to translate non-English job titles into English
-- Requires Google account authentication via OAuth2
-- Translation is performed client-side during the session
+- Accessed via the Cloudflare Worker backend using a server-side API key — no client-side authentication required
+- Works identically in Chrome and Edge
 
 ## 5. Security & Privacy Considerations
 
@@ -221,8 +220,7 @@ All stored data remains on the user's device.
 - **User preferences (UI settings)** are stored locally using Chrome Storage API
 - **No cookies are set or read**
 - **Clipboard is used only temporarily**, initiated manually by the user
-- **OAuth2 tokens** for Google Translate are handled by the Chrome Identity API and never stored
-- **All secret keys (Emailable API)** are stored only in the Cloudflare Worker
+- **All secret keys (Google Translate API, Emailable API)** are stored only in the Cloudflare Worker — never exposed to the client
 
 For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
@@ -275,7 +273,8 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    │    ├── dom-helper.js            (DOM getter functions)
  │    │    └── general.js              (version display)
  │    ├── output/
- │    │    └── alert.js                (toast notifications)
+ │    │    ├── alert.js                (toast notifications)
+ │    │    └── confirm.js              (in-page confirmation dialog)
  │    ├── services/
  │    │    ├── company-data.js         (company fetch, cache, domain utils)
  │    │    ├── email-generator.js      (email address generation logic)
@@ -309,7 +308,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 - Copy all saved leads to clipboard in spreadsheet-compatible format
 - Clean all locally saved leads
 - Rearrange data using drag-and-drop
-- Translate job title via the Google Translate API (if logged in via Google OAuth2)
+- Translate job title via the Google Translate API
 - Trigger email generation:
   - Extension sends company domain to backend
   - Backend validates generated emails via Emailable
@@ -354,7 +353,6 @@ sequenceDiagram
 "permissions": [
   "activeTab",
   "scripting",
-  "identity",
   "tabs",
   "storage"
 ],
