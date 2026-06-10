@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - **Unit test suite**: Jest-based tests covering pure business logic
+- **GitHub Actions CI pipeline** (`.github/workflows/test.yml`): unit tests run automatically on every push to `master` and on every pull request targeting `master`
+- **Branch protection rule** on `master`: merging is blocked until the `test` CI check passes
 
 ## [3.3.6] - 2026-06-10
 

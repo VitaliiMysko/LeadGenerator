@@ -226,7 +226,11 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ## 5. Project Structure
 
-```src/
+```
+.github/
+ └── workflows/
+      └── test.yml                      (GitHub Actions CI — runs npm test on push/PR to master)
+src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
  │    ├── config.js                    (MAX_SAVED_LEADS, getWorkerUrl)
@@ -296,16 +300,16 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
-## 6. Testing
+## 6. Testing & CI/CD
 
-The project uses **Jest** with native ES module support.
-
-### Running tests
+### Running tests locally
 
 ```
 npm install   # once after cloning
 npm test
 ```
+
+The project uses **Jest** with native ES module support.
 
 ### Scope
 
@@ -323,6 +327,25 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 ### What is not tested
 
 Content scripts, DOM manipulation, Chrome API wrappers (`chrome.storage`, `chrome.runtime`), and `fetch`-based services are not unit-tested. They depend on a real browser environment and are verified manually by loading the extension.
+
+### CI/CD pipeline
+
+The workflow is defined in `.github/workflows/test.yml` and runs on **GitHub Actions**.
+
+**Triggers:**
+- Every push to `master`
+- Every pull request targeting `master`
+
+**Steps:** checkout → Node.js 22 setup → `npm ci` → `npm test`
+
+**Branch protection:** the `master` branch has a classic protection rule that requires the `test` status check to pass before a PR can be merged. Direct pushes to `master` without a passing check are also blocked.
+
+```mermaid
+flowchart LR
+    PR[Pull Request] --> CI[GitHub Actions: npm test]
+    CI -- pass --> Merge[Merge allowed]
+    CI -- fail --> Block[Merge blocked]
+```
 
 ## 7. Data Flow Summary
 
