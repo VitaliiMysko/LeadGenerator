@@ -28,7 +28,9 @@ Tests live in `tests/` and import from `src/utils/` (pure utility modules with n
 
 **When to add a test:** any new pure function (no DOM, no `chrome.*`, no `fetch`) should have a test. Extract it to `src/utils/` first, import it back in the original module, then test the utility directly.
 
-**What not to test:** content scripts, DOM manipulation, Chrome API wrappers, and `fetch`-based services — these require a real browser environment and are verified manually.
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested: mock the `chrome-storage.js` wrapper with `jest.unstable_mockModule` before dynamically importing the module under test (see `tests/filter-store.test.js` as the reference pattern).
+
+**What not to test:** content scripts, DOM manipulation, and `fetch`-based services — these require a real browser environment and are verified manually.
 
 ### CI/CD
 

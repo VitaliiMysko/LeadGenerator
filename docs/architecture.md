@@ -296,6 +296,7 @@ src/
  │    └── main.css
  └── utils/
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
+      ├── filter-utils.js              (matchesFilter — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
@@ -323,10 +324,14 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
+| `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
+| `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
 
 ### What is not tested
 
-Content scripts, DOM manipulation, Chrome API wrappers (`chrome.storage`, `chrome.runtime`), and `fetch`-based services are not unit-tested. They depend on a real browser environment and are verified manually by loading the extension.
+Content scripts, DOM manipulation, and `fetch`-based services are not unit-tested — they depend on a real browser environment and are verified manually by loading the extension.
+
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test (see `tests/filter-store.test.js`).
 
 ### CI/CD pipeline
 
