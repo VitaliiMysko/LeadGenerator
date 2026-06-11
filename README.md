@@ -230,6 +230,8 @@ The `master` branch is protected: a PR cannot be merged until the `test` check p
 
 Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and should have a corresponding file in `tests/`. Logic that is tightly coupled to DOM or Chrome APIs is not unit-tested — verify it manually in the browser.
 
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test.
+
 ## Changelog
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.

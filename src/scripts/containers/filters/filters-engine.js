@@ -1,4 +1,5 @@
 import { subscribe, getState } from "../../store/filter-store.js";
+import { matchesFilter } from "../../../utils/filter-utils.js";
 import { initCompanyLocationFilter } from "./company-location.js";
 import { initCompanySizeFilter } from "./company-size.js";
 import {
@@ -29,13 +30,8 @@ export function applyFilters() {
     const loc = company.dataset.companyLocation || "";
     const size = company.dataset.companySize || "";
 
-    const matchLocation =
-      companyLocation.length === 0 ||
-      companyLocation.some((filter) => loc.toLowerCase().includes(filter.toLowerCase()));
-
-    const matchSize =
-      companySize.length === 0 ||
-      companySize.some((filter) => size.toLowerCase().includes(filter.toLowerCase()));
+    const matchLocation = matchesFilter(loc, companyLocation);
+    const matchSize = matchesFilter(size, companySize);
 
     const visible = matchLocation && matchSize;
     company.style.display = visible ? "block" : "none";
