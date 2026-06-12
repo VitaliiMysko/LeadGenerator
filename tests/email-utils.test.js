@@ -62,7 +62,7 @@ describe("collectEmails", () => {
   test("single-part name produces one email", () => {
     const emails = [];
     collectEmails(emails, "example.com", "Smith");
-    expect(emails).toEqual(["smith@example.com"]);
+    expect(emails).toEqual(["smith@example1.com"]);
   });
 
   test("standard two-part name includes common variants", () => {

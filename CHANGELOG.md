@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 - **GitHub Actions CI pipeline** (`.github/workflows/test.yml`): unit tests run automatically on every push to `master` and on every pull request targeting `master`
 - **Branch protection rule** on `master`: merging is blocked until the `test` CI check passes
 
+### Fixed
+
+- **Loading website animation**: dots now appear directly after the text without a gap
+
 ## [3.3.6] - 2026-06-10
 
 ### Added

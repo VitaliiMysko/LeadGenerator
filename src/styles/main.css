@@ -433,7 +433,7 @@ a:active {
 }
 .loading:not(.refresh-btn)::after {
   content: "";
-  display: inline-block;
+  display: inline;
   animation: dots 1.5s infinite;
 }
 .company-website.loading span,
@@ -463,6 +463,14 @@ a:active {
 }
 .company-website.loading span {
   flex: initial;
+}
+.company-website.loading::after {
+  display: none;
+}
+.company-website.loading span::after {
+  content: "";
+  display: inline;
+  animation: dots 1.5s infinite;
 }
 @keyframes dots {
   0% {
