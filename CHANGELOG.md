@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **Loading website animation**: dots now appear directly after the text without a gap
+- **Background company data fetching**: support parallel usage across multiple browser windows
 
 ## [3.3.6] - 2026-06-10
 

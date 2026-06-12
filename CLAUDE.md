@@ -54,7 +54,7 @@ The extension has two execution environments:
 - Handles all user interaction, rendering, and state
 - Makes **direct `fetch` calls** to external services (Cloudflare Worker backend) — do not route these through `background.js`
 
-### Background Service Worker (`src/scripts/worker/background.js`)
+### Background Service Worker (`src/scripts/workers/background.js`)
 - Used **only** for Chrome APIs requiring background context: `tabs` and `scripting`
 - Responsible for opening company pages in background tabs and injecting content scripts to extract company data
 - **Do not add HTTP requests here.** The MV3 service worker can be terminated mid-request, causing `null` responses via `sendMessage`. All network I/O belongs in the popup.
