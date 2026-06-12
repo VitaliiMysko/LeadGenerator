@@ -1,0 +1,93 @@
+/* ---------- TAB SELECTOR ---------- */
+.tab-selector {
+  position: relative;
+  width: 100%;
+  margin-bottom: 6px;
+}
+.tab-selector-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ddd;
+  cursor: pointer;
+}
+.tab-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #f4f4f4;
+  margin-top: 3px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  display: none;
+  overflow: hidden;
+  z-index: 1;
+}
+.tab-option {
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.tab-option:hover {
+  background: #f9f9f9;
+  border-left: 2px solid #ccc;
+  transition: background 0.5s ease;
+  padding-left: 6px;
+}
+.tab-option.active {
+  font-weight: 550;
+}
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid #333;
+}
+.tab-selector-trigger.open .arrow {
+  transform: rotate(180deg);
+}
+
+/* ---------- TABS ---------- */
+.tabs-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tabs-content {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+
+  scrollbar-gutter: stable;
+  padding-left: 3px;
+}
+.tab {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+}
+.tab.active {
+  display: flex;
+}
+.tab-item-block {
+  padding-bottom: 5px;
+}
+
+/* ---------- SCROLLBAR ---------- */
+.tabs-content::-webkit-scrollbar {
+  width: 3px;
+}
+.tabs-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tabs-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #66b2ff 0%, #007bff 100%);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+.tabs-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
+}

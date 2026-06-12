@@ -132,7 +132,14 @@ All external requests go through: [Cloudflare Worker](https://developers.cloudfl
 
 ### 2.5 Styles (`src/styles`)
 
-- `main.css` defines styles for the popup interface and interactive components
+The popup styles are split into focused files by domain:
+
+- `main.css` — global element resets (body, inputs, button base, links) and main layout containers
+- `buttons.css` — button groups, variants (secondary, progress), and get-counter widget
+- `form-fields.css` — draggable field blocks, icon buttons, alert toasts, confirm dialog, and validation states
+- `company-card.css` — accordion company card components, loading states, and website/domain editor
+- `tabs.css` — tab selector dropdown, tab show/hide, and custom scrollbar
+- `filters.css` — multi-select tags, single-select dropdown, and option styles
 
 ### 2.6 HTML Interface
 
@@ -293,7 +300,12 @@ src/
  │    └── worker/
  │         └── background.js           (service worker)
  ├── styles/
- │    └── main.css
+ │    ├── main.css          (global element resets and layout)
+ │    ├── buttons.css       (button groups and variants)
+ │    ├── form-fields.css   (draggable fields, alert, confirm dialog)
+ │    ├── company-card.css  (accordion card, loading states, domain editor)
+ │    ├── tabs.css          (tab selector, tabs, scrollbar)
+ │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
