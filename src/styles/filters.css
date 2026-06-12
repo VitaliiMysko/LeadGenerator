@@ -1,0 +1,79 @@
+.multi-select-tags {
+  position: relative;
+  border-radius: 6px;
+  padding: 5px;
+  margin-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  background: #fdfdfd;
+}
+.multi-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 80px;
+}
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tag {
+  background: #e6f0ff;
+  color: #0056b3;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tag-remove {
+  cursor: pointer;
+  font-weight: bold;
+}
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: none;
+  z-index: 10;
+}
+.multi-select-tags.open .dropdown {
+  display: block;
+}
+.single-select {
+  position: relative;
+  border-radius: 6px;
+  padding: 5px;
+  margin-top: 5px;
+  background: #fdfdfd;
+  box-sizing: border-box;
+}
+.single-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  box-sizing: border-box;
+}
+.single-select.open .dropdown {
+  display: block;
+}
+.option.selected {
+  color: #0056b3;
+  font-weight: 500;
+}
+.option {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.option:hover {
+  background: #f5f5f5;
+}

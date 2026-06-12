@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 10, 2026
+**Last updated**: June 12, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -132,7 +132,14 @@ All external requests go through: [Cloudflare Worker](https://developers.cloudfl
 
 ### 2.5 Styles (`src/styles`)
 
-- `main.css` defines styles for the popup interface and interactive components
+The popup styles are split into focused files by domain:
+
+- `main.css` — global element resets (body, inputs, button base, links) and main layout containers
+- `buttons.css` — button groups, variants (secondary, progress), and get-counter widget
+- `form-fields.css` — draggable field blocks, icon buttons, alert toasts, confirm dialog, and validation states
+- `company-card.css` — accordion company card components, loading states, and website/domain editor
+- `tabs.css` — tab selector dropdown, tab show/hide, and custom scrollbar
+- `filters.css` — multi-select tags, single-select dropdown, and option styles
 
 ### 2.6 HTML Interface
 
@@ -210,7 +217,7 @@ All stored data remains on the user's device.
 - Optional
 - Used to translate non-English job titles into English
 - Accessed via the Cloudflare Worker backend using a server-side API key — no client-side authentication required
-- Works identically in Chrome and Edge
+- Works identically in Chrome, Edge, Firefox
 
 ## 5. Security & Privacy Considerations
 
@@ -226,7 +233,11 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 
 ## 5. Project Structure
 
-```src/
+```
+.github/
+ └── workflows/
+      └── test.yml                      (GitHub Actions CI — runs npm test on push/PR to master)
+src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
  │    ├── config.js                    (MAX_SAVED_LEADS, getWorkerUrl)
@@ -289,12 +300,71 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
  │    └── worker/
  │         └── background.js           (service worker)
  ├── styles/
- │    └── main.css
+ │    ├── main.css          (global element resets and layout)
+ │    ├── buttons.css       (button groups and variants)
+ │    ├── form-fields.css   (draggable fields, alert, confirm dialog)
+ │    ├── company-card.css  (accordion card, loading states, domain editor)
+ │    ├── tabs.css          (tab selector, tabs, scrollbar)
+ │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
+      ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
+      ├── filter-utils.js              (matchesFilter — pure, tested)
+      ├── lead-utils.js                (isDuplicate — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
-## 6. Data Flow Summary
+## 6. Testing & CI/CD
+
+### Running tests locally
+
+```
+npm install   # once after cloning
+npm test
+```
+
+The project uses **Jest** with native ES module support.
+
+### Scope
+
+Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. They are extracted into `src/utils/` so they can be imported in Node.js without mocking the browser environment.
+
+| Test file | Module under test | What it covers |
+|---|---|---|
+| `tests/email-utils.test.js` | `src/utils/email-utils.js` | `prepareEmailName`, `collectEmails` |
+| `tests/email-validator.test.js` | `src/scripts/services/email-validator.js` | `parseVerifyResult` |
+| `tests/company-data.test.js` | `src/scripts/services/company-data.js` | `isValidDomain`, `getHostName`, `formatCompanySize` |
+| `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
+| `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
+| `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
+| `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
+| `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
+
+### What is not tested
+
+Content scripts, DOM manipulation, and `fetch`-based services are not unit-tested — they depend on a real browser environment and are verified manually by loading the extension.
+
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test (see `tests/filter-store.test.js`).
+
+### CI/CD pipeline
+
+The workflow is defined in `.github/workflows/test.yml` and runs on **GitHub Actions**.
+
+**Triggers:**
+- Every push to `master`
+- Every pull request targeting `master`
+
+**Steps:** checkout → Node.js 22 setup → `npm ci` → `npm test`
+
+**Branch protection:** the `master` branch has a classic protection rule that requires the `test` status check to pass before a PR can be merged. Direct pushes to `master` without a passing check are also blocked.
+
+```mermaid
+flowchart LR
+    PR[Pull Request] --> CI[GitHub Actions: npm test]
+    CI -- pass --> Merge[Merge allowed]
+    CI -- fail --> Block[Merge blocked]
+```
+
+## 7. Data Flow Summary
 
 1. User opens the popup
 
@@ -347,7 +417,7 @@ sequenceDiagram
     BG-->>UI: Result
 ```
 
-## 7. Permissions Summary
+## 8. Permissions Summary
 
 ```json
 "permissions": [
@@ -363,7 +433,7 @@ sequenceDiagram
 ]
 ```
 
-## 8. Extensibility Notes
+## 9. Extensibility Notes
 
 The modular directory structure allows easy scaling:
 
@@ -379,7 +449,7 @@ The modular directory structure allows easy scaling:
   - Add the new filter key to `filter-store.js` state and to `filters-engine.js`
 - The filter system is designed to support scalable multi-criteria filtering
 
-## 9. Background Script Usage Strategy
+## 10. Background Script Usage Strategy
 
 In the current architecture of the extension, the `background.js` (service worker) is **used selectively** and only for scenarios where it provides clear technical value.
 
@@ -451,15 +521,35 @@ Using direct fetch calls from the popup provides:
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
 
-### 9.6 Request Stability Improvements
+### 9.6 Request Stability — Per-Session Task Model
 
-The background communication layer has been improved to ensure more reliable data fetching:
+The background service worker tracks company-data fetch tasks using a **per-session model** to eliminate race conditions and support parallel usage across multiple browser windows.
 
-- Introduced better handling of asynchronous message flows
-- Reduced race conditions when multiple requests are triggered rapidly (e.g., switching between companies)
-- Improved resilience against message timeouts in Chrome's service worker environment
+#### How it works
 
-These improvements enhance overall data consistency and user experience without introducing additional complexity to the UI layer.
+- When a popup opens, `company-data.js` generates a `popupSessionId` (`crypto.randomUUID()`) that is stable for the lifetime of that popup window
+- Every `fetchLinkedinCompanyPage` message carries this `sessionId`
+- The background maintains a `sessionTasks` map (`Map<sessionId, { tabId, resolve, timeoutId, ... }>`) — at most one in-flight tab per popup window
+- When a new request arrives for a session that already has a tab in flight (e.g., the user switched companies), the old tab is immediately closed and its promise resolved with `null` before the new tab is created
+
+#### Parallel window support
+
+Because each window has a distinct `sessionId`, sessions are fully isolated: cancelling an in-flight request in window A has no effect on window B's tab.
+
+#### Timeout strategy
+
+Two timeouts are used in combination:
+
+| Timeout | Starts from | Duration | Purpose |
+|---|---|---|---|
+| Post-load | `status: complete` | 10 s | Gives the content script a full budget after the LinkedIn SPA finishes rendering |
+| Fallback | Tab creation | 30 s | Guards against `complete` never firing (e.g., blocked or crashed tab) |
+
+Previously the only timeout started at tab creation; on a slow connection the SPA could take several seconds to reach `complete`, leaving the content script fewer than 10 s to find the DOM element.
+
+#### Listener registration
+
+`chrome.tabs.onUpdated` and `chrome.runtime.onMessage` handlers are registered **once at service-worker startup** (module level), not inside each Promise constructor. Listeners route by looking up the sender's `tabId` in `sessionTasks`. This eliminates listener accumulation that occurred under rapid company switching in earlier versions.
 
 ### 9.7 Summary
 
@@ -467,7 +557,7 @@ The background script is **not a default communication layer**, but a **speciali
 
 > It should only be used when its capabilities are required. Otherwise, introducing it into the request flow may lead to unnecessary complexity, reduced reliability, and degraded user experience.
 
-## 10. Related Documents
+## 11. Related Documents
 
 - [`README.md`](../README.md) – Installation and usage instructions
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – Explains what data is collected and how it is handled

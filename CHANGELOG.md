@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.7] - 2026-06-10
+
+### Added
+
+- **Unit test suite**: Jest-based tests covering pure business logic
+- **GitHub Actions CI pipeline** (`.github/workflows/test.yml`): unit tests run automatically on every push to `master` and on every pull request targeting `master`
+- **Branch protection rule** on `master`: merging is blocked until the `test` CI check passes
+
+### Changed
+
+- **CSS refactoring**: split `main.css` (795 lines) into six focused stylesheets
+
+### Fixed
+
+- **Loading website animation**: dots now appear directly after the text without a gap
+- **Background company data fetching**: support parallel usage across multiple browser windows
+
 ## [3.3.6] - 2026-06-10
 
 ### Added

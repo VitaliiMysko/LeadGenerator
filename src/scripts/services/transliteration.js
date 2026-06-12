@@ -15,11 +15,11 @@ export async function transliterateElement(inputElement) {
   inputElement.setAttribute(`data-${inputElement.id}`, attributeValue);
 }
 
-function hasGermanLetters(text) {
+export function hasGermanLetters(text) {
   return /[äöüÄÖÜ]/.test(text);
 }
 
-function transliterateGermanLetters(text) {
+export function transliterateGermanLetters(text) {
   const map = {
     ä: "ae",
     ö: "oe",
