@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 10, 2026
+**Last updated**: June 12, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -521,15 +521,35 @@ Using direct fetch calls from the popup provides:
 - Simpler and more maintainable code
 - Improved user experience (fewer edge-case failures)
 
-### 9.6 Request Stability Improvements
+### 9.6 Request Stability — Per-Session Task Model
 
-The background communication layer has been improved to ensure more reliable data fetching:
+The background service worker tracks company-data fetch tasks using a **per-session model** to eliminate race conditions and support parallel usage across multiple browser windows.
 
-- Introduced better handling of asynchronous message flows
-- Reduced race conditions when multiple requests are triggered rapidly (e.g., switching between companies)
-- Improved resilience against message timeouts in Chrome's service worker environment
+#### How it works
 
-These improvements enhance overall data consistency and user experience without introducing additional complexity to the UI layer.
+- When a popup opens, `company-data.js` generates a `popupSessionId` (`crypto.randomUUID()`) that is stable for the lifetime of that popup window
+- Every `fetchLinkedinCompanyPage` message carries this `sessionId`
+- The background maintains a `sessionTasks` map (`Map<sessionId, { tabId, resolve, timeoutId, ... }>`) — at most one in-flight tab per popup window
+- When a new request arrives for a session that already has a tab in flight (e.g., the user switched companies), the old tab is immediately closed and its promise resolved with `null` before the new tab is created
+
+#### Parallel window support
+
+Because each window has a distinct `sessionId`, sessions are fully isolated: cancelling an in-flight request in window A has no effect on window B's tab.
+
+#### Timeout strategy
+
+Two timeouts are used in combination:
+
+| Timeout | Starts from | Duration | Purpose |
+|---|---|---|---|
+| Post-load | `status: complete` | 10 s | Gives the content script a full budget after the LinkedIn SPA finishes rendering |
+| Fallback | Tab creation | 30 s | Guards against `complete` never firing (e.g., blocked or crashed tab) |
+
+Previously the only timeout started at tab creation; on a slow connection the SPA could take several seconds to reach `complete`, leaving the content script fewer than 10 s to find the DOM element.
+
+#### Listener registration
+
+`chrome.tabs.onUpdated` and `chrome.runtime.onMessage` handlers are registered **once at service-worker startup** (module level), not inside each Promise constructor. Listeners route by looking up the sender's `tabId` in `sessionTasks`. This eliminates listener accumulation that occurred under rapid company switching in earlier versions.
 
 ### 9.7 Summary
 
