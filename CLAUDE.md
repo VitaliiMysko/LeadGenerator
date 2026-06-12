@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development
 
-This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build system, transpiler, or package manager.
+This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build system or transpiler.
 
 **To load the extension locally:**
 1. Open `chrome://extensions/`
@@ -13,7 +13,28 @@ This is a **vanilla JavaScript Chrome Extension (Manifest V3)** with no build sy
 
 **To apply changes:** click the reload icon on the extension card in `chrome://extensions/`, then reopen the popup.
 
-There are no lint, test, or build commands — the source is deployed as-is.
+There are no lint or build commands — the source is deployed as-is.
+
+### Tests
+
+The project uses **Jest** for unit testing pure logic. Install once after cloning, then run:
+
+```
+npm install
+npm test
+```
+
+Tests live in `tests/` and import from `src/utils/` (pure utility modules with no DOM or Chrome API dependencies).
+
+**When to add a test:** any new pure function (no DOM, no `chrome.*`, no `fetch`) should have a test. Extract it to `src/utils/` first, import it back in the original module, then test the utility directly.
+
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested: mock the `chrome-storage.js` wrapper with `jest.unstable_mockModule` before dynamically importing the module under test (see `tests/filter-store.test.js` as the reference pattern).
+
+**What not to test:** content scripts, DOM manipulation, and `fetch`-based services — these require a real browser environment and are verified manually.
+
+### CI/CD
+
+Tests run automatically on GitHub Actions on every push to `master` and every PR targeting `master` (`.github/workflows/test.yml`). The `master` branch is protected — a PR cannot be merged until the `test` check passes. Never bypass this check.
 
 ## Documentation
 
@@ -33,7 +54,7 @@ The extension has two execution environments:
 - Handles all user interaction, rendering, and state
 - Makes **direct `fetch` calls** to external services (Cloudflare Worker backend) — do not route these through `background.js`
 
-### Background Service Worker (`src/scripts/worker/background.js`)
+### Background Service Worker (`src/scripts/workers/background.js`)
 - Used **only** for Chrome APIs requiring background context: `tabs` and `scripting`
 - Responsible for opening company pages in background tabs and injecting content scripts to extract company data
 - **Do not add HTTP requests here.** The MV3 service worker can be terminated mid-request, causing `null` responses via `sendMessage`. All network I/O belongs in the popup.

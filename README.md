@@ -202,6 +202,36 @@ Benefits:
 - Improved stability under load
 - Consistent behavior across environments
 
+## Development & Testing
+
+### Prerequisites
+
+Install dev dependencies (Jest) once after cloning:
+
+```
+npm install
+```
+
+### Running tests
+
+```
+npm test
+```
+
+Jest runs all files under `tests/`. The suite covers pure business logic only — no DOM, no Chrome APIs, no network calls.
+
+### CI/CD
+
+A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite automatically on every push to `master` and on every pull request targeting `master`.
+
+The `master` branch is protected: a PR cannot be merged until the `test` check passes. This is enforced via a classic branch protection rule in the repository settings.
+
+### Adding new tests
+
+Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and should have a corresponding file in `tests/`. Logic that is tightly coupled to DOM or Chrome APIs is not unit-tested — verify it manually in the browser.
+
+Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test.
+
 ## Changelog
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
@@ -308,7 +338,6 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 - **activeTab** - access current page
 - **scripting** - inject scripts
-- **identity** - Google authentication
 - **tabs** - tab interaction
 - **storage** - store user preferences, filter state, and user-saved lead data locally
 
