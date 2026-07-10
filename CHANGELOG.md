@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.8] - 2026-07-10
+
+### Added
+
+- **Store company id setting**: new "Leads data" settings block with a "Store company id" toggle
+- **Company id** field: derived from the active company's LinkedIn link and saved with each lead; appended as the last column when copying saved leads to the clipboard, if the setting is enabled
+
 ## [3.3.7] - 2026-06-10
 
 ### Added

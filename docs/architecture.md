@@ -178,7 +178,9 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
 
 ### 2.8 Local Storage (`chrome.storage.local`)
 
-Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications.
+Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry, company id). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications; when the **Store company id** setting is enabled, the company id is appended as an extra last column.
+
+Company id is derived from the active company's LinkedIn link (`data-company-id`, extracted via `extractCompanyId` in `src/utils/company-id.js`) and held in a hidden `#company-id` field, populated whenever a company header is clicked (mirrors how country/industry are populated). It is not part of the draggable field order — it is always appended after it.
 
 ### 2.9 Persistence Strategy
 
@@ -186,7 +188,7 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 
 - `chrome.storage.sync`
   - User preferences
-  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country)
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country, store-company-id toggle)
   - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
   - Filter state
 
@@ -275,6 +277,7 @@ src/
  │    │         ├── country-by-default.js
  │    │         ├── drag-and-drop.js
  │    │         ├── field-order.js
+ │    │         ├── store-company-id.js
  │    │         └── transliteration.js
  │    ├── features/
  │    │    ├── drag-and-drop.js          (drag-and-drop field reordering)
@@ -307,6 +310,7 @@ src/
  │    ├── tabs.css          (tab selector, tabs, scrollbar)
  │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
+      ├── company-id.js                (extractCompanyId — pure, tested)
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
@@ -335,6 +339,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/company-data.test.js` | `src/scripts/services/company-data.js` | `isValidDomain`, `getHostName`, `formatCompanySize` |
 | `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
+| `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
 | `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |

@@ -10,12 +10,13 @@ import {
   getCompanyNameElement,
   getCompanyCountryElement,
   getCompanyIndustryElement,
+  getCompanyIdElement,
   getDataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
 import { MAX_SAVED_LEADS } from "../../../constants/config.js";
-import { localGet, localSet } from "../../utils/chrome-storage.js";
+import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 
 const STORAGE_KEY = "saved_leads";
@@ -133,6 +134,7 @@ function collectCurrentData() {
     companyName: getCompanyNameElement().value,
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
+    companyId: getCompanyIdElement().value,
   };
 }
 
@@ -144,9 +146,13 @@ function getFieldOrder() {
 
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
-  const rows = leads.map((lead) =>
-    fieldOrder.map((id) => lead[INPUT_ID_TO_LEAD_KEY[id]] || "").join("\t"),
-  );
+  const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
+
+  const rows = leads.map((lead) => {
+    const columns = fieldOrder.map((id) => lead[INPUT_ID_TO_LEAD_KEY[id]] || "");
+    if (storeCompanyId) columns.push(lead.companyId || "");
+    return columns.join("\t");
+  });
 
   await navigator.clipboard.writeText(rows.join("\n"));
   showAlert("Copied", "success");
