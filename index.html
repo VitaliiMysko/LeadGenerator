@@ -104,6 +104,7 @@
             <input type="text" id="company-industry" value="" />
           </div>
         </div>
+        <input type="hidden" id="company-id" value="" />
         <div id="alert" class="alert"></div>
         <div id="confirm-dialog" class="confirm-overlay" style="display:none">
           <div class="confirm-box">
@@ -195,6 +196,16 @@
                   placeholder="Type or select country..."
                 />
                 <div class="dropdown"></div>
+              </div>
+            </div>
+            <div class="settings-section">
+              <div class="settings-section-title">Leads data</div>
+              <div class="tab-item-block">
+                <input
+                  id="store-company-id-settings"
+                  type="checkbox"
+                  title="Include company id as the last column when copying saved leads to the clipboard"
+                />Store company id
               </div>
             </div>
           </div>

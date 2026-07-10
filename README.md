@@ -30,7 +30,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the 99-item limit is reached. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last column. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -120,6 +120,12 @@ Available option:
   - The selected country is used as a fallback for the **Country** field when the company's location cannot be mapped to a known country
   - State and selected country persisted via Chrome `storage`
 
+**Leads data** (separate settings block):
+
+- **Store company id Toggle**
+  - When enabled, the **Get** button appends the company id as an extra, last column when copying saved leads to the clipboard
+  - State persisted via Chrome `storage`
+
 ## Data Fields
 
 ### Left Panel
@@ -132,6 +138,7 @@ Available option:
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location
 - **Industry** - company indutry
+- **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output only when **Store company id** is enabled in Settings
 
 All fields are editable before copying.
 
@@ -295,6 +302,7 @@ After installing the extension, configure it for optimal usage:
 3. **Settings (via Settings Tab)**
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
+   - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
 
 4. **Filters**
