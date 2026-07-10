@@ -3,6 +3,7 @@ import {
   getCompanyNameElement,
   getCompanyIndustryElement,
   getCompanyCountryElement,
+  getCompanyIdElement,
   getEmailElement,
   getTabExperienceElement,
   getOpenCompanyLinkedinBtnElement,
@@ -14,6 +15,7 @@ import { formatCompanySize } from "../../services/company-data.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
+import { extractCompanyId } from "../../../utils/company-id.js";
 
 export function createCompanyList(experience) {
   getTabExperienceElement().innerHTML = "";
@@ -44,6 +46,7 @@ function getCompanyBlock(company) {
   companyBlock.setAttribute("data-company-size-init", extraCompanyData.companySize);
   companyBlock.setAttribute("data-company-revenue", extraCompanyData.revenue);
   companyBlock.setAttribute("data-company-link", company.companyLink || "");
+  companyBlock.setAttribute("data-company-id", extractCompanyId(company.companyLink));
 
   const header = getCompanyHeaderElement(company);
   const details = getCompanyDetailsElement(company);
@@ -76,6 +79,7 @@ function getCompanyBlock(company) {
     getCompanyIndustryElement().value = companyBlock.getAttribute(
       "data-company-industry",
     );
+    getCompanyIdElement().value = companyBlock.getAttribute("data-company-id");
     setLinkedInBtn(companyBlock.getAttribute("data-company-link"));
     updateSaveBtnState();
   });

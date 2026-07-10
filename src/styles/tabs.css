@@ -75,6 +75,15 @@
 .tab-item-block {
   padding-bottom: 5px;
 }
+.settings-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+}
+.settings-section-title {
+  font-weight: 600;
+  padding-bottom: 5px;
+}
 
 /* ---------- SCROLLBAR ---------- */
 .tabs-content::-webkit-scrollbar {

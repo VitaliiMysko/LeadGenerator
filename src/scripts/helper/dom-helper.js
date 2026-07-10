@@ -26,6 +26,10 @@ export function getCompanyCountryElement() {
   return document.querySelector("#company-country");
 }
 
+export function getCompanyIdElement() {
+  return document.getElementById("company-id");
+}
+
 export function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }
