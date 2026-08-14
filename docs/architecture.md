@@ -173,9 +173,10 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
   - `.company-details` – hidden by default; revealed by adding `.active` to the parent `.company-item`; contains website, industry, location, company size, and members count
 - Only one `.company-item` can hold `.active` at a time; clicking a header removes `.active` from all siblings and adds it to the clicked item
 - **Company data loading** is handled by `company-details.js`:
-  - Uses a `companyDetailsCache` Map (keyed by company URL) to avoid redundant network fetches
+  - `company-data.js` keeps an in-memory `companyDetailsCache` Map (keyed by company URL, popup-lifetime only) to avoid redundant fetches within the same popup session
   - Marks a `.company-website` block with `data-initialized="true"` once data is loaded to skip re-fetching on re-expand
-- **Refresh button (↻)** in the active header: calls `refreshCompanyDetails(item)`, which clears the cache entry, resets `data-initialized`, restores original attribute values, and re-runs the fetch pipeline
+  - Backed underneath by a **persistent company cache** (`company-cache-store.js`) — see [2.8.1](#281-persistent-company-data-cache) — so data also survives across popup reopens
+- **Refresh button (↻)** in the active header: calls `refreshCompanyDetails(item)`, which clears both the in-memory cache entry and the persistent cache entry for that company, resets `data-initialized`, restores original attribute values, and re-runs the fetch pipeline
 
 ### 2.8 Local Storage (`chrome.storage.local`)
 
@@ -193,6 +194,28 @@ Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, s
 
 Company id is derived from the active company's LinkedIn link (`data-company-id`, extracted via `extractCompanyId` in `src/utils/company-id.js`) and held in a hidden `#company-id` field, populated whenever a company header is clicked (mirrors how country/industry are populated). It is not part of the draggable field order — it is always appended after it.
 
+#### 2.8.1 Persistent Company Data Cache
+
+Company detail lookups (website, location, industry, size, members) require opening a hidden background tab and scraping the company's LinkedIn `/about` page — an expensive operation. Previously this was cached only in-memory (`companyDetailsCache` Map in `company-data.js`), so the same company was re-fetched from scratch every time the popup was reopened.
+
+- `company-cache-store.js` (`src/scripts/store/`) persists the **last 10 companies** whose details were **successfully** fetched, in `chrome.storage.local` under the key `cachedCompanies`
+- Entries are keyed by **company id** (`extractCompanyId(companyLink)`, the numeric id from the LinkedIn company URL) — the same key already used for saved leads and the hidden `#company-id` field
+- Each entry is `{ companyId, data }`, where `data` is the full company details object (`website`, `location`, `industry`, `size`, `members`, `status`, `ok`)
+- List semantics (most-recently-used first, capped at `MAX_CACHED_COMPANIES` = 10 from `src/constants/config.js`) are implemented as pure, unit-tested functions in `src/utils/company-cache.js` (`upsertCompanyCacheEntry`, `findCompanyCacheEntry`, `removeCompanyCacheEntry`); `company-cache-store.js` is a thin `chrome.storage.local` wrapper around them
+- `getCompanyData()` in `company-data.js` checks, in order: (1) the in-memory Map (same popup session), (2) the persistent cache by company id, (3) a live LinkedIn fetch. A live fetch that completes successfully is written back into the persistent cache
+- The refresh button (↻) removes the persistent entry for that company (via `clearCompanyCache`) in addition to the in-memory one, forcing a live re-fetch on demand
+
+```mermaid
+flowchart LR
+    Request[getCompanyData] --> MemCache{In-memory Map hit?}
+    MemCache -- yes --> Return[Return cached details]
+    MemCache -- no --> PersistCache{Persistent cache hit by company id?}
+    PersistCache -- yes --> Return
+    PersistCache -- no --> Fetch[Fetch LinkedIn company page via background tab]
+    Fetch -- success --> Save[Save to persistent cache] --> Return
+    Fetch -- failure --> Return
+```
+
 ### 2.9 Persistence Strategy
 
 The extension uses Chrome Storage APIs for lightweight client-side persistence:
@@ -206,6 +229,7 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 - `chrome.storage.local`
   - Saved leads
   - Temporary structured lead datasets
+  - Persistent company data cache (last 10 successfully fetched companies, keyed by company id)
 
 No server-side persistence is used.
 All stored data remains on the user's device.
@@ -253,7 +277,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
- │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, getWorkerUrl)
+ │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, MAX_CACHED_COMPANIES, getWorkerUrl)
  │    ├── countries.js                 (EUROPEAN_COUNTRIES array)
  │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
@@ -309,6 +333,7 @@ src/
  │    │    ├── translation.js          (Google Translate integration)
  │    │    └── transliteration.js      (Cyrillic/German name handling)
  │    ├── store/
+ │    │    ├── company-cache-store.js  (chrome.storage.local-backed cache of last 10 fetched companies)
  │    │    ├── filter-store.js         (pub/sub state manager)
  │    │    └── max-leads-store.js      (pub/sub state manager for max saved leads limit)
  │    ├── utils/
@@ -323,6 +348,7 @@ src/
  │    ├── tabs.css          (tab selector, tabs, scrollbar)
  │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
+      ├── company-cache.js             (upsertCompanyCacheEntry, findCompanyCacheEntry, removeCompanyCacheEntry — pure, tested)
       ├── company-id.js                (extractCompanyId — pure, tested)
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
@@ -357,6 +383,8 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
 | `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
 | `tests/max-leads-store.test.js` | `src/scripts/store/max-leads-store.js` | `subscribe`/unsubscribe, `setMaxSavedLeads` (state, storage, listeners), `loadMaxSavedLeads` (default fallback); Chrome Storage mocked via `jest.unstable_mockModule` |
+| `tests/company-cache.test.js` | `src/utils/company-cache.js` | `upsertCompanyCacheEntry` (insert, move-to-front, MRU eviction at max size), `findCompanyCacheEntry`, `removeCompanyCacheEntry` |
+| `tests/company-cache-store.test.js` | `src/scripts/store/company-cache-store.js` | `getCachedCompany`, `setCachedCompany` (persists, caps at 10), `removeCachedCompany`; Chrome Storage mocked via `jest.unstable_mockModule` |
 
 ### What is not tested
 

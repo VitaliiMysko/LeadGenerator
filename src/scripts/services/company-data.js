@@ -1,4 +1,6 @@
 import { getWorkerUrl } from "../../constants/config.js";
+import { extractCompanyId } from "../../utils/company-id.js";
+import { getCachedCompany, setCachedCompany, removeCachedCompany } from "../store/company-cache-store.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -18,11 +20,25 @@ const companyDetailsCache = new Map();
 
 export function clearCompanyCache(companyLink) {
   companyDetailsCache.delete(companyLink);
+
+  const companyId = extractCompanyId(companyLink);
+  if (companyId) {
+    removeCachedCompany(companyId).catch((error) => {
+      console.error("Error clearing cached company data:", error);
+    });
+  }
 }
 
 export async function getCompanyData(companyLink, location, industry, size) {
   if (companyDetailsCache.has(companyLink)) {
     return companyDetailsCache.get(companyLink);
+  }
+
+  const companyId = extractCompanyId(companyLink);
+  const cachedDetails = companyId ? await getCachedCompany(companyId) : undefined;
+  if (cachedDetails) {
+    companyDetailsCache.set(companyLink, cachedDetails);
+    return cachedDetails;
   }
 
   const companyDetails = {
@@ -57,6 +73,10 @@ export async function getCompanyData(companyLink, location, industry, size) {
         const websiteState = await getWebsiteState(response.website);
         companyDetails.status = websiteState.status;
         companyDetails.ok = websiteState.ok;
+
+        if (companyId) {
+          await setCachedCompany(companyId, companyDetails);
+        }
       } else if (requestId !== currentRequestId) {
         companyDetails.completeRequest = false;
         return companyDetails;

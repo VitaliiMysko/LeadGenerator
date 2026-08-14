@@ -73,6 +73,8 @@ The extension has two execution environments:
 
 **Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (email is the unique key). The max item count is user-configurable via the "Max saved leads" setting (`src/scripts/containers/settings/max-saved-leads.js`, 1-9999, default 99); lowering it below the current saved count prompts for confirmation before deleting the oldest leads. The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
 
+**Persistent company data cache:** `src/scripts/store/company-cache-store.js` caches the last `MAX_CACHED_COMPANIES` (10, from `src/constants/config.js`) companies whose details were successfully fetched from their LinkedIn page, in `chrome.storage.local` key `cachedCompanies`, keyed by company id (`extractCompanyId(companyLink)` from `src/utils/company-id.js`). List/eviction logic is a pure, unit-tested helper in `src/utils/company-cache.js` (`upsertCompanyCacheEntry`, `findCompanyCacheEntry`, `removeCompanyCacheEntry`). `company-data.js`'s `getCompanyData()` checks this persistent cache (after its popup-lifetime in-memory Map) before opening a background tab to re-scrape a company page, so the same company isn't re-fetched across popup sessions. The refresh button (↻) clears a company's persistent cache entry to force a live re-fetch.
+
 **New content scripts** go in `src/content-scripts/` and must be registered in `manifest.json` under `content_scripts`.
 
 ## External Services
@@ -89,4 +91,4 @@ All sensitive operations route through the Cloudflare Worker backend (URL in `ma
 3. Popup sends message to `background.js` to open company pages in background tabs
 4. Background injects content scripts → extracts company data → returns to popup
 5. Popup displays data; user can filter, translate, edit, generate/validate email, then copy
-6. No extracted data is ever persisted — it lives only in popup memory and clipboard
+6. No lead data is ever persisted automatically — it lives only in popup memory and clipboard unless the user explicitly clicks Save. Fetched company details (website, location, industry, size, members) are the one exception: they are cached in `chrome.storage.local` (last 10 companies, keyed by company id) purely to avoid redundant re-fetches — see "Persistent company data cache" above
