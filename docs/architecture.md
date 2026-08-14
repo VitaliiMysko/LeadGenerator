@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: June 12, 2026
+**Last updated**: August 14, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -60,9 +60,10 @@ Handles user-interaction logic related to core actions:
 - `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
-  - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
-  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill; column order reflects the current left-panel field order at the time of copying
+  - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; disabled when the configured max-saved-leads limit is reached; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
+  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill relative to the configured limit; column order reflects the current left-panel field order at the time of copying
   - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
+  - Subscribes to `max-leads-store.js` so the counter, progress bar, and Save button state react immediately when the max-saved-leads setting changes
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -178,7 +179,17 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
 
 ### 2.8 Local Storage (`chrome.storage.local`)
 
-Used for saved leads (key: `saved_leads`). Holds a list of up to 99 lead objects (name, surname, job position, link, email, company name, country, industry, company id). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications; when the **Store company id** setting is enabled, the company id is appended as an extra last column.
+Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, surname, job position, link, email, company name, country, industry, company id), capped at a user-configurable limit (default 99, adjustable up to 9999 via the **Max saved leads** setting). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications; when the **Store company id** setting is enabled, the company id is appended as an extra last column.
+
+#### Max Saved Leads Setting
+
+- `max-leads-store.js` (`src/scripts/store/`) — pub/sub state manager for the configured limit (`maxSavedLeads` key in `chrome.storage.sync`, default 99, hard cap 9999), mirroring `filter-store.js`'s pattern (`state`, `subscribe`, `notify`)
+- `max-saved-leads.js` (`src/scripts/containers/settings/`) — wires the "Max saved leads" numeric field in the Settings tab:
+  - Strips non-digit characters as the user types, capped to 4 characters
+  - On blur, validates the value is an integer between 1 and 9999; invalid input is rejected and reverted, with an alert shown
+  - If the new limit is lower than the current number of saved leads, shows a confirmation dialog before proceeding; on confirmation, the oldest leads (first added, i.e. the start of the `saved_leads` array) are removed to fit the new limit; declining leaves both the stored leads and the setting unchanged
+  - Valid changes are persisted automatically on blur — no explicit save action required
+- `storage-actions.js` subscribes to `max-leads-store.js` to keep the Save button state, leads counter, and progress bar in sync whenever the limit changes
 
 Company id is derived from the active company's LinkedIn link (`data-company-id`, extracted via `extractCompanyId` in `src/utils/company-id.js`) and held in a hidden `#company-id` field, populated whenever a company header is clicked (mirrors how country/industry are populated). It is not part of the draggable field order — it is always appended after it.
 
@@ -188,7 +199,7 @@ The extension uses Chrome Storage APIs for lightweight client-side persistence:
 
 - `chrome.storage.sync`
   - User preferences
-  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country, store-company-id toggle)
+  - UI settings (drag-and-drop toggle, remember field order toggle, transliteration toggle, country-by-default toggle and selected country, store-company-id toggle, max-saved-leads limit)
   - Field order (`fieldOrder` key — array of input IDs representing left-panel field sequence)
   - Filter state
 
@@ -242,7 +253,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
- │    ├── config.js                    (MAX_SAVED_LEADS, getWorkerUrl)
+ │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, getWorkerUrl)
  │    ├── countries.js                 (EUROPEAN_COUNTRIES array)
  │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
@@ -277,6 +288,7 @@ src/
  │    │         ├── country-by-default.js
  │    │         ├── drag-and-drop.js
  │    │         ├── field-order.js
+ │    │         ├── max-saved-leads.js
  │    │         ├── store-company-id.js
  │    │         └── transliteration.js
  │    ├── features/
@@ -297,7 +309,8 @@ src/
  │    │    ├── translation.js          (Google Translate integration)
  │    │    └── transliteration.js      (Cyrillic/German name handling)
  │    ├── store/
- │    │    └── filter-store.js         (pub/sub state manager)
+ │    │    ├── filter-store.js         (pub/sub state manager)
+ │    │    └── max-leads-store.js      (pub/sub state manager for max saved leads limit)
  │    ├── utils/
  │    │    └── chrome-storage.js       (syncGet, syncSet, localGet, localSet)
  │    └── worker/
@@ -343,6 +356,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
 | `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
+| `tests/max-leads-store.test.js` | `src/scripts/store/max-leads-store.js` | `subscribe`/unsubscribe, `setMaxSavedLeads` (state, storage, listeners), `loadMaxSavedLeads` (default fallback); Chrome Storage mocked via `jest.unstable_mockModule` |
 
 ### What is not tested
 

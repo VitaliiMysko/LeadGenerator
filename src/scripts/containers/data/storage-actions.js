@@ -15,9 +15,13 @@ import {
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
-import { MAX_SAVED_LEADS } from "../../../constants/config.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
+import {
+  getMaxSavedLeads,
+  loadMaxSavedLeads,
+  subscribe as subscribeMaxSavedLeads,
+} from "../../store/max-leads-store.js";
 
 const STORAGE_KEY = "saved_leads";
 
@@ -35,11 +39,17 @@ const INPUT_ID_TO_LEAD_KEY = {
 let currentCount = 0;
 
 (async () => {
+  await loadMaxSavedLeads();
   const leads = await loadLeads();
   currentCount = leads.length;
-  getStorageLeadsBtnElement().querySelector(".get-counter-max").textContent = MAX_SAVED_LEADS;
   updateUI();
 })();
+
+subscribeMaxSavedLeads(async () => {
+  const leads = await loadLeads();
+  currentCount = leads.length;
+  updateUI();
+});
 
 [
   getFirstNameElement,
@@ -53,7 +63,7 @@ let currentCount = 0;
 ].forEach((getter) => getter().addEventListener("input", updateSaveBtnState));
 
 getSaveBtnElement().addEventListener("click", async () => {
-  if (isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS) return;
+  if (isAllFieldsEmpty() || currentCount >= getMaxSavedLeads()) return;
 
   const leads = await loadLeads();
   const newLead = collectCurrentData();
@@ -89,9 +99,11 @@ getCleanBtnElement().addEventListener("click", async () => {
 });
 
 function updateUI(animate = false) {
+  const max = getMaxSavedLeads();
   const storageLeadsBtnElement = getStorageLeadsBtnElement();
-  const pct = (currentCount / MAX_SAVED_LEADS) * 100;
+  const pct = (currentCount / max) * 100;
   storageLeadsBtnElement.style.setProperty("--fill-pct", `${pct}%`);
+  storageLeadsBtnElement.querySelector(".get-counter-max").textContent = max;
   const counterEl = storageLeadsBtnElement.querySelector(".get-counter-current");
   counterEl.textContent = currentCount;
   if (animate) {
@@ -121,7 +133,7 @@ function isAllFieldsEmpty() {
 }
 
 export function updateSaveBtnState() {
-  getSaveBtnElement().disabled = isAllFieldsEmpty() || currentCount >= MAX_SAVED_LEADS;
+  getSaveBtnElement().disabled = isAllFieldsEmpty() || currentCount >= getMaxSavedLeads();
 }
 
 function collectCurrentData() {
