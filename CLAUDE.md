@@ -63,13 +63,15 @@ The extension has two execution environments:
 
 **Filter state (pub/sub):** `src/scripts/store/filter-store.js` is a mini state manager with `state`, `subscribe`, and `notify`. Filter UI components subscribe to it and re-render reactively. Filter state is persisted to Chrome Storage and restored on load.
 
+**Max saved leads (pub/sub):** `src/scripts/store/max-leads-store.js` follows the same `state`/`subscribe`/`notify` pattern as `filter-store.js`, holding the user-configurable max-saved-leads limit (`chrome.storage.sync` key `maxSavedLeads`, default 99, hard cap 9999 from `MAX_SAVED_LEADS_LIMIT` in `src/constants/config.js`). `storage-actions.js` subscribes to it to keep the Save button, counter, and progress bar in sync when the limit changes.
+
 **Tab system:** The right panel uses a show/hide pattern — all tab contents are in the DOM at once, toggled visible. Avoid full re-renders when switching tabs.
 
 **New filters** go in `src/scripts/containers/filters/` using the existing pattern: a UI module that reads/writes through `filter-store.js`. Filters combine with AND logic.
 
 **New button/action logic** goes in `src/scripts/containers/data/`.
 
-**Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (max 99 items, email is the unique key). The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
+**Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (email is the unique key). The max item count is user-configurable via the "Max saved leads" setting (`src/scripts/containers/settings/max-saved-leads.js`, 1-9999, default 99); lowering it below the current saved count prompts for confirmation before deleting the oldest leads. The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
 
 **New content scripts** go in `src/content-scripts/` and must be registered in `manifest.json` under `content_scripts`.
 
