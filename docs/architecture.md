@@ -31,6 +31,15 @@ The extension is composed of modular JavaScript files, grouped logically into di
 - Do **not perform external network requests**
 - Examples: `lead.js`, `lead-experience.js`
 
+#### 2.1.1 Name extraction and cleanup (`lead.js`)
+
+`lead.js`'s `handleFullName()` cleans up the LinkedIn heading's raw text before splitting it into first/second name (`getFirstName`/`getSecondName`):
+
+- Cyrillic names (`\p{Script=Cyrillic}` test) skip cleanup entirely and are only whitespace-normalized
+- Otherwise: strips any leading non-letter characters (badges, stray punctuation), then strips a leading `Dr.`/`Prof.`/etc. title, drops anything after a comma (e.g. trailing credentials), and re-capitalizes each word — respecting Dutch surname particles (`van`, `der`, `den`, `de`, kept lowercase) and the `Mc`/`Mac` prefix (capital letter after it is preserved)
+- Both the leading-strip and the title-strip lookahead use the Unicode `\p{L}` ("any letter") property (with the `u` regex flag) rather than a hand-picked character range, so names are recognized correctly regardless of script or diacritic — a narrower explicit range (e.g. only Latin-1 + Latin Extended-A) would incorrectly treat a name's first letter as "junk to strip" whenever that letter fell just outside the chosen range (this previously happened for some diacritic letters, e.g. Romanian "Ș")
+- `getSecondName()` additionally capitalizes the letter following an apostrophe (e.g. `O'brien` → `O'Brien`), also letter-class-aware for the same reason
+
 ### 2.2 Extension Scripts (`src/scripts`)
 
 Contain all logic related to:

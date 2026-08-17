@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 - **Refresh button required two clicks to actually re-fetch**: clearing the cached entry before refreshing was fire-and-forget, so the very next cache lookup could race ahead and still read the stale entry, silently returning cached data instead of fetching. The cache clear is now awaited before refreshing, so the first click always triggers a live re-fetch
 - **"No website found" placeholder no longer needs to be manually deleted**: clicking the edit icon when the website shows the "No website found" placeholder now clears it automatically, so the user can type the real domain straight away instead of deleting the placeholder text first
+- **Names and surnames with certain diacritic letters were extracted incomplete**: the extraction logic only recognized letters in a hand-picked Latin range, so a name whose first letter fell just outside it (e.g. Romanian "Ș") had that letter silently dropped. Name cleanup now recognizes any Unicode letter, so names and surnames in any script or with any diacritic are extracted in full
 
 ## [3.3.8] - 2026-07-10
 
