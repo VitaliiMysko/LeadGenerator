@@ -178,6 +178,7 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
   - Backed underneath by a **persistent company cache** (`company-cache-store.js`) — see [2.8.1](#281-persistent-company-data-cache) — so data also survives across popup reopens
   - The company's LinkedIn link, used as the cache key, is read from the `.company-item`'s `data-company-link` attribute (set once in `actual-experience.js`) rather than re-querying the DOM for an `<a>` tag — the item can contain more than one anchor (the LinkedIn link in the header, the website link once rendered), so relying on `data-company-link` avoids accidentally picking up the wrong one
 - **Refresh button (↻)** in the active header: calls `refreshCompanyDetails(item)`, which **awaits** clearing both the in-memory cache entry and the persistent cache entry for that company before resetting `data-initialized`, restoring original attribute values, and re-running the fetch pipeline — clearing the persistent entry must complete before the subsequent cache lookup runs, otherwise a still-in-flight removal can lose the race and the lookup reads the stale entry (see [2.8.1](#281-persistent-company-data-cache))
+- **Inline website editing** (`website-domain-editor.js`'s `editWebsiteDomain`, wired up in `company-details.js`): clicking the edit icon makes the website `<span>` `contentEditable`. If its text is currently the `NO_WEBSITE_FOUND_TEXT` placeholder ("No website found", from `src/constants/config.js`) — passed in as the `placeholderValue` option — it is cleared as editing starts, so the user types the real domain straight away instead of first deleting the placeholder. Cancelling (Escape/Tab, or leaving it empty) restores the original value, which `editWebsiteDomain` captured before clearing it
 
 ### 2.8 Local Storage (`chrome.storage.local`)
 
@@ -294,7 +295,7 @@ For more, see [PRIVACY_POLICY.md](../PRIVACY_POLICY.md)
 src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
- │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, MAX_CACHED_COMPANIES, getWorkerUrl)
+ │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, MAX_CACHED_COMPANIES, NO_WEBSITE_FOUND_TEXT, getWorkerUrl)
  │    ├── countries.js                 (EUROPEAN_COUNTRIES array)
  │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
@@ -334,7 +335,7 @@ src/
  │    │         └── transliteration.js
  │    ├── features/
  │    │    ├── drag-and-drop.js          (drag-and-drop field reordering)
- │    │    └── website-domain-editor.js  (inline contentEditable domain editing)
+ │    │    └── website-domain-editor.js  (inline contentEditable domain editing; clears the "No website found" placeholder when editing starts)
  │    ├── helper/
  │    │    ├── dom-action.js            (copy, validation, text effects)
  │    │    ├── dom-helper.js            (DOM getter functions)

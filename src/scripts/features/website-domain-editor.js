@@ -16,7 +16,7 @@ export function getEditWebsiteDomainElement() {
   return wrapper;
 }
 
-export function editWebsiteDomain(element, controlEditElement, { onSave } = {}) {
+export function editWebsiteDomain(element, controlEditElement, { onSave, placeholderValue } = {}) {
   if (!(element instanceof HTMLElement)) return;
 
   const iconElement = controlEditElement._icon;
@@ -39,11 +39,15 @@ export function editWebsiteDomain(element, controlEditElement, { onSave } = {}) 
 
   const startEditing = () => {
     if (isEditing()) return;
-    element.setAttribute(PREVIOUS_VALUE_KEY, element.textContent.trim());
+    const currentValue = element.textContent.trim();
+    element.setAttribute(PREVIOUS_VALUE_KEY, currentValue);
     element.setAttribute(IS_EDITING_KEY, "true");
     element.setAttribute("spellcheck", "false");
     element.contentEditable = "true";
     element.classList.add("editing-domain");
+    if (placeholderValue && currentValue === placeholderValue) {
+      element.textContent = "";
+    }
     element.focus();
     controlEditElement.style.display = "none";
     document.addEventListener("click", handleDocumentClick);
