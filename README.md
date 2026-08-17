@@ -60,7 +60,7 @@ Displays a list of companies associated with the profile as an interactive accor
 - Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
 - Expanded company details include:
-  - Website (click to copy a basic email address; click the edit icon to correct it inline — if it currently shows "No website found", that placeholder is cleared automatically as soon as editing starts)
+  - Website (click to copy a basic email address; click the edit icon to correct it inline — if it currently shows "No website found", that placeholder is cleared automatically as soon as editing starts). Pasting a full URL (e.g. `https://www.example.com/about?ref=123`) and saving automatically converts it to its bare domain (`example.com`) when possible
   - Industry
   - Location
   - Company size

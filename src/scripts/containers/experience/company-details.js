@@ -144,13 +144,20 @@ async function manageCompanyDetailsBlock(item) {
 }
 
 async function handleDomainSave(newValue, websiteBlock, item) {
-  const valid = isValidDomain(newValue);
-  const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
+  const domainValue = getHostName(newValue);
+  const valid = isValidDomain(domainValue);
+  const displayValue = valid ? domainValue : newValue;
+  const fullUrl = displayValue.includes("://") ? displayValue : `https://${displayValue}`;
 
   const iconImg = websiteBlock.querySelector("img");
   const existingLink = websiteBlock.querySelector("a");
+  const websiteSpan = websiteBlock.querySelector("span");
 
   if (valid) {
+    if (websiteSpan && displayValue !== newValue) {
+      websiteSpan.textContent = displayValue;
+      websiteSpan.title = displayValue;
+    }
     if (existingLink) {
       existingLink.href = fullUrl;
     } else if (iconImg) {
@@ -164,7 +171,7 @@ async function handleDomainSave(newValue, websiteBlock, item) {
     iconImg?.classList.add("disabled");
   }
 
-  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, newValue), "basic email");
+  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, displayValue), "basic email");
 
   if (item.classList.contains("active")) {
     getGenerateEmailsBtnElement().disabled = !valid;
