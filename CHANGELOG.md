@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 - **Configurable saved leads limit**: new "Max saved leads" numeric field in the Settings tab's "Leads data" block, replacing the previous hardcoded 99-item cap. Accepts digits only, up to 9999. Saved automatically on blur when valid
 - **Automatic trimming on limit decrease**: lowering the limit below the current number of saved leads prompts for confirmation; if confirmed, the oldest leads (first added) are removed to fit the new limit, otherwise the change is discarded
 - **Persistent company data cache**: the last 10 companies whose details were successfully fetched from their LinkedIn page are now remembered in `chrome.storage.local`, keyed by company id. Reopening the popup (or revisiting a recently seen company) reuses the cached details instead of re-opening a background tab and re-scraping the company page. The refresh button (↻) still forces a live re-fetch and clears that company's cached entry
+- **Company name fallback for the cache**: when the currently selected company has no LinkedIn link (and therefore no company id), the cache is now also searched by company name, so previously fetched details can still be reused
+- **Cache stays in sync with manual website edits**: editing a company's website inline now updates that company's cached entry (matched by company id, or by name when no id is available) so the corrected website is reused on future lookups instead of the stale one
+
+### Fixed
+
+- **Refresh button required two clicks to actually re-fetch**: clearing the cached entry before refreshing was fire-and-forget, so the very next cache lookup could race ahead and still read the stale entry, silently returning cached data instead of fetching. The cache clear is now awaited before refreshing, so the first click always triggers a live re-fetch
 
 ## [3.3.8] - 2026-07-10
 

@@ -19,6 +19,7 @@ import {
   isValidDomain,
   getHostName,
   clearCompanyCache,
+  updateCompanyWebsite,
 } from "../../services/company-data.js";
 import {
   editWebsiteDomain,
@@ -31,9 +32,9 @@ export function setupCompanyDetails() {
 }
 
 export async function refreshCompanyDetails(item) {
-  const companyLinkElement = item.querySelector("a");
-  if (companyLinkElement) {
-    clearCompanyCache(companyLinkElement.href);
+  const companyLink = item.getAttribute("data-company-link");
+  if (companyLink) {
+    await clearCompanyCache(companyLink);
   }
 
   const websiteBlock = item.querySelector(".company-website");
@@ -68,13 +69,14 @@ async function manageCompanyDetailsBlock(item) {
   let location = item.getAttribute("data-company-location");
   let industry = item.getAttribute("data-company-industry");
   let size = item.getAttribute("data-company-size");
+  const companyName = item.getAttribute("data-company-name");
+  const companyLink = item.getAttribute("data-company-link");
 
   const websiteBlock = item.querySelector(".company-website");
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
   const membersBlock = item.querySelector(".company-members");
-  const companyLinkElement = item.querySelector("a");
 
   if (websiteBlock.getAttribute("data-initialized") === "true") {
     getGenerateEmailsBtnElement().disabled = !isValidDomain(
@@ -95,9 +97,7 @@ async function manageCompanyDetailsBlock(item) {
   let companyDetails;
 
   try {
-    companyDetails = companyLinkElement
-      ? await getCompanyData(companyLinkElement.href, location, industry, size)
-      : { website: "", location: "", industry: "", size: "", members: "", ok: false, completeRequest: true };
+    companyDetails = await getCompanyData(companyLink, location, industry, size, companyName);
 
     clearLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock });
 
@@ -176,6 +176,10 @@ async function handleDomainSave(newValue, websiteBlock, item) {
   } else {
     const state = await getWebsiteState(fullUrl);
     setValidationStyle(websiteBlock, state.ok);
+
+    const companyLink = item.getAttribute("data-company-link");
+    const companyName = item.getAttribute("data-company-name");
+    await updateCompanyWebsite(companyLink, companyName, fullUrl);
   }
 }
 
