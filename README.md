@@ -69,6 +69,11 @@ Displays a list of companies associated with the profile as an interactive accor
 - Active company header includes a **Refresh button (↻)** to re-fetch company data on demand
   - Only visible for the currently active company
   - Spins while loading; blocked during in-flight requests to prevent double-fetching
+  - Clears that company's cached entry, forcing a live re-fetch from LinkedIn
+
+- **Persistent company data cache**: the last 10 companies whose details were successfully fetched are remembered across popup sessions (keyed by company id), so revisiting a recently seen company reuses the cached data instead of opening a new background tab
+  - When the selected company has no LinkedIn link (and so no company id), the cache is looked up by company name instead
+  - Editing a company's website inline updates that company's cached entry so the corrected value is reused afterward
 
 - Selecting a company updates the left panel:
   - Job position
