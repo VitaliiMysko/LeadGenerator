@@ -49,6 +49,7 @@ The extension has two execution environments:
 - Extract DOM data and return it via Chrome messaging
 - Must **not** make external network requests (CORS restriction)
 - **Name/surname cleanup** (`lead.js`'s `handleFullName`/`getSecondName`): when matching "is this character part of the name", use the Unicode `\p{L}` letter property (with the `u` regex flag) instead of a hand-picked character range (e.g. `a-zA-ZÀ-ſ`) — a narrower range silently drops any letter that falls outside it (this happened for some diacritic letters, e.g. Romanian "Ș").
+- **Name heading may be visually truncated**: `getFullNameText()` in `lead.js` reads the lead heading's `aria-label`/`title` in addition to `textContent`, preferring whichever is longest, since LinkedIn's narrow Sales Navigator panel can JS-truncate the visible heading text while the full name stays available via those attributes for accessibility.
 
 ### Popup UI (`src/scripts/`, `index.html`)
 - Runs in the extension popup context
