@@ -25,6 +25,7 @@ import {
   editWebsiteDomain,
   getEditWebsiteDomainElement,
 } from "../../features/website-domain-editor.js";
+import { NO_WEBSITE_FOUND_TEXT } from "../../../constants/config.js";
 
 export function setupCompanyDetails() {
   initCompanyDetails();
@@ -128,6 +129,7 @@ async function manageCompanyDetailsBlock(item) {
       onSave: async (newValue) => {
         await handleDomainSave(newValue, websiteBlock, item);
       },
+      placeholderValue: NO_WEBSITE_FOUND_TEXT,
     });
   } catch (error) {
     websiteBlock.innerHTML = "Error loading website.";
@@ -184,7 +186,7 @@ async function handleDomainSave(newValue, websiteBlock, item) {
 }
 
 function renderWebsite(websiteBlock, websiteIconElement, companyDetails) {
-  const fallback = companyDetails.completeRequest ? "No website found" : "";
+  const fallback = companyDetails.completeRequest ? NO_WEBSITE_FOUND_TEXT : "";
 
   if (companyDetails.website) {
     const hostname = getHostName(companyDetails.website);
