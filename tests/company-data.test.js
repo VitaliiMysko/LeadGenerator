@@ -33,6 +33,21 @@ describe("getHostName", () => {
   test("returns original input for truly invalid url", () => {
     expect(getHostName("not a url")).toBe("not a url");
   });
+  test("strips query string and path from a pasted url", () => {
+    expect(getHostName("https://www.example.com/about?ref=123")).toBe("example.com");
+  });
+  test("strips www from a bare domain typed with a leading www.", () => {
+    expect(getHostName("www.example.com/pricing")).toBe("example.com");
+  });
+});
+
+describe("isValidDomain(getHostName(...)) — pasted URL to domain view", () => {
+  test("a full pasted url converts to a valid bare domain", () => {
+    expect(isValidDomain(getHostName("https://www.example.com/about?ref=123"))).toBe(true);
+  });
+  test("gibberish with no TLD still fails after conversion", () => {
+    expect(isValidDomain(getHostName("not a url"))).toBe(false);
+  });
 });
 
 describe("formatCompanySize", () => {
