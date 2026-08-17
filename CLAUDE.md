@@ -55,6 +55,7 @@ The extension has two execution environments:
 - Runs in the extension popup context
 - Handles all user interaction, rendering, and state
 - Makes **direct `fetch` calls** to external services (Cloudflare Worker backend) — do not route these through `background.js`
+- **`libs/transliteration/bundle.umd.min.js` is loaded as a classic, non-module `<script>`** (not imported), so any globals it patches for browser compatibility apply to the whole popup page. Its bundled core-js `trim` polyfill mishandles some Latin Extended-A letters at the end of a string as trimmable whitespace and silently deletes them (e.g. `"Miha Kampuš".trim()` → `"Miha Kampu"`) — it also patches `String.prototype.replace`/`RegExp.prototype.exec`. **Do not call `String.prototype.trim()` (or a regex-based replace) anywhere in `src/scripts/` on values that may contain non-ASCII letters** — use `trimAsciiWhitespace()` from `src/utils/text-utils.js` instead, which only uses `charCodeAt()`/`slice()`. This is scoped to the popup only: content scripts (`src/content-scripts/`) run in the LinkedIn page's own JS realm, which never loads that bundle, so `.trim()` there is unaffected.
 
 ### Background Service Worker (`src/scripts/workers/background.js`)
 - Used **only** for Chrome APIs requiring background context: `tabs` and `scripting`

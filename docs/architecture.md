@@ -80,6 +80,18 @@ Handles user-interaction logic related to core actions:
   - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
   - Subscribes to `max-leads-store.js` so the counter, progress bar, and Save button state react immediately when the max-saved-leads setting changes
 
+#### ▸ `src/scripts/services/transliteration.js`
+
+Runs automatically on the Name/Surname fields after every Extract (and again on manual edit, via a `change` listener in `extract-data.js`), transliterating them to Latin/ASCII when the **Transliteration** setting is enabled, and always populating a `data-first-name`/`data-second-name` attribute (used by `email-generator.js`'s alternative-name email templates) with the Latin/ASCII form regardless of the setting.
+
+Uses the global `transliterate()` function exposed by `libs/transliteration/bundle.umd.min.js` (loaded as a classic, non-module `<script>` in `index.html`, so its exports attach to `window` rather than being imported). `hasGermanLetters()`/`transliterateGermanLetters()` special-case German umlauts (`ä→ae`, `ö→oe`, `ü→ue`, etc.) before the general transliteration pass, since the library's own umlaut handling differs from the desired convention.
+
+##### Trimming the field's value — not with `String.prototype.trim()`
+
+`transliterateElement()` needs the field's current value trimmed of surrounding whitespace before processing. It deliberately does **not** use `String.prototype.trim()` (or `.replace()` with a whitespace regex) for this: because `bundle.umd.min.js` is loaded as a classic script, any globals it patches for browser-compatibility reasons apply to the **entire popup page**, not just its own internal code. That bundle ships an old core-js polyfill for `trim` (and also patches `String.prototype.replace`/`RegExp.prototype.exec`) that mishandles some Latin Extended-A letters positioned at the end of a string as trimmable whitespace, silently deleting them — e.g. `"Miha Kampuš".trim()` came back as `"Miha Kampu"`, reproducibly, with nothing else touching the string in between (confirmed by isolating the read from the DOM, capturing it as a plain variable, and calling only `.trim()` on it).
+
+`trimAsciiWhitespace()` (`src/utils/text-utils.js`, pure and unit-tested) sidesteps the compromised built-ins entirely — it only uses `charCodeAt()`/`slice()`, checking for the four ASCII whitespace codepoints (space, tab, `\n`, `\r`) directly, with no regex or `String.prototype.trim`/`replace` involved. Values coming from `lead.js` are already trimmed at the content-script side (a different, unaffected JS realm — that library is only loaded into the popup page), so this mainly guards the manual-edit path.
+
 ### 2.3 Filters (`src/scripts/filters`)
 
 The filtering system is implemented as a **client-side module** responsible for dynamically filtering extracted company data within the popup UI.
@@ -386,6 +398,7 @@ src/
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
+      ├── text-utils.js                (trimAsciiWhitespace — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
@@ -413,6 +426,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
 | `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
+| `tests/text-utils.test.js` | `src/utils/text-utils.js` | `trimAsciiWhitespace` — ASCII whitespace only, leaves Latin Extended-A letters (including at the end of the string) untouched |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
 | `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
 | `tests/max-leads-store.test.js` | `src/scripts/store/max-leads-store.js` | `subscribe`/unsubscribe, `setMaxSavedLeads` (state, storage, listeners), `loadMaxSavedLeads` (default fallback); Chrome Storage mocked via `jest.unstable_mockModule` |
