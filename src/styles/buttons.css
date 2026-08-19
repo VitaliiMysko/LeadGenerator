@@ -23,14 +23,14 @@
 }
 .get-counter {
   position: absolute;
-  right: 6px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   height: 16px;
   font-size: 8px;
-  line-height: 1;
+  line-height: 0.5;
 }
 .get-counter-current {
   align-self: flex-start;
@@ -55,7 +55,7 @@
   height: 12px;
   background-color: currentColor;
   transform: rotate(45deg);
-  margin: 0 2px;
+  margin: 0 1px;
   flex-shrink: 0;
 }
 .btn-progress {

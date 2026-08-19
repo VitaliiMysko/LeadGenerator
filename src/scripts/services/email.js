@@ -15,6 +15,7 @@ import {
   emailDataByDefault,
 } from "./email-validator.js";
 import { generateEmails } from "./email-generator.js";
+import { NO_WEBSITE_FOUND_TEXT } from "../../constants/config.js";
 
 const emailCache = new Map();
 let loadingInterval = null;
@@ -151,5 +152,5 @@ function showMessage(message, isEmailValid) {
 
 function getWebsiteDomain() {
   const text = getCompanyDomainElement()?.textContent.trim();
-  return text && text !== "No website found" ? text : "";
+  return text && text !== NO_WEBSITE_FOUND_TEXT ? text : "";
 }

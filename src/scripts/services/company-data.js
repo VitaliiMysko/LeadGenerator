@@ -1,4 +1,11 @@
 import { getWorkerUrl } from "../../constants/config.js";
+import { extractCompanyId } from "../../utils/company-id.js";
+import {
+  getCachedCompany,
+  setCachedCompany,
+  removeCachedCompany,
+  updateCachedCompanyWebsite,
+} from "../store/company-cache-store.js";
 
 const companyDetailsByDefault = {
   website: "",
@@ -16,13 +23,48 @@ const popupSessionId = crypto.randomUUID();
 let currentRequestId = 0;
 const companyDetailsCache = new Map();
 
-export function clearCompanyCache(companyLink) {
+export async function clearCompanyCache(companyLink) {
   companyDetailsCache.delete(companyLink);
+
+  const companyId = extractCompanyId(companyLink);
+  if (companyId) {
+    try {
+      await removeCachedCompany(companyId);
+    } catch (error) {
+      console.error("Error clearing cached company data:", error);
+    }
+  }
 }
 
-export async function getCompanyData(companyLink, location, industry, size) {
-  if (companyDetailsCache.has(companyLink)) {
-    return companyDetailsCache.get(companyLink);
+export async function updateCompanyWebsite(companyLink, companyName, website) {
+  const cacheKey = companyLink || companyName;
+  const companyId = extractCompanyId(companyLink);
+
+  if (cacheKey && companyDetailsCache.has(cacheKey)) {
+    companyDetailsCache.set(cacheKey, { ...companyDetailsCache.get(cacheKey), website });
+  }
+
+  if (!companyId && !companyName) return;
+
+  try {
+    await updateCachedCompanyWebsite(companyId, companyName, website);
+  } catch (error) {
+    console.error("Error updating cached company website:", error);
+  }
+}
+
+export async function getCompanyData(companyLink, location, industry, size, companyName) {
+  const cacheKey = companyLink || companyName;
+
+  if (cacheKey && companyDetailsCache.has(cacheKey)) {
+    return companyDetailsCache.get(cacheKey);
+  }
+
+  const companyId = extractCompanyId(companyLink);
+  const cachedDetails = await getCachedCompany(companyId, companyName);
+  if (cachedDetails) {
+    if (cacheKey) companyDetailsCache.set(cacheKey, cachedDetails);
+    return cachedDetails;
   }
 
   const companyDetails = {
@@ -57,6 +99,10 @@ export async function getCompanyData(companyLink, location, industry, size) {
         const websiteState = await getWebsiteState(response.website);
         companyDetails.status = websiteState.status;
         companyDetails.ok = websiteState.ok;
+
+        if (companyId) {
+          await setCachedCompany(companyId, companyName, companyDetails);
+        }
       } else if (requestId !== currentRequestId) {
         companyDetails.completeRequest = false;
         return companyDetails;
@@ -66,7 +112,7 @@ export async function getCompanyData(companyLink, location, industry, size) {
     }
   }
 
-  companyDetailsCache.set(companyLink, companyDetails);
+  if (cacheKey) companyDetailsCache.set(cacheKey, companyDetails);
   return companyDetails;
 }
 
