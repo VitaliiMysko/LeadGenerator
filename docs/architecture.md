@@ -31,6 +31,17 @@ The extension is composed of modular JavaScript files, grouped logically into di
 - Do **not perform external network requests**
 - Examples: `lead.js`, `lead-experience.js`
 
+#### 2.1.1 Name extraction and cleanup (`lead.js`)
+
+`getFullName()` in `lead.js` reads the LinkedIn lead heading's raw text (`fullNameElement.textContent`) and runs it through `handleFullName()` before splitting it into first/second name (`getFirstName`/`getSecondName`).
+
+##### Cleanup (`handleFullName`)
+
+- Cyrillic names (`\p{Script=Cyrillic}` test) skip cleanup entirely and are only whitespace-normalized
+- Otherwise: strips any leading non-letter characters (badges, stray punctuation), then strips a leading `Dr.`/`Prof.`/etc. title, drops anything after a comma (e.g. trailing credentials), and re-capitalizes each word — respecting Dutch surname particles (`van`, `der`, `den`, `de`, kept lowercase) and the `Mc`/`Mac` prefix (capital letter after it is preserved)
+- Both the leading-strip and the title-strip lookahead use the Unicode `\p{L}` ("any letter") property (with the `u` regex flag) rather than a hand-picked character range, so names are recognized correctly regardless of script or diacritic — a narrower explicit range (e.g. only Latin-1 + Latin Extended-A) would incorrectly treat a name's first letter as "junk to strip" whenever that letter fell just outside the chosen range (this previously happened for some diacritic letters, e.g. Romanian "Ș")
+- `getSecondName()` additionally capitalizes the letter following an apostrophe (e.g. `O'brien` → `O'Brien`), also letter-class-aware for the same reason
+
 ### 2.2 Extension Scripts (`src/scripts`)
 
 Contain all logic related to:
@@ -64,6 +75,18 @@ Handles user-interaction logic related to core actions:
   - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill relative to the configured limit; column order reflects the current left-panel field order at the time of copying
   - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
   - Subscribes to `max-leads-store.js` so the counter, progress bar, and Save button state react immediately when the max-saved-leads setting changes
+
+#### ▸ `src/scripts/services/transliteration.js`
+
+Runs automatically on the Name/Surname fields after every Extract (and again on manual edit, via a `change` listener in `extract-data.js`), transliterating them to Latin/ASCII when the **Transliteration** setting is enabled, and always populating a `data-first-name`/`data-second-name` attribute (used by `email-generator.js`'s alternative-name email templates) with the Latin/ASCII form regardless of the setting.
+
+Uses the global `transliterate()` function exposed by `libs/transliteration/bundle.umd.min.js` (loaded as a classic, non-module `<script>` in `index.html`, so its exports attach to `window` rather than being imported). `hasGermanLetters()`/`transliterateGermanLetters()` special-case German umlauts (`ä→ae`, `ö→oe`, `ü→ue`, etc.) before the general transliteration pass, since the library's own umlaut handling differs from the desired convention.
+
+##### Trimming the field's value — not with `String.prototype.trim()`
+
+`transliterateElement()` needs the field's current value trimmed of surrounding whitespace before processing. It deliberately does **not** use `String.prototype.trim()` (or `.replace()` with a whitespace regex) for this: because `bundle.umd.min.js` is loaded as a classic script, any globals it patches for browser-compatibility reasons apply to the **entire popup page**, not just its own internal code. That bundle ships an old core-js polyfill for `trim` (and also patches `String.prototype.replace`/`RegExp.prototype.exec`) that mishandles some Latin Extended-A letters positioned at the end of a string as trimmable whitespace, silently deleting them — e.g. `"Miha Kampuš".trim()` came back as `"Miha Kampu"`, reproducibly, with nothing else touching the string in between (confirmed by isolating the read from the DOM, capturing it as a plain variable, and calling only `.trim()` on it).
+
+`trimAsciiWhitespace()` (`src/utils/text-utils.js`, pure and unit-tested) sidesteps the compromised built-ins entirely — it only uses `charCodeAt()`/`slice()`, checking for the four ASCII whitespace codepoints (space, tab, `\n`, `\r`) directly, with no regex or `String.prototype.trim`/`replace` involved. Values coming from `lead.js` are already trimmed at the content-script side (a different, unaffected JS realm — that library is only loaded into the popup page), so this mainly guards the manual-edit path.
 
 ### 2.3 Filters (`src/scripts/filters`)
 
@@ -371,6 +394,7 @@ src/
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
+      ├── text-utils.js                (trimAsciiWhitespace — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
 
@@ -398,6 +422,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
 | `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
+| `tests/text-utils.test.js` | `src/utils/text-utils.js` | `trimAsciiWhitespace` — ASCII whitespace only, leaves Latin Extended-A letters (including at the end of the string) untouched |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
 | `tests/filter-store.test.js` | `src/scripts/store/filter-store.js` | `subscribe`/unsubscribe, `setFilter` (state, storage, listeners), `loadFilters`; Chrome Storage mocked via `jest.unstable_mockModule` |
 | `tests/max-leads-store.test.js` | `src/scripts/store/max-leads-store.js` | `subscribe`/unsubscribe, `setMaxSavedLeads` (state, storage, listeners), `loadMaxSavedLeads` (default fallback); Chrome Storage mocked via `jest.unstable_mockModule` |
