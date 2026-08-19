@@ -33,11 +33,7 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 #### 2.1.1 Name extraction and cleanup (`lead.js`)
 
-`getFullName()` in `lead.js` reads the LinkedIn lead heading's raw name text (via `getFullNameText()`) and runs it through `handleFullName()` before splitting it into first/second name (`getFirstName`/`getSecondName`).
-
-##### Reading the raw name text (`getFullNameText`)
-
-The heading (`h1[data-x--lead--name][data-anonymize="person-name"]`) can be visually truncated by LinkedIn in the narrow Sales Navigator lead panel — when that happens, `textContent` only reflects the truncated display text (e.g. "Miha Kampu" instead of "Miha Kampuš"), even though the character set itself is handled correctly by the cleanup step below. `getFullNameText()` also reads the heading's `aria-label` and `title` attributes — commonly kept as the full, untruncated name for accessibility/tooltips even when the visible text is clipped — and returns whichever of the three candidates (`aria-label`, `title`, `textContent`) is longest, falling back to plain `textContent` when neither attribute is present.
+`getFullName()` in `lead.js` reads the LinkedIn lead heading's raw text (`fullNameElement.textContent`) and runs it through `handleFullName()` before splitting it into first/second name (`getFirstName`/`getSecondName`).
 
 ##### Cleanup (`handleFullName`)
 

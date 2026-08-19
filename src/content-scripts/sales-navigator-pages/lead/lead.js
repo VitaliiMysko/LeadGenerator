@@ -28,26 +28,7 @@ if (!window.leadGenerator.personalDataInit) {
       const fullNameElement = getFullNameElement();
       if (!fullNameElement) return "";
 
-      return handleFullName(getFullNameText(fullNameElement));
-    }
-
-    function getFullNameText(fullNameElement) {
-      // The heading can be visually truncated by LinkedIn (narrow lead panel),
-      // in which case textContent only reflects the truncated display text.
-      // aria-label/title are commonly kept as the full, untruncated name for
-      // accessibility/tooltips, so prefer whichever candidate is longest.
-      const candidates = [
-        fullNameElement.getAttribute("aria-label"),
-        fullNameElement.getAttribute("title"),
-        fullNameElement.textContent,
-      ]
-        .filter(Boolean)
-        .map((value) => value.trim());
-
-      return candidates.reduce(
-        (longest, current) => (current.length > longest.length ? current : longest),
-        "",
-      );
+      return handleFullName(fullNameElement.textContent);
     }
 
     function handleFullName(str) {
