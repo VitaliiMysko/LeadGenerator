@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - **Company name fallback for the cache**: when the currently selected company has no LinkedIn link (and therefore no company id), the cache is now also searched by company name, so previously fetched details can still be reused
 - **Cache stays in sync with manual website edits**: editing a company's website inline now updates that company's cached entry (matched by company id, or by name when no id is available) so the corrected website is reused on future lookups instead of the stale one
 - **Pasted website URLs are converted to domain view**: saving the website field now converts a pasted full URL (e.g. `https://www.example.com/about?ref=123`) into its bare domain (`example.com`) whenever that's possible, instead of rejecting it as an invalid domain
+- **More recognized company status suffixes**: added Finnish "Oy"/"Oyj" and "Ky" to the list of legal-form suffixes stripped from extracted company names
 
 ### Fixed
 
