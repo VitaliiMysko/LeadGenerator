@@ -40,12 +40,15 @@ if (!window.leadGenerator.personalDataInit) {
         .join(" ");
       }
 
-      str = str.replace(/^[^a-zA-Z\u00C0-\u017F]+/, "");
+      // \P{L} (not a Unicode letter) covers any script, not just the hand-picked
+      // Latin-1/Latin Extended-A range used previously, which incorrectly ate into
+      // names whose first letter falls just outside that narrower range.
+      str = str.replace(/^\P{L}+/u, "");
       // Removes the prefix dr/Dr/prof/Prof before the full name
       str = str
         .trim()
         .replace(
-          /^(prof\.?\s+)?(prof\.?|prof\,?|dr\.?|dr\,?|dr\.-ing\.?)\s+(?=[A-Z\u00C0-\u017F])/i,
+          /^(prof\.?\s+)?(prof\.?|prof,?|dr\.?|dr,?|dr\.-ing\.?)\s+(?=\p{L})/iu,
           ""
         );
       const [textBeforeComma] = str.split(",");
@@ -81,7 +84,7 @@ if (!window.leadGenerator.personalDataInit) {
       let secondName = parts.length > 1 ? parts.slice(1).join(" ") : "";
 
       if (secondName.includes("'")) {
-        secondName = secondName.replace(/'\w/g, (match) => match.toUpperCase());
+        secondName = secondName.replace(/'\p{L}/gu, (match) => match.toUpperCase());
       }
 
       return secondName;

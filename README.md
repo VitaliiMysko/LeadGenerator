@@ -29,8 +29,8 @@ This extension is a straightforward tool for extracting data about individuals d
     The "Email" field is not auto-filled.
 
 - **Storage utility buttons**:
-  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the 99-item limit is reached. When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last column. Fill level shows storage usage (0 = empty, full = 99 items); hover to see exact count.
+  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 9999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last column. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -60,7 +60,7 @@ Displays a list of companies associated with the profile as an interactive accor
 - Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
 - Expanded company details include:
-  - Website (click to copy a basic email address)
+  - Website (click to copy a basic email address; click the edit icon to correct it inline — if it currently shows "No website found", that placeholder is cleared automatically as soon as editing starts). Pasting a full URL (e.g. `https://www.example.com/about?ref=123`) and saving automatically converts it to its bare domain (`example.com`) when possible
   - Industry
   - Location
   - Company size
@@ -69,6 +69,11 @@ Displays a list of companies associated with the profile as an interactive accor
 - Active company header includes a **Refresh button (↻)** to re-fetch company data on demand
   - Only visible for the currently active company
   - Spins while loading; blocked during in-flight requests to prevent double-fetching
+  - Clears that company's cached entry, forcing a live re-fetch from LinkedIn
+
+- **Persistent company data cache**: the last 10 companies whose details were successfully fetched are remembered across popup sessions (keyed by company id), so revisiting a recently seen company reuses the cached data instead of opening a new background tab
+  - When the selected company has no LinkedIn link (and so no company id), the cache is looked up by company name instead
+  - Editing a company's website inline updates that company's cached entry so the corrected value is reused afterward
 
 - Selecting a company updates the left panel:
   - Job position
@@ -124,6 +129,11 @@ Available option:
 
 - **Store company id Toggle**
   - When enabled, the **Get** button appends the company id as an extra, last column when copying saved leads to the clipboard
+  - State persisted via Chrome `storage`
+- **Max saved leads**
+  - Numeric field controlling how many leads can be stored locally (1-9999, default 99); only digits can be typed
+  - Saved automatically when the field loses focus, if the value is valid
+  - Lowering the limit below the current number of saved leads prompts for confirmation before removing the oldest saved leads (first added) to fit the new limit; declining the confirmation discards the change
   - State persisted via Chrome `storage`
 
 ## Data Fields
@@ -303,6 +313,7 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
+   - Set the maximum number of leads that can be stored locally, 1-9999 (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
 
 4. **Filters**

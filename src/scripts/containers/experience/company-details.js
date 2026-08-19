@@ -19,11 +19,13 @@ import {
   isValidDomain,
   getHostName,
   clearCompanyCache,
+  updateCompanyWebsite,
 } from "../../services/company-data.js";
 import {
   editWebsiteDomain,
   getEditWebsiteDomainElement,
 } from "../../features/website-domain-editor.js";
+import { NO_WEBSITE_FOUND_TEXT } from "../../../constants/config.js";
 
 export function setupCompanyDetails() {
   initCompanyDetails();
@@ -31,9 +33,9 @@ export function setupCompanyDetails() {
 }
 
 export async function refreshCompanyDetails(item) {
-  const companyLinkElement = item.querySelector("a");
-  if (companyLinkElement) {
-    clearCompanyCache(companyLinkElement.href);
+  const companyLink = item.getAttribute("data-company-link");
+  if (companyLink) {
+    await clearCompanyCache(companyLink);
   }
 
   const websiteBlock = item.querySelector(".company-website");
@@ -68,13 +70,14 @@ async function manageCompanyDetailsBlock(item) {
   let location = item.getAttribute("data-company-location");
   let industry = item.getAttribute("data-company-industry");
   let size = item.getAttribute("data-company-size");
+  const companyName = item.getAttribute("data-company-name");
+  const companyLink = item.getAttribute("data-company-link");
 
   const websiteBlock = item.querySelector(".company-website");
   const locationBlock = item.querySelector(".company-location");
   const industryBlock = item.querySelector(".company-industry");
   const sizeBlock = item.querySelector(".company-size");
   const membersBlock = item.querySelector(".company-members");
-  const companyLinkElement = item.querySelector("a");
 
   if (websiteBlock.getAttribute("data-initialized") === "true") {
     getGenerateEmailsBtnElement().disabled = !isValidDomain(
@@ -95,9 +98,7 @@ async function manageCompanyDetailsBlock(item) {
   let companyDetails;
 
   try {
-    companyDetails = companyLinkElement
-      ? await getCompanyData(companyLinkElement.href, location, industry, size)
-      : { website: "", location: "", industry: "", size: "", members: "", ok: false, completeRequest: true };
+    companyDetails = await getCompanyData(companyLink, location, industry, size, companyName);
 
     clearLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock });
 
@@ -128,6 +129,7 @@ async function manageCompanyDetailsBlock(item) {
       onSave: async (newValue) => {
         await handleDomainSave(newValue, websiteBlock, item);
       },
+      placeholderValue: NO_WEBSITE_FOUND_TEXT,
     });
   } catch (error) {
     websiteBlock.innerHTML = "Error loading website.";
@@ -142,13 +144,20 @@ async function manageCompanyDetailsBlock(item) {
 }
 
 async function handleDomainSave(newValue, websiteBlock, item) {
-  const valid = isValidDomain(newValue);
-  const fullUrl = newValue.includes("://") ? newValue : `https://${newValue}`;
+  const domainValue = getHostName(newValue);
+  const valid = isValidDomain(domainValue);
+  const displayValue = valid ? domainValue : newValue;
+  const fullUrl = displayValue.includes("://") ? displayValue : `https://${displayValue}`;
 
   const iconImg = websiteBlock.querySelector("img");
   const existingLink = websiteBlock.querySelector("a");
+  const websiteSpan = websiteBlock.querySelector("span");
 
   if (valid) {
+    if (websiteSpan && displayValue !== newValue) {
+      websiteSpan.textContent = displayValue;
+      websiteSpan.title = displayValue;
+    }
     if (existingLink) {
       existingLink.href = fullUrl;
     } else if (iconImg) {
@@ -162,7 +171,7 @@ async function handleDomainSave(newValue, websiteBlock, item) {
     iconImg?.classList.add("disabled");
   }
 
-  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, newValue), "basic email");
+  addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, displayValue), "basic email");
 
   if (item.classList.contains("active")) {
     getGenerateEmailsBtnElement().disabled = !valid;
@@ -176,11 +185,15 @@ async function handleDomainSave(newValue, websiteBlock, item) {
   } else {
     const state = await getWebsiteState(fullUrl);
     setValidationStyle(websiteBlock, state.ok);
+
+    const companyLink = item.getAttribute("data-company-link");
+    const companyName = item.getAttribute("data-company-name");
+    await updateCompanyWebsite(companyLink, companyName, fullUrl);
   }
 }
 
 function renderWebsite(websiteBlock, websiteIconElement, companyDetails) {
-  const fallback = companyDetails.completeRequest ? "No website found" : "";
+  const fallback = companyDetails.completeRequest ? NO_WEBSITE_FOUND_TEXT : "";
 
   if (companyDetails.website) {
     const hostname = getHostName(companyDetails.website);

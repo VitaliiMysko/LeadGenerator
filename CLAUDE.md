@@ -48,11 +48,13 @@ The extension has two execution environments:
 - Injected directly into LinkedIn pages (`sales/lead/*`, `company/*`)
 - Extract DOM data and return it via Chrome messaging
 - Must **not** make external network requests (CORS restriction)
+- **Name/surname cleanup** (`lead.js`'s `handleFullName`/`getSecondName`): when matching "is this character part of the name", use the Unicode `\p{L}` letter property (with the `u` regex flag) instead of a hand-picked character range (e.g. `a-zA-ZÀ-ſ`) — a narrower range silently drops any letter that falls outside it (this happened for some diacritic letters, e.g. Romanian "Ș").
 
 ### Popup UI (`src/scripts/`, `index.html`)
 - Runs in the extension popup context
 - Handles all user interaction, rendering, and state
 - Makes **direct `fetch` calls** to external services (Cloudflare Worker backend) — do not route these through `background.js`
+- **`libs/transliteration/bundle.umd.min.js` is loaded as a classic, non-module `<script>`** (not imported), so any globals it patches for browser compatibility apply to the whole popup page. Its bundled core-js `trim` polyfill mishandles some Latin Extended-A letters at the end of a string as trimmable whitespace and silently deletes them (e.g. `"Miha Kampuš".trim()` → `"Miha Kampu"`) — it also patches `String.prototype.replace`/`RegExp.prototype.exec`. **Do not call `String.prototype.trim()` (or a regex-based replace) anywhere in `src/scripts/` on values that may contain non-ASCII letters** — use `trimAsciiWhitespace()` from `src/utils/text-utils.js` instead, which only uses `charCodeAt()`/`slice()`. This is scoped to the popup only: content scripts (`src/content-scripts/`) run in the LinkedIn page's own JS realm, which never loads that bundle, so `.trim()` there is unaffected.
 
 ### Background Service Worker (`src/scripts/workers/background.js`)
 - Used **only** for Chrome APIs requiring background context: `tabs` and `scripting`
@@ -63,13 +65,19 @@ The extension has two execution environments:
 
 **Filter state (pub/sub):** `src/scripts/store/filter-store.js` is a mini state manager with `state`, `subscribe`, and `notify`. Filter UI components subscribe to it and re-render reactively. Filter state is persisted to Chrome Storage and restored on load.
 
+**Max saved leads (pub/sub):** `src/scripts/store/max-leads-store.js` follows the same `state`/`subscribe`/`notify` pattern as `filter-store.js`, holding the user-configurable max-saved-leads limit (`chrome.storage.sync` key `maxSavedLeads`, default 99, hard cap 9999 from `MAX_SAVED_LEADS_LIMIT` in `src/constants/config.js`). `storage-actions.js` subscribes to it to keep the Save button, counter, and progress bar in sync when the limit changes.
+
 **Tab system:** The right panel uses a show/hide pattern — all tab contents are in the DOM at once, toggled visible. Avoid full re-renders when switching tabs.
 
 **New filters** go in `src/scripts/containers/filters/` using the existing pattern: a UI module that reads/writes through `filter-store.js`. Filters combine with AND logic.
 
 **New button/action logic** goes in `src/scripts/containers/data/`.
 
-**Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (max 99 items, email is the unique key). The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
+**Storage actions** (`Save`/`Get`/`Clean`) live in `src/scripts/containers/data/storage-actions.js`. They use `chrome.storage.local` with key `saved_leads` (email is the unique key). The max item count is user-configurable via the "Max saved leads" setting (`src/scripts/containers/settings/max-saved-leads.js`, 1-9999, default 99); lowering it below the current saved count prompts for confirmation before deleting the oldest leads. The Get button copies all saved leads to the clipboard in tab-separated format (spreadsheet-friendly).
+
+**Persistent company data cache:** `src/scripts/store/company-cache-store.js` caches the last `MAX_CACHED_COMPANIES` (10, from `src/constants/config.js`) companies whose details were successfully fetched from their LinkedIn page, in `chrome.storage.local` key `cachedCompanies`, keyed by company id (`extractCompanyId(companyLink)` from `src/utils/company-id.js`), with the company name also stored on each entry. List/eviction logic is a pure, unit-tested helper in `src/utils/company-cache.js` (`upsertCompanyCacheEntry`, `findCompanyCacheEntry`, `removeCompanyCacheEntry`, `updateCompanyCacheEntryWebsite`). `company-data.js`'s `getCompanyData()` checks this persistent cache (after its popup-lifetime in-memory Map) before opening a background tab to re-scrape a company page, so the same company isn't re-fetched across popup sessions. When the selected company has no LinkedIn link (so no company id), lookups fall back to matching by company name instead. Editing a company's website inline (`handleDomainSave` in `company-details.js`) calls `updateCompanyWebsite()` to keep the cached entry's website field current. The refresh button (↻) `await`s clearing a company's persistent cache entry (via `clearCompanyCache`, itself `async`) before re-fetching — clearing must be awaited, since an unawaited `chrome.storage.local` removal can still be in flight when the next lookup runs, causing it to read the stale entry.
+
+**Inline website editor:** `src/scripts/features/website-domain-editor.js`'s `editWebsiteDomain(element, controlEditElement, { onSave, placeholderValue })` is a generic `contentEditable` inline editor (used for the company website field in `company-details.js`). Pass `placeholderValue` to have it clear the element's text as soon as editing starts if it currently equals that value — used so the "No website found" placeholder (`NO_WEBSITE_FOUND_TEXT` in `src/constants/config.js`) doesn't need to be manually deleted before typing a real domain. Cancelling (Escape/Tab, clicking away with no change, or saving empty) restores the original value, which is captured before the clear happens. On save, `handleDomainSave()` in `company-details.js` runs the value through `getHostName()` (from `company-data.js`) before validating with `isValidDomain()`, so a pasted full URL (e.g. `https://www.example.com/about?ref=123`) is converted to its bare domain (`example.com`) when possible, and the displayed `<span>` text is rewritten to that converted value.
 
 **New content scripts** go in `src/content-scripts/` and must be registered in `manifest.json` under `content_scripts`.
 
@@ -87,4 +95,4 @@ All sensitive operations route through the Cloudflare Worker backend (URL in `ma
 3. Popup sends message to `background.js` to open company pages in background tabs
 4. Background injects content scripts → extracts company data → returns to popup
 5. Popup displays data; user can filter, translate, edit, generate/validate email, then copy
-6. No extracted data is ever persisted — it lives only in popup memory and clipboard
+6. No lead data is ever persisted automatically — it lives only in popup memory and clipboard unless the user explicitly clicks Save. Fetched company details (website, location, industry, size, members) are the one exception: they are cached in `chrome.storage.local` (last 10 companies, keyed by company id) purely to avoid redundant re-fetches — see "Persistent company data cache" above

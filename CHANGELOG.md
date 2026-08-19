@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.9] - 2026-08-14
+
+### Added
+
+- **Configurable saved leads limit**: new "Max saved leads" numeric field in the Settings tab's "Leads data" block, replacing the previous hardcoded 99-item cap. Accepts digits only, up to 9999. Saved automatically on blur when valid
+- **Automatic trimming on limit decrease**: lowering the limit below the current number of saved leads prompts for confirmation; if confirmed, the oldest leads (first added) are removed to fit the new limit, otherwise the change is discarded
+- **Persistent company data cache**: the last 10 companies whose details were successfully fetched from their LinkedIn page are now remembered in `chrome.storage.local`, keyed by company id. Reopening the popup (or revisiting a recently seen company) reuses the cached details instead of re-opening a background tab and re-scraping the company page. The refresh button (↻) still forces a live re-fetch and clears that company's cached entry
+- **Company name fallback for the cache**: when the currently selected company has no LinkedIn link (and therefore no company id), the cache is now also searched by company name, so previously fetched details can still be reused
+- **Cache stays in sync with manual website edits**: editing a company's website inline now updates that company's cached entry (matched by company id, or by name when no id is available) so the corrected website is reused on future lookups instead of the stale one
+- **Pasted website URLs are converted to domain view**: saving the website field now converts a pasted full URL (e.g. `https://www.example.com/about?ref=123`) into its bare domain (`example.com`) whenever that's possible, instead of rejecting it as an invalid domain
+- **More recognized company status suffixes**: added Finnish "Oy"/"Oyj" and "Ky" to the list of legal-form suffixes stripped from extracted company names
+
+### Fixed
+
+- **Refresh button required two clicks to actually re-fetch**: clearing the cached entry before refreshing was fire-and-forget, so the very next cache lookup could race ahead and still read the stale entry, silently returning cached data instead of fetching. The cache clear is now awaited before refreshing, so the first click always triggers a live re-fetch
+- **"No website found" placeholder no longer needs to be manually deleted**: clicking the edit icon when the website shows the "No website found" placeholder now clears it automatically, so the user can type the real domain straight away instead of deleting the placeholder text first
+- **Names and surnames with certain diacritic letters were extracted incomplete**: the extraction logic only recognized letters in a hand-picked Latin range, so a name whose first letter fell just outside it (e.g. Romanian "Ș") had that letter silently dropped. Name cleanup now recognizes any Unicode letter, so names and surnames in any script or with any diacritic are extracted in full
+- **Trailing diacritic letters were still dropped even with a recognized letter** (e.g. "Miha Kampuš" was populated as "Miha Kampu"), traced all the way to a broken `String.prototype.trim()`: the bundled `libs/transliteration/bundle.umd.min.js` is loaded as a classic `<script>`, so the old core-js `trim` polyfill it ships patches that method globally for the whole popup page, and mishandles some Latin Extended-A letters at the end of a string as trimmable whitespace. `transliterateElement()` (run automatically on every extracted name/surname) now trims with a small ASCII-only helper (`trimAsciiWhitespace` in `src/utils/text-utils.js`) instead of the compromised built-in
+
 ## [3.3.8] - 2026-07-10
 
 ### Added
