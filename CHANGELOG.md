@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.10] - 2026-08-31
+
+### Fixed
+
+- **Company details could no longer be fetched from LinkedIn company pages**: LinkedIn removed the `.org-page-details-module__card-spacing` container and the `<dl>`/`<dt>`/`<dd>` list it used to render the Overview section (website, industry, company size, headquarters, associated members), replacing it with plain sibling `<div>`s under CSS classes that are hashed per-build and therefore unusable as selectors. `company.js` now locates each field by its visible label text (`Website`, `Industry`, `Company size`, `Headquarters`, plus previously supported localized labels) instead of by class name, and reads the associated-member count via a text-pattern match. A new `waitForConditionWithTimeout` helper (`src/utils/mutation-observer.js`) waits for any of those labels to appear, mirroring the existing `waitForElementWithTimeout` but polling a predicate instead of a CSS selector
+
 ## [3.3.9] - 2026-08-14
 
 ### Added
