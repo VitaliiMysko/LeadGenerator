@@ -47,12 +47,26 @@ if (!window.leadGenerator.personalDataInit) {
       return window.location.href.trim().split("?")[0];
     }
 
-    // LinkedIn's public profile page has no stable class on the name heading.
-    // The name is reliably the first heading on the page — the "Experience"
-    // section heading (and every other section heading) is also an <h2>, but
-    // always appears further down the DOM, after the name.
+    // LinkedIn's public profile page has no stable class on the name heading,
+    // and searching the whole document for the first <h1>/<h2> is not safe:
+    // the global top nav (outside the page's main content) also has hidden
+    // headings for its icons (e.g. an <h2>"Notifications"), which sit earlier
+    // in the DOM than the profile name and were being picked up instead.
+    // Scoping to <main> excludes the top nav; the name is reliably the first
+    // heading within it — the "Experience" section heading (and every other
+    // section heading) is also an <h2>, but always appears further down.
+    // NAV_HEADING_TEXTS is a defense-in-depth filter in case a <main>-scoped
+    // nav-like heading ever slips through.
+    const NAV_HEADING_TEXTS = ["notifications", "messaging", "my network", "jobs", "home"];
+
     function getFullNameElement() {
-      return document.querySelector("h1") || document.querySelector("h2");
+      const scope = document.querySelector("main") || document;
+      const headings = [...scope.querySelectorAll("h1, h2")];
+      return (
+        headings.find(
+          (heading) => !NAV_HEADING_TEXTS.includes(heading.textContent.trim().toLowerCase()),
+        ) || null
+      );
     }
 
     window.leadGenerator.personalData.getPersonalData = getPersonalData;
