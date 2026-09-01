@@ -40,9 +40,18 @@ if (!window.leadGenerator.experienceDataInit) {
       );
     }
 
+    // The single-position (no <ul>) shape sometimes appends the employment
+    // type straight onto the company-name paragraph instead of rendering it
+    // as a separate <p>, e.g. "Global Message Services · Full-time" — cut
+    // off everything from that " · " separator onward.
+    function stripTrailingMetadata(text) {
+      const separatorIndex = text.indexOf(" · ");
+      return separatorIndex === -1 ? text : text.slice(0, separatorIndex);
+    }
+
     function cleanCompanyName(name) {
       const regex = removeCompanyStatusRegex();
-      return name
+      return stripTrailingMetadata(name.trim())
         .trim()
         .replace(/\p{Extended_Pictographic}/gu, "")
         .replace(regex, "");
