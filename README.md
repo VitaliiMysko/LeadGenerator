@@ -1,6 +1,6 @@
 # Lead Generator Extension
 
-This extension is a straightforward tool for extracting data about individuals directly from LinkedIn Sales Navigator pages.
+This extension is a straightforward tool for extracting data about individuals directly from LinkedIn Sales Navigator pages or public LinkedIn profile pages.
 
 ## Key Features
 
@@ -296,7 +296,7 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
 The extension must be signed via [Firefox Add-ons (AMO)](https://addons.mozilla.org/) or Mozilla's self-distribution signing service before it can be installed permanently.
 
-> **Note:** This extension is optimized for LinkedIn Sales Navigator pages. Some permissions may need to be granted to ensure full functionality
+> **Note:** This extension is optimized for LinkedIn Sales Navigator pages and public LinkedIn profile pages. Some permissions may need to be granted to ensure full functionality
 
 ## Configuration
 
@@ -326,10 +326,11 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a LinkedIn Sales Navigator profile page
+1. Open a LinkedIn Sales Navigator lead page, or a public LinkedIn profile page (`linkedin.com/in/...`)
 
 2. Click **Extract**
    - Extracts available profile and company data
+   - On a public profile page, if the visible Experience section may be hiding further current positions behind a "Show all" link, the full experience list is fetched automatically in the background before the fields are populated
 
 3. Review and edit fields (optional)
    - All fields are fully editable
@@ -368,7 +369,7 @@ The "Lead generator" extension requires certain permissions to function effectiv
 ## Requirements
 
 - Google Chrome
-- LinkedIn Sales Navigator access
+- LinkedIn Sales Navigator access, or a LinkedIn account able to view public profile pages
 
 ## Privacy Policy
 

@@ -9,11 +9,12 @@
       "strict_min_version": "128.0"
     }
   },
-  "description": "Lead generator is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page.",
+  "description": "Lead generator is a straightforward tool for extracting data about individuals directly from a LinkedIn Sales Navigator page or a public LinkedIn profile page.",
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "host_permissions": [
     "https://www.linkedin.com/sales/lead/*",
     "https://www.linkedin.com/company/*",
+    "https://www.linkedin.com/in/*",
     "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
   ],
   "icons": {

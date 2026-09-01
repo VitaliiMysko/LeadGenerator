@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: August 14, 2026
+**Last updated**: September 1, 2026
 
 This document provides a high-level overview of the architectural structure of the **Lead Generator** browser extension (Chrome, Edge, Firefox). It is intended for developers and maintainers who wish to understand how the extension is structured and how its core components interact.
 
@@ -9,6 +9,7 @@ This document provides a high-level overview of the architectural structure of t
 The extension is designed to extract structured data (name, surname, job position, LinkedIn profile link, etc.) from:
 
 - **LinkedIn Sales Navigator pages** (`https://www.linkedin.com/sales/lead/*`)
+- **Public LinkedIn profile pages** (`https://www.linkedin.com/in/*`)
 - **LinkedIn company pages** (`https://www.linkedin.com/company/*`)
 
 The extension operates **only within LinkedIn domains** (`https://www.linkedin.com/*`).
@@ -26,14 +27,17 @@ The extension is composed of modular JavaScript files, grouped logically into di
 
 - Injected into:
   - `https://www.linkedin.com/sales/lead/*`
+  - `https://www.linkedin.com/in/*`
   - `https://www.linkedin.com/company/*`
 - Responsible for extracting public data from the DOM via messaging
 - Do **not perform external network requests**
-- Examples: `lead.js`, `lead-experience.js`
+- Examples: `lead.js`, `lead-experience.js` (one pair under `sales-navigator-pages/lead/`, one pair under `linkedin-pages/lead/`)
 
-#### 2.1.1 Name extraction and cleanup (`lead.js`)
+#### 2.1.1 Name extraction and cleanup (`common/name-utils.js`)
 
-`getFullName()` in `lead.js` reads the LinkedIn lead heading's raw text (`fullNameElement.textContent`) and runs it through `handleFullName()` before splitting it into first/second name (`getFirstName`/`getSecondName`).
+Content scripts are plain classic scripts injected via `chrome.scripting.executeScript`'s `files` list — they can't `import`/`export` — so the name-cleanup logic used by both the Sales Navigator and public-profile `lead.js` lives in one shared file, `src/content-scripts/common/name-utils.js`, which sets `window.leadGenerator.nameUtils = { handleFullName, getFirstName, getSecondName }` (mirroring the existing `common/constants.js` sharing pattern). Both injection lists load it before their respective `lead.js`.
+
+`getFullName()` in each `lead.js` reads the profile heading's raw text (`fullNameElement.textContent`) and runs it through `window.leadGenerator.nameUtils.handleFullName()` before splitting it into first/second name (`getFirstName`/`getSecondName`).
 
 ##### Cleanup (`handleFullName`)
 
@@ -41,6 +45,16 @@ The extension is composed of modular JavaScript files, grouped logically into di
 - Otherwise: strips any leading non-letter characters (badges, stray punctuation), then strips a leading `Dr.`/`Prof.`/etc. title, drops anything after a comma (e.g. trailing credentials), and re-capitalizes each word — respecting Dutch surname particles (`van`, `der`, `den`, `de`, kept lowercase) and the `Mc`/`Mac` prefix (capital letter after it is preserved)
 - Both the leading-strip and the title-strip lookahead use the Unicode `\p{L}` ("any letter") property (with the `u` regex flag) rather than a hand-picked character range, so names are recognized correctly regardless of script or diacritic — a narrower explicit range (e.g. only Latin-1 + Latin Extended-A) would incorrectly treat a name's first letter as "junk to strip" whenever that letter fell just outside the chosen range (this previously happened for some diacritic letters, e.g. Romanian "Ș")
 - `getSecondName()` additionally capitalizes the letter following an apostrophe (e.g. `O'brien` → `O'Brien`), also letter-class-aware for the same reason
+
+#### 2.1.2 Public profile page extraction (`linkedin-pages/lead/`)
+
+Extracts the same personal-data/experience shape as the Sales Navigator version, adapted to the public profile page's markup and constraints:
+
+- **Name heading**: no stable class exists, so `getFullNameElement()` takes the first `<h1>` on the page, falling back to the first `<h2>` — LinkedIn's own section headings (e.g. "Experience") are also `<h2>`, but always appear later in the DOM than the profile name
+- **Link field**: simply `window.location.href` (trimmed of the query string) — no dropdown/menu lookup is needed since the extension is already on the profile page, unlike Sales Navigator
+- **No hover-tooltip company data**: the SN tooltip mechanism doesn't exist here, so every extracted entry's `extraData` (location/industry/companySize/revenue) is empty; this isn't a regression because that data is re-derived anyway by the existing company-page-scrape pipeline (§2.8.1) once the user expands a company
+- **Experience parsing** (`lead-experience.js`, `extractEntriesFromContainer(container)`): both the concise Experience section and the full `/details/experience/` page expose a stable, semantic `data-testid` on their container (`profile_ExperienceTopLevelSection_<slug>` / `profile_ExperienceDetailsSection_<slug>`, matched with `^=`), and their per-entry markup (`[componentkey^="entity-collection-item-"]`) is otherwise identical, so one function parses both. Per entry, job title / company name / employment type / date range / location are unlabelled sibling `<p>`s; only the date range (e.g. `"Oct 2022 - Present · 4 yrs"`, `"2014 – Jun 2015"`) has a recognizable shape, so it's located by a content-pattern regex rather than by position — the same "match by visible content, not class" strategy `company.js` already uses for this page family. The walk collects only *current* positions and stops at the first past one (positions render newest-first), exactly mirroring the Sales Navigator algorithm's termination logic
+- **"Show all" / full experience list**: if a `Show all` link is present (matched via `a[href$="/details/experience/"]` — the href, not the possibly-localized `aria-label` text) **and** the concise-list scan ran off the end while still collecting current positions (meaning further current positions could be hidden beyond the truncated list), `getActualExperienceData()` reports `needsFullExperience: { needed: true, url }` instead of guessing. The popup then triggers a second background-tab fetch of that URL (see `background.js` below) and uses its result as the authoritative experience list
 
 ### 2.2 Extension Scripts (`src/scripts`)
 
@@ -59,16 +73,29 @@ Used **only when necessary** for:
   - `tabs`
   - `scripting`
   - `action` (icon override)
-- Managing background tab processing (e.g., opening company pages)
+- Managing background tab processing (e.g., opening company pages, or a public profile's `/details/experience/` page)
 - Coordinating data extraction from secondary pages
 - On `onInstalled` / `onStartup`: if `manifest.environment === "local"`, renders the toolbar icon in greyscale via `OffscreenCanvas` and `chrome.action.setIcon()` to visually distinguish development builds from production
 🚫 **Not used for external HTTP requests**
+
+##### Task kinds (generalized hidden-tab round trip)
+
+The `sessionTasks` model (see §9.6) originally only handled company-page scraping. It now supports two task **kinds**, declared in one `TASK_KINDS` map so the shared tab-lifecycle/timeout/cancellation logic isn't duplicated per kind:
+
+| Kind | Injected files | Response action |
+|---|---|---|
+| `company` | `mutation-observer.js`, `linkedin-pages/company.js` | `linkedinCompanyPageContent` |
+| `profileExperience` | `mutation-observer.js`, `common/constants.js`, `linkedin-pages/lead/lead-experience.js`, `linkedin-pages/lead/experience-details-fetch.js` | `linkedinProfileExperienceContent` |
+
+Each `sessionTasks` entry carries its `kind`; `chrome.tabs.onUpdated` injects that kind's `scriptFiles` once the hidden tab finishes loading (the `window.leadGeneratorInitData` seed step stays `company`-only, since only the company flow has SN-tooltip data to pre-fill), and `chrome.runtime.onMessage` resolves the matching session when it sees either kind's `responseAction`. `extract-data.js` (popup) triggers the `profileExperience` kind, generating its own `crypto.randomUUID()` session id the same way `company-data.js` does for the `company` kind.
+
+`linkedin-pages/lead/experience-details-fetch.js` is the hidden-tab trigger for the `profileExperience` kind — structurally the same shape as `company.js` (IIFE, `waitForConditionWithTimeout`, `sendMessage` in a `finally`): it waits for `[data-testid^="profile_ExperienceDetailsSection_"]`, then calls the same `extractEntriesFromContainer()` used on the live tab (see §2.1.2).
 
 #### ▸ `src/scripts/containers/data/`
 
 Handles user-interaction logic related to core actions:
 
-- `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked
+- `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked. First resolves the active tab's page type via `getLinkedInPageType()` (`src/utils/linkedin-page.js`) to pick the matching content-script file set (Sales Navigator lead page vs. public profile page) and injects it; an unrecognized page shows an alert instead. If the content script reports `needsFullExperience` (public-profile flow only), sends a second message to `background.js` (`fetchLinkedinProfileExperience`, `profileExperience` task kind) to fetch the full `/details/experience/` list before rendering
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; disabled when the configured max-saved-leads limit is reached; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
@@ -323,11 +350,17 @@ src/
  │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
  │    ├── actions/
- │    │    └── extract-data.js         (message listener, data orchestrator)
+ │    │    ├── extract-data.js         (Sales Navigator message listener, data orchestrator)
+ │    │    └── extract-data-linkedin.js (public profile message listener, data orchestrator)
  │    ├── common/
- │    │    └── constants.js            (company status suffixes, Dutch surnames)
+ │    │    ├── constants.js            (company status suffixes, Dutch surnames)
+ │    │    └── name-utils.js           (handleFullName, getFirstName, getSecondName — shared by both lead.js files)
  │    ├── linkedin-pages/
- │    │    └── company.js              (LinkedIn company About page scraper)
+ │    │    ├── company.js              (LinkedIn company About page scraper)
+ │    │    └── lead/
+ │    │         ├── lead.js                     (personal data extraction, public profile page)
+ │    │         ├── lead-experience.js           (job experience extraction; parses both the concise and full /details/experience/ containers)
+ │    │         └── experience-details-fetch.js  (hidden-tab trigger: extracts from the full /details/experience/ page)
  │    └── sales-navigator-pages/
  │         └── lead/
  │              ├── lead.js            (personal data extraction)
@@ -394,6 +427,7 @@ src/
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
+      ├── linkedin-page.js             (getLinkedInPageType — pure, tested)
       ├── text-utils.js                (trimAsciiWhitespace — pure, tested)
       └── mutation-observer.js         (waitForElement utilities for content scripts)
 ```
@@ -421,6 +455,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
 | `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
+| `tests/linkedin-page.test.js` | `src/utils/linkedin-page.js` | `getLinkedInPageType` — Sales Navigator lead vs. public profile vs. unrecognized URL |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
 | `tests/text-utils.test.js` | `src/utils/text-utils.js` | `trimAsciiWhitespace` — ASCII whitespace only, leaves Latin Extended-A letters (including at the end of the string) untouched |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |
@@ -458,7 +493,7 @@ flowchart LR
 
 1. User opens the popup
 
-2. On pressing "Extract", content scripts extract data from the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page; additional company data is fetched from `https://www.linkedin.com/company/*` in the background
+2. On pressing "Extract", the popup determines the active tab's page type (`getLinkedInPageType()`) and injects the matching content scripts: either the current `https://www.linkedin.com/sales/lead/*` LinkedIn Sales Navigator page, or a `https://www.linkedin.com/in/*` public profile page — on an unrecognized page, an alert is shown instead. On a public profile page whose concise Experience section may be truncated (a "Show all" link is present and the visible list ends mid-current-position), the full list is additionally fetched from that profile's `/details/experience/` page in the background. Additional company data is fetched from `https://www.linkedin.com/company/*` in the background
 
 3. Data is returned and displayed in the popup
 
@@ -519,6 +554,7 @@ sequenceDiagram
 "host_permissions": [
   "https://www.linkedin.com/sales/lead/*",
   "https://www.linkedin.com/company/*",
+  "https://www.linkedin.com/in/*",
   "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
 ]
 ```
@@ -613,14 +649,14 @@ Using direct fetch calls from the popup provides:
 
 ### 9.6 Request Stability — Per-Session Task Model
 
-The background service worker tracks company-data fetch tasks using a **per-session model** to eliminate race conditions and support parallel usage across multiple browser windows.
+The background service worker tracks hidden-tab fetch tasks — both company-data fetches and public-profile full-experience fetches (see §2.2's "Task kinds") — using a **per-session model** to eliminate race conditions and support parallel usage across multiple browser windows.
 
 #### How it works
 
-- When a popup opens, `company-data.js` generates a `popupSessionId` (`crypto.randomUUID()`) that is stable for the lifetime of that popup window
-- Every `fetchLinkedinCompanyPage` message carries this `sessionId`
-- The background maintains a `sessionTasks` map (`Map<sessionId, { tabId, resolve, timeoutId, ... }>`) — at most one in-flight tab per popup window
-- When a new request arrives for a session that already has a tab in flight (e.g., the user switched companies), the old tab is immediately closed and its promise resolved with `null` before the new tab is created
+- When a popup opens, `company-data.js` generates a `popupSessionId` (`crypto.randomUUID()`) stable for the lifetime of that popup window; `extract-data.js` generates its own separate session id the same way for `fetchLinkedinProfileExperience` requests
+- Every `fetchLinkedinCompanyPage` / `fetchLinkedinProfileExperience` message carries its session id
+- The background maintains a `sessionTasks` map (`Map<sessionId, { kind, tabId, resolve, timeoutId, ... }>`) — at most one in-flight tab per session id
+- When a new request arrives for a session that already has a tab in flight (e.g., the user switched companies, or clicked Extract again), the old tab is immediately closed and its promise resolved with `null` before the new tab is created
 
 #### Parallel window support
 

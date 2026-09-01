@@ -28,9 +28,34 @@ async function applyDevIconIfLocal() {
 }
 
 // -----------------------------
+// TASK KINDS
+// Each kind describes what to inject into the hidden tab once it finishes
+// loading, and which message action carries its result back.
+// -----------------------------
+const TASK_KINDS = {
+  company: {
+    scriptFiles: [
+      "src/utils/mutation-observer.js",
+      "src/content-scripts/linkedin-pages/company.js",
+    ],
+    responseAction: "linkedinCompanyPageContent",
+  },
+  profileExperience: {
+    scriptFiles: [
+      "src/utils/mutation-observer.js",
+      "src/content-scripts/common/constants.js",
+      "src/content-scripts/linkedin-pages/lead/lead-experience.js",
+      "src/content-scripts/linkedin-pages/lead/experience-details-fetch.js",
+    ],
+    responseAction: "linkedinProfileExperienceContent",
+  },
+};
+
+// -----------------------------
 // PER-SESSION IN-FLIGHT TASK TRACKER
-// key: sessionId (unique per popup lifetime, generated in company-data.js)
-// value: { tabId, resolve, timeoutId, url, location, industry, size }
+// key: sessionId (unique per popup lifetime, generated in company-data.js /
+// extract-data.js)
+// value: { kind, tabId, resolve, timeoutId, url, location, industry, size }
 // -----------------------------
 const sessionTasks = new Map();
 
@@ -75,32 +100,38 @@ chrome.tabs.onUpdated.addListener((tabId, info) => {
     finishTask(sessionId, null);
   }, 10000);
 
-  chrome.scripting.executeScript(
-    {
-      target: { tabId },
-      func: (initData) => { window.leadGeneratorInitData = initData; },
-      args: [{ location: task.location, industry: task.industry, size: task.size }],
-    },
-    () => {
-      if (chrome.runtime.lastError) return;
-      chrome.scripting.executeScript({
+  const scriptFiles = TASK_KINDS[task.kind].scriptFiles;
+
+  if (task.kind === "company") {
+    chrome.scripting.executeScript(
+      {
         target: { tabId },
-        files: [
-          "src/utils/mutation-observer.js",
-          "src/content-scripts/linkedin-pages/company.js",
-        ],
-      });
-    }
-  );
+        func: (initData) => { window.leadGeneratorInitData = initData; },
+        args: [{ location: task.location, industry: task.industry, size: task.size }],
+      },
+      () => {
+        if (chrome.runtime.lastError) return;
+        chrome.scripting.executeScript({ target: { tabId }, files: scriptFiles });
+      }
+    );
+  } else {
+    chrome.scripting.executeScript({ target: { tabId }, files: scriptFiles });
+  }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "fetchLinkedinCompanyPage") {
-    handleCompanyRequest(message, sendResponse);
+    handleTaskRequest("company", message, sendResponse);
     return true;
   }
 
-  if (message.action === "linkedinCompanyPageContent") {
+  if (message.action === "fetchLinkedinProfileExperience") {
+    handleTaskRequest("profileExperience", message, sendResponse);
+    return true;
+  }
+
+  const responseActions = Object.values(TASK_KINDS).map((kind) => kind.responseAction);
+  if (responseActions.includes(message.action)) {
     const tabId = sender.tab?.id;
     if (!tabId) return;
     const sessionId = findSessionByTabId(tabId);
@@ -121,10 +152,10 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // -----------------------------
 // MAIN MESSAGE HANDLER
 // -----------------------------
-function handleCompanyRequest(request, sendResponse) {
+function handleTaskRequest(kind, request, sendResponse) {
   const { sessionId, url, location, industry, size } = request;
 
-  // Cancel any in-flight task for this session (user switched company mid-fetch)
+  // Cancel any in-flight task for this session (user switched company / re-extracted mid-fetch)
   cancelSessionTask(sessionId);
 
   chrome.tabs.create({ url, active: false }, (tab) => {
@@ -135,6 +166,7 @@ function handleCompanyRequest(request, sendResponse) {
     }, 30000);
 
     sessionTasks.set(sessionId, {
+      kind,
       tabId: tab.id,
       resolve: sendResponse,
       timeoutId,
