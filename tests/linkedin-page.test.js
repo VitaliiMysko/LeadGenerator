@@ -25,8 +25,14 @@ describe("getLinkedInPageType", () => {
     ).toBe("linkedinProfile");
   });
 
-  test("returns null for a LinkedIn company page", () => {
-    expect(getLinkedInPageType("https://www.linkedin.com/company/5010955/")).toBeNull();
+  test("treats a LinkedIn company page as a Sales Navigator-style lead page", () => {
+    expect(getLinkedInPageType("https://www.linkedin.com/company/5010955/")).toBe(
+      "salesNavigatorLead",
+    );
+  });
+
+  test("treats any other LinkedIn domain page as a Sales Navigator-style lead page", () => {
+    expect(getLinkedInPageType("https://www.linkedin.com/feed/")).toBe("salesNavigatorLead");
   });
 
   test("returns null for an unrelated site", () => {

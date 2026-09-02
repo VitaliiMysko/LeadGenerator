@@ -326,7 +326,7 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a LinkedIn Sales Navigator lead page, or a public LinkedIn profile page (`linkedin.com/in/...`)
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`), or any other `linkedin.com` page (e.g. a Sales Navigator lead page) — the latter is extracted best-effort using the Sales Navigator logic
 
 2. Click **Extract**
    - Extracts available profile and company data

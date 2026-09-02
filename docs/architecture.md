@@ -95,7 +95,7 @@ Each `sessionTasks` entry carries its `kind`; `chrome.tabs.onUpdated` injects th
 
 Handles user-interaction logic related to core actions:
 
-- `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked. First resolves the active tab's page type via `getLinkedInPageType()` (`src/utils/linkedin-page.js`) to pick the matching content-script file set (Sales Navigator lead page vs. public profile page) and injects it; an unrecognized page shows an alert instead. If the content script reports `needsFullExperience` (public-profile flow only), sends a second message to `background.js` (`fetchLinkedinProfileExperience`, `profileExperience` task kind) to fetch the full `/details/experience/` list before rendering
+- `extract-data.js` – fetches and formats the data from the LinkedIn pages when the "Extract" button is clicked. First resolves the active tab's page type via `getLinkedInPageType()` (`src/utils/linkedin-page.js`) to pick the matching content-script file set and injects it; only `linkedin.com/in/...` gets the public-profile file set, every other `linkedin.com` page (Sales Navigator lead, company, or anything else) falls back to the Sales Navigator lead file set and best-effort extracts whatever the page's DOM allows — only a non-`linkedin.com` page shows an alert instead. If the content script reports `needsFullExperience` (public-profile flow only), sends a second message to `background.js` (`fetchLinkedinProfileExperience`, `profileExperience` task kind) to fetch the full `/details/experience/` list before rendering
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; disabled when the configured max-saved-leads limit is reached; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
@@ -455,7 +455,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
 | `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
-| `tests/linkedin-page.test.js` | `src/utils/linkedin-page.js` | `getLinkedInPageType` — Sales Navigator lead vs. public profile vs. unrecognized URL |
+| `tests/linkedin-page.test.js` | `src/utils/linkedin-page.js` | `getLinkedInPageType` — public profile page vs. any other `linkedin.com` page (treated as Sales Navigator-style, e.g. lead or company pages) vs. unrelated domain |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
 | `tests/text-utils.test.js` | `src/utils/text-utils.js` | `trimAsciiWhitespace` — ASCII whitespace only, leaves Latin Extended-A letters (including at the end of the string) untouched |
 | `tests/filter-utils.test.js` | `src/utils/filter-utils.js` | `matchesFilter` — case-insensitive substring matching, multi-filter OR logic, edge cases |

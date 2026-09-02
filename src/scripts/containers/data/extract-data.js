@@ -37,10 +37,7 @@ getExtractBtnElement().addEventListener("click", async () => {
 
   const pageType = getLinkedInPageType(tab.url);
   if (!pageType) {
-    showAlert(
-      "Open a LinkedIn Sales Navigator lead page or a LinkedIn profile page first.",
-      "error",
-    );
+    showAlert("Open a LinkedIn page first.", "error");
     return;
   }
 

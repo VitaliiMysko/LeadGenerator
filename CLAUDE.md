@@ -97,7 +97,7 @@ All sensitive operations route through the Cloudflare Worker backend (URL in `ma
 
 ## Data Flow
 
-1. User clicks "Extract" → popup checks the active tab's URL (`getLinkedInPageType()` in `src/utils/linkedin-page.js`) to decide whether it's a Sales Navigator lead page or a public LinkedIn profile page (anything else shows an alert instead of injecting scripts), then sends a message to the matching content script on that tab
+1. User clicks "Extract" → popup checks the active tab's URL (`getLinkedInPageType()` in `src/utils/linkedin-page.js`) to decide whether it's a public LinkedIn profile page (`linkedin.com/in/...`) or any other `linkedin.com` page — the latter (Sales Navigator lead pages, company pages, or anything else on the domain) is treated as a Sales Navigator-style lead page and extracted best-effort; only a non-`linkedin.com` page shows an alert instead of injecting scripts — then sends a message to the matching content script on that tab
 2. Content script extracts profile data from DOM → returns to popup. On a public profile page, it also reports whether the concise Experience section may be missing current positions behind a "Show all" link
 3. Popup sends message to `background.js` to open a hidden background tab — either a company's LinkedIn page, or (public-profile flow only, when step 2 flagged it) the profile's `/details/experience/` page
 4. Background injects content scripts → extracts the data → returns to popup
