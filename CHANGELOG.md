@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [3.3.10] - 2026-08-31
 
+### Added
+
+- **Extraction from public LinkedIn profile pages**: the "Extract" button now also works on a regular `linkedin.com/in/...` profile page, not just a Sales Navigator lead page. Personal data and the actual (current) experience list are extracted the same way as on Sales Navigator wherever the public page's DOM allows it:
+  - `Link` is simply the current page's own URL, since no dropdown lookup is needed
+  - Company hover-tooltip data (location/industry/size/revenue) isn't available on this page, so it's left empty and filled in the normal way once a company is expanded — no functional loss
+  - If the visible Experience section shows a "Show all" link and the current-position scan runs to the end of that truncated list without finding a past position, the extension automatically fetches the profile's full `/details/experience/` list from a hidden background tab (mirroring the existing company-page-scrape flow) so no current position is missed
+  - Clicking Extract on a page that's neither a Sales Navigator lead page nor a public profile page now shows an alert instead of silently doing nothing
+- **Any other `linkedin.com` page now falls back to the Sales Navigator extraction logic**: previously only `linkedin.com/sales/lead/...` was recognized as extractable and every other LinkedIn page (company pages, `/feed/`, etc.) showed the "not a supported page" alert. `getLinkedInPageType()` now only special-cases the public profile pattern (`linkedin.com/in/...`); every other `linkedin.com` URL is treated the same as a Sales Navigator lead page and extracted best-effort, since the Sales Navigator content scripts already tolerate missing fields. The alert is now reserved for pages outside the `linkedin.com` domain entirely
+- Name/surname cleanup logic (`handleFullName`, `getFirstName`, `getSecondName`) moved into a shared `src/content-scripts/common/name-utils.js`, used by both the Sales Navigator and public-profile extraction scripts instead of being duplicated
+
 ### Fixed
 
 - **Company details could no longer be fetched from LinkedIn company pages**: LinkedIn removed the `.org-page-details-module__card-spacing` container and the `<dl>`/`<dt>`/`<dd>` list it used to render the Overview section (website, industry, company size, headquarters, associated members), replacing it with plain sibling `<div>`s under CSS classes that are hashed per-build and therefore unusable as selectors. `company.js` now locates each field by its visible label text (`Website`, `Industry`, `Company size`, `Headquarters`, plus previously supported localized labels) instead of by class name, and reads the associated-member count via a text-pattern match. A new `waitForConditionWithTimeout` helper (`src/utils/mutation-observer.js`) waits for any of those labels to appear, mirroring the existing `waitForElementWithTimeout` but polling a predicate instead of a CSS selector
