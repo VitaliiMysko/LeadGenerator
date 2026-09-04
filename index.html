@@ -219,14 +219,17 @@
                 />
               </div>
               <div class="tab-item-block">
-                <label for="export-format-settings">Export format:</label>
-                <select
+                <label>Export format:</label>
+                <div
+                  class="segmented-control"
                   id="export-format-settings"
                   title="Format used when copying saved leads to the clipboard"
                 >
-                  <option value="tsv">Tab-separated</option>
-                  <option value="json">JSON</option>
-                </select>
+                  <input type="radio" name="export-format" id="export-format-tsv" value="tsv" />
+                  <label for="export-format-tsv">Tab-separated</label>
+                  <input type="radio" name="export-format" id="export-format-json" value="json" />
+                  <label for="export-format-json">JSON</label>
+                </div>
               </div>
             </div>
           </div>

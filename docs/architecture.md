@@ -189,7 +189,7 @@ The popup styles are split into focused files by domain:
 - `buttons.css` — button groups, variants (secondary, progress), and get-counter widget
 - `form-fields.css` — draggable field blocks, icon buttons, alert toasts, confirm dialog, and validation states
 - `company-card.css` — accordion company card components, loading states, and website/domain editor
-- `tabs.css` — tab selector dropdown, tab show/hide, and custom scrollbar
+- `tabs.css` — tab selector dropdown, tab show/hide, custom scrollbar, and the settings segmented control
 - `filters.css` — multi-select tags, single-select dropdown, and option styles
 
 ### 2.6 HTML Interface
@@ -246,7 +246,8 @@ Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, s
 
 #### Export Format Setting
 
-- `export-format.js` (`src/scripts/containers/settings/`) — wires the "Export format" `<select>` in the Settings tab's **Leads data** block: on load, reads `leadsExportFormat` from `chrome.storage.sync` (default `"tsv"`, from `DEFAULT_LEADS_EXPORT_FORMAT` in `src/constants/config.js`) into the select's value; on `change`, writes the new value back via `syncSet`. No dedicated pub/sub store — `storage-actions.js`'s `copyLeadsToClipboard()` reads the setting directly with `syncGet` at copy time, the same way it already reads `storeCompanyIdEnabled`
+- The "Export format" control in the Settings tab's **Leads data** block is a `.segmented-control` (`src/styles/tabs.css`): a pair of visually-hidden radio inputs (`name="export-format"`) each paired with an adjacent `<label>`, styled as a two-option pill toggle via the `input:checked + label` sibling selector — no separate JS-driven active-state class needed
+- `export-format.js` (`src/scripts/containers/settings/`) wires it up: on load, reads `leadsExportFormat` from `chrome.storage.sync` (default `"tsv"`, from `DEFAULT_LEADS_EXPORT_FORMAT` in `src/constants/config.js`) and checks the matching radio; each radio's `change` listener writes its value back via `syncSet` when it becomes checked. No dedicated pub/sub store — `storage-actions.js`'s `copyLeadsToClipboard()` reads the setting directly with `syncGet` at copy time, the same way it already reads `storeCompanyIdEnabled`
 - `LEADS_EXPORT_FORMATS` (`src/constants/config.js`) enumerates the two values (`TSV: "tsv"`, `JSON: "json"`) so both `export-format.js` and `storage-actions.js` compare against the same constants instead of duplicating string literals
 
 Company id is derived from the active company's LinkedIn link (`data-company-id`, extracted via `extractCompanyId` in `src/utils/company-id.js`) and held in a hidden `#company-id` field, populated whenever a company header is clicked (mirrors how country/industry are populated). It is not part of the draggable field order — it is always appended after it.
@@ -425,7 +426,7 @@ src/
  │    ├── buttons.css       (button groups and variants)
  │    ├── form-fields.css   (draggable fields, alert, confirm dialog)
  │    ├── company-card.css  (accordion card, loading states, domain editor)
- │    ├── tabs.css          (tab selector, tabs, scrollbar)
+ │    ├── tabs.css          (tab selector, tabs, scrollbar, segmented control)
  │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
       ├── company-cache.js             (upsertCompanyCacheEntry, findCompanyCacheEntry, removeCompanyCacheEntry, updateCompanyCacheEntryWebsite — pure, tested)

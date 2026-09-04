@@ -136,7 +136,7 @@ Available option:
   - Lowering the limit below the current number of saved leads prompts for confirmation before removing the oldest saved leads (first added) to fit the new limit; declining the confirmation discards the change
   - State persisted via Chrome `storage`
 - **Export format**
-  - Dropdown controlling the format used by the **Get** button: **Tab-separated** (default) or **JSON**
+  - Segmented toggle controlling the format used by the **Get** button: **Tab-separated** (default) or **JSON**
   - Saved immediately on change
   - State persisted via Chrome `storage`
 
