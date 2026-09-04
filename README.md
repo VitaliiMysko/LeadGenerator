@@ -30,7 +30,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 9999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last column. Fill level shows storage usage relative to the configured limit; hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -135,6 +135,10 @@ Available option:
   - Saved automatically when the field loses focus, if the value is valid
   - Lowering the limit below the current number of saved leads prompts for confirmation before removing the oldest saved leads (first added) to fit the new limit; declining the confirmation discards the change
   - State persisted via Chrome `storage`
+- **Export format**
+  - Dropdown controlling the format used by the **Get** button: **Tab-separated** (default) or **JSON**
+  - Saved immediately on change
+  - State persisted via Chrome `storage`
 
 ## Data Fields
 
@@ -148,7 +152,7 @@ Available option:
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location
 - **Industry** - company indutry
-- **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output only when **Store company id** is enabled in Settings
+- **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
 
 All fields are editable before copying.
 
@@ -314,6 +318,7 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
    - Set the maximum number of leads that can be stored locally, 1-9999 (**Leads data** block)
+   - Choose the Get button's clipboard export format: tab-separated or JSON (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
 
 4. **Filters**
