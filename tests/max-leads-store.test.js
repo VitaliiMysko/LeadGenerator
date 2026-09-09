@@ -46,8 +46,8 @@ describe("setMaxSavedLeads", () => {
 
   test("overwrites previous value", async () => {
     await setMaxSavedLeads(500);
-    await setMaxSavedLeads(9999);
-    expect(getMaxSavedLeads()).toBe(9999);
+    await setMaxSavedLeads(999);
+    expect(getMaxSavedLeads()).toBe(999);
   });
 
   test("persists the value to storage via syncSet", async () => {

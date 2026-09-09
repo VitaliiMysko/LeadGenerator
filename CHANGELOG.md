@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file.
 - Name/surname cleanup logic (`handleFullName`, `getFirstName`, `getSecondName`) moved into a shared `src/content-scripts/common/name-utils.js`, used by both the Sales Navigator and public-profile extraction scripts instead of being duplicated
 - **Export format setting**: new "Export format" segmented toggle in the Settings tab's "Leads data" block, letting the "Get" button copy saved leads as either tab-separated text (default, unchanged behavior) or a JSON array of lead objects. Saved immediately on change
 
+### Changed
+
+- **Max saved leads hard cap lowered from 9999 to 999**: the "Max saved leads" setting's upper bound is now 999, matching its 3-digit input field. Existing values above 999 are accepted as-is until the user changes the setting, at which point the new cap is enforced
+
 ### Fixed
 
 - **Company details could no longer be fetched from LinkedIn company pages**: LinkedIn removed the `.org-page-details-module__card-spacing` container and the `<dl>`/`<dt>`/`<dd>` list it used to render the Overview section (website, industry, company size, headquarters, associated members), replacing it with plain sibling `<div>`s under CSS classes that are hashed per-build and therefore unusable as selectors. `company.js` now locates each field by its visible label text (`Website`, `Industry`, `Company size`, `Headquarters`, plus previously supported localized labels) instead of by class name, and reads the associated-member count via a text-pattern match. A new `waitForConditionWithTimeout` helper (`src/utils/mutation-observer.js`) waits for any of those labels to appear, mirroring the existing `waitForElementWithTimeout` but polling a predicate instead of a CSS selector

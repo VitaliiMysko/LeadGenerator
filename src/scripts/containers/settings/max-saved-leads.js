@@ -18,7 +18,7 @@ export async function initMaxSavedLeads() {
   inputElement.value = current;
 
   inputElement.addEventListener("input", () => {
-    inputElement.value = inputElement.value.replace(/\D/g, "").slice(0, 4);
+    inputElement.value = inputElement.value.replace(/\D/g, "").slice(0, 3);
   });
 
   inputElement.addEventListener("blur", () => handleBlur(inputElement));
