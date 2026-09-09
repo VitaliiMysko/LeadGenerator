@@ -352,7 +352,7 @@ src/
  ├── constants/                        (shared config and data)
  │    ├── company-sizes.js             (COMPANY_SIZES array)
  │    ├── config.js                    (DEFAULT_MAX_SAVED_LEADS, MAX_SAVED_LEADS_LIMIT, MAX_CACHED_COMPANIES, NO_WEBSITE_FOUND_TEXT, getWorkerUrl)
- │    ├── countries.js                 (EUROPEAN_COUNTRIES array)
+ │    ├── countries.js                 (COUNTRIES array — all countries worldwide)
  │    └── email-templates.js           (emailTemplates array)
  ├── content-scripts/
  │    ├── actions/

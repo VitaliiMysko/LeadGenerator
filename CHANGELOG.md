@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Name/surname cleanup logic (`handleFullName`, `getFirstName`, `getSecondName`) moved into a shared `src/content-scripts/common/name-utils.js`, used by both the Sales Navigator and public-profile extraction scripts instead of being duplicated
 - **Export format setting**: new "Export format" segmented toggle in the Settings tab's "Leads data" block, letting the "Get" button copy saved leads as either tab-separated text (default, unchanged behavior) or a JSON array of lead objects. Saved immediately on change
 - **More recognized company status suffixes**: added "DOO", "d.o.o", "A.Ş", "Shpk", "sh.p.k", "d.d.", "s.r.l", "sl", and "a.m.b.a" to the list of legal-form suffixes stripped from extracted company names
+- **Company location filter now supports any country worldwide**, not just European ones: `src/constants/countries.js` now exports `COUNTRIES` (previously `EUROPEAN_COUNTRIES`) with a full worldwide list, used by the Company Location filter and the "Country by default" setting
 
 ### Changed
 
