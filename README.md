@@ -29,7 +29,7 @@ This extension is a straightforward tool for extracting data about individuals d
     The "Email" field is not auto-filled.
 
 - **Storage utility buttons**:
-  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 9999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
+  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
   - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
@@ -131,7 +131,7 @@ Available option:
   - When enabled, the **Get** button appends the company id as an extra, last column when copying saved leads to the clipboard
   - State persisted via Chrome `storage`
 - **Max saved leads**
-  - Numeric field controlling how many leads can be stored locally (1-9999, default 99); only digits can be typed
+  - Numeric field controlling how many leads can be stored locally (1-999, default 99); only digits can be typed
   - Saved automatically when the field loses focus, if the value is valid
   - Lowering the limit below the current number of saved leads prompts for confirmation before removing the oldest saved leads (first added) to fit the new limit; declining the confirmation discards the change
   - State persisted via Chrome `storage`
@@ -317,7 +317,7 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
-   - Set the maximum number of leads that can be stored locally, 1-9999 (**Leads data** block)
+   - Set the maximum number of leads that can be stored locally, 1-999 (**Leads data** block)
    - Choose the Get button's clipboard export format: tab-separated or JSON (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
 
