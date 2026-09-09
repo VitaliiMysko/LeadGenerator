@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - **Any other `linkedin.com` page now falls back to the Sales Navigator extraction logic**: previously only `linkedin.com/sales/lead/...` was recognized as extractable and every other LinkedIn page (company pages, `/feed/`, etc.) showed the "not a supported page" alert. `getLinkedInPageType()` now only special-cases the public profile pattern (`linkedin.com/in/...`); every other `linkedin.com` URL is treated the same as a Sales Navigator lead page and extracted best-effort, since the Sales Navigator content scripts already tolerate missing fields. The alert is now reserved for pages outside the `linkedin.com` domain entirely
 - Name/surname cleanup logic (`handleFullName`, `getFirstName`, `getSecondName`) moved into a shared `src/content-scripts/common/name-utils.js`, used by both the Sales Navigator and public-profile extraction scripts instead of being duplicated
 - **Export format setting**: new "Export format" segmented toggle in the Settings tab's "Leads data" block, letting the "Get" button copy saved leads as either tab-separated text (default, unchanged behavior) or a JSON array of lead objects. Saved immediately on change
+- **More recognized company status suffixes**: added "DOO", "d.o.o", "A.Ş", "Shpk", "sh.p.k", "d.d.", "s.r.l", "sl", and "a.m.b.a" to the list of legal-form suffixes stripped from extracted company names
 
 ### Changed
 

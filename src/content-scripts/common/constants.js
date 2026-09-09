@@ -31,6 +31,15 @@ if (!window.leadGenerator.constantsInit) {
       "Oy",
       "Oyj",
       "Ky",
+      "DOO",
+      "d.o.o",
+      "A.Ş",
+      "Shpk",
+      "sh.p.k",
+      "d.d.",
+      "s.r.l",
+      "sl",
+      "a.m.b.a",
     ];
 
     const dutchSurnames = ["van", "der", "den", "de"];
