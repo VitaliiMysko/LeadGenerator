@@ -1,7 +1,7 @@
-import { EUROPEAN_COUNTRIES } from "../../../constants/countries.js";
+import { COUNTRIES } from "../../../constants/countries.js";
 import { initMultiSelectFilter } from "../../components/multi-select-filter.js";
 
-export const allOptions = EUROPEAN_COUNTRIES;
+export const allOptions = COUNTRIES;
 
 export function extractCountry(location) {
   if (!location) return "";
@@ -13,7 +13,7 @@ export function extractCountry(location) {
 export function initCompanyLocationFilter() {
   initMultiSelectFilter({
     containerId: "company-location-filter",
-    options: EUROPEAN_COUNTRIES,
+    options: COUNTRIES,
     filterKey: "companyLocation",
   });
 }

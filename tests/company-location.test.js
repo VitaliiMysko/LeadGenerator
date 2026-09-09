@@ -19,8 +19,11 @@ describe("extractCountry", () => {
   test("location that is just a country name", () => {
     expect(extractCountry("France")).toBe("France");
   });
-  test("returns empty for non-European country", () => {
-    expect(extractCountry("New York, United States")).toBe("");
+  test("extracts non-European country", () => {
+    expect(extractCountry("New York, United States")).toBe("United States");
+  });
+  test("returns empty for unrecognized location", () => {
+    expect(extractCountry("Nowhereland")).toBe("");
   });
   test("falls back to substring match when last segment is not a country", () => {
     expect(extractCountry("Berlin, Germany, District")).toBe("Germany");
