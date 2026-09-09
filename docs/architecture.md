@@ -99,7 +99,7 @@ Handles user-interaction logic related to core actions:
 - `open-company-linkedin.js` – handles the LinkedIn button next to the Company Name field; opens the selected company's LinkedIn page in a new tab; button is enabled/disabled reactively based on whether the selected company has a LinkedIn URL
 - `storage-actions.js` – manages local storage of leads:
   - **Save** - saves current left-panel lead data; requires at least one field to be non-empty; disabled when the configured max-saved-leads limit is reached; when email is present it acts as a unique key; when email is empty, the full combination of all other fields must be unique
-  - **Get** - clipboard copy in tab-separated format with live counter, progress bar fill relative to the configured limit; column order reflects the current left-panel field order at the time of copying
+  - **Get** - clipboard copy in tab-separated format or JSON (per the **Export format** setting) with live counter, progress bar fill relative to the configured limit; field order reflects the current left-panel field order at the time of copying. The actual row/object shaping (`buildLeadRecord`, `formatLeadsAsTsv`, `formatLeadsAsJson` in `src/utils/lead-export.js`) is pure and unit-tested; `copyLeadsToClipboard()` here only reads the field order from the DOM and the two settings (`storeCompanyIdEnabled`, `leadsExportFormat`) before delegating to it
   - **Clean** - full reset; disabled when no leads are saved; shows an in-page confirmation dialog before clearing
   - Subscribes to `max-leads-store.js` so the counter, progress bar, and Save button state react immediately when the max-saved-leads setting changes
 
@@ -189,7 +189,7 @@ The popup styles are split into focused files by domain:
 - `buttons.css` — button groups, variants (secondary, progress), and get-counter widget
 - `form-fields.css` — draggable field blocks, icon buttons, alert toasts, confirm dialog, and validation states
 - `company-card.css` — accordion company card components, loading states, and website/domain editor
-- `tabs.css` — tab selector dropdown, tab show/hide, and custom scrollbar
+- `tabs.css` — tab selector dropdown, tab show/hide, custom scrollbar, and the settings segmented control
 - `filters.css` — multi-select tags, single-select dropdown, and option styles
 
 ### 2.6 HTML Interface
@@ -232,7 +232,7 @@ The Actual Experience tab (`src/scripts/containers/experience/`) uses a CSS-clas
 - **Pasted URL → domain view conversion**: `handleDomainSave()` in `company-details.js` runs the saved value through `getHostName()` before validating it with `isValidDomain()`. `getHostName()` already strips the protocol, `www.`, path, and query string down to a bare hostname (see `src/scripts/services/company-data.js`), so a pasted full URL like `https://www.example.com/about?ref=123` converts to `example.com` and is treated as valid; a raw string that still isn't a valid domain after conversion falls back to being validated (and displayed, on error) as-is, preserving the original invalid-domain error path. On a successful conversion, the visible `<span>` text and `title` are rewritten to the converted domain so the user sees the clean value, not the raw pasted URL
 ### 2.8 Local Storage (`chrome.storage.local`)
 
-Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, surname, job position, link, email, company name, country, industry, company id), capped at a user-configurable limit (default 99, adjustable up to 9999 via the **Max saved leads** setting). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as tab-separated rows for direct paste into spreadsheet applications; when the **Store company id** setting is enabled, the company id is appended as an extra last column.
+Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, surname, job position, link, email, company name, country, industry, company id), capped at a user-configurable limit (default 99, adjustable up to 9999 via the **Max saved leads** setting). The email field acts as a unique key — duplicates are rejected at save time. The Get button copies all leads to the clipboard as either tab-separated rows (default, for direct paste into spreadsheet applications) or a JSON array of lead objects, per the **Export format** setting; when the **Store company id** setting is enabled, the company id is appended as an extra last field in both formats.
 
 #### Max Saved Leads Setting
 
@@ -243,6 +243,12 @@ Used for saved leads (key: `saved_leads`). Holds a list of lead objects (name, s
   - If the new limit is lower than the current number of saved leads, shows a confirmation dialog before proceeding; on confirmation, the oldest leads (first added, i.e. the start of the `saved_leads` array) are removed to fit the new limit; declining leaves both the stored leads and the setting unchanged
   - Valid changes are persisted automatically on blur — no explicit save action required
 - `storage-actions.js` subscribes to `max-leads-store.js` to keep the Save button state, leads counter, and progress bar in sync whenever the limit changes
+
+#### Export Format Setting
+
+- The "Export format" control in the Settings tab's **Leads data** block is a `.segmented-control` (`src/styles/tabs.css`): a pair of visually-hidden radio inputs (`name="export-format"`) each paired with an adjacent `<label>`, styled as a two-option pill toggle via the `input:checked + label` sibling selector — no separate JS-driven active-state class needed
+- `export-format.js` (`src/scripts/containers/settings/`) wires it up: on load, reads `leadsExportFormat` from `chrome.storage.sync` (default `"tsv"`, from `DEFAULT_LEADS_EXPORT_FORMAT` in `src/constants/config.js`) and checks the matching radio; each radio's `change` listener writes its value back via `syncSet` when it becomes checked. No dedicated pub/sub store — `storage-actions.js`'s `copyLeadsToClipboard()` reads the setting directly with `syncGet` at copy time, the same way it already reads `storeCompanyIdEnabled`
+- `LEADS_EXPORT_FORMATS` (`src/constants/config.js`) enumerates the two values (`TSV: "tsv"`, `JSON: "json"`) so both `export-format.js` and `storage-actions.js` compare against the same constants instead of duplicating string literals
 
 Company id is derived from the active company's LinkedIn link (`data-company-id`, extracted via `extractCompanyId` in `src/utils/company-id.js`) and held in a hidden `#company-id` field, populated whenever a company header is clicked (mirrors how country/industry are populated). It is not part of the draggable field order — it is always appended after it.
 
@@ -385,6 +391,7 @@ src/
  │    │    └── settings/
  │    │         ├── country-by-default.js
  │    │         ├── drag-and-drop.js
+ │    │         ├── export-format.js
  │    │         ├── field-order.js
  │    │         ├── max-saved-leads.js
  │    │         ├── store-company-id.js
@@ -419,13 +426,14 @@ src/
  │    ├── buttons.css       (button groups and variants)
  │    ├── form-fields.css   (draggable fields, alert, confirm dialog)
  │    ├── company-card.css  (accordion card, loading states, domain editor)
- │    ├── tabs.css          (tab selector, tabs, scrollbar)
+ │    ├── tabs.css          (tab selector, tabs, scrollbar, segmented control)
  │    └── filters.css       (multi-select, tags, dropdown)
  └── utils/
       ├── company-cache.js             (upsertCompanyCacheEntry, findCompanyCacheEntry, removeCompanyCacheEntry, updateCompanyCacheEntryWebsite — pure, tested)
       ├── company-id.js                (extractCompanyId — pure, tested)
       ├── email-utils.js               (prepareEmailName, collectEmails — pure, tested)
       ├── filter-utils.js              (matchesFilter — pure, tested)
+      ├── lead-export.js               (buildLeadRecord, formatLeadsAsTsv, formatLeadsAsJson — pure, tested)
       ├── lead-utils.js                (isDuplicate — pure, tested)
       ├── linkedin-page.js             (getLinkedInPageType — pure, tested)
       ├── text-utils.js                (trimAsciiWhitespace — pure, tested)
@@ -454,6 +462,7 @@ Only **pure functions** (no DOM, no Chrome APIs, no `fetch`) are unit-tested. Th
 | `tests/company-data.test.js` | `src/scripts/services/company-data.js` | `isValidDomain`, `getHostName` (including pasted-url-with-query-string cases), `formatCompanySize`, and the `isValidDomain(getHostName(...))` composition used to convert a pasted website URL to domain view |
 | `tests/company-location.test.js` | `src/scripts/containers/filters/company-location.js` | `extractCountry` |
 | `tests/lead-utils.test.js` | `src/utils/lead-utils.js` | `isDuplicate` |
+| `tests/lead-export.test.js` | `src/utils/lead-export.js` | `buildLeadRecord`, `formatLeadsAsTsv`, `formatLeadsAsJson` |
 | `tests/company-id.test.js` | `src/utils/company-id.js` | `extractCompanyId` |
 | `tests/linkedin-page.test.js` | `src/utils/linkedin-page.js` | `getLinkedInPageType` — public profile page vs. any other `linkedin.com` page (treated as Sales Navigator-style, e.g. lead or company pages) vs. unrelated domain |
 | `tests/transliteration.test.js` | `src/scripts/services/transliteration.js` | `hasGermanLetters`, `transliterateGermanLetters` |
@@ -500,7 +509,7 @@ flowchart LR
 4. The user can:
 
 - Save current lead data locally
-- Copy all saved leads to clipboard in spreadsheet-compatible format
+- Copy all saved leads to clipboard, in spreadsheet-compatible or JSON format (per the **Export format** setting)
 - Clean all locally saved leads
 - Rearrange data using drag-and-drop
 - Translate job title via the Google Translate API

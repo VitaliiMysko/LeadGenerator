@@ -218,6 +218,19 @@
                   title="Maximum number of leads that can be stored locally (1-9999)"
                 />
               </div>
+              <div class="tab-item-block">
+                <label>Export format:</label>
+                <div
+                  class="segmented-control"
+                  id="export-format-settings"
+                  title="Format used when copying saved leads to the clipboard"
+                >
+                  <input type="radio" name="export-format" id="export-format-tsv" value="tsv" />
+                  <label for="export-format-tsv">Tab-separated</label>
+                  <input type="radio" name="export-format" id="export-format-json" value="json" />
+                  <label for="export-format-json">JSON</label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
