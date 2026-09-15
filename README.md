@@ -97,12 +97,9 @@ Provides advanced filtering for extracted company data
 - Removing a tag restores the option back to the dropdown
 - Filters can be combined
 
-### Architecture
+### Persistence
 
-- Powered by a lightweight **state manager**
-- Filter state is:
-  - Stored locally via Chrome `storage`
-  - Automatically restored on reload
+- Filter selections are stored locally via Chrome `storage` and automatically restored on reload
 
 ### 3. Settings
 
@@ -192,36 +189,7 @@ Includes:
 
 ## Network & Data Fetching Strategy
 
-Due to browser security restrictions:
-
-- Runs only on:
-  - `https://www.linkedin.com/*`
-
-**Important**
-
-- The extension does not directly communicate with third-party services from the client
-- All external requests are routed through a backend service
-
-## Secure Architecture
-
-All sensitive operations are handled via a a [Cloudflare Worker](https://developers.cloudflare.com/workers/).
-
-Includes:
-
-- Email validation (via Emailable API)
-- Website availability checks
-
-Benefits:
-
-- No API keys exposed
-- No CORS issues
-- Stable networking layer
-
-## Performance & Reliability Improvements
-
-- Backend proxy for external requests
-- Improved stability under load
-- Consistent behavior across environments
+The extension runs only on `https://www.linkedin.com/*` and never talks to third-party services directly from the client. Sensitive operations (email validation via Emailable, website availability checks) are handled by a secure [Cloudflare Worker](https://developers.cloudflare.com/workers/) backend, so no API keys are ever exposed and no CORS issues arise.
 
 ## Development & Testing
 
@@ -373,19 +341,9 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 ## Requirements
 
-- Google Chrome
+- A supported browser (Chrome, Edge, or Firefox — see [Browser Compatibility](#browser-compatibility))
 - LinkedIn Sales Navigator access, or a LinkedIn account able to view public profile pages
 
 ## Privacy Policy
 
-This extension:
-
-- Does **not** track users
-- Does **not** sell or share personal data
-- Stores user preferences and optionally user-saved lead data locally using Chrome Storage
-- Saves lead data only after explicit user interaction
-- Sends data externally only when required (e.g., email validation or website checks)
-
-Users maintain full control over locally stored data and may retrieve or remove it at any time.
-
-For full details, see [Privacy Policy](PRIVACY_POLICY.md).
+This extension does not track users or sell/share personal data. See [Privacy Policy](PRIVACY_POLICY.md) for full details on what data is collected and how it's handled.
