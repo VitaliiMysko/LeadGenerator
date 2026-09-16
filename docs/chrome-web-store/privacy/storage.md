@@ -1,0 +1,1 @@
+Lead Generator uses the `storage` permission to save your preferences (such as drag-and-drop and transliteration settings), filter selections, the persistent company-details cache, and leads you explicitly choose to save, locally on your device. This lets your settings and saved leads persist between sessions without any external server.

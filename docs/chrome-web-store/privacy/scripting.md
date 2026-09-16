@@ -1,0 +1,1 @@
+Lead Generator uses the `scripting` permission to inject the data-extraction logic into the current LinkedIn tab when you click "Extract", and into a hidden background tab when fetching full company details or a profile's complete experience list. This is how the extension reads lead and company information directly from the page's content.
