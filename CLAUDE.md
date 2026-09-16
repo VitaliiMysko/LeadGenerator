@@ -42,6 +42,8 @@ Every task must include updates to all relevant `.md` files: `CHANGELOG.md`, `RE
 
 Markdown documentation governance (which file owns what, and what must stay out of `CLAUDE.md`) is defined in [.claude/rules/documentation-governance.md](.claude/rules/documentation-governance.md) — follow it whenever adding or editing any `.md` file. Do not use `CLAUDE.md` as a repository of application documentation or implementation knowledge.
 
+Chrome Web Store listing content (`docs/chrome-web-store/`) is governed separately by [.claude/rules/chrome-web-store.md](.claude/rules/chrome-web-store.md) — check it whenever a change affects permissions, host access, or user-facing functionality. Validate it with `npm run validate:chrome-store`.
+
 ## Architecture
 
 The extension has two execution environments — content scripts (`src/content-scripts/`) injected into LinkedIn pages, and the popup UI (`src/scripts/`, `index.html`). See [docs/architecture.md](docs/architecture.md) for component structure, data flow, and design rationale. Constraints to follow when writing code here:

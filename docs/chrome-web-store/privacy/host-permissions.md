@@ -1,0 +1,3 @@
+Lead Generator requests host access to `https://www.linkedin.com/sales/lead/*`, `https://www.linkedin.com/company/*`, and `https://www.linkedin.com/in/*` so it can read lead and company data from the Sales Navigator lead pages, company pages, and public profile pages you visit — this is the extension's core extraction functionality.
+
+It also requests host access to the extension's own Cloudflare Worker backend (`https://lead-generator-backend-worker.vitalij-musko.workers.dev`), used to validate email addresses, check website availability, and translate job titles. Routing these requests through a dedicated backend keeps third-party API keys out of the extension and avoids cross-origin restrictions, without granting the extension access to any other site.
