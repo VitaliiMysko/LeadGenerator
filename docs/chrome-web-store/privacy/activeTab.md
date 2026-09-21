@@ -1,0 +1,1 @@
+Lead Generator uses the `activeTab` permission to read data from the LinkedIn page you are currently viewing only when you click the "Extract" button. This lets the extension pull the person's and company's details from that page into the popup without requesting broad access to every open tab.

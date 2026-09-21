@@ -29,6 +29,35 @@ const waitForElementWithTimeout = (selector, timeout = 4000) => {
   });
 };
 
+const waitForConditionWithTimeout = (conditionFn, timeout = 4000) => {
+  return new Promise((resolve, reject) => {
+    const existing = conditionFn();
+    if (existing) {
+      resolve(existing);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      observer.disconnect();
+      reject(new Error(`Condition has not been met for ${timeout} ms.`));
+    }, timeout);
+
+    const observer = new MutationObserver((mutations, obs) => {
+      const result = conditionFn();
+      if (result) {
+        clearTimeout(timer);
+        obs.disconnect();
+        resolve(result);
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  });
+};
+
 const waitForElementById = (id, conditionFn = () => true, timeout = 3000) => {
   return new Promise((resolve, reject) => {
     const check = () => {
@@ -53,4 +82,5 @@ const waitForElementById = (id, conditionFn = () => true, timeout = 3000) => {
 };
 
 window.leadGenerator.waitForElementWithTimeout = waitForElementWithTimeout;
+window.leadGenerator.waitForConditionWithTimeout = waitForConditionWithTimeout;
 window.leadGenerator.waitForElementById = waitForElementById;

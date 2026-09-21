@@ -208,15 +208,28 @@
                 />Store company id
               </div>
               <div class="tab-item-block">
-                <label for="max-saved-leads-settings">Max saved leads (1-9999):</label>
+                <label for="max-saved-leads-settings">Max saved leads (1-999):</label>
                 <input
                   id="max-saved-leads-settings"
                   type="text"
                   inputmode="numeric"
                   pattern="[0-9]*"
-                  maxlength="4"
-                  title="Maximum number of leads that can be stored locally (1-9999)"
+                  maxlength="3"
+                  title="Maximum number of leads that can be stored locally (1-999)"
                 />
+              </div>
+              <div class="tab-item-block">
+                <label>Export format:</label>
+                <div
+                  class="segmented-control"
+                  id="export-format-settings"
+                  title="Format used when copying saved leads to the clipboard"
+                >
+                  <input type="radio" name="export-format" id="export-format-tsv" value="tsv" />
+                  <label for="export-format-tsv">Tab-separated</label>
+                  <input type="radio" name="export-format" id="export-format-json" value="json" />
+                  <label for="export-format-json">JSON</label>
+                </div>
               </div>
             </div>
           </div>

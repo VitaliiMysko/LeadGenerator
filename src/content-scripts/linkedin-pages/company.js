@@ -1,6 +1,6 @@
 (() => {
-  const waitForElementWithTimeout =
-    window.leadGenerator.waitForElementWithTimeout;
+  const waitForConditionWithTimeout =
+    window.leadGenerator.waitForConditionWithTimeout;
 
   const initData = window.leadGeneratorInitData || {};
 
@@ -14,39 +14,37 @@
     error: "",
   };
 
+  const LABELS = {
+    website: ["Website", "Вебсайт"],
+    industry: ["Industry", "Галузь"],
+    size: ["Company size", "Розмір компанії"],
+    headquarters: ["Headquarters", "Штаб-квартира"],
+  };
+
+  const ALL_LABELS = Object.values(LABELS).flat();
+
   (async () => {
     try {
-      const element = await waitForElementWithTimeout(
-        ".org-page-details-module__card-spacing",
+      await waitForConditionWithTimeout(
+        () => findLabelElement(ALL_LABELS),
         8000,
       );
-      const descriptionList = element.querySelector("dl");
 
-      data.website =
-        getDefinitionByTerm(descriptionList, "Website") ||
-        getDefinitionByTerm(descriptionList, "Вебсайт");
+      data.website = getValueForLabels(LABELS.website);
 
       if (!data.location) {
-        data.location =
-          getDefinitionByTerm(descriptionList, "Headquarters") ||
-          getDefinitionByTerm(descriptionList, "Штаб-квартира");
+        data.location = getValueForLabels(LABELS.headquarters);
       }
 
       if (!data.industry) {
-        data.industry =
-          getDefinitionByTerm(descriptionList, "Industry") ||
-          getDefinitionByTerm(descriptionList, "Галузь");
+        data.industry = getValueForLabels(LABELS.industry);
       }
 
       if (!data.size) {
-        data.size =
-          getDefinitionByTerm(descriptionList, "Company size") ||
-          getDefinitionByTerm(descriptionList, "Розмір компанії");
+        data.size = getValueForLabels(LABELS.size);
       }
 
-      data.members =
-        getMembersCount(descriptionList, "Company size") ||
-        getMembersCount(descriptionList, "Розмір компанії");
+      data.members = getMembersCount();
     } catch (error) {
       console.error("Error finding element:", error);
     } finally {
@@ -54,31 +52,34 @@
     }
   })();
 
-  function getMembersCount(dlElement, termText) {
-    const terms = dlElement.querySelectorAll("dt");
-    for (const dt of terms) {
-      if (dt.textContent.trim() === termText) {
-        const firstDd = dt.nextElementSibling;
-        if (firstDd?.tagName.toLowerCase() === "dd") {
-          const secondDd = firstDd.nextElementSibling;
-          if (secondDd?.tagName.toLowerCase() === "dd" && secondDd.querySelector("a")) {
-            const match = secondDd.textContent.trim().match(/^(\d[\d,\s]*)/);
-            return match ? match[1].replace(/[,\s]/g, "") : "";
-          }
-        }
+  // LinkedIn's overview section no longer uses a <dl>/<dt>/<dd> list under a
+  // stable class name; it renders each field as two sibling divs (label, then
+  // value) under CSS classes that are hashed per-build and unusable as
+  // selectors. Match on the visible label text instead.
+  function findLabelElement(labels) {
+    const candidates = document.querySelectorAll("p, h3");
+    for (const candidate of candidates) {
+      if (labels.includes(candidate.textContent.trim())) {
+        return candidate;
       }
     }
-    return "";
+    return null;
   }
 
-  function getDefinitionByTerm(dlElement, termText) {
-    const terms = dlElement.querySelectorAll("dt");
-    for (const dt of terms) {
-      if (dt.textContent.trim() === termText) {
-        const dd = dt.nextElementSibling;
-        if (dd && dd.tagName.toLowerCase() === "dd") {
-          return dd.textContent.trim();
-        }
+  function getValueForLabels(labels) {
+    const labelElement = findLabelElement(labels);
+    const valueContainer = labelElement?.parentElement?.nextElementSibling;
+    return valueContainer ? valueContainer.textContent.trim() : "";
+  }
+
+  function getMembersCount() {
+    const links = document.querySelectorAll("a");
+    for (const link of links) {
+      const match = link.textContent
+        .trim()
+        .match(/^([\d,\s]+)\s+associated members$/i);
+      if (match) {
+        return match[1].replace(/[,\s]/g, "");
       }
     }
     return "";
