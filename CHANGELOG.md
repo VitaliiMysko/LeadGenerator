@@ -2,13 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.3.10] - 2026-08-31
+
+### Added
+
+- **Extraction from public LinkedIn profile pages**: the "Extract" button now also works on a regular `linkedin.com/in/...` profile page, not just a Sales Navigator lead page. Personal data and the actual (current) experience list are extracted the same way as on Sales Navigator wherever the public page's DOM allows it:
+  - `Link` is simply the current page's own URL, since no dropdown lookup is needed
+  - Company hover-tooltip data (location/industry/size/revenue) isn't available on this page, so it's left empty and filled in the normal way once a company is expanded — no functional loss
+  - If the visible Experience section shows a "Show all" link and the current-position scan runs to the end of that truncated list without finding a past position, the extension automatically fetches the profile's full `/details/experience/` list from a hidden background tab (mirroring the existing company-page-scrape flow) so no current position is missed
+  - Clicking Extract on a page that's neither a Sales Navigator lead page nor a public profile page now shows an alert instead of silently doing nothing
+- **Any other `linkedin.com` page now falls back to the Sales Navigator extraction logic**: previously only Sales Navigator lead pages were recognized as extractable and every other LinkedIn page (company pages, feed, etc.) showed the "not a supported page" alert. Every `linkedin.com` page other than a public profile is now treated as a Sales Navigator lead page and extracted best-effort. The alert is now reserved for pages outside the `linkedin.com` domain entirely
+- **Export format setting**: new "Export format" segmented toggle in the Settings tab's "Leads data" block, letting the "Get" button copy saved leads as either tab-separated text (default, unchanged behavior) or a JSON array of lead objects. Saved immediately on change
+- **More recognized company status suffixes**: added "DOO", "d.o.o", "A.Ş", "Shpk", "sh.p.k", "d.d.", "s.r.l", "sl", and "a.m.b.a" to the list of legal-form suffixes stripped from extracted company names
+- **Company location filter now supports any country worldwide**, not just European ones: `src/constants/countries.js` now exports `COUNTRIES` (previously `EUROPEAN_COUNTRIES`) with a full worldwide list, used by the Company Location filter and the "Country by default" setting
+
+### Changed
+
+- **Max saved leads hard cap lowered from 9999 to 999**: the "Max saved leads" setting's upper bound is now 999, matching its 3-digit input field. Existing values above 999 are accepted as-is until the user changes the setting, at which point the new cap is enforced
+
+### Fixed
+
+- **Company details (website, industry, company size, headquarters, associated members) could no longer be fetched from LinkedIn company pages**, following a LinkedIn layout change to that section. Extraction now works again
+
 ## [3.3.9] - 2026-08-14
 
 ### Added
 
 - **Configurable saved leads limit**: new "Max saved leads" numeric field in the Settings tab's "Leads data" block, replacing the previous hardcoded 99-item cap. Accepts digits only, up to 9999. Saved automatically on blur when valid
 - **Automatic trimming on limit decrease**: lowering the limit below the current number of saved leads prompts for confirmation; if confirmed, the oldest leads (first added) are removed to fit the new limit, otherwise the change is discarded
-- **Persistent company data cache**: the last 10 companies whose details were successfully fetched from their LinkedIn page are now remembered in `chrome.storage.local`, keyed by company id. Reopening the popup (or revisiting a recently seen company) reuses the cached details instead of re-opening a background tab and re-scraping the company page. The refresh button (↻) still forces a live re-fetch and clears that company's cached entry
+- **Persistent company data cache**: the last 10 companies whose details were successfully fetched from their LinkedIn page are now remembered locally on your device. Reopening the popup (or revisiting a recently seen company) reuses the cached details instead of re-opening a background tab and re-scraping the company page. The refresh button (↻) still forces a live re-fetch and clears that company's cached entry
 - **Company name fallback for the cache**: when the currently selected company has no LinkedIn link (and therefore no company id), the cache is now also searched by company name, so previously fetched details can still be reused
 - **Cache stays in sync with manual website edits**: editing a company's website inline now updates that company's cached entry (matched by company id, or by name when no id is available) so the corrected website is reused on future lookups instead of the stale one
 - **Pasted website URLs are converted to domain view**: saving the website field now converts a pasted full URL (e.g. `https://www.example.com/about?ref=123`) into its bare domain (`example.com`) whenever that's possible, instead of rejecting it as an invalid domain
@@ -16,10 +38,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Refresh button required two clicks to actually re-fetch**: clearing the cached entry before refreshing was fire-and-forget, so the very next cache lookup could race ahead and still read the stale entry, silently returning cached data instead of fetching. The cache clear is now awaited before refreshing, so the first click always triggers a live re-fetch
+- **Refresh button required two clicks to actually re-fetch**: clicking it once could still return the stale cached data instead of fetching fresh details. The first click now always triggers a live re-fetch
 - **"No website found" placeholder no longer needs to be manually deleted**: clicking the edit icon when the website shows the "No website found" placeholder now clears it automatically, so the user can type the real domain straight away instead of deleting the placeholder text first
-- **Names and surnames with certain diacritic letters were extracted incomplete**: the extraction logic only recognized letters in a hand-picked Latin range, so a name whose first letter fell just outside it (e.g. Romanian "Ș") had that letter silently dropped. Name cleanup now recognizes any Unicode letter, so names and surnames in any script or with any diacritic are extracted in full
-- **Trailing diacritic letters were still dropped even with a recognized letter** (e.g. "Miha Kampuš" was populated as "Miha Kampu"), traced all the way to a broken `String.prototype.trim()`: the bundled `libs/transliteration/bundle.umd.min.js` is loaded as a classic `<script>`, so the old core-js `trim` polyfill it ships patches that method globally for the whole popup page, and mishandles some Latin Extended-A letters at the end of a string as trimmable whitespace. `transliterateElement()` (run automatically on every extracted name/surname) now trims with a small ASCII-only helper (`trimAsciiWhitespace` in `src/utils/text-utils.js`) instead of the compromised built-in
+- **Names and surnames with certain diacritic letters were extracted incomplete** (e.g. Romanian "Ș" was dropped). Name cleanup now recognizes any Unicode letter, so names and surnames in any script or with any diacritic are extracted in full
+- **Trailing accented letters were dropped during automatic transliteration** (e.g. "Miha Kampuš" was populated as "Miha Kampu"). This has been corrected
 
 ## [3.3.8] - 2026-07-10
 

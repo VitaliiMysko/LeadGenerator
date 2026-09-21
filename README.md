@@ -1,6 +1,6 @@
 # Lead Generator Extension
 
-This extension is a straightforward tool for extracting data about individuals directly from LinkedIn Sales Navigator pages.
+This extension is a straightforward tool for extracting data about individuals directly from LinkedIn Sales Navigator pages or public LinkedIn profile pages.
 
 ## Key Features
 
@@ -29,8 +29,8 @@ This extension is a straightforward tool for extracting data about individuals d
     The "Email" field is not auto-filled.
 
 - **Storage utility buttons**:
-  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 9999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard in tab-separated format; paste directly into Excel or Google Sheets to populate rows. Column order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last column. Fill level shows storage usage relative to the configured limit; hover to see exact count.
+  - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -97,12 +97,9 @@ Provides advanced filtering for extracted company data
 - Removing a tag restores the option back to the dropdown
 - Filters can be combined
 
-### Architecture
+### Persistence
 
-- Powered by a lightweight **state manager**
-- Filter state is:
-  - Stored locally via Chrome `storage`
-  - Automatically restored on reload
+- Filter selections are stored locally via Chrome `storage` and automatically restored on reload
 
 ### 3. Settings
 
@@ -131,9 +128,13 @@ Available option:
   - When enabled, the **Get** button appends the company id as an extra, last column when copying saved leads to the clipboard
   - State persisted via Chrome `storage`
 - **Max saved leads**
-  - Numeric field controlling how many leads can be stored locally (1-9999, default 99); only digits can be typed
+  - Numeric field controlling how many leads can be stored locally (1-999, default 99); only digits can be typed
   - Saved automatically when the field loses focus, if the value is valid
   - Lowering the limit below the current number of saved leads prompts for confirmation before removing the oldest saved leads (first added) to fit the new limit; declining the confirmation discards the change
+  - State persisted via Chrome `storage`
+- **Export format**
+  - Segmented toggle controlling the format used by the **Get** button: **Tab-separated** (default) or **JSON**
+  - Saved immediately on change
   - State persisted via Chrome `storage`
 
 ## Data Fields
@@ -148,7 +149,7 @@ Available option:
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location
 - **Industry** - company indutry
-- **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output only when **Store company id** is enabled in Settings
+- **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
 
 All fields are editable before copying.
 
@@ -188,36 +189,7 @@ Includes:
 
 ## Network & Data Fetching Strategy
 
-Due to browser security restrictions:
-
-- Runs only on:
-  - `https://www.linkedin.com/*`
-
-**Important**
-
-- The extension does not directly communicate with third-party services from the client
-- All external requests are routed through a backend service
-
-## Secure Architecture
-
-All sensitive operations are handled via a a [Cloudflare Worker](https://developers.cloudflare.com/workers/).
-
-Includes:
-
-- Email validation (via Emailable API)
-- Website availability checks
-
-Benefits:
-
-- No API keys exposed
-- No CORS issues
-- Stable networking layer
-
-## Performance & Reliability Improvements
-
-- Backend proxy for external requests
-- Improved stability under load
-- Consistent behavior across environments
+The extension runs only on `https://www.linkedin.com/*` and never talks to third-party services directly from the client. Sensitive operations (email validation via Emailable, website availability checks) are handled by a secure [Cloudflare Worker](https://developers.cloudflare.com/workers/) backend, so no API keys are ever exposed and no CORS issues arise.
 
 ## Development & Testing
 
@@ -239,9 +211,11 @@ Jest runs all files under `tests/`. The suite covers pure business logic only �
 
 ### CI/CD
 
-A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite automatically on every push to `master` and on every pull request targeting `master`.
+A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite and the Chrome Web Store documentation validator automatically on every push to `master` and on every pull request targeting `master`.
 
 The `master` branch is protected: a PR cannot be merged until the `test` check passes. This is enforced via a classic branch protection rule in the repository settings.
+
+Pushing to `prod` triggers the production release pipeline (`.github/workflows/release-chrome-web-store.yml`), which builds, packages, and publishes the extension to the Chrome Web Store. See [docs/release.md](docs/release.md) for the full process and required setup.
 
 ### Adding new tests
 
@@ -296,7 +270,7 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 
 The extension must be signed via [Firefox Add-ons (AMO)](https://addons.mozilla.org/) or Mozilla's self-distribution signing service before it can be installed permanently.
 
-> **Note:** This extension is optimized for LinkedIn Sales Navigator pages. Some permissions may need to be granted to ensure full functionality
+> **Note:** This extension is optimized for LinkedIn Sales Navigator pages and public LinkedIn profile pages. Some permissions may need to be granted to ensure full functionality
 
 ## Configuration
 
@@ -313,7 +287,8 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
-   - Set the maximum number of leads that can be stored locally, 1-9999 (**Leads data** block)
+   - Set the maximum number of leads that can be stored locally, 1-999 (**Leads data** block)
+   - Choose the Get button's clipboard export format: tab-separated or JSON (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
 
 4. **Filters**
@@ -326,10 +301,11 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a LinkedIn Sales Navigator profile page
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`), or any other `linkedin.com` page (e.g. a Sales Navigator lead page) — the latter is extracted best-effort using the Sales Navigator logic
 
 2. Click **Extract**
    - Extracts available profile and company data
+   - On a public profile page, if the visible Experience section may be hiding further current positions behind a "Show all" link, the full experience list is fetched automatically in the background before the fields are populated
 
 3. Review and edit fields (optional)
    - All fields are fully editable
@@ -367,19 +343,9 @@ The "Lead generator" extension requires certain permissions to function effectiv
 
 ## Requirements
 
-- Google Chrome
-- LinkedIn Sales Navigator access
+- A supported browser (Chrome, Edge, or Firefox — see [Browser Compatibility](#browser-compatibility))
+- LinkedIn Sales Navigator access, or a LinkedIn account able to view public profile pages
 
 ## Privacy Policy
 
-This extension:
-
-- Does **not** track users
-- Does **not** sell or share personal data
-- Stores user preferences and optionally user-saved lead data locally using Chrome Storage
-- Saves lead data only after explicit user interaction
-- Sends data externally only when required (e.g., email validation or website checks)
-
-Users maintain full control over locally stored data and may retrieve or remove it at any time.
-
-For full details, see [Privacy Policy](PRIVACY_POLICY.md).
+This extension does not track users or sell/share personal data. See [Privacy Policy](PRIVACY_POLICY.md) for full details on what data is collected and how it's handled.

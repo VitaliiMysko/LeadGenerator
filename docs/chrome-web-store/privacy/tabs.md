@@ -1,0 +1,1 @@
+Lead Generator uses the `tabs` permission to open and manage a hidden background tab used to fetch full company details or a profile's complete experience list, without disrupting the LinkedIn page you are actively viewing. The tab is closed automatically once the data has been retrieved.

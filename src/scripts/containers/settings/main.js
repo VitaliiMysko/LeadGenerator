@@ -4,6 +4,7 @@ import { initFieldOrder } from "./field-order.js";
 import { initCountryByDefault } from "./country-by-default.js";
 import { initStoreCompanyId } from "./store-company-id.js";
 import { initMaxSavedLeads } from "./max-saved-leads.js";
+import { initExportFormat } from "./export-format.js";
 
 export async function initSettings() {
   await initFieldOrder();
@@ -12,4 +13,5 @@ export async function initSettings() {
   await initCountryByDefault();
   await initStoreCompanyId();
   await initMaxSavedLeads();
+  await initExportFormat();
 }

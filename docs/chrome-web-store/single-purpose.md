@@ -1,0 +1,1 @@
+Lead Generator's single purpose is to extract professional contact and company information (name, job position, company details) from a LinkedIn Sales Navigator lead page or a public LinkedIn profile page that the user is currently viewing, and let the user save and export that information for their own lead-generation use.

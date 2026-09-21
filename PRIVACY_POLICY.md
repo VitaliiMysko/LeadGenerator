@@ -10,6 +10,7 @@ Thank you for using the **Lead Generator** extension. This privacy policy explai
 The "Lead Generator" extension allows users to collect publicly available information from LinkedIn profiles, specifically from:
 
 - LinkedIn Sales Navigator pages (`https://www.linkedin.com/sales/lead/*`)
+- Public LinkedIn profile pages (`https://www.linkedin.com/in/*`)
 - LinkedIn company pages (`https://www.linkedin.com/company/*`)
 
 The extension operates **only within LinkedIn domains** and does not run on other websites.

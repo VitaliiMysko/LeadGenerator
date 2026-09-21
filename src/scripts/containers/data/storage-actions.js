@@ -17,6 +17,8 @@ import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
+import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
+import { LEADS_EXPORT_FORMATS, DEFAULT_LEADS_EXPORT_FORMAT } from "../../../constants/config.js";
 import {
   getMaxSavedLeads,
   loadMaxSavedLeads,
@@ -159,14 +161,14 @@ function getFieldOrder() {
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
   const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
+  const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
 
-  const rows = leads.map((lead) => {
-    const columns = fieldOrder.map((id) => lead[INPUT_ID_TO_LEAD_KEY[id]] || "");
-    if (storeCompanyId) columns.push(lead.companyId || "");
-    return columns.join("\t");
-  });
+  const text =
+    format === LEADS_EXPORT_FORMATS.JSON
+      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId)
+      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId);
 
-  await navigator.clipboard.writeText(rows.join("\n"));
+  await navigator.clipboard.writeText(text);
   showAlert("Copied", "success");
 }
 
