@@ -28,6 +28,9 @@ async function main() {
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((err) => {
     console.error(`✗ Publish failed: ${err.message}`);
+    if (err.body) {
+      console.error(`  API response: ${JSON.stringify(err.body)}`);
+    }
     process.exit(1);
   });
 }
