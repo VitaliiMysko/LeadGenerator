@@ -3,6 +3,8 @@ name: Release to Chrome Web Store
 on:
   push:
     branches: [prod]
+  pull_request:
+    branches: [prod]
   workflow_dispatch: {}
 
 # The Store item must never be touched by two releases at once. A new run
@@ -12,8 +14,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Runs for both a real release (push/workflow_dispatch on prod) and a PR
+  # into prod, so problems surface before merge. Only push/workflow_dispatch
+  # continue on to build/upload/publish — see build's `if:` below.
   validate:
-    if: github.ref == 'refs/heads/prod'
+    if: |
+      (github.event_name != 'pull_request' && github.ref == 'refs/heads/prod') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'prod')
     runs-on: ubuntu-latest
     outputs:
       listing_changed: ${{ steps.listing-check.outputs.listing_changed }}
@@ -43,8 +50,12 @@ jobs:
         id: listing-check
         run: node scripts/chrome-web-store/detect-listing-changes.js
 
+  # A PR into prod stops after validate — no package is built, nothing is
+  # uploaded or published, and no Store credentials are touched, for a PR
+  # that hasn't been merged yet.
   build:
     needs: validate
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
