@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: September 10, 2026
+**Last updated**: September 18, 2026
 
 High-level overview of how the **Lead Generator** browser extension (Chrome, Edge, Firefox) is structured, for developers and maintainers.
 
@@ -133,13 +133,23 @@ src/
 
 Jest covers pure business logic only — functions with no DOM, Chrome API, or `fetch` dependency, extracted into `src/utils/` (or, for `chrome.storage`-only modules, tested by mocking the storage wrapper). See `tests/` for the current suite. Content scripts, DOM manipulation, and `fetch`-based services are verified manually in the browser instead.
 
-CI (`.github/workflows/test.yml`) runs the suite on every push and PR targeting `master`; a passing `test` check is required before merge.
+CI (`.github/workflows/test.yml`) runs the suite and the Chrome Web Store documentation validator on every push and PR targeting `master`; a passing `test` check is required before merge.
 
 ```mermaid
 flowchart LR
     PR[Pull Request] --> CI[GitHub Actions: npm test]
     CI -- pass --> Merge[Merge allowed]
     CI -- fail --> Block[Merge blocked]
+```
+
+A push to `prod` triggers a separate deployment boundary — `.github/workflows/release-chrome-web-store.yml` — that builds the package, uploads it to the Chrome Web Store API v2, and publishes it once a reviewer approves the protected `production` GitHub Environment. Chrome Web Store credentials exist only in that environment's secrets, never in this repository or the Cloudflare Worker. See [docs/release.md](release.md) for the full pipeline.
+
+```mermaid
+flowchart LR
+    ProdPush[Push to prod] --> Validate[Validate: tests + docs + version bump]
+    Validate --> Build[Build & package]
+    Build --> Upload[Upload to Chrome Web Store]
+    Upload -- approval --> Publish[Publish]
 ```
 
 ## 8. Data Flow Summary
@@ -196,3 +206,4 @@ Hidden-tab tasks (company-page scraping, profile-experience fetching) share one 
 - [`README.md`](../README.md) – Installation and usage instructions
 - [`PRIVACY_POLICY.md`](../PRIVACY_POLICY.md) – What data is collected and how it's handled
 - [`CHANGELOG.md`](../CHANGELOG.md) – Version history
+- [`release.md`](release.md) – Chrome Web Store CI/CD release pipeline

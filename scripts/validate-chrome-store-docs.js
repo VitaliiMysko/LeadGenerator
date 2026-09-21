@@ -22,6 +22,9 @@ function checkFile(path, label, limit) {
     return;
   }
   const content = readFileSync(path, 'utf8');
+  if (content.trim().length === 0) {
+    errors.push(`${label} is empty`);
+  }
   if (content.length > limit) {
     errors.push(`${label} is ${content.length} characters, exceeds the ${limit}-character limit`);
   }
