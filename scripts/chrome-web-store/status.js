@@ -22,8 +22,16 @@ export function isTerminalUploadState(state) {
   return Boolean(state) && !IN_PROGRESS_STATES.has(state);
 }
 
+// Confirmed against a real :upload response: the actual value is
+// "SUCCEEDED", not "SUCCESS" as Google's prose summary earlier suggested.
+// "SUCCESS" is kept alongside it in case fetchStatus's lastAsyncUploadState
+// ever uses a different literal than :upload's own uploadState for the same
+// outcome — cheap to allow both, and this exact kind of undocumented enum
+// mismatch is what caused the last two failures.
+const SUCCESS_STATES = new Set(["SUCCEEDED", "SUCCESS"]);
+
 export function isSuccessUploadState(state) {
-  return state === "SUCCESS";
+  return SUCCESS_STATES.has(state);
 }
 
 export async function pollUploadStatus(
