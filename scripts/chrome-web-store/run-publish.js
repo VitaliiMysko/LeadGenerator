@@ -20,8 +20,12 @@ async function main() {
 
   const client = createClient({ accessToken, publisherId: CWS_PUBLISHER_ID, extensionId: CWS_EXTENSION_ID });
 
-  await publishItem(client);
+  const result = await publishItem(client);
   console.log("✓ Publish request submitted");
+  console.log(`  state: ${result.state ?? "not set"}`);
+  if (result.warningInfo?.warnings?.length) {
+    console.log(`  warnings: ${JSON.stringify(result.warningInfo.warnings)}`);
+  }
   console.log("✓ Chrome Web Store review initiated (this does not mean the extension is live yet)");
 }
 
