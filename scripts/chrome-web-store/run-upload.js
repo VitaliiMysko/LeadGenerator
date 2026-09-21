@@ -10,7 +10,7 @@ import { pathToFileURL } from "node:url";
 import { getAccessToken } from "./auth.js";
 import { createClient } from "./client.js";
 import { uploadPackage } from "./upload.js";
-import { pollUploadStatus } from "./status.js";
+import { pollUploadStatus, isTerminalUploadState, isSuccessUploadState } from "./status.js";
 
 async function main() {
   const zipPath = process.argv[2];
@@ -29,16 +29,23 @@ async function main() {
   const client = createClient({ accessToken, publisherId: CWS_PUBLISHER_ID, extensionId: CWS_EXTENSION_ID });
 
   const zipBuffer = readFileSync(zipPath);
-  await uploadPackage(client, zipBuffer);
-  console.log("✓ Package upload completed");
+  const uploadResult = await uploadPackage(client, zipBuffer);
+  console.log(`✓ Package upload request completed (uploadState: ${uploadResult.uploadState ?? "not set"})`);
 
-  const intervalMs = Number(process.env.CWS_STATUS_POLL_INTERVAL_MS) || 5000;
-  const timeoutMs = Number(process.env.CWS_STATUS_POLL_TIMEOUT_MS) || 120000;
-  const status = await pollUploadStatus(client, { intervalMs, timeoutMs });
-  const state = status.uploadState ?? status.lastAsyncUploadState ?? "UNKNOWN";
+  // The :upload response's own uploadState is authoritative when it's
+  // already terminal — a synchronous upload never populates fetchStatus's
+  // lastAsyncUploadState at all, so only poll when genuinely still working.
+  let state = uploadResult.uploadState;
+  if (!isTerminalUploadState(state)) {
+    const intervalMs = Number(process.env.CWS_STATUS_POLL_INTERVAL_MS) || 5000;
+    const timeoutMs = Number(process.env.CWS_STATUS_POLL_TIMEOUT_MS) || 120000;
+    const status = await pollUploadStatus(client, { intervalMs, timeoutMs });
+    state = status.lastAsyncUploadState;
+    console.log(`  fetchStatus lastAsyncUploadState: ${state ?? "not set"}`);
+  }
 
-  if (state !== "SUCCESS") {
-    throw new Error(`Chrome Web Store reported upload state "${state}", expected "SUCCESS"`);
+  if (!isSuccessUploadState(state)) {
+    throw new Error(`Chrome Web Store reported upload state "${state ?? "UNKNOWN"}", expected "SUCCESS"`);
   }
 
   console.log(`✓ Chrome Web Store upload status: ${state}`);
