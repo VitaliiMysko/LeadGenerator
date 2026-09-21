@@ -94,6 +94,32 @@ getValidateEmailsBtnElement().addEventListener("click", async () => {
   useValidationEffect(emailElement, emailData.ok);
 });
 
+async function verifyEmailDirect(email) {
+  const manifest = chrome.runtime.getManifest();
+  const worker = manifest.host_permissions[2];
+  const workerUrl = `${worker}?email=${encodeURIComponent(email)}`;
+
+  let emailVerificationResponse;
+  try {
+    const response = await fetch(workerUrl);
+    const result = await response.json();
+
+    emailVerificationResponse = {
+      state: result.state,
+      reason: result.reason,
+      error: "",
+    };
+  } catch (error) {
+    console.error("Email verification failed:", error);
+    emailVerificationResponse = {
+      state: "",
+      reason: "",
+      error: error.message,
+    };
+  }
+  return emailVerificationResponse;
+}
+
 function startLoadingEffect() {
   const emailElement = getEmailElement();
   emailElement.disabled = true;
