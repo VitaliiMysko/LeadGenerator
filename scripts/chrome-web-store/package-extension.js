@@ -6,7 +6,7 @@ import { cpSync, rmSync, mkdirSync, readFileSync, writeFileSync, existsSync, rea
 import { execFileSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { parseManifest } from "./manifest-utils.js";
+import { parseManifest, assertManifestDescriptionWithinLimit } from "./manifest-utils.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 // Not dot-prefixed: actions/upload-artifact@v4 excludes hidden
@@ -47,6 +47,7 @@ function assertProductionManifest(manifest) {
       'manifest.json has "environment": "local" — this must be cleared before releasing to the Chrome Web Store (it visibly grey-tints the icon and appends "(local)" to the version in the popup).'
     );
   }
+  assertManifestDescriptionWithinLimit(manifest.description);
 }
 
 function setDeterministicMtimes(path) {
