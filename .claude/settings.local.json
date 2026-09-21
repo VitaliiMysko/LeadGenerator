@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:\\\\Users\\\\vmysko\\\\source\\\\repos\\\\LeadGenerator\" branch --show-current)",
+      "Bash(git -C \"c:\\\\Users\\\\vmysko\\\\source\\\\repos\\\\LeadGenerator\" mv \"src/scripts/containers/data/get-data.js\" \"src/scripts/containers/data/find-data.js\")",
+      "Bash(git -C \"c:\\\\Users\\\\vmysko\\\\source\\\\repos\\\\LeadGenerator\" diff --stat)",
+      "Bash(git -C \"c:\\\\Users\\\\vmysko\\\\source\\\\repos\\\\LeadGenerator\" mv \"src/scripts/containers/data/find-data.js\" \"src/scripts/containers/data/extract-data.js\")",
+      "Bash(git -C \"c:\\\\Users\\\\vmysko\\\\source\\\\repos\\\\LeadGenerator\" status --short)"
+    ]
+  }
+}
