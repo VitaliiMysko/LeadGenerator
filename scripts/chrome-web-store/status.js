@@ -1,13 +1,29 @@
 // Chrome Web Store API v2 — publishers.items.fetchStatus:
 // GET https://chromewebstore.googleapis.com/v2/publishers/{publisherId}/items/{extensionId}:fetchStatus
-const IN_PROGRESS_STATES = new Set(["STATE_UNSPECIFIED", "UPLOAD_IN_PROGRESS", "IN_PROGRESS"]);
+//
+// The response's only upload-related field is lastAsyncUploadState, and per
+// Google's own reference docs it is "only set when there has been an async
+// upload for the item" — i.e. it is never set at all for an upload that
+// completed synchronously. Callers must only poll this when the :upload
+// response itself reported UPLOAD_IN_PROGRESS (see run-upload.js); polling
+// unconditionally waits out the full timeout for a field that may simply
+// never appear.
+const IN_PROGRESS_STATES = new Set(["UPLOAD_IN_PROGRESS"]);
 
 export async function fetchUploadStatus(client) {
   return client.request(`${client.itemPath}:fetchStatus`, { method: "GET" });
 }
 
-function extractState(status) {
-  return status.uploadState ?? status.lastAsyncUploadState ?? null;
+// True once a state is anything other than "still working" — covers both
+// the :upload response's own uploadState (checked first, since a
+// synchronous upload never needs fetchStatus at all) and, when polling is
+// needed, fetchStatus's lastAsyncUploadState.
+export function isTerminalUploadState(state) {
+  return Boolean(state) && !IN_PROGRESS_STATES.has(state);
+}
+
+export function isSuccessUploadState(state) {
+  return state === "SUCCESS";
 }
 
 export async function pollUploadStatus(
@@ -18,7 +34,7 @@ export async function pollUploadStatus(
 
   while (true) {
     const status = await fetchUploadStatus(client);
-    const state = extractState(status);
+    const state = status.lastAsyncUploadState ?? null;
 
     if (state && !IN_PROGRESS_STATES.has(state)) {
       return status;
@@ -26,7 +42,7 @@ export async function pollUploadStatus(
 
     if (now() >= deadline) {
       throw new Error(
-        `Timed out after ${timeoutMs}ms waiting for the Chrome Web Store upload to finish processing (last state: ${state ?? "UNKNOWN"})`
+        `Timed out after ${timeoutMs}ms waiting for the Chrome Web Store upload to finish processing (last lastAsyncUploadState: ${state ?? "not set"})`
       );
     }
 
