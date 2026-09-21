@@ -21,6 +21,18 @@ Every job under `production` needs the same credential, and GitHub Environment a
 
 Publishing submits the item for Google's review — it does **not** mean the extension is immediately live for users.
 
+## After merging a release PR — what to actually do
+
+Merging the PR into `prod` does **not** finish the release by itself, and GitHub does not notify you that anything is waiting — you have to go look:
+
+1. Go to the repo's **Actions** tab and open the new **Release to Chrome Web Store** run (or open it straight from the merge commit's status check).
+2. `validate` and `build` run immediately, no approval needed. Once `build` finishes, the run pauses — its job summary (visible right on the run page) says so and tells you what to do next.
+3. Click **Review deployments** (a banner near the top of the run page), check **production**, click **Approve and deploy**. This unblocks `upload`.
+4. Repeat step 3 for each subsequent paused job. Each job's summary says exactly what's next: usually `upload` → `publish` (two approvals), or `upload` → `listing-sync-checkpoint` → `publish` (three) if the Store listing docs changed — in which case that job's summary also tells you to update the Developer Dashboard *before* approving it.
+5. Once `publish` finishes, its summary confirms the submission and reminds you it's not live yet — Google's review still has to run. If the Chrome Web Store Developer Dashboard still shows a clickable **Submit for review** button right after, try a hard refresh before assuming anything went wrong — that's been a stale-UI quirk here before, not an actual failure.
+
+If you don't see a **Review deployments** banner and a job just looks stuck, you're probably not looking at the run itself — open it from the Actions tab, not the PR's checks list.
+
 ## Listing sync checkpoint
 
 The Chrome Web Store API v2 can't update the listing description, single-purpose text, or privacy justifications (see below) — those still have to be pasted into the Developer Dashboard by hand. To make that hard to forget, `validate` diffs `docs/chrome-web-store/` against the previous `prod` commit (`scripts/chrome-web-store/detect-listing-changes.js`) and, if anything changed, the pipeline inserts an extra `production`-gated approval between `upload` and `publish` that exists purely as a checklist item — approve it once you've actually updated the Dashboard. If the diff can't be determined (e.g. no parent commit), it fails safe and requests the approval anyway. If nothing changed, the checkpoint is skipped and the pipeline goes straight from upload to publish, same as before.

@@ -68,8 +68,18 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
+      - name: Next-step summary
+        run: |
+          {
+            echo "## ⏸ Waiting for your approval"
+            echo ""
+            echo "This run is paused before it uploads to the Chrome Web Store."
+            echo ""
+            echo "**To continue:** scroll to the top of this page, click **Review deployments** (yellow banner), check **production**, then **Approve and deploy**."
+          } >> "$GITHUB_STEP_SUMMARY"
+
   upload:
-    needs: build
+    needs: [build, validate]
     runs-on: ubuntu-latest
     environment: production
 
@@ -99,6 +109,24 @@ jobs:
           zip_file=$(ls release/*.zip)
           node scripts/chrome-web-store/run-upload.js "$zip_file"
 
+      - name: Next-step summary
+        env:
+          LISTING_CHANGED: ${{ needs.validate.outputs.listing_changed }}
+        run: |
+          {
+            echo "## ✓ Uploaded — one more approval needed"
+            echo ""
+            if [ "$LISTING_CHANGED" = "true" ]; then
+              echo "\`docs/chrome-web-store/\` changed in this release. **Before approving the next step:**"
+              echo "1. Open the Chrome Web Store Developer Dashboard for this item."
+              echo "2. Copy the updated text from \`docs/chrome-web-store/\` into the matching Dashboard fields (description, single purpose, privacy justifications) and save — the API can't do this part."
+              echo ""
+              echo "Then scroll to the top of this page, click **Review deployments**, check **production**, and **Approve and deploy** — first for **listing-sync-checkpoint** (just a sign-off, no API calls), then again for **publish**."
+            else
+              echo "Scroll to the top of this page, click **Review deployments**, check **production**, and **Approve and deploy** to continue to **publish** — the step that actually submits the item for Google's review."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
   # Only requested when docs/chrome-web-store/ changed since the last prod
   # release (see validate's "listing-check" step). Runs no API calls of its
   # own — approving it is the developer's sign-off that they've manually
@@ -112,6 +140,14 @@ jobs:
 
     steps:
       - run: echo "Approved - Chrome Web Store Dashboard listing has been manually synced with docs/chrome-web-store/."
+
+      - name: Next-step summary
+        run: |
+          {
+            echo "## ✓ Listing sync confirmed — one more approval needed"
+            echo ""
+            echo "Scroll to the top of this page, click **Review deployments**, check **production**, and **Approve and deploy** for **publish** — the step that actually submits the item for Google's review."
+          } >> "$GITHUB_STEP_SUMMARY"
 
   publish:
     needs: [upload, listing-sync-checkpoint]
@@ -140,3 +176,13 @@ jobs:
           CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
           CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
         run: node scripts/chrome-web-store/run-publish.js
+
+      - name: Result summary
+        run: |
+          {
+            echo "## ✓ Submitted for Google's review"
+            echo ""
+            echo "Nothing left to approve — this run is done. This does **not** mean the extension is live yet; Google's review still has to pass."
+            echo ""
+            echo "Check the Chrome Web Store Developer Dashboard for the item's real status. If it still shows a clickable **Submit for review** button right after this, try a hard refresh first — that's been a stale-UI quirk here before, not an actual failure."
+          } >> "$GITHUB_STEP_SUMMARY"
