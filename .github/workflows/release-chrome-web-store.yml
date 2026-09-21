@@ -1,0 +1,142 @@
+name: Release to Chrome Web Store
+
+on:
+  push:
+    branches: [prod]
+  workflow_dispatch: {}
+
+# The Store item must never be touched by two releases at once. A new run
+# waits for the previous one rather than cancelling it mid-upload/publish.
+concurrency:
+  group: chrome-web-store-release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/prod'
+    runs-on: ubuntu-latest
+    outputs:
+      listing_changed: ${{ steps.listing-check.outputs.listing_changed }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Validate Chrome Web Store documentation
+        run: npm run validate:chrome-store
+
+      - name: Validate manifest.json version was bumped
+        run: npm run release:chrome:validate-version
+
+      - name: Check whether the Chrome Web Store listing docs changed
+        id: listing-check
+        run: node scripts/chrome-web-store/detect-listing-changes.js
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build and package the extension
+        run: npm run release:chrome:package
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-web-store-package
+          path: .release/*.zip
+          retention-days: 5
+          if-no-files-found: error
+
+  upload:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts
+            package.json
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: chrome-web-store-package
+          path: .release
+
+      - name: Authenticate, upload package, and verify upload status
+        env:
+          CWS_SERVICE_ACCOUNT_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+        run: |
+          zip_file=$(ls .release/*.zip)
+          node scripts/chrome-web-store/run-upload.js "$zip_file"
+
+  # Only requested when docs/chrome-web-store/ changed since the last prod
+  # release (see validate's "listing-check" step). Runs no API calls of its
+  # own — approving it is the developer's sign-off that they've manually
+  # copied the updated description/single-purpose/privacy text into the
+  # Chrome Web Store Developer Dashboard, since the API can't do that part.
+  listing-sync-checkpoint:
+    needs: [validate, upload]
+    if: needs.validate.outputs.listing_changed == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - run: echo "Approved - Chrome Web Store Dashboard listing has been manually synced with docs/chrome-web-store/."
+
+  publish:
+    needs: [upload, listing-sync-checkpoint]
+    if: |
+      always() &&
+      needs.upload.result == 'success' &&
+      (needs.listing-sync-checkpoint.result == 'success' || needs.listing-sync-checkpoint.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts
+            package.json
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Authenticate and publish
+        env:
+          CWS_SERVICE_ACCOUNT_KEY: ${{ secrets.CWS_SERVICE_ACCOUNT_KEY }}
+          CWS_PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+        run: node scripts/chrome-web-store/run-publish.js

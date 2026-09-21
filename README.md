@@ -211,9 +211,11 @@ Jest runs all files under `tests/`. The suite covers pure business logic only â€
 
 ### CI/CD
 
-A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite automatically on every push to `master` and on every pull request targeting `master`.
+A GitHub Actions workflow (`.github/workflows/test.yml`) runs the full test suite and the Chrome Web Store documentation validator automatically on every push to `master` and on every pull request targeting `master`.
 
 The `master` branch is protected: a PR cannot be merged until the `test` check passes. This is enforced via a classic branch protection rule in the repository settings.
+
+Pushing to `prod` triggers the production release pipeline (`.github/workflows/release-chrome-web-store.yml`), which builds, packages, and publishes the extension to the Chrome Web Store. See [docs/release.md](docs/release.md) for the full process and required setup.
 
 ### Adding new tests
 

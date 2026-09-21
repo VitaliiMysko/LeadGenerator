@@ -36,6 +36,8 @@ Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.ta
 
 Tests run automatically on GitHub Actions on every push to `master` and every PR targeting `master` (`.github/workflows/test.yml`). The `master` branch is protected — a PR cannot be merged until the `test` check passes. Never bypass this check.
 
+A push to `prod` triggers `.github/workflows/release-chrome-web-store.yml`, which builds, packages, and publishes the extension to the Chrome Web Store. Chrome Web Store credentials live only in the `production` GitHub Environment's secrets — never in this repo, never in the Cloudflare Worker, never in a log. See [docs/release.md](docs/release.md) for the full release process; do not duplicate that content here.
+
 ## Documentation
 
 Every task must include updates to all relevant `.md` files: `CHANGELOG.md`, `README.md`, `docs/architecture.md`, and `CLAUDE.md` if the architecture or workflow changes. `CHANGELOG.md` follows the existing versioning format.
