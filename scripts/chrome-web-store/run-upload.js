@@ -47,6 +47,12 @@ async function main() {
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((err) => {
     console.error(`✗ Upload failed: ${err.message}`);
+    // err.body is the Chrome Web Store API's own JSON error payload — never
+    // request data or credentials — so it's safe to print and is usually the
+    // only way to tell what Google actually rejected.
+    if (err.body) {
+      console.error(`  API response: ${JSON.stringify(err.body)}`);
+    }
     process.exit(1);
   });
 }

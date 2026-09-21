@@ -16,7 +16,7 @@ describe("uploadPackage", () => {
     expect(request).toHaveBeenCalledWith("/publishers/pub/items/ext:upload", {
       method: "POST",
       upload: true,
-      headers: { "Content-Type": "application/zip" },
+      headers: { "Content-Type": "application/octet-stream" },
       body: zip,
     });
   });
