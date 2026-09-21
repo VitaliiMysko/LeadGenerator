@@ -86,8 +86,15 @@ describe("isTerminalUploadState", () => {
 });
 
 describe("isSuccessUploadState", () => {
-  test("true only for exactly SUCCESS", () => {
+  test("true for SUCCEEDED (the value the Chrome Web Store API actually returns)", () => {
+    expect(isSuccessUploadState("SUCCEEDED")).toBe(true);
+  });
+
+  test("true for SUCCESS too, in case fetchStatus ever uses a different literal than :upload", () => {
     expect(isSuccessUploadState("SUCCESS")).toBe(true);
+  });
+
+  test("false for anything else", () => {
     expect(isSuccessUploadState("FAILURE")).toBe(false);
     expect(isSuccessUploadState(undefined)).toBe(false);
   });
