@@ -58,3 +58,20 @@ export function assertVersionBumped(previousVersion, nextVersion) {
     );
   }
 }
+
+// The Chrome Web Store rejects the whole package (PKG_MANIFEST_SUMMARY_TOO_LONG)
+// if manifest.json's own "description" field — a short summary, distinct
+// from docs/chrome-web-store/description.md's full listing text — exceeds
+// this. Checked only at packaging time for the manifest actually being
+// released, not inside parseManifest: that function also parses historical
+// commits purely to compare version numbers, and enforcing this there would
+// break comparisons against any past commit that already violated it.
+export const MAX_MANIFEST_DESCRIPTION_LENGTH = 132;
+
+export function assertManifestDescriptionWithinLimit(description) {
+  if (typeof description === "string" && description.length > MAX_MANIFEST_DESCRIPTION_LENGTH) {
+    throw new Error(
+      `manifest.json "description" is ${description.length} characters, exceeds the Chrome Web Store's ${MAX_MANIFEST_DESCRIPTION_LENGTH}-character limit for that field (this is the manifest's own short description, not docs/chrome-web-store/description.md)`
+    );
+  }
+}

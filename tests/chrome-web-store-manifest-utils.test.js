@@ -1,4 +1,11 @@
-import { parseManifest, parseVersion, compareVersions, assertVersionBumped } from "../scripts/chrome-web-store/manifest-utils.js";
+import {
+  parseManifest,
+  parseVersion,
+  compareVersions,
+  assertVersionBumped,
+  assertManifestDescriptionWithinLimit,
+  MAX_MANIFEST_DESCRIPTION_LENGTH,
+} from "../scripts/chrome-web-store/manifest-utils.js";
 
 describe("parseVersion", () => {
   test("accepts 1-4 numeric parts", () => {
@@ -56,5 +63,28 @@ describe("parseManifest", () => {
 
   test("rejects invalid version field", () => {
     expect(() => parseManifest(JSON.stringify({ manifest_version: 3, version: "not-a-version" }))).toThrow();
+  });
+
+  test("does not itself enforce the description length limit (historical commits may already violate it)", () => {
+    const oversized = "x".repeat(MAX_MANIFEST_DESCRIPTION_LENGTH + 1);
+    expect(() =>
+      parseManifest(JSON.stringify({ manifest_version: 3, version: "1.0.0", description: oversized }))
+    ).not.toThrow();
+  });
+});
+
+describe("assertManifestDescriptionWithinLimit", () => {
+  test("passes at or under the Chrome Web Store's limit", () => {
+    expect(() => assertManifestDescriptionWithinLimit("x".repeat(MAX_MANIFEST_DESCRIPTION_LENGTH))).not.toThrow();
+  });
+
+  test("throws over the limit", () => {
+    expect(() => assertManifestDescriptionWithinLimit("x".repeat(MAX_MANIFEST_DESCRIPTION_LENGTH + 1))).toThrow(
+      /132-character limit/
+    );
+  });
+
+  test("ignores a missing/non-string description", () => {
+    expect(() => assertManifestDescriptionWithinLimit(undefined)).not.toThrow();
   });
 });
