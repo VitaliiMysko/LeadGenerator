@@ -9,7 +9,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseManifest } from "./manifest-utils.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const RELEASE_DIR = join(ROOT, ".release");
+// Not dot-prefixed: actions/upload-artifact@v4 excludes hidden
+// (dot-prefixed) paths from uploads by default, which would silently drop
+// this whole directory in CI.
+const RELEASE_DIR = join(ROOT, "release");
 const STAGING_DIR = join(RELEASE_DIR, "extension");
 
 // Everything the packaged extension is allowed to contain. Anything not
