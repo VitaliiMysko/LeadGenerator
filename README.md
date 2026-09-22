@@ -8,6 +8,10 @@ This extension is a straightforward tool for extracting data about individuals d
 
   The application features a simple, modern layout with intuitive functionality
 
+- **Floating Panel**:
+
+  Click the toolbar icon — shown only on Sales Navigator lead pages and public profile pages — to open the tool as a panel that floats over the page. It stays open across tab switches and LinkedIn navigation until you close it (click the icon again, or the panel's **×** button)
+
 - **Dynamic Tab Navigation**:
 
   The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
@@ -301,30 +305,32 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a public LinkedIn profile page (`linkedin.com/in/...`), or any other `linkedin.com` page (e.g. a Sales Navigator lead page) — the latter is extracted best-effort using the Sales Navigator logic
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`)
 
-2. Click **Extract**
+2. Click the extension's toolbar icon — visible only on these page types — to open the floating panel over the page. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches and LinkedIn navigation
+
+3. Click **Extract**
    - Extracts available profile and company data
    - On a public profile page, if the visible Experience section may be hiding further current positions behind a "Show all" link, the full experience list is fetched automatically in the background before the fields are populated
 
-3. Review and edit fields (optional)
+4. Review and edit fields (optional)
    - All fields are fully editable
 
-4. (Optional) Use Filters
+5. (Optional) Use Filters
    - Narrow down company data by location or size
 
-5. (Optional) Use additional features:
+6. (Optional) Use additional features:
    - Translate job title
    - Enable transliteration
    - Generate / validate email
 
-6. Click **Save**
+7. Click **Save**
    - Saves current lead data locally
 
-7. Click **Get**
+8. Click **Get**
    - Copies all saved leads in spreadsheet-ready format
 
-8. (Optional) Click **Clean**
+9. (Optional) Click **Clean**
    - Removes all saved leads from local storage
 
 ## Permissions
