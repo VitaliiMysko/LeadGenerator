@@ -6,6 +6,8 @@ if (!window.leadGenerator.floatingPanelInit) {
   const PANEL_WIDTH = 400;
   const PANEL_HEIGHT = 500;
   const RESET_MESSAGE_TYPE = "lead-generator:panel-reset";
+  const INIT_MESSAGE_TYPE = "lead-generator:panel-init";
+  const EXTENSION_ORIGIN = new URL(chrome.runtime.getURL("index.html")).origin;
 
   // Mirrors background.js's PANEL_ENABLED_URL_PATTERNS. Content scripts and
   // the service worker can't share modules, so this stays a small, separate
@@ -46,6 +48,9 @@ if (!window.leadGenerator.floatingPanelInit) {
       width: "100%",
       height: "100%",
       display: "block",
+    });
+    panelIframe.addEventListener("load", () => {
+      panelIframe.contentWindow.postMessage({ type: INIT_MESSAGE_TYPE }, EXTENSION_ORIGIN);
     });
 
     const closeButton = document.createElement("button");
@@ -98,10 +103,7 @@ if (!window.leadGenerator.floatingPanelInit) {
 
   function notifyPanelOfNavigation() {
     if (!isPanelVisible() || !panelIframe?.contentWindow) return;
-    panelIframe.contentWindow.postMessage(
-      { type: RESET_MESSAGE_TYPE },
-      new URL(chrome.runtime.getURL("index.html")).origin
-    );
+    panelIframe.contentWindow.postMessage({ type: RESET_MESSAGE_TYPE }, EXTENSION_ORIGIN);
   }
 
   function handlePossibleNavigation() {
