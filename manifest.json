@@ -27,7 +27,6 @@
     "service_worker": "src/scripts/workers/background.js"
   },
   "action": {
-    "default_popup": "index.html",
     "default_title": "Lead generator",
     "default_icon": {
       "16": "assets/icons/logo-16.png",
