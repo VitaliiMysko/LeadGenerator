@@ -5,9 +5,23 @@ if (!window.leadGenerator.floatingPanelInit) {
 
   const PANEL_WIDTH = 400;
   const PANEL_HEIGHT = 500;
+  const RESET_MESSAGE_TYPE = "lead-generator:panel-reset";
+
+  // Mirrors background.js's PANEL_ENABLED_URL_PATTERNS. Content scripts and
+  // the service worker can't share modules, so this stays a small, separate
+  // copy rather than a shared import.
+  const SUPPORTED_PAGE_PATTERNS = [
+    /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
+    /^https:\/\/www\.linkedin\.com\/in\//,
+  ];
 
   let panelHost = null;
   let panelIframe = null;
+  let lastKnownUrl = location.href;
+
+  function isSupportedPageUrl(url) {
+    return SUPPORTED_PAGE_PATTERNS.some((pattern) => pattern.test(url));
+  }
 
   function createPanel() {
     panelHost = document.createElement("div");
@@ -81,6 +95,36 @@ if (!window.leadGenerator.floatingPanelInit) {
       showPanel();
     }
   }
+
+  function notifyPanelOfNavigation() {
+    if (!isPanelVisible() || !panelIframe?.contentWindow) return;
+    panelIframe.contentWindow.postMessage(
+      { type: RESET_MESSAGE_TYPE },
+      new URL(chrome.runtime.getURL("index.html")).origin
+    );
+  }
+
+  function handlePossibleNavigation() {
+    const currentUrl = location.href;
+    if (currentUrl === lastKnownUrl) return;
+    lastKnownUrl = currentUrl;
+
+    if (isSupportedPageUrl(currentUrl)) {
+      notifyPanelOfNavigation();
+    }
+  }
+
+  // LinkedIn is a single-page app: navigating between lead/profile pages
+  // doesn't reload the tab, so watch History API navigation directly.
+  for (const method of ["pushState", "replaceState"]) {
+    const original = history[method];
+    history[method] = function (...args) {
+      const result = original.apply(this, args);
+      handlePossibleNavigation();
+      return result;
+    };
+  }
+  window.addEventListener("popstate", handlePossibleNavigation);
 
   chrome.runtime.onMessage.addListener((message) => {
     if (message.action === "toggleFloatingPanel") {
