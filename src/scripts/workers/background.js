@@ -29,10 +29,15 @@ async function applyDevIconIfLocal() {
 
 // -----------------------------
 // ACTION (TOOLBAR ICON) VISIBILITY
-// The icon is only shown on pages the floating panel actually supports:
+// The icon is only enabled on pages the floating panel actually supports:
 // Sales Navigator lead pages and public profile pages. Company pages are
 // still scraped (via the hidden-tab flow below), just never through a
 // visible panel.
+//
+// chrome.action has no API to remove the icon from the toolbar entirely
+// (that only ever existed on the deprecated MV2 pageAction API) - disable()
+// is the real, current equivalent: it greys the icon out and stops
+// onClicked from firing, but the icon itself stays visible.
 // -----------------------------
 const PANEL_ENABLED_URL_PATTERNS = [
   /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
@@ -47,9 +52,9 @@ async function updateActionVisibility(tabId, url) {
   if (!tabId) return;
   try {
     if (isPanelEnabledUrl(url)) {
-      await chrome.action.show(tabId);
+      await chrome.action.enable(tabId);
     } else {
-      await chrome.action.hide(tabId);
+      await chrome.action.disable(tabId);
     }
   } catch {
     // Tab may have closed mid-update; nothing to do.

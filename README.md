@@ -10,7 +10,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Floating Panel**:
 
-  Click the toolbar icon — shown only on Sales Navigator lead pages and public profile pages — to open the tool as a panel that floats over the page. It stays open across tab switches and LinkedIn navigation until you close it (click the icon again, or the panel's **×** button)
+  Click the toolbar icon — active only on Sales Navigator lead pages and public profile pages (greyed out elsewhere) — to open the tool as a panel that floats over the page. It stays open across tab switches and LinkedIn navigation until you close it (click the icon again, or the panel's **×** button)
 
 - **Dynamic Tab Navigation**:
 
@@ -307,7 +307,7 @@ After installing the extension, configure it for optimal usage:
 
 1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`)
 
-2. Click the extension's toolbar icon — visible only on these page types — to open the floating panel over the page. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches and LinkedIn navigation
+2. Click the extension's toolbar icon — active only on these page types, greyed out elsewhere — to open the floating panel over the page. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches and LinkedIn navigation
 
 3. Click **Extract**
    - Extracts available profile and company data
