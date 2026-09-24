@@ -158,6 +158,26 @@ if (!window.leadGenerator.floatingPanelInit) {
     applyLauncherPosition();
   }
 
+  // Drawn as SVG rather than a "×" character: a text glyph sits off-centre
+  // in a small circle because of font baseline metrics.
+  function createCloseIcon() {
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("width", "8");
+    svg.setAttribute("height", "8");
+    svg.setAttribute("viewBox", "0 0 8 8");
+    svg.style.display = "block";
+
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", "M1 1L7 7M7 1L1 7");
+    path.setAttribute("stroke", "#fff");
+    path.setAttribute("stroke-width", "1.5");
+    path.setAttribute("stroke-linecap", "round");
+    svg.appendChild(path);
+
+    return svg;
+  }
+
   function createPanel() {
     panelHost = document.createElement("div");
     panelHost.id = "lead-generator-floating-panel";
@@ -185,7 +205,6 @@ if (!window.leadGenerator.floatingPanelInit) {
     });
 
     const closeButton = document.createElement("button");
-    closeButton.textContent = "×";
     closeButton.setAttribute("aria-label", "Close");
     Object.assign(closeButton.style, {
       position: "absolute",
@@ -193,16 +212,17 @@ if (!window.leadGenerator.floatingPanelInit) {
       right: "4px",
       width: "16px",
       height: "16px",
-      lineHeight: "15px",
       padding: "0",
       border: "none",
       borderRadius: "50%",
       background: "rgba(0, 0, 0, 0.6)",
-      color: "#fff",
-      fontSize: "11px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
       cursor: "pointer",
       zIndex: "1",
     });
+    closeButton.appendChild(createCloseIcon());
     closeButton.addEventListener("click", hidePanel);
 
     panelHost.appendChild(panelIframe);
