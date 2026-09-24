@@ -14,7 +14,7 @@ The extension extracts structured lead data (name, surname, job position, Linked
 
 It runs **only within LinkedIn domains**. Because content scripts cannot make cross-origin requests, all external network calls go through a secure backend (Cloudflare Worker).
 
-The UI opens as a **floating panel** injected over the LinkedIn page — not a browser popup — toggled by a draggable launcher icon that the extension places on the page itself, only on Sales Navigator lead pages and public profile pages (company pages are still scraped, just never through a visible panel; see §2.1 and §11). The browser toolbar icon also toggles the panel, as a fallback.
+The UI opens as a **floating panel** injected over the LinkedIn page — not a browser popup — toggled by a draggable launcher icon that the extension places on the page itself, only on Sales Navigator lead and people-search pages and public profile pages (company pages are still scraped, just never through a visible panel; see §2.1 and §11). The browser toolbar icon also toggles the panel, as a fallback.
 
 The codebase splits into two execution environments:
 
@@ -32,7 +32,7 @@ Injected into the LinkedIn page hosts listed above; extract DOM data and return 
 - Both profile page types expose equivalent markup for the concise Experience section and the full "all experience" page, so one parser handles both. When the concise list may be truncated, the popup triggers a second background-tab fetch of the full page (see §2.2) and treats that as authoritative.
 - The company-page scraper locates fields (Website, Industry, Company size, Headquarters) by matching their visible label text rather than by CSS selector, since LinkedIn hashes its class names per build — matching on label text is the only strategy that survives LinkedIn's frequent markup changes.
 - `panel/floating-panel.js` is the one exception to "injected on demand" (see §10): it's statically registered alongside `common/constants.js` so it's loaded on every LinkedIn page. On supported pages it places a fixed-position **launcher** (the extension logo in a round button) on the page; a click toggles a fixed-position `<iframe src="chrome-extension://.../index.html">` — the same `index.html`/`src/scripts/` that used to run as the popup, unchanged — opened beside the launcher and clamped to the viewport. The iframe document is created once and only shown/hidden afterwards, never recreated. The launcher is draggable via pointer events (pointer capture keeps the drag alive over the iframe; a small movement threshold separates a drag from a click), an open panel follows it, and its position persists in `chrome.storage.local`. A `toggleFloatingPanel` message from the background worker (toolbar-icon click) toggles the panel the same way.
-- The same script detects LinkedIn's in-page (SPA) navigation — via the Navigation API's `currententrychange` event, with URL polling as a fallback. Wrapping `history.pushState` would not work here: content scripts run in an isolated JS world, so the page's own calls never pass through a wrapper installed by the content script. On navigation it shows/hides the launcher (and panel) for the new page, and if the panel is open on a supported page it posts a message telling the panel to reset its displayed fields.
+- The same script detects LinkedIn's in-page (SPA) navigation — via the Navigation API's `currententrychange` event, with URL polling as a fallback. Wrapping `history.pushState` would not work here: content scripts run in an isolated JS world, so the page's own calls never pass through a wrapper installed by the content script. On navigation it shows/hides the launcher (and panel) for the new page, and if the panel is open and the new page is a lead/profile page it posts a message telling the panel to reset its displayed fields. People-search pages show the launcher but never trigger a reset, since their URL changes with every filter or results page.
 
 ### 2.2 Panel UI & Background Worker (`src/scripts/`)
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ## 8. Data Flow Summary
 
-1. On a lead or profile page, the always-loaded panel content script shows the on-page launcher icon; clicking it creates or toggles the floating panel iframe beside the icon (a toolbar-icon click reaches the same toggle via the background worker).
+1. On a lead, profile, or people-search page, the always-loaded panel content script shows the on-page launcher icon; clicking it creates or toggles the floating panel iframe beside the icon (a toolbar-icon click reaches the same toggle via the background worker).
 2. Inside the panel, the user clicks **Extract**; the panel determines the active tab's page type and injects the matching content scripts (public profile vs. Sales-Navigator-style), showing an alert on an unrecognized (non-LinkedIn) page.
 3. If a public profile's Experience section may be truncated, the full list is fetched from the profile's details page in a hidden background tab before display.
 4. Extracted data is returned and rendered in the panel; company details are fetched (or read from cache) in the background as companies are expanded.

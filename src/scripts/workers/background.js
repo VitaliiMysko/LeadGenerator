@@ -30,7 +30,7 @@ async function applyDevIconIfLocal() {
 // -----------------------------
 // ACTION (TOOLBAR ICON) VISIBILITY
 // The icon is only enabled on pages the floating panel actually supports:
-// Sales Navigator lead pages and public profile pages. Company pages are
+// Sales Navigator lead and people-search pages, and public profile pages. Company pages are
 // still scraped (via the hidden-tab flow below), just never through a
 // visible panel.
 //
@@ -42,6 +42,7 @@ async function applyDevIconIfLocal() {
 const PANEL_ENABLED_URL_PATTERNS = [
   /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
   /^https:\/\/www\.linkedin\.com\/in\//,
+  /^https:\/\/www\.linkedin\.com\/sales\/search\/people/,
 ];
 
 function isPanelEnabledUrl(url) {

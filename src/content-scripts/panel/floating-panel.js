@@ -13,12 +13,19 @@ if (!window.leadGenerator.floatingPanelInit) {
   const INIT_MESSAGE_TYPE = "lead-generator:panel-init";
   const EXTENSION_ORIGIN = new URL(chrome.runtime.getURL("index.html")).origin;
 
-  // Mirrors background.js's PANEL_ENABLED_URL_PATTERNS. Content scripts and
-  // the service worker can't share modules, so this stays a small, separate
-  // copy rather than a shared import.
-  const SUPPORTED_PAGE_PATTERNS = [
+  // Pages a lead is extracted from; landing on a different one resets the
+  // panel's displayed fields.
+  const EXTRACTABLE_PAGE_PATTERNS = [
     /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
     /^https:\/\/www\.linkedin\.com\/in\//,
+  ];
+
+  // Pages the launcher is shown on. Mirrors background.js's
+  // PANEL_ENABLED_URL_PATTERNS - content scripts and the service worker can't
+  // share modules, so this stays a small, separate copy.
+  const SUPPORTED_PAGE_PATTERNS = [
+    ...EXTRACTABLE_PAGE_PATTERNS,
+    /^https:\/\/www\.linkedin\.com\/sales\/search\/people/,
   ];
 
   let launcher = null;
@@ -29,6 +36,10 @@ if (!window.leadGenerator.floatingPanelInit) {
 
   function isSupportedPageUrl(url) {
     return SUPPORTED_PAGE_PATTERNS.some((pattern) => pattern.test(url));
+  }
+
+  function isExtractablePageUrl(url) {
+    return EXTRACTABLE_PAGE_PATTERNS.some((pattern) => pattern.test(url));
   }
 
   function clamp(value, min, max) {
@@ -246,7 +257,9 @@ if (!window.leadGenerator.floatingPanelInit) {
     lastKnownUrl = currentUrl;
 
     updateLauncherVisibility();
-    if (isSupportedPageUrl(currentUrl)) {
+    // Not on every supported page: search result URLs change with every
+    // filter/page change, which must not wipe what the user extracted.
+    if (isExtractablePageUrl(currentUrl)) {
       notifyPanelOfNavigation();
     }
   }
