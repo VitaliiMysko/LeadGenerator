@@ -117,14 +117,14 @@ if (!window.leadGenerator.floatingPanelInit) {
   }
 
   // LinkedIn is a single-page app: navigating between lead/profile pages
-  // doesn't reload the tab, so watch History API navigation directly.
-  for (const method of ["pushState", "replaceState"]) {
-    const original = history[method];
-    history[method] = function (...args) {
-      const result = original.apply(this, args);
-      handlePossibleNavigation();
-      return result;
-    };
+  // doesn't reload the tab. Wrapping history.pushState here would not work -
+  // content scripts run in an isolated JS world, so the page's own pushState
+  // calls never go through our wrapper. The Navigation API's events are DOM
+  // events and do reach this world; polling is the fallback where it's absent.
+  if (window.navigation) {
+    window.navigation.addEventListener("currententrychange", handlePossibleNavigation);
+  } else {
+    setInterval(handlePossibleNavigation, 1000);
   }
   window.addEventListener("popstate", handlePossibleNavigation);
 
