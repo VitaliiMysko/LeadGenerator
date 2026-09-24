@@ -1,6 +1,6 @@
 Lead Generator is a browser extension that extracts contact and company information directly from LinkedIn Sales Navigator lead pages and public LinkedIn profile pages, so you can build a lead list without manually copying data field by field.
 
-On a supported page, click the toolbar icon to open Lead Generator as a panel that floats over the page — it stays open while you browse, instead of closing every time you click elsewhere.
+On a supported page, click the Lead Generator icon shown on the page to open the tool as a panel that floats over it — it stays open while you browse, instead of closing every time you click elsewhere. Drag the icon anywhere you like; its position is remembered.
 
 **What it does**
 

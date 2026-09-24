@@ -2,12 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.4.0] - 2026-09-23
+## [3.4.0] - 2026-09-24
 
 ### Changed
 
-- **The extension now opens as a floating panel instead of a browser popup**: clicking the toolbar icon opens the tool as a panel that floats over the LinkedIn page, rather than a popup that closes as soon as you click elsewhere. Click the icon again, or the panel's new **×** button, to close it. The panel stays open when you switch to another browser tab and back, and each tab keeps its own independent panel and in-progress (unsaved) data
-- **The toolbar icon is now only active on Sales Navigator lead pages and public profile pages**, and greyed out (disabled) elsewhere: previously the popup could be opened on any LinkedIn page. Company pages are unaffected functionally — company details are still fetched automatically in the background when expanding a company — but the icon no longer opens anything there or on other LinkedIn pages (e.g. the feed)
+- **The extension now opens as a floating panel from an icon on the page, instead of a browser popup**: on Sales Navigator lead pages and public profile pages, a round Lead Generator icon is shown on the page itself. Clicking it opens the tool as a panel next to the icon, floating over the LinkedIn page, rather than a popup that closes as soon as you click elsewhere. Click the icon again, or the panel's new **×** button, to close the panel, leaving just the icon. The panel stays open when you switch to another browser tab and back, and each tab keeps its own independent panel and in-progress (unsaved) data
+- **The on-page icon can be dragged anywhere on the page**; an open panel follows it, and the icon's position is remembered across pages and browser restarts
+- **The extension is now only available on Sales Navigator lead pages and public profile pages**: previously the popup could be opened on any LinkedIn page. Company pages are unaffected functionally — company details are still fetched automatically in the background when expanding a company. The browser toolbar icon still toggles the panel on supported pages, but is no longer needed
 - **Navigating to a different lead or profile page while the panel is open now clears the displayed fields**, matching what a freshly opened popup showed before — saved leads, filters, and settings are unaffected
 
 ## [3.3.10] - 2026-08-31
