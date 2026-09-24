@@ -163,9 +163,9 @@ if (!window.leadGenerator.floatingPanelInit) {
   function createCloseIcon() {
     const SVG_NS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(SVG_NS, "svg");
-    svg.setAttribute("width", "8");
-    svg.setAttribute("height", "8");
-    svg.setAttribute("viewBox", "0 0 8 8");
+    svg.setAttribute("width", "6");
+    svg.setAttribute("height", "6");
+    svg.setAttribute("viewBox", "0 0 9 9");
     svg.style.display = "block";
 
     const path = document.createElementNS(SVG_NS, "path");
