@@ -201,6 +201,9 @@ if (!window.leadGenerator.floatingPanelInit) {
     });
 
     panelIframe = document.createElement("iframe");
+    // Cross-origin iframes may only use the Clipboard API when the embedder
+    // delegates it; set before src, since it's read when navigation starts.
+    panelIframe.allow = "clipboard-write";
     panelIframe.src = chrome.runtime.getURL("index.html");
     Object.assign(panelIframe.style, {
       border: "none",

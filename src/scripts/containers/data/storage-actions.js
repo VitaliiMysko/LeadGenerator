@@ -168,8 +168,12 @@ async function copyLeadsToClipboard(leads) {
       ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId)
       : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId);
 
-  await navigator.clipboard.writeText(text);
-  showAlert("Copied", "success");
+  try {
+    await navigator.clipboard.writeText(text);
+    showAlert("Copied", "success");
+  } catch {
+    showAlert("Copy failed!", "error");
+  }
 }
 
 async function loadLeads() {
