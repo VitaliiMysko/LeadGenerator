@@ -18,7 +18,7 @@ const companyDetailsByDefault = {
   completeRequest: true,
 };
 
-const popupSessionId = crypto.randomUUID();
+const panelSessionId = crypto.randomUUID();
 
 let currentRequestId = 0;
 const companyDetailsCache = new Map();
@@ -82,7 +82,7 @@ export async function getCompanyData(companyLink, location, industry, size, comp
     try {
       const response = await chrome.runtime.sendMessage({
         action: "fetchLinkedinCompanyPage",
-        sessionId: popupSessionId,
+        sessionId: panelSessionId,
         url: `${publicCompanyUrl}/about`,
         location,
         industry,

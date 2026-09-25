@@ -13,7 +13,11 @@
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body style="display: none">
+    <script
+      type="module"
+      src="src/scripts/panel-embedding-guard.js"
+    ></script>
     <div id="version-container">
       <span id="app-version"></span>
     </div>
@@ -251,6 +255,10 @@
       src="src/scripts/containers/navigation/tab-selector.js"
     ></script>
     <script type="module" src="src/scripts/services/translation.js"></script>
+    <script
+      type="module"
+      src="src/scripts/containers/panel/panel-reset-listener.js"
+    ></script>
     <script src="libs/transliteration/bundle.umd.min.js"></script>
   </body>
 </html>

@@ -28,6 +28,72 @@ async function applyDevIconIfLocal() {
 }
 
 // -----------------------------
+// ACTION (TOOLBAR ICON) VISIBILITY
+// The icon is only enabled on pages the floating panel actually supports:
+// Sales Navigator lead and people-search pages, and public profile pages. Company pages are
+// still scraped (via the hidden-tab flow below), just never through a
+// visible panel.
+//
+// chrome.action can't remove the icon from the toolbar; disable() greys it
+// out and stops onClicked from firing.
+// -----------------------------
+const PANEL_ENABLED_URL_PATTERNS = [
+  /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
+  /^https:\/\/www\.linkedin\.com\/in\//,
+  /^https:\/\/www\.linkedin\.com\/sales\/search\/people/,
+];
+
+function isPanelEnabledUrl(url) {
+  return !!url && PANEL_ENABLED_URL_PATTERNS.some((pattern) => pattern.test(url));
+}
+
+async function updateActionVisibility(tabId, url) {
+  if (!tabId) return;
+  try {
+    if (isPanelEnabledUrl(url)) {
+      await chrome.action.enable(tabId);
+    } else {
+      await chrome.action.disable(tabId);
+    }
+  } catch {
+    // Tab may have closed mid-update; nothing to do.
+  }
+}
+
+async function initializeActionVisibilityForOpenTabs() {
+  const tabs = await chrome.tabs.query({});
+  for (const tab of tabs) {
+    updateActionVisibility(tab.id, tab.url);
+  }
+}
+
+chrome.runtime.onInstalled.addListener(initializeActionVisibilityForOpenTabs);
+chrome.runtime.onStartup.addListener(initializeActionVisibilityForOpenTabs);
+
+chrome.tabs.onUpdated.addListener((tabId, info) => {
+  if (info.url) updateActionVisibility(tabId, info.url);
+});
+
+chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+  try {
+    const tab = await chrome.tabs.get(tabId);
+    updateActionVisibility(tabId, tab.url);
+  } catch {
+    // Tab may have closed between activation and this lookup.
+  }
+});
+
+// -----------------------------
+// ICON CLICK -> TOGGLE THE FLOATING PANEL
+// The panel itself is owned by a persistent content script (see
+// src/content-scripts/panel/floating-panel.js), which is already loaded and
+// listening on every LinkedIn page.
+// -----------------------------
+chrome.action.onClicked.addListener((tab) => {
+  chrome.tabs.sendMessage(tab.id, { action: "toggleFloatingPanel" }).catch(() => {});
+});
+
+// -----------------------------
 // TASK KINDS
 // Each kind describes what to inject into the hidden tab once it finishes
 // loading, and which message action carries its result back.
@@ -53,7 +119,7 @@ const TASK_KINDS = {
 
 // -----------------------------
 // PER-SESSION IN-FLIGHT TASK TRACKER
-// key: sessionId (unique per popup lifetime, generated in company-data.js /
+// key: sessionId (unique per panel iframe document, generated in company-data.js /
 // extract-data.js)
 // value: { kind, tabId, resolve, timeoutId, url, location, industry, size }
 // -----------------------------

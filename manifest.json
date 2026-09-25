@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lead generator",
-  "version": "3.3.10",
+  "version": "3.4.0",
   "environment": "local",
   "browser_specific_settings": {
     "gecko": {
@@ -27,7 +27,6 @@
     "service_worker": "src/scripts/workers/background.js"
   },
   "action": {
-    "default_popup": "index.html",
     "default_title": "Lead generator",
     "default_icon": {
       "16": "assets/icons/logo-16.png",
@@ -40,6 +39,16 @@
     {
       "matches": ["https://www.linkedin.com/*"],
       "js": ["src/content-scripts/common/constants.js"]
+    },
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["src/content-scripts/panel/floating-panel.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "assets/icons/logo-32.png"],
+      "matches": ["https://www.linkedin.com/*"]
     }
   ],
   "content_security_policy": {
