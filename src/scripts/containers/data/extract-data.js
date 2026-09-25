@@ -29,7 +29,7 @@ const FILE_SETS = {
   ],
 };
 
-// Stable for the lifetime of this popup window, mirroring company-data.js's popupSessionId.
+// Stable for the lifetime of this panel document, mirroring company-data.js's popupSessionId.
 const profileExperienceSessionId = crypto.randomUUID();
 
 getExtractBtnElement().addEventListener("click", async () => {

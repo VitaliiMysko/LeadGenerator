@@ -34,10 +34,8 @@ async function applyDevIconIfLocal() {
 // still scraped (via the hidden-tab flow below), just never through a
 // visible panel.
 //
-// chrome.action has no API to remove the icon from the toolbar entirely
-// (that only ever existed on the deprecated MV2 pageAction API) - disable()
-// is the real, current equivalent: it greys the icon out and stops
-// onClicked from firing, but the icon itself stays visible.
+// chrome.action can't remove the icon from the toolbar; disable() greys it
+// out and stops onClicked from firing.
 // -----------------------------
 const PANEL_ENABLED_URL_PATTERNS = [
   /^https:\/\/www\.linkedin\.com\/sales\/lead\//,
@@ -121,7 +119,7 @@ const TASK_KINDS = {
 
 // -----------------------------
 // PER-SESSION IN-FLIGHT TASK TRACKER
-// key: sessionId (unique per popup lifetime, generated in company-data.js /
+// key: sessionId (unique per panel iframe document, generated in company-data.js /
 // extract-data.js)
 // value: { kind, tabId, resolve, timeoutId, url, location, industry, size }
 // -----------------------------
