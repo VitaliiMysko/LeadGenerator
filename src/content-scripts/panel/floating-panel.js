@@ -86,6 +86,13 @@ if (!window.leadGenerator.floatingPanelInit) {
     panelHost.style.top = `${top}px`;
   }
 
+  // Icon counterpart of the panel's useTextChangeEffect (a 1s dim-to-full
+  // fade). Can't reuse that helper or its CSS class: they live in the
+  // panel's iframe document, and this runs in the LinkedIn page.
+  function playClickEffect(element, duration = 1000) {
+    element.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration, easing: "ease" });
+  }
+
   function createLauncher() {
     launcher = document.createElement("div");
     launcher.id = "lead-generator-launcher";
@@ -150,6 +157,7 @@ if (!window.leadGenerator.floatingPanelInit) {
       if (wasDrag) {
         chrome.storage.local.set({ [LAUNCHER_POSITION_KEY]: launcherPosition });
       } else {
+        playClickEffect(icon);
         togglePanel();
       }
     });
