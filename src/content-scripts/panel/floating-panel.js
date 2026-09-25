@@ -90,7 +90,7 @@ if (!window.leadGenerator.floatingPanelInit) {
   // fade). Can't reuse that helper or its CSS class: they live in the
   // panel's iframe document, and this runs in the LinkedIn page.
   function playClickEffect(element, duration = 1000) {
-    element.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration, easing: "ease" });
+    element.animate([{ opacity: 0.8 }, { opacity: 1 }], { duration, easing: "ease" });
   }
 
   function createLauncher() {
