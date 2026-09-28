@@ -120,6 +120,8 @@ function createCompanyNameElement(company) {
   if (company.companyLink !== "") {
     const link = document.createElement("a");
     link.href = company.companyLink;
+    link.target = "_blank";
+    link.rel = "noopener";
     link.textContent = company.companyName;
     nameEl.appendChild(link);
   } else {

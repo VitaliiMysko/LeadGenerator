@@ -1,33 +1,4 @@
 // -----------------------------
-// DEV ICON (grey tint in local env)
-// -----------------------------
-chrome.runtime.onInstalled.addListener(applyDevIconIfLocal);
-chrome.runtime.onStartup.addListener(applyDevIconIfLocal);
-
-async function applyDevIconIfLocal() {
-  if (chrome.runtime.getManifest().environment !== "local") return;
-
-  const sizes = [16, 32, 48, 128];
-  const imageData = {};
-
-  for (const size of sizes) {
-    const url = chrome.runtime.getURL(`assets/icons/logo-${size}.png`);
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const bitmap = await createImageBitmap(blob);
-
-    const canvas = new OffscreenCanvas(size, size);
-    const ctx = canvas.getContext("2d");
-    ctx.filter = "grayscale(100%)";
-    ctx.drawImage(bitmap, 0, 0);
-
-    imageData[size] = ctx.getImageData(0, 0, size, size);
-  }
-
-  await chrome.action.setIcon({ imageData });
-}
-
-// -----------------------------
 // TASK KINDS
 // Each kind describes what to inject into the hidden tab once it finishes
 // loading, and which message action carries its result back.
@@ -53,7 +24,7 @@ const TASK_KINDS = {
 
 // -----------------------------
 // PER-SESSION IN-FLIGHT TASK TRACKER
-// key: sessionId (unique per popup lifetime, generated in company-data.js /
+// key: sessionId (unique per panel iframe document, generated in company-data.js /
 // extract-data.js)
 // value: { kind, tabId, resolve, timeoutId, url, location, industry, size }
 // -----------------------------

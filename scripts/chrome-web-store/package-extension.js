@@ -44,7 +44,7 @@ export function validatePackageContents(entries) {
 function assertProductionManifest(manifest) {
   if (manifest.environment === "local") {
     throw new Error(
-      'manifest.json has "environment": "local" — this must be cleared before releasing to the Chrome Web Store (it visibly grey-tints the icon and appends "(local)" to the version in the popup).'
+      'manifest.json has "environment": "local" — this must be cleared before releasing to the Chrome Web Store (it visibly grey-tints the on-page icon and appends "(local)" to the version in the panel).'
     );
   }
   assertManifestDescriptionWithinLimit(manifest.description);
