@@ -118,6 +118,11 @@ if (!window.leadGenerator.floatingPanelInit) {
     icon.alt = "Lead generator";
     icon.draggable = false;
     Object.assign(icon.style, { width: "32px", height: "32px", pointerEvents: "none" });
+    // Same local-build marker as background.js's applyDevIconIfLocal, which
+    // can only reach the toolbar icon, not this in-page one.
+    if (chrome.runtime.getManifest().environment === "local") {
+      icon.style.filter = "grayscale(100%)";
+    }
     launcher.appendChild(icon);
 
     let dragStart = null;
