@@ -5,6 +5,6 @@ const openCompanyLinkedinBtnElement = getOpenCompanyLinkedinBtnElement();
 openCompanyLinkedinBtnElement.addEventListener("click", () => {
   const href = openCompanyLinkedinBtnElement.dataset.href;
   if (href) {
-    chrome.tabs.create({ url: href.replace("/sales/", "/"), active: false });
+    chrome.tabs.create({ url: href.replace("/sales/", "/"), active: true });
   }
 });

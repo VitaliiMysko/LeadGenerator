@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - **The on-page icon can be dragged anywhere on the page**; an open panel follows it, and the icon's position is remembered across pages and browser restarts
 - **The extension is now only available on Sales Navigator lead pages, Sales Navigator people-search pages, and public profile pages**: previously the popup could be opened on any LinkedIn page. Browsing or paging through search results keeps whatever is shown in the panel. Company pages are unaffected functionally — company details are still fetched automatically in the background when expanding a company. The browser toolbar icon still toggles the panel on supported pages, but is no longer needed
 - **Navigating to a different lead or profile page while the panel is open now clears the displayed fields**, matching what a freshly opened popup showed before — saved leads, filters, and settings are unaffected
+- **The LinkedIn button next to the Company name field now switches to the company page it opens**, instead of opening it in a background tab; company names in the Actual Experience tab also open in a new tab
 
 ## [3.3.10] - 2026-08-31
 
