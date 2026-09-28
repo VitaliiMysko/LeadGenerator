@@ -9,6 +9,7 @@ import { createCompanyList } from "../experience/actual-experience.js";
 import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
+import { getPanelTab, injectScripts, sendMessageToTab } from "../../services/tab-bridge.js";
 
 const FILE_SETS = {
   salesNavigatorLead: [
@@ -33,7 +34,7 @@ const FILE_SETS = {
 const profileExperienceSessionId = crypto.randomUUID();
 
 getExtractBtnElement().addEventListener("click", async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tab = await getPanelTab();
 
   const pageType = getLinkedInPageType(tab.url);
   if (!pageType) {
@@ -41,17 +42,14 @@ getExtractBtnElement().addEventListener("click", async () => {
     return;
   }
 
-  await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: FILE_SETS[pageType],
-  });
+  await injectScripts(tab.id, FILE_SETS[pageType]);
 
   const loadingElement = document.createElement("div");
   loadingElement.textContent = "Loading";
   loadingElement.classList.add("loading", "loading-text");
   getTabExperienceElement().appendChild(loadingElement);
 
-  const results = await chrome.tabs.sendMessage(tab.id, { action: "extractData" });
+  const results = await sendMessageToTab(tab.id, { action: "extractData" });
 
   getTabExperienceElement().innerHTML = "";
 
