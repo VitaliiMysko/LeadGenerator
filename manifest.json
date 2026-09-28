@@ -10,7 +10,7 @@
     }
   },
   "description": "A straightforward tool for extracting lead data from LinkedIn Sales Navigator and public profile pages.",
-  "permissions": ["activeTab", "scripting", "tabs", "storage"],
+  "permissions": ["scripting", "tabs", "storage"],
   "host_permissions": [
     "https://www.linkedin.com/sales/lead/*",
     "https://www.linkedin.com/company/*",
@@ -25,15 +25,6 @@
   },
   "background": {
     "service_worker": "src/scripts/workers/background.js"
-  },
-  "action": {
-    "default_title": "Lead generator",
-    "default_icon": {
-      "16": "assets/icons/logo-16.png",
-      "32": "assets/icons/logo-32.png",
-      "48": "assets/icons/logo-48.png",
-      "128": "assets/icons/logo-128.png"
-    }
   },
   "content_scripts": [
     {

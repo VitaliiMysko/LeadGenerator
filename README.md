@@ -10,7 +10,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Floating Panel**:
 
-  On Sales Navigator lead and people-search pages, and on public profile pages, a round Lead Generator icon appears on the page itself. Click it to open the tool as a panel next to the icon, floating over the page; click it again (or the panel's **×** button) to close the panel, leaving just the icon. Drag the icon to move it anywhere on the page — the panel follows it, and the position is remembered. The panel stays open across tab switches until you close it. No need to pin anything in the browser toolbar
+  On Sales Navigator lead and people-search pages, and on public profile pages, a round Lead Generator icon appears on the page itself. Click it to open the tool as a panel next to the icon, floating over the page; click it again (or the panel's **×** button) to close the panel, leaving just the icon. Drag the icon to move it anywhere on the page — the panel follows it, and the position is remembered. The panel stays open across tab switches until you close it. The extension has no browser toolbar button
 
 - **Dynamic Tab Navigation**:
 
@@ -337,7 +337,6 @@ After installing the extension, configure it for optimal usage:
 
 The "Lead generator" extension requires certain permissions to function effectively and ensure smooth operation:
 
-- **activeTab** - access current page
 - **scripting** - inject scripts
 - **tabs** - tab interaction
 - **storage** - store user preferences, filter state, and user-saved lead data locally

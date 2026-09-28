@@ -20,9 +20,7 @@ if (!window.leadGenerator.floatingPanelInit) {
     /^https:\/\/www\.linkedin\.com\/in\//,
   ];
 
-  // Pages the launcher is shown on. Mirrors background.js's
-  // PANEL_ENABLED_URL_PATTERNS - content scripts and the service worker can't
-  // share modules, so this stays a small, separate copy.
+  // Pages the launcher is shown on.
   const SUPPORTED_PAGE_PATTERNS = [
     ...EXTRACTABLE_PAGE_PATTERNS,
     /^https:\/\/www\.linkedin\.com\/sales\/search\/people/,
@@ -118,8 +116,7 @@ if (!window.leadGenerator.floatingPanelInit) {
     icon.alt = "Lead generator";
     icon.draggable = false;
     Object.assign(icon.style, { width: "32px", height: "32px", pointerEvents: "none" });
-    // Same local-build marker as background.js's applyDevIconIfLocal, which
-    // can only reach the toolbar icon, not this in-page one.
+    // Greyscale marks a local development build.
     if (chrome.runtime.getManifest().environment === "local") {
       icon.style.filter = "grayscale(100%)";
     }
@@ -317,13 +314,6 @@ if (!window.leadGenerator.floatingPanelInit) {
 
   window.addEventListener("resize", () => {
     if (launcher) applyLauncherPosition();
-  });
-
-  // The toolbar icon still toggles the panel too, as a fallback.
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.action === "toggleFloatingPanel") {
-      togglePanel();
-    }
   });
 
   init();

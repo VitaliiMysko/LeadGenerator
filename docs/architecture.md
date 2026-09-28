@@ -14,7 +14,7 @@ The extension extracts structured lead data (name, surname, job position, Linked
 
 It runs **only within LinkedIn domains**. Because content scripts cannot make cross-origin requests, all external network calls go through a secure backend (Cloudflare Worker).
 
-The UI opens as a **floating panel** injected over the LinkedIn page — not a browser popup — toggled by a draggable launcher icon that the extension places on the page itself, only on Sales Navigator lead and people-search pages and public profile pages (company pages are still scraped, just never through a visible panel; see §2.1 and §11). The browser toolbar icon also toggles the panel, as a fallback.
+The UI opens as a **floating panel** injected over the LinkedIn page — not a browser popup — toggled by a draggable launcher icon that the extension places on the page itself, only on Sales Navigator lead and people-search pages and public profile pages (company pages are still scraped, just never through a visible panel; see §2.1 and §11).
 
 The codebase splits into two execution environments:
 
@@ -31,14 +31,14 @@ Injected into the LinkedIn page hosts listed above; extract DOM data and return 
 - The public-profile variant adapts to that page's differences: no stable heading class for the name (lookup is scoped to the main content area to avoid the page's own navigation headings), the profile URL doubles as the `Link` field, and there's no hover-tooltip company data (filled in later by the normal company-page scrape).
 - Both profile page types expose equivalent markup for the concise Experience section and the full "all experience" page, so one parser handles both. When the concise list may be truncated, the panel triggers a second background-tab fetch of the full page (see §2.2) and treats that as authoritative.
 - The company-page scraper locates fields (Website, Industry, Company size, Headquarters) by matching their visible label text rather than by CSS selector, since LinkedIn hashes its class names per build — matching on label text is the only strategy that survives LinkedIn's frequent markup changes.
-- `panel/floating-panel.js` is the one exception to "injected on demand" (see §10): it's statically registered alongside `common/constants.js` so it's loaded on every LinkedIn page. On supported pages it places a fixed-position **launcher** (the extension logo in a round button) on the page; a click toggles a fixed-position `<iframe src="chrome-extension://.../index.html">` (the panel UI, §2.2) opened beside the launcher and clamped to the viewport. The iframe document is created once and only shown/hidden afterwards, never recreated. It's created with `allow="clipboard-write"`: as a cross-origin iframe it can't use the Clipboard API (the **Get** button, click-to-copy) unless the embedder delegates it. The launcher is draggable via pointer events (pointer capture keeps the drag alive over the iframe; a small movement threshold separates a drag from a click), an open panel follows it, and its position persists in `chrome.storage.local`. A `toggleFloatingPanel` message from the background worker (toolbar-icon click) toggles the panel the same way.
+- `panel/floating-panel.js` is the one exception to "injected on demand" (see §10): it's statically registered alongside `common/constants.js` so it's loaded on every LinkedIn page. On supported pages it places a fixed-position **launcher** (the extension logo in a round button) on the page; a click toggles a fixed-position `<iframe src="chrome-extension://.../index.html">` (the panel UI, §2.2) opened beside the launcher and clamped to the viewport. The iframe document is created once and only shown/hidden afterwards, never recreated. It's created with `allow="clipboard-write"`: as a cross-origin iframe it can't use the Clipboard API (the **Get** button, click-to-copy) unless the embedder delegates it. The launcher is draggable via pointer events (pointer capture keeps the drag alive over the iframe; a small movement threshold separates a drag from a click), an open panel follows it, and its position persists in `chrome.storage.local`. In a local build (`"environment": "local"` in `manifest.json`) the launcher logo is greyscale, marking it apart from production.
 - The same script detects LinkedIn's in-page (SPA) navigation — via the Navigation API's `currententrychange` event, with URL polling as a fallback. On navigation it shows/hides the launcher (and panel) for the new page, and if the panel is open and the new page is a lead/profile page it posts a message telling the panel to reset its displayed fields. People-search pages show the launcher but never trigger a reset, since their URL changes with every filter or results page.
 
 ### 2.2 Panel UI & Background Worker (`src/scripts/`)
 
 The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in §2.1) owns all user interaction, rendering, state, and **direct `fetch` calls** to the Cloudflare Worker backend — as an extension page, the iframe has the extension's `host_permissions`-based fetch privileges, which content scripts lack. As defense-in-depth on top of the manifest's `web_accessible_resources` restriction (the actual, browser-enforced gate limiting who can load this page at all), `index.html` starts hidden and only reveals itself after a `postMessage` handshake from the content script that created it (`src/scripts/panel-embedding-guard.js`).
 
-`src/scripts/workers/background.js` is used **only** for Chrome APIs that require background context (`tabs`, `scripting`) — opening a hidden background tab, injecting content scripts into it, and returning results to the panel. This powers two flows sharing one task-tracking model: scraping a company's LinkedIn page, and fetching a public profile's full experience page. HTTP requests are deliberately kept out of the background script: an MV3 service worker can be terminated mid-request, which would surface as a silent `null` response to the panel. It also enables/disables the (fallback) toolbar icon per tab and relays its click to the panel content script (see §11).
+`src/scripts/workers/background.js` is used **only** for Chrome APIs that require background context (`tabs`, `scripting`) — opening a hidden background tab, injecting content scripts into it, and returning results to the panel. This powers two flows sharing one task-tracking model: scraping a company's LinkedIn page, and fetching a public profile's full experience page. HTTP requests are deliberately kept out of the background script: an MV3 service worker can be terminated mid-request, which would surface as a silent `null` response to the panel.
 
 Each hidden-tab request is tracked per panel session (a random id generated once per iframe document). One iframe document exists per tab (created once, then only shown/hidden), so this gives per-tab independence. A two-stage timeout (a shorter one starting once the page reports load complete, a longer fallback from tab creation) accounts for LinkedIn's single-page-app needing time to render after the initial page load.
 
@@ -160,7 +160,7 @@ flowchart LR
 
 ## 8. Data Flow Summary
 
-1. On a lead, profile, or people-search page, the always-loaded panel content script shows the on-page launcher icon; clicking it creates or toggles the floating panel iframe beside the icon (a toolbar-icon click reaches the same toggle via the background worker).
+1. On a lead, profile, or people-search page, the always-loaded panel content script shows the on-page launcher icon; clicking it creates or toggles the floating panel iframe beside the icon.
 2. Inside the panel, the user clicks **Extract**; the panel determines the active tab's page type and injects the matching content scripts (public profile vs. Sales-Navigator-style), showing an alert on an unrecognized (non-LinkedIn) page.
 3. If a public profile's Experience section may be truncated, the full list is fetched from the profile's details page in a hidden background tab before display.
 4. Extracted data is returned and rendered in the panel; company details are fetched (or read from cache) in the background as companies are expanded.
@@ -193,7 +193,7 @@ sequenceDiagram
 ## 9. Permissions Summary
 
 ```json
-"permissions": ["activeTab", "scripting", "tabs", "storage"],
+"permissions": ["scripting", "tabs", "storage"],
 "host_permissions": [
   "https://www.linkedin.com/sales/lead/*",
   "https://www.linkedin.com/company/*",
@@ -209,7 +209,7 @@ sequenceDiagram
 ]
 ```
 
-No new **permissions** were needed for the floating-panel architecture — only these two non-permission manifest keys (a second static `content_scripts` entry, and `web_accessible_resources` scoped to `linkedin.com`: the panel page, plus the launcher's logo image, which the LinkedIn page itself loads).
+There is no toolbar `action`: the extension is opened only from the on-page launcher. `web_accessible_resources` is scoped to `linkedin.com` and covers the panel page plus the launcher's logo image, which the LinkedIn page itself loads.
 
 ## 10. Extensibility Notes
 
@@ -222,9 +222,6 @@ No new **permissions** were needed for the floating-panel architecture — only 
 The background service worker is used only when a Chrome API (`tabs`, `scripting`) is actually required — never as a general-purpose network proxy. Direct `fetch` from the panel UI is preferred for external requests because `chrome.runtime.sendMessage` has implicit timeout/lifecycle constraints, and an MV3 service worker can be terminated mid-request — both of which can surface as a silent `null` response.
 
 Hidden-tab tasks (company-page scraping, profile-experience fetching) share one per-session tracking model, keyed by a random id generated once per panel iframe document, so parallel tabs don't interfere with each other and a new request for the same session cancels a stale in-flight tab. A two-tier timeout (a shorter one from page-load-complete, a longer fallback from tab creation) accounts for the LinkedIn SPA's post-load rendering time.
-
-The toolbar icon is only a fallback trigger — the primary one is the on-page launcher (§2.1). The background worker gates it per tab (`chrome.action.enable`/`disable`, driven by `tabs.onUpdated`/`onActivated`) to the pages the launcher is shown on (Sales Navigator lead and people-search, public profile) — company pages are excluded, since their scraping happens headlessly via the hidden-tab flow above, never through a visible panel. `chrome.action` can't remove the icon from the toolbar; `disable()` greys it out and stops `onClicked` from firing. `chrome.action.onClicked` (available only because `default_popup` is unset) forwards the click to the panel content script as a plain message.
-
 ## 12. Related Documents
 
 - [`README.md`](../README.md) – Installation and usage instructions

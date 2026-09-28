@@ -165,7 +165,7 @@ The translation feature (job title translation) is performed via the secure Clou
 
 The extension requests the following permissions:
 
-- **activeTab, scripting** — to extract data from the current LinkedIn page upon user action
+- **scripting** — to extract data from the current LinkedIn page upon user action
 - **tabs** — to manage background tab processing for company data
 - **storage** — to store user preferences, filter settings, and user-saved lead data locally on the device
 
