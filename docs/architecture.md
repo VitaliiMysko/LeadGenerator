@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: September 24, 2026
+**Last updated**: September 28, 2026
 
 High-level overview of how the **Lead Generator** browser extension (Chrome, Edge, Firefox) is structured, for developers and maintainers.
 
@@ -39,6 +39,8 @@ Injected into the LinkedIn page hosts listed above; extract DOM data and return 
 The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in §2.1) owns all user interaction, rendering, state, and **direct `fetch` calls** to the Cloudflare Worker backend — as an extension page, the iframe has the extension's `host_permissions`-based fetch privileges, which content scripts lack. As defense-in-depth on top of the manifest's `web_accessible_resources` restriction (the actual, browser-enforced gate limiting who can load this page at all), `index.html` starts hidden and only reveals itself after a `postMessage` handshake from the content script that created it (`src/scripts/panel-embedding-guard.js`).
 
 `src/scripts/workers/background.js` is used **only** for Chrome APIs that require background context (`tabs`, `scripting`) — opening a hidden background tab, injecting content scripts into it, and returning results to the panel. This powers two flows sharing one task-tracking model: scraping a company's LinkedIn page, and fetching a public profile's full experience page. HTTP requests are deliberately kept out of the background script: an MV3 service worker can be terminated mid-request, which would surface as a silent `null` response to the panel.
+
+**Firefox difference:** Firefox gives an extension page framed inside a web page only the content-script API subset (`runtime`, `storage`, …), not `tabs` or `scripting`. The panel therefore makes its tab calls (find its own tab, inject the extraction scripts, message them, open a tab) through `src/scripts/services/tab-bridge.js`. In Chrome it calls the APIs directly; in Firefox it relays each call to the background worker as a `tabBridge:*` message, and the worker performs it, identifying the panel's tab from the message sender. Everything else in the panel — `storage`, `runtime` messaging, `fetch` to the Worker — works directly in both browsers. The manifest declares the background under both `service_worker` (Chrome) and `scripts` (Firefox, which runs it as an event page); each browser ignores the other key.
 
 Each hidden-tab request is tracked per panel session (a random id generated once per iframe document). One iframe document exists per tab (created once, then only shown/hidden), so this gives per-tab independence. A two-stage timeout (a shorter one starting once the page reports load complete, a longer fallback from tab creation) accounts for LinkedIn's single-page-app needing time to render after the initial page load.
 
@@ -96,7 +98,7 @@ No server-side persistence; all stored data stays on the user's device.
 ## 3. Technologies Used
 
 - Vanilla JavaScript — no front-end framework
-- WebExtensions API (Manifest V3) — background worker, clipboard, storage; compatible with Chrome, Edge, and Firefox 128+
+- WebExtensions API (Manifest V3) — background worker, clipboard, storage; compatible with Chrome, Edge, and Firefox 128+ (see §2.2 for the Firefox-specific differences)
 - Cloudflare Workers — backend proxy for all external requests
 - Google Cloud Translate API — via the Worker, server-side key
 
