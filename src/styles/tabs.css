@@ -132,7 +132,7 @@
   background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
 /* Used by features/scrollbar-fallback.js, only where the styling above
-   doesn't render (Firefox). */
+   doesn't render (Firefox). "thin" has no arrow buttons. */
 .scrollbar-probe {
   position: absolute;
   top: -9999px;
@@ -143,20 +143,7 @@
 .scrollbar-probe::-webkit-scrollbar {
   width: 3px;
 }
-.drawn-scrollbar-host {
-  position: relative;
-}
-/* Hide the native scrollbar; reserve the same 3px Chrome's gutter does. */
-.tabs-content.drawn-scrollbar {
-  scrollbar-width: none;
-  scrollbar-gutter: auto;
-  width: calc(100% - 3px);
-  padding-right: 3px;
-}
-.drawn-scrollbar-thumb {
-  display: none;
-  position: absolute;
-  width: 3px;
-  border-radius: 10px;
-  background: #007bff;
+.tabs-content.standard-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #007bff transparent;
 }
