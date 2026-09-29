@@ -24,6 +24,7 @@
     "128": "assets/icons/logo-128.png"
   },
   "background": {
+    "scripts": ["src/scripts/workers/background.js"],
     "service_worker": "src/scripts/workers/background.js"
   },
   "content_scripts": [

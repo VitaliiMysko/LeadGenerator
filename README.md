@@ -267,8 +267,11 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 3. Click **This Firefox**
 4. Click **Load Temporary Add-on…**
 5. Select `manifest.json` from the repository root
+6. Reload any LinkedIn tabs that were already open, so the on-page icon appears
 
 > Temporary add-ons are removed when Firefox is closed.
+
+> If the on-page icon doesn't appear on LinkedIn, open `about:addons` → Lead generator → **Permissions** and make sure access to `www.linkedin.com` is allowed. Firefox lets users revoke site access, and the extension can't run on LinkedIn without it.
 
 #### Option 2: Install Permanently (signed package)
 
