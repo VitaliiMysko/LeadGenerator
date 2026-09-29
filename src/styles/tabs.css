@@ -131,3 +131,19 @@
 .tabs-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
+/* Used by features/scrollbar-fallback.js, only where the styling above
+   doesn't render (Firefox). "thin" has no arrow buttons. */
+.scrollbar-probe {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+.scrollbar-probe::-webkit-scrollbar {
+  width: 3px;
+}
+.tabs-content.standard-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #007bff transparent;
+}
