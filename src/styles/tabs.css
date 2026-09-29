@@ -131,11 +131,37 @@
 .tabs-content::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
-/* Firefox has no ::-webkit-scrollbar, only the standard properties. Gated,
-   because Chrome ignores ::-webkit-scrollbar styling once these are set. */
-@supports not selector(::-webkit-scrollbar) {
-  .tabs-content {
-    scrollbar-width: thin;
-    scrollbar-color: #007bff transparent;
-  }
+
+/* Drawn scrollbar (features/custom-scrollbar.js), used only where the
+   ::-webkit-scrollbar styling above doesn't render (Firefox). */
+.scrollbar-probe {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
+}
+.scrollbar-probe::-webkit-scrollbar {
+  width: 3px;
+}
+.custom-scrollbar-host {
+  position: relative;
+}
+/* Hide the native scrollbar and reserve the same 3px Chrome's gutter does. */
+.tabs-content.custom-scrollbar {
+  scrollbar-width: none;
+  scrollbar-gutter: auto;
+  width: calc(100% - 3px);
+  padding-right: 3px;
+}
+.custom-scrollbar-thumb {
+  display: none;
+  position: absolute;
+  width: 3px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #66b2ff 0%, #007bff 100%);
+}
+.custom-scrollbar-thumb:hover,
+.custom-scrollbar-thumb.dragging {
+  background: linear-gradient(180deg, #3399ff 0%, #0056b3 100%);
 }
