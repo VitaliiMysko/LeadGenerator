@@ -2,6 +2,9 @@ body {
   width: 400px;
   height: 500px;
   font-family: "Roboto", sans-serif;
+  /* Chrome's default for extension pages; set explicitly so Firefox,
+     which uses the normal 16px default, renders the panel the same. */
+  font-size: 75%;
   background-color: #f4f4f4;
   color: #333;
   margin: 0;

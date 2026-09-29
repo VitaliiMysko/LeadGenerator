@@ -28,6 +28,12 @@
 #open-company-linkedin-btn {
   position: absolute;
   right: 0;
+  /* Explicit vertical centring: without it, browsers fall back to the
+     button's inline position, which Firefox wraps onto the next line. */
+  top: 0;
+  bottom: 0;
+  margin-top: auto;
+  margin-bottom: auto;
   width: 20px;
   height: 20px;
   background-color: transparent;
