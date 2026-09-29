@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: September 28, 2026
+**Last updated**: September 29, 2026
 
 High-level overview of how the **Lead Generator** browser extension (Chrome, Edge, Firefox) is structured, for developers and maintainers.
 
@@ -40,7 +40,7 @@ The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in 
 
 `src/scripts/workers/background.js` is used **only** for Chrome APIs that require background context (`tabs`, `scripting`) — opening a hidden background tab, injecting content scripts into it, and returning results to the panel. This powers two flows sharing one task-tracking model: scraping a company's LinkedIn page, and fetching a public profile's full experience page. HTTP requests are deliberately kept out of the background script: an MV3 service worker can be terminated mid-request, which would surface as a silent `null` response to the panel.
 
-**Firefox difference:** Firefox gives an extension page framed inside a web page only the content-script API subset (`runtime`, `storage`, …), not `tabs` or `scripting`. The panel therefore makes its tab calls (find its own tab, inject the extraction scripts, message them, open a tab) through `src/scripts/services/tab-bridge.js`. In Chrome it calls the APIs directly; in Firefox it relays each call to the background worker as a `tabBridge:*` message, and the worker performs it, identifying the panel's tab from the message sender. Everything else in the panel — `storage`, `runtime` messaging, `fetch` to the Worker — works directly in both browsers. The manifest declares the background under both `service_worker` (Chrome) and `scripts` (Firefox, which runs it as an event page); each browser ignores the other key.
+**Firefox difference:** Firefox gives an extension page framed inside a web page only the content-script API subset (`runtime`, `storage`, …), not `tabs` or `scripting`. The panel therefore makes its tab calls (find its own tab, inject the extraction scripts, message them, open a tab) through `src/scripts/services/tab-bridge.js`. In Chrome it calls the APIs directly; in Firefox it relays each call to the background worker as a `tabBridge:*` message, and the worker performs it, identifying the panel's tab from the message sender. Firefox also loads that framed page as unprivileged web content and aborts its network requests, so Worker requests go through `src/scripts/services/worker-client.js`: direct `fetch` in Chrome, and in Firefox a `workerFetch` message to the background page, which accepts only the Worker's origin. That is the one HTTP request the background makes, and only in Firefox, where the background is an event page, so the service-worker termination risk above doesn't apply. `storage` and `runtime` messaging work directly in both browsers. The manifest declares the background under both `service_worker` (Chrome) and `scripts` (Firefox, which runs it as an event page); each browser ignores the other key.
 
 The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render, so Firefox shows its native scrollbar there.
 
@@ -223,7 +223,7 @@ There is no toolbar `action`: the extension is opened only from the on-page laun
 
 ## 11. Background Script Usage Strategy
 
-The background service worker is used only when a Chrome API (`tabs`, `scripting`) is actually required — never as a general-purpose network proxy. Direct `fetch` from the panel UI is preferred for external requests because `chrome.runtime.sendMessage` has implicit timeout/lifecycle constraints, and an MV3 service worker can be terminated mid-request — both of which can surface as a silent `null` response.
+The background service worker is used only when a Chrome API (`tabs`, `scripting`) is actually required — never as a general-purpose network proxy. Direct `fetch` from the panel UI is preferred for external requests because `chrome.runtime.sendMessage` has implicit timeout/lifecycle constraints, and an MV3 service worker can be terminated mid-request — both of which can surface as a silent `null` response. The only exception is Firefox's Worker-request relay (§2.2), limited to the Worker's own origin.
 
 Hidden-tab tasks (company-page scraping, profile-experience fetching) share one per-session tracking model, keyed by a random id generated once per panel iframe document, so parallel tabs don't interfere with each other and a new request for the same session cancels a stale in-flight tab. A two-tier timeout (a shorter one from page-load-complete, a longer fallback from tab creation) accounts for the LinkedIn SPA's post-load rendering time.
 ## 12. Related Documents
