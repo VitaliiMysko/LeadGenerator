@@ -53,6 +53,12 @@
 #open-company-linkedin-btn:disabled img {
   filter: grayscale(100%) opacity(0.5);
 }
+/* Explicit width: as a centred flex item it would otherwise size to its
+   inputs' minimum width, which in Firefox exceeds the panel column and
+   overflows past the padding. */
+#data-container {
+  width: 100%;
+}
 .draggable-block {
   width: 100%;
   display: flex;
