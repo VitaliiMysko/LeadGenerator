@@ -2,9 +2,12 @@
 // content-script API subset, so chrome.tabs / chrome.scripting are missing in
 // the panel there. In that case these calls are relayed to the background
 // worker, which has them; in Chrome they are made directly.
-const hasTabApis =
-  typeof chrome.tabs?.query === "function" &&
-  typeof chrome.scripting?.executeScript === "function";
+export function hasTabApis() {
+  return (
+    typeof chrome.tabs?.query === "function" &&
+    typeof chrome.scripting?.executeScript === "function"
+  );
+}
 
 async function relay(message) {
   const response = await chrome.runtime.sendMessage(message);
@@ -13,7 +16,7 @@ async function relay(message) {
 }
 
 export async function getPanelTab() {
-  if (hasTabApis) {
+  if (hasTabApis()) {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     return tab;
   }
@@ -21,7 +24,7 @@ export async function getPanelTab() {
 }
 
 export async function injectScripts(tabId, files) {
-  if (hasTabApis) {
+  if (hasTabApis()) {
     await chrome.scripting.executeScript({ target: { tabId }, files });
     return;
   }
@@ -29,12 +32,12 @@ export async function injectScripts(tabId, files) {
 }
 
 export async function sendMessageToTab(tabId, message) {
-  if (hasTabApis) return chrome.tabs.sendMessage(tabId, message);
+  if (hasTabApis()) return chrome.tabs.sendMessage(tabId, message);
   return relay({ action: "tabBridge:sendMessageToTab", tabId, message });
 }
 
 export async function openTab(url) {
-  if (hasTabApis) {
+  if (hasTabApis()) {
     await chrome.tabs.create({ url, active: true });
     return;
   }
