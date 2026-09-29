@@ -42,7 +42,7 @@ The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in 
 
 **Firefox difference:** Firefox gives an extension page framed inside a web page only the content-script API subset (`runtime`, `storage`, …), not `tabs` or `scripting`. The panel therefore makes its tab calls (find its own tab, inject the extraction scripts, message them, open a tab) through `src/scripts/services/tab-bridge.js`. In Chrome it calls the APIs directly; in Firefox it relays each call to the background worker as a `tabBridge:*` message, and the worker performs it, identifying the panel's tab from the message sender. Everything else in the panel — `storage`, `runtime` messaging, `fetch` to the Worker — works directly in both browsers. The manifest declares the background under both `service_worker` (Chrome) and `scripts` (Firefox, which runs it as an event page); each browser ignores the other key.
 
-The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render. `src/scripts/features/scrollbar-fallback.js` measures whether that styling renders and, where it doesn't, switches to a thin, blue native scrollbar via the standard properties (not set in Chrome, which drops its `::-webkit-scrollbar` styling once they're present).
+The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render, so Firefox shows its native scrollbar there.
 
 Each hidden-tab request is tracked per panel session (a random id generated once per iframe document). One iframe document exists per tab (created once, then only shown/hidden), so this gives per-tab independence. A two-stage timeout (a shorter one starting once the page reports load complete, a longer fallback from tab creation) accounts for LinkedIn's single-page-app needing time to render after the initial page load.
 
@@ -127,7 +127,7 @@ src/
  ├── scripts/
  │    ├── components/    reusable UI components
  │    ├── containers/    feature wiring: data actions, experience tab, filters, navigation, settings, panel
- │    ├── features/      standalone UI features (drag-and-drop, inline website editor, scrollbar fallback)
+ │    ├── features/      standalone UI features (drag-and-drop, inline website editor)
  │    ├── helper/        DOM helpers, general utilities
  │    ├── output/        toast/confirm UI primitives
  │    ├── services/      company data, email generation/validation, translation, transliteration
