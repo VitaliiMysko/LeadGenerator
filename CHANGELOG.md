@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.4.1] - 2026-09-28
 
+### Changed
+
+- **Panel buttons now use the same Roboto font as the rest of the panel**, in semi-bold, so button text looks the same in every browser
+
 ### Fixed
 
 - **The extension can now be installed and used in Firefox (128+)**: Firefox previously refused to install it. The on-page icon, the floating panel and all of its actions — including Extract and the company LinkedIn button — now work in Firefox as they do in Chrome, and the panel's layout matches Chrome (text size, field spacing, email-field buttons)
