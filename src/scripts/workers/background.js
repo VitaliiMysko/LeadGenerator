@@ -167,9 +167,11 @@ async function handleTabBridgeRequest(message, sender) {
 // page, not a service worker, so the mid-request termination that keeps
 // HTTP out of this file in Chrome doesn't apply. Chrome never sends this.
 // -----------------------------
-const WORKER_ORIGIN = new URL(
-  chrome.runtime.getManifest().host_permissions.find((url) => !url.includes("linkedin.com"))
-).origin;
+// Same value as WORKER_URL in src/constants/config.js (this classic script
+// can't import it; a test keeps both in sync with manifest.json). Not read
+// from getManifest(): Firefox drops the path-less Worker entry from
+// host_permissions there.
+const WORKER_ORIGIN = "https://lead-generator-backend-worker.vitalij-musko.workers.dev";
 
 async function handleWorkerFetch({ url, method, body }) {
   if (new URL(url).origin !== WORKER_ORIGIN) throw new Error("Only the extension's Worker may be fetched");
