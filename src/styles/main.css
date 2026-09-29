@@ -12,6 +12,7 @@ body {
 }
 input {
   font-family: "Roboto", sans-serif;
+  width: -moz-available;
   width: -webkit-fill-available;
 }
 input[type="text"],
