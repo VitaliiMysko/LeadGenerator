@@ -157,26 +157,61 @@ if (!window.leadGenerator.experienceDataInit) {
       return { entries, reachedEndCurrently };
     }
 
+    const TOP_LEVEL_SECTION_SELECTOR = '[data-testid^="profile_ExperienceTopLevelSection_"]';
+    const DETAILS_SECTION_SELECTOR = '[data-testid^="profile_ExperienceDetailsSection_"]';
+    const REVEAL_STEP_WAIT_MS = 400;
+    const REVEAL_MAX_STEPS = 20;
+
+    // LinkedIn only renders the profile's lower sections, Experience
+    // included, once they're scrolled near the viewport. If it isn't in the
+    // DOM yet, scroll down a viewport at a time until it appears (or the page
+    // ends), then put the scroll position back where the user left it.
+    async function revealTopLevelSection() {
+      const waitForConditionWithTimeout = window.leadGenerator.waitForConditionWithTimeout;
+      const scroller = document.scrollingElement || document.documentElement;
+      const originalTop = scroller.scrollTop;
+      // "instant" overrides any scroll-behavior: smooth the page sets.
+      const scrollToTop = (top) => scroller.scrollTo({ top, behavior: "instant" });
+
+      try {
+        for (let step = 0; step < REVEAL_MAX_STEPS; step++) {
+          const atBottom = scroller.scrollTop + window.innerHeight >= scroller.scrollHeight - 1;
+          scrollToTop(scroller.scrollTop + window.innerHeight);
+
+          const found = await waitForConditionWithTimeout(
+            () => document.querySelector(TOP_LEVEL_SECTION_SELECTOR),
+            REVEAL_STEP_WAIT_MS,
+          ).catch(() => null);
+          if (found) return found;
+          if (atBottom) return null;
+        }
+        return null;
+      } finally {
+        scrollToTop(originalTop);
+      }
+    }
+
     async function getActualExperienceData() {
-      const topLevelContainer = document.querySelector(
-        '[data-testid^="profile_ExperienceTopLevelSection_"]',
-      );
+      let topLevelContainer = document.querySelector(TOP_LEVEL_SECTION_SELECTOR);
 
       if (!topLevelContainer) {
         // Handles the edge case where the user is already on the
         // /details/experience/ page when clicking Extract.
-        const detailsContainer = document.querySelector(
-          '[data-testid^="profile_ExperienceDetailsSection_"]',
-        );
-        const { entries } = extractEntriesFromContainer(detailsContainer);
-        return { entries, needsFullExperience: { needed: false, url: "" } };
+        const detailsContainer = document.querySelector(DETAILS_SECTION_SELECTOR);
+        if (detailsContainer) {
+          const { entries } = extractEntriesFromContainer(detailsContainer);
+          return { entries, needsFullExperience: { needed: false, url: "" } };
+        }
+        topLevelContainer = await revealTopLevelSection();
       }
 
       const { entries, reachedEndCurrently } =
         extractEntriesFromContainer(topLevelContainer);
 
       // Matches on the href, not the (potentially localized) aria-label text.
-      const showAllLink = document.querySelector('a[href$="/details/experience/"]');
+      // Contains rather than ends-with: LinkedIn appends query parameters
+      // (e.g. ?locale=en-US&vieweeProfileId=...).
+      const showAllLink = document.querySelector('a[href*="/details/experience"]');
 
       const needsFullExperience =
         showAllLink && reachedEndCurrently && entries.length > 0
