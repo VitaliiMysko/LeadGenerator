@@ -176,8 +176,44 @@ if (!window.leadGenerator.experienceDataInit) {
 
     const TOP_LEVEL_SECTION_SELECTOR = '[data-testid^="profile_ExperienceTopLevelSection_"]';
     const DETAILS_SECTION_SELECTOR = '[data-testid^="profile_ExperienceDetailsSection_"]';
+    // Matches on the href, not the (potentially localized) aria-label text.
+    // Contains rather than ends-with: LinkedIn appends query parameters
+    // (e.g. ?locale=en-US&vieweeProfileId=...).
+    const SHOW_ALL_SELECTOR = 'a[href*="/details/experience"]';
     const REVEAL_STEP_WAIT_MS = 400;
     const REVEAL_MAX_STEPS = 20;
+
+    // Chrome/Edge get data-testid attributes on the Experience sections;
+    // Firefox is served the same markup without any data-testid, so fall back
+    // to structure there (section componentkeys are random, and headings are
+    // localized): the section holding the "Show all" experience link, else
+    // the first section whose items link to companies (Education links to
+    // /school/ instead).
+    function findTopLevelSection() {
+      const byTestId = document.querySelector(TOP_LEVEL_SECTION_SELECTOR);
+      if (byTestId) return byTestId;
+
+      const sectionsWithItems = [...document.querySelectorAll("section")].filter((section) =>
+        section.querySelector(ITEM_SELECTOR),
+      );
+      return (
+        sectionsWithItems.find((section) => section.querySelector(SHOW_ALL_SELECTOR)) ??
+        sectionsWithItems.find((section) =>
+          section.querySelector(`${ITEM_SELECTOR} a[href*="/company/"]`),
+        ) ??
+        null
+      );
+    }
+
+    // The /details/experience/ page lists only experience, all within <main>.
+    function findDetailsContainer() {
+      const byTestId = document.querySelector(DETAILS_SECTION_SELECTOR);
+      if (byTestId) return byTestId;
+      if (!/\/details\/experience\/?$/.test(location.pathname)) return null;
+
+      const main = document.querySelector("main");
+      return main?.querySelector(ITEM_SELECTOR) ? main : null;
+    }
 
     // The page may scroll inside its own container rather than the document,
     // so use the nearest scrollable ancestor of <main>, falling back to the
@@ -210,7 +246,7 @@ if (!window.leadGenerator.experienceDataInit) {
           scrollToTop(scroller.scrollTop + scroller.clientHeight);
 
           const found = await waitForConditionWithTimeout(
-            () => document.querySelector(TOP_LEVEL_SECTION_SELECTOR),
+            findTopLevelSection,
             REVEAL_STEP_WAIT_MS,
           ).catch(() => null);
           if (found) return found;
@@ -223,12 +259,12 @@ if (!window.leadGenerator.experienceDataInit) {
     }
 
     async function getActualExperienceData() {
-      let topLevelContainer = document.querySelector(TOP_LEVEL_SECTION_SELECTOR);
+      let topLevelContainer = findTopLevelSection();
 
       if (!topLevelContainer) {
         // Handles the edge case where the user is already on the
         // /details/experience/ page when clicking Extract.
-        const detailsContainer = document.querySelector(DETAILS_SECTION_SELECTOR);
+        const detailsContainer = findDetailsContainer();
         if (detailsContainer) {
           const { entries } = extractEntriesFromContainer(detailsContainer);
           return { entries, needsFullExperience: { needed: false, url: "" } };
@@ -239,10 +275,7 @@ if (!window.leadGenerator.experienceDataInit) {
       const { entries, reachedEndCurrently } =
         extractEntriesFromContainer(topLevelContainer);
 
-      // Matches on the href, not the (potentially localized) aria-label text.
-      // Contains rather than ends-with: LinkedIn appends query parameters
-      // (e.g. ?locale=en-US&vieweeProfileId=...).
-      const showAllLink = document.querySelector('a[href*="/details/experience"]');
+      const showAllLink = document.querySelector(SHOW_ALL_SELECTOR);
 
       const needsFullExperience =
         showAllLink && reachedEndCurrently && entries.length > 0
@@ -254,6 +287,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
     window.leadGenerator.experienceData.getActualExperienceData = getActualExperienceData;
     window.leadGenerator.experienceData.extractEntriesFromContainer = extractEntriesFromContainer;
+    window.leadGenerator.experienceData.findDetailsContainer = findDetailsContainer;
   })();
 
   window.leadGenerator.experienceDataInit = true;
