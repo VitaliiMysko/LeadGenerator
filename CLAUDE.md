@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development
 
-This is a **vanilla JavaScript browser extension (Manifest V3) for Chrome and Firefox** with no build system or transpiler. Changes must keep working in both.
+This is a **vanilla JavaScript browser extension (Manifest V3) for Chrome and Firefox** with no build system or transpiler. Changes must keep working in both. Microsoft Edge is also supported: it's Chromium-based and runs the Chrome code paths, so don't add Edge-specific code.
 
 **To load the extension locally:**
 1. Open `chrome://extensions/`

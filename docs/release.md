@@ -2,6 +2,8 @@
 
 How this extension gets from `master` to a published Chrome Web Store release, and what has to be configured in GitHub for it to work.
 
+The Chrome Web Store is the only automated store. Microsoft Edge users install from it too (with Edge's "Allow extensions from other stores"). The same package can't be submitted to the Microsoft Edge Add-ons store as-is: Partner Center rejects an MV3 manifest containing `background.scripts`, which is kept for Firefox. An Edge Add-ons release would need a separate package without `background.scripts` (and `browser_specific_settings`), a Partner Center account, and its own listing.
+
 ## Branches
 
 - **`master`** — development branch. `.github/workflows/test.yml` runs the unit test suite and validates `docs/chrome-web-store/` on every push/PR. It never touches the Chrome Web Store and never needs Store credentials.
