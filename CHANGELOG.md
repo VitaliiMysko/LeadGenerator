@@ -22,6 +22,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **The extension can now be installed and used in Firefox (128+)**: Firefox previously refused to install it. The on-page icon, the floating panel and all of its actions — Extract, email validation and generation, job title translation, company details and website checks, and the company LinkedIn button — now work in Firefox as they do in Chrome, and the panel's layout matches Chrome (text size, field spacing, email-field buttons)
+- **Public profile pages with many positions only showed the first few**: following a LinkedIn change to the "Show all" experience link, the full experience list was no longer fetched. It is again, in all browsers
+- **Extract on a public profile page could return only the name, surname and link**, with no job position or company: LinkedIn now loads the Experience section only once it's scrolled into view. Extract now scrolls the page to load it when needed, then returns to where you were
 
 ## [3.3.10] - 2026-08-31
 

@@ -323,6 +323,7 @@ After installing the extension, configure it for optimal usage:
 3. Click **Extract**
    - Extracts available profile and company data
    - On a public profile page, if the visible Experience section may be hiding further current positions behind a "Show all" link, the full experience list is fetched automatically in the background before the fields are populated
+   - LinkedIn only loads a public profile's Experience section once it's scrolled into view, so if you haven't scrolled to it yet, the page scrolls down briefly while extracting and then returns to where you were
 
 4. Review and edit fields (optional)
    - All fields are fully editable
