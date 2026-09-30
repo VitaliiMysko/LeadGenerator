@@ -1,6 +1,6 @@
 # Architecture Overview – Lead Generator Extension
 
-**Last updated**: September 29, 2026
+**Last updated**: September 30, 2026
 
 High-level overview of how the **Lead Generator** browser extension (Chrome, Edge, Firefox) is structured, for developers and maintainers.
 
@@ -41,6 +41,8 @@ The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in 
 `src/scripts/workers/background.js` is used **only** for Chrome APIs that require background context (`tabs`, `scripting`) — opening a hidden background tab, injecting content scripts into it, and returning results to the panel. This powers two flows sharing one task-tracking model: scraping a company's LinkedIn page, and fetching a public profile's full experience page. HTTP requests are deliberately kept out of the background script: an MV3 service worker can be terminated mid-request, which would surface as a silent `null` response to the panel.
 
 **Firefox difference:** Firefox gives an extension page framed inside a web page only the content-script API subset (`runtime`, `storage`, …), not `tabs` or `scripting`. The panel therefore makes its tab calls (find its own tab, inject the extraction scripts, message them, open a tab) through `src/scripts/services/tab-bridge.js`. In Chrome it calls the APIs directly; in Firefox it relays each call to the background worker as a `tabBridge:*` message, and the worker performs it, identifying the panel's tab from the message sender. Firefox also loads that framed page as unprivileged web content and aborts its network requests, so Worker requests go through `src/scripts/services/worker-client.js`: direct `fetch` in Chrome, and in Firefox a `workerFetch` message to the background page, which accepts only the Worker's origin. That is the one HTTP request the background makes, and only in Firefox, where the background is an event page, so the service-worker termination risk above doesn't apply. `storage` and `runtime` messaging work directly in both browsers. The Worker URL is a constant in `src/constants/config.js` and `background.js` (a test keeps both in sync with `host_permissions`) rather than read from `chrome.runtime.getManifest()`: Firefox drops the path-less Worker entry from `host_permissions` there. The manifest declares the background under both `service_worker` (Chrome) and `scripts` (Firefox, which runs it as an event page); each browser ignores the other key.
+
+**Edge:** Chromium-based, so it takes exactly the Chrome paths: the framed panel has full APIs and fetches the Worker directly, and there is no Edge-specific code. It loads the manifest with both background keys and uses `service_worker`.
 
 The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render, so Firefox shows its native scrollbar there.
 
@@ -100,7 +102,7 @@ No server-side persistence; all stored data stays on the user's device.
 ## 3. Technologies Used
 
 - Vanilla JavaScript — no front-end framework
-- WebExtensions API (Manifest V3) — background worker, clipboard, storage; compatible with Chrome, Edge, and Firefox 128+ (see §2.2 for the Firefox-specific differences)
+- WebExtensions API (Manifest V3) — background worker, clipboard, storage; compatible with Chrome, Edge (same code paths as Chrome), and Firefox 128+ (see §2.2 for the Firefox-specific differences)
 - Cloudflare Workers — backend proxy for all external requests
 - Google Cloud Translate API — via the Worker, server-side key
 

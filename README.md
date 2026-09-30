@@ -240,6 +240,8 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 | Firefox | Full | 128.0 |
 | Safari | Not supported | — |
 
+Microsoft Edge is built on Chromium and runs the extension exactly as Chrome does. It isn't published on the Microsoft Edge Add-ons store; Edge users install it from the Chrome Web Store (see below).
+
 ## Installation
 
 ### Chrome / Edge
@@ -247,16 +249,22 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 #### Option 1: Install from the Chrome Web Store
 
 1. Go to the [Lead Generator extension page on the Chrome Web Store](https://chromewebstore.google.com/detail/negmangnhbhanhajjpcjgecieghmdldm)
-2. Click **Add to Chrome**
-3. Confirm permissions
+2. **Edge only:** if a banner asks, click **Allow extensions from other stores**, then confirm
+3. Click **Add to Chrome**
+4. Confirm permissions
+
+> **Edge:** extensions from other stores keep working only while **Allow extensions from other stores** stays on (`edge://extensions/`). Updates still come from the Chrome Web Store.
 
 #### Option 2: Install Locally from Source
 
 1. Download or clone repository
 2. Unzip if needed
-3. Open `chrome://extensions/`
+3. Open `chrome://extensions/` (Edge: `edge://extensions/`)
 4. Enable **Developer mode**
 5. Click **Load unpacked**
+6. Reload any LinkedIn tabs that were already open, so the on-page icon appears
+
+> On a company-managed Chrome or Edge, IT policies can block **Developer mode**, extensions from other stores, or specific extensions. Company network filters can also block the extension's backend (`*.workers.dev`), which stops email validation, website checks and translation. In either case, contact your IT administrator.
 
 ### Firefox
 
