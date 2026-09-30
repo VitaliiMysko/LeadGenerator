@@ -51,7 +51,9 @@ getExtractBtnElement().addEventListener("click", async () => {
 
   const results = await sendMessageToTab(tab.id, { action: "extractData" });
 
-  getTabExperienceElement().innerHTML = "";
+  // "Loading" stays until the list is rendered - createCompanyList replaces
+  // it - so it also covers the wait for the full list from the details page.
+  if (!results) getTabExperienceElement().innerHTML = "";
 
   if (results) {
     let actualExperienceData = [];
