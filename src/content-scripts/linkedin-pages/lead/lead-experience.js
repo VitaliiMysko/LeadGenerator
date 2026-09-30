@@ -79,6 +79,25 @@ if (!window.leadGenerator.experienceDataInit) {
       return { companyName: cleanCompanyName(companyNameRaw), companyLink };
     }
 
+    const ITEM_SELECTOR = '[componentkey^="entity-collection-item-"]';
+
+    // Items sit at different depths: direct children of the profile's short
+    // Experience section, but wrapped in extra <div>s on the
+    // /details/experience/ page. Take every item that isn't nested inside
+    // another item of the same container.
+    function getTopLevelItems(container) {
+      return [...container.querySelectorAll(ITEM_SELECTOR)].filter((item) => {
+        const parentItem = item.parentElement?.closest(ITEM_SELECTOR);
+        return !parentItem || !container.contains(parentItem);
+      });
+    }
+
+    // A multi-position company lists its positions in a <ul>; look below the
+    // item's direct children too, for the same wrapping reason.
+    function getPositionsList(item) {
+      return item.querySelector(":scope > ul") ?? item.querySelector("ul:has(> li)");
+    }
+
     // Walks the experience entries from most-recent to oldest, collecting
     // only the profile's *current* position(s) and stopping at the first
     // past one (positions are always rendered newest-first), mirroring the
@@ -88,13 +107,11 @@ if (!window.leadGenerator.experienceDataInit) {
       if (!container) return { entries, reachedEndCurrently: false };
 
       let reachedEndCurrently = true;
-      const items = container.querySelectorAll(
-        ':scope > [componentkey^="entity-collection-item-"]',
-      );
+      const items = getTopLevelItems(container);
       let id = 0;
 
       itemLoop: for (const item of items) {
-        const ul = item.querySelector(":scope > ul");
+        const ul = getPositionsList(item);
 
         if (ul) {
           const { companyName, companyLink } = getHeaderCompany(item, ul);
