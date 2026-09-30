@@ -162,21 +162,35 @@ if (!window.leadGenerator.experienceDataInit) {
     const REVEAL_STEP_WAIT_MS = 400;
     const REVEAL_MAX_STEPS = 20;
 
+    // The page may scroll inside its own container rather than the document,
+    // so use the nearest scrollable ancestor of <main>, falling back to the
+    // document.
+    function findScrollContainer() {
+      const isScrollable = (el) =>
+        /(auto|scroll|overlay)/.test(getComputedStyle(el).overflowY) &&
+        el.scrollHeight > el.clientHeight + 1;
+
+      for (let el = document.querySelector("main"); el && el !== document.body; el = el.parentElement) {
+        if (isScrollable(el)) return el;
+      }
+      return document.scrollingElement || document.documentElement;
+    }
+
     // LinkedIn only renders the profile's lower sections, Experience
     // included, once they're scrolled near the viewport. If it isn't in the
-    // DOM yet, scroll down a viewport at a time until it appears (or the page
+    // DOM yet, scroll down a screen at a time until it appears (or the page
     // ends), then put the scroll position back where the user left it.
     async function revealTopLevelSection() {
       const waitForConditionWithTimeout = window.leadGenerator.waitForConditionWithTimeout;
-      const scroller = document.scrollingElement || document.documentElement;
+      const scroller = findScrollContainer();
       const originalTop = scroller.scrollTop;
       // "instant" overrides any scroll-behavior: smooth the page sets.
       const scrollToTop = (top) => scroller.scrollTo({ top, behavior: "instant" });
 
       try {
         for (let step = 0; step < REVEAL_MAX_STEPS; step++) {
-          const atBottom = scroller.scrollTop + window.innerHeight >= scroller.scrollHeight - 1;
-          scrollToTop(scroller.scrollTop + window.innerHeight);
+          const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+          scrollToTop(scroller.scrollTop + scroller.clientHeight);
 
           const found = await waitForConditionWithTimeout(
             () => document.querySelector(TOP_LEVEL_SECTION_SELECTOR),

@@ -72,7 +72,10 @@ getExtractBtnElement().addEventListener("click", async () => {
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
-      if (fullExperienceData) actualExperienceData = fullExperienceData;
+      // The full list is only requested when the short one found current
+      // positions, so an empty result means the fetch failed - keep the
+      // short list rather than wiping it.
+      if (fullExperienceData?.length) actualExperienceData = fullExperienceData;
     }
 
     createCompanyList(actualExperienceData);
