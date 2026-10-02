@@ -79,6 +79,25 @@ if (!window.leadGenerator.experienceDataInit) {
       return { companyName: cleanCompanyName(companyNameRaw), companyLink };
     }
 
+    const ITEM_SELECTOR = '[componentkey^="entity-collection-item-"]';
+
+    // Items sit at different depths: direct children of the profile's short
+    // Experience section, but wrapped in extra <div>s on the
+    // /details/experience/ page. Take every item that isn't nested inside
+    // another item of the same container.
+    function getTopLevelItems(container) {
+      return [...container.querySelectorAll(ITEM_SELECTOR)].filter((item) => {
+        const parentItem = item.parentElement?.closest(ITEM_SELECTOR);
+        return !parentItem || !container.contains(parentItem);
+      });
+    }
+
+    // A multi-position company lists its positions in a <ul>; look below the
+    // item's direct children too, for the same wrapping reason.
+    function getPositionsList(item) {
+      return item.querySelector(":scope > ul") ?? item.querySelector("ul:has(> li)");
+    }
+
     // Walks the experience entries from most-recent to oldest, collecting
     // only the profile's *current* position(s) and stopping at the first
     // past one (positions are always rendered newest-first), mirroring the
@@ -88,13 +107,11 @@ if (!window.leadGenerator.experienceDataInit) {
       if (!container) return { entries, reachedEndCurrently: false };
 
       let reachedEndCurrently = true;
-      const items = container.querySelectorAll(
-        ':scope > [componentkey^="entity-collection-item-"]',
-      );
+      const items = getTopLevelItems(container);
       let id = 0;
 
       itemLoop: for (const item of items) {
-        const ul = item.querySelector(":scope > ul");
+        const ul = getPositionsList(item);
 
         if (ul) {
           const { companyName, companyLink } = getHeaderCompany(item, ul);
@@ -157,26 +174,108 @@ if (!window.leadGenerator.experienceDataInit) {
       return { entries, reachedEndCurrently };
     }
 
-    async function getActualExperienceData() {
-      const topLevelContainer = document.querySelector(
-        '[data-testid^="profile_ExperienceTopLevelSection_"]',
+    const TOP_LEVEL_SECTION_SELECTOR = '[data-testid^="profile_ExperienceTopLevelSection_"]';
+    const DETAILS_SECTION_SELECTOR = '[data-testid^="profile_ExperienceDetailsSection_"]';
+    // Matches on the href, not the (potentially localized) aria-label text.
+    // Contains rather than ends-with: LinkedIn appends query parameters
+    // (e.g. ?locale=en-US&vieweeProfileId=...).
+    const SHOW_ALL_SELECTOR = 'a[href*="/details/experience"]';
+    const REVEAL_STEP_WAIT_MS = 400;
+    const REVEAL_MAX_STEPS = 20;
+
+    // Chrome/Edge get data-testid attributes on the Experience sections;
+    // Firefox is served the same markup without any data-testid, so fall back
+    // to structure there (section componentkeys are random, and headings are
+    // localized): the section holding the "Show all" experience link, else
+    // the first section whose items link to companies (Education links to
+    // /school/ instead).
+    function findTopLevelSection() {
+      const byTestId = document.querySelector(TOP_LEVEL_SECTION_SELECTOR);
+      if (byTestId) return byTestId;
+
+      const sectionsWithItems = [...document.querySelectorAll("section")].filter((section) =>
+        section.querySelector(ITEM_SELECTOR),
       );
+      return (
+        sectionsWithItems.find((section) => section.querySelector(SHOW_ALL_SELECTOR)) ??
+        sectionsWithItems.find((section) =>
+          section.querySelector(`${ITEM_SELECTOR} a[href*="/company/"]`),
+        ) ??
+        null
+      );
+    }
+
+    // The /details/experience/ page lists only experience, all within <main>.
+    function findDetailsContainer() {
+      const byTestId = document.querySelector(DETAILS_SECTION_SELECTOR);
+      if (byTestId) return byTestId;
+      if (!/\/details\/experience\/?$/.test(location.pathname)) return null;
+
+      const main = document.querySelector("main");
+      return main?.querySelector(ITEM_SELECTOR) ? main : null;
+    }
+
+    // The page may scroll inside its own container rather than the document,
+    // so use the nearest scrollable ancestor of <main>, falling back to the
+    // document.
+    function findScrollContainer() {
+      const isScrollable = (el) =>
+        /(auto|scroll|overlay)/.test(getComputedStyle(el).overflowY) &&
+        el.scrollHeight > el.clientHeight + 1;
+
+      for (let el = document.querySelector("main"); el && el !== document.body; el = el.parentElement) {
+        if (isScrollable(el)) return el;
+      }
+      return document.scrollingElement || document.documentElement;
+    }
+
+    // LinkedIn only renders the profile's lower sections, Experience
+    // included, once they're scrolled near the viewport. If it isn't in the
+    // DOM yet, scroll down a screen at a time until it appears (or the page
+    // ends), then put the scroll position back where the user left it.
+    async function revealTopLevelSection() {
+      const waitForConditionWithTimeout = window.leadGenerator.waitForConditionWithTimeout;
+      const scroller = findScrollContainer();
+      const originalTop = scroller.scrollTop;
+      // "instant" overrides any scroll-behavior: smooth the page sets.
+      const scrollToTop = (top) => scroller.scrollTo({ top, behavior: "instant" });
+
+      try {
+        for (let step = 0; step < REVEAL_MAX_STEPS; step++) {
+          const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1;
+          scrollToTop(scroller.scrollTop + scroller.clientHeight);
+
+          const found = await waitForConditionWithTimeout(
+            findTopLevelSection,
+            REVEAL_STEP_WAIT_MS,
+          ).catch(() => null);
+          if (found) return found;
+          if (atBottom) return null;
+        }
+        return null;
+      } finally {
+        scrollToTop(originalTop);
+      }
+    }
+
+    async function getActualExperienceData() {
+      let topLevelContainer = findTopLevelSection();
 
       if (!topLevelContainer) {
         // Handles the edge case where the user is already on the
         // /details/experience/ page when clicking Extract.
-        const detailsContainer = document.querySelector(
-          '[data-testid^="profile_ExperienceDetailsSection_"]',
-        );
-        const { entries } = extractEntriesFromContainer(detailsContainer);
-        return { entries, needsFullExperience: { needed: false, url: "" } };
+        const detailsContainer = findDetailsContainer();
+        if (detailsContainer) {
+          const { entries } = extractEntriesFromContainer(detailsContainer);
+          return { entries, needsFullExperience: { needed: false, url: "" } };
+        }
+        topLevelContainer = await revealTopLevelSection();
       }
 
       const { entries, reachedEndCurrently } =
         extractEntriesFromContainer(topLevelContainer);
 
-      // Matches on the href, not the (potentially localized) aria-label text.
-      const showAllLink = document.querySelector('a[href$="/details/experience/"]');
+      const showAllLink = document.querySelector(SHOW_ALL_SELECTOR);
 
       const needsFullExperience =
         showAllLink && reachedEndCurrently && entries.length > 0
@@ -188,6 +287,7 @@ if (!window.leadGenerator.experienceDataInit) {
 
     window.leadGenerator.experienceData.getActualExperienceData = getActualExperienceData;
     window.leadGenerator.experienceData.extractEntriesFromContainer = extractEntriesFromContainer;
+    window.leadGenerator.experienceData.findDetailsContainer = findDetailsContainer;
   })();
 
   window.leadGenerator.experienceDataInit = true;

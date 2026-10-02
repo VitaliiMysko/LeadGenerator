@@ -1,33 +1,4 @@
 // -----------------------------
-// DEV ICON (grey tint in local env)
-// -----------------------------
-chrome.runtime.onInstalled.addListener(applyDevIconIfLocal);
-chrome.runtime.onStartup.addListener(applyDevIconIfLocal);
-
-async function applyDevIconIfLocal() {
-  if (chrome.runtime.getManifest().environment !== "local") return;
-
-  const sizes = [16, 32, 48, 128];
-  const imageData = {};
-
-  for (const size of sizes) {
-    const url = chrome.runtime.getURL(`assets/icons/logo-${size}.png`);
-    const response = await fetch(url);
-    const blob = await response.blob();
-    const bitmap = await createImageBitmap(blob);
-
-    const canvas = new OffscreenCanvas(size, size);
-    const ctx = canvas.getContext("2d");
-    ctx.filter = "grayscale(100%)";
-    ctx.drawImage(bitmap, 0, 0);
-
-    imageData[size] = ctx.getImageData(0, 0, size, size);
-  }
-
-  await chrome.action.setIcon({ imageData });
-}
-
-// -----------------------------
 // TASK KINDS
 // Each kind describes what to inject into the hidden tab once it finishes
 // loading, and which message action carries its result back.
@@ -53,7 +24,7 @@ const TASK_KINDS = {
 
 // -----------------------------
 // PER-SESSION IN-FLIGHT TASK TRACKER
-// key: sessionId (unique per popup lifetime, generated in company-data.js /
+// key: sessionId (unique per panel iframe document, generated in company-data.js /
 // extract-data.js)
 // value: { kind, tabId, resolve, timeoutId, url, location, industry, size }
 // -----------------------------
@@ -120,6 +91,22 @@ chrome.tabs.onUpdated.addListener((tabId, info) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "workerFetch") {
+    handleWorkerFetch(message).then(
+      (result) => sendResponse({ ok: true, result }),
+      (error) => sendResponse({ ok: false, error: error?.message || String(error) })
+    );
+    return true;
+  }
+
+  if (message.action?.startsWith("tabBridge:")) {
+    handleTabBridgeRequest(message, sender).then(
+      (result) => sendResponse({ ok: true, result }),
+      (error) => sendResponse({ ok: false, error: error?.message || String(error) })
+    );
+    return true;
+  }
+
   if (message.action === "fetchLinkedinCompanyPage") {
     handleTaskRequest("company", message, sendResponse);
     return true;
@@ -148,6 +135,55 @@ chrome.tabs.onRemoved.addListener((tabId) => {
   sessionTasks.delete(sessionId);
   task.resolve(null);
 });
+
+// -----------------------------
+// TAB BRIDGE
+// Tab/scripting calls relayed from the panel where its framed page lacks
+// those APIs (Firefox) - see src/scripts/services/tab-bridge.js.
+// -----------------------------
+async function handleTabBridgeRequest(message, sender) {
+  switch (message.action) {
+    case "tabBridge:getPanelTab":
+      if (!sender.tab) throw new Error("Request did not come from a tab");
+      return { id: sender.tab.id, url: sender.tab.url };
+    case "tabBridge:injectScripts":
+      await chrome.scripting.executeScript({ target: { tabId: message.tabId }, files: message.files });
+      return null;
+    case "tabBridge:sendMessageToTab":
+      return chrome.tabs.sendMessage(message.tabId, message.message);
+    case "tabBridge:openTab":
+      await chrome.tabs.create({ url: message.url, active: true });
+      return null;
+    default:
+      throw new Error(`Unknown tab bridge action: ${message.action}`);
+  }
+}
+
+// -----------------------------
+// WORKER FETCH (Firefox only)
+// Firefox aborts network requests from the panel's framed extension page,
+// so the panel relays its Cloudflare Worker requests here - see
+// src/scripts/services/worker-client.js. Firefox's background is an event
+// page, not a service worker, so the mid-request termination that keeps
+// HTTP out of this file in Chrome doesn't apply. Chrome never sends this.
+// -----------------------------
+// Same value as WORKER_URL in src/constants/config.js (this classic script
+// can't import it; a test keeps both in sync with manifest.json). Not read
+// from getManifest(): Firefox drops the path-less Worker entry from
+// host_permissions there.
+const WORKER_ORIGIN = "https://lead-generator-backend-worker.vitalij-musko.workers.dev";
+
+async function handleWorkerFetch({ url, method, body }) {
+  if (new URL(url).origin !== WORKER_ORIGIN) throw new Error("Only the extension's Worker may be fetched");
+
+  const init = { method };
+  if (body !== undefined) {
+    init.headers = { "Content-Type": "application/json" };
+    init.body = JSON.stringify(body);
+  }
+  const response = await fetch(url, init);
+  return response.json();
+}
 
 // -----------------------------
 // MAIN MESSAGE HANDLER

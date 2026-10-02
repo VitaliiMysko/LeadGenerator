@@ -1,5 +1,6 @@
 import { getWorkerUrl } from "../../constants/config.js";
 import { extractCompanyId } from "../../utils/company-id.js";
+import { fetchWorkerJson } from "./worker-client.js";
 import {
   getCachedCompany,
   setCachedCompany,
@@ -18,7 +19,7 @@ const companyDetailsByDefault = {
   completeRequest: true,
 };
 
-const popupSessionId = crypto.randomUUID();
+const panelSessionId = crypto.randomUUID();
 
 let currentRequestId = 0;
 const companyDetailsCache = new Map();
@@ -82,7 +83,7 @@ export async function getCompanyData(companyLink, location, industry, size, comp
     try {
       const response = await chrome.runtime.sendMessage({
         action: "fetchLinkedinCompanyPage",
-        sessionId: popupSessionId,
+        sessionId: panelSessionId,
         url: `${publicCompanyUrl}/about`,
         location,
         industry,
@@ -121,8 +122,7 @@ export async function getWebsiteState(url) {
 
   const fullUrl = url.startsWith("http") ? url : `https://${url}`;
   const workerUrl = `${getWorkerUrl()}?url=${encodeURIComponent(fullUrl)}`;
-  const response = await fetch(workerUrl);
-  return response.json();
+  return fetchWorkerJson(workerUrl);
 }
 
 export function isValidDomain(value) {
