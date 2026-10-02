@@ -9,6 +9,7 @@ import { createCompanyList } from "../experience/actual-experience.js";
 import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
+import { getPanelTab, injectScripts, sendMessageToTab } from "../../services/tab-bridge.js";
 
 const FILE_SETS = {
   salesNavigatorLead: [
@@ -29,11 +30,11 @@ const FILE_SETS = {
   ],
 };
 
-// Stable for the lifetime of this popup window, mirroring company-data.js's popupSessionId.
+// Stable for the lifetime of this panel document, mirroring company-data.js's panelSessionId.
 const profileExperienceSessionId = crypto.randomUUID();
 
 getExtractBtnElement().addEventListener("click", async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tab = await getPanelTab();
 
   const pageType = getLinkedInPageType(tab.url);
   if (!pageType) {
@@ -41,19 +42,18 @@ getExtractBtnElement().addEventListener("click", async () => {
     return;
   }
 
-  await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: FILE_SETS[pageType],
-  });
+  await injectScripts(tab.id, FILE_SETS[pageType]);
 
   const loadingElement = document.createElement("div");
   loadingElement.textContent = "Loading";
   loadingElement.classList.add("loading", "loading-text");
   getTabExperienceElement().appendChild(loadingElement);
 
-  const results = await chrome.tabs.sendMessage(tab.id, { action: "extractData" });
+  const results = await sendMessageToTab(tab.id, { action: "extractData" });
 
-  getTabExperienceElement().innerHTML = "";
+  // "Loading" stays until the list is rendered - createCompanyList replaces
+  // it - so it also covers the wait for the full list from the details page.
+  if (!results) getTabExperienceElement().innerHTML = "";
 
   if (results) {
     let actualExperienceData = [];
@@ -74,7 +74,10 @@ getExtractBtnElement().addEventListener("click", async () => {
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
-      if (fullExperienceData) actualExperienceData = fullExperienceData;
+      // The full list is only requested when the short one found current
+      // positions, so an empty result means the fetch failed - keep the
+      // short list rather than wiping it.
+      if (fullExperienceData?.length) actualExperienceData = fullExperienceData;
     }
 
     createCompanyList(actualExperienceData);

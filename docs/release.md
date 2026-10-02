@@ -2,16 +2,18 @@
 
 How this extension gets from `master` to a published Chrome Web Store release, and what has to be configured in GitHub for it to work.
 
+The Chrome Web Store is the only automated store. Microsoft Edge users install from it too (with Edge's "Allow extensions from other stores"). The same package can't be submitted to the Microsoft Edge Add-ons store as-is: Partner Center rejects an MV3 manifest containing `background.scripts`, which is kept for Firefox. An Edge Add-ons release would need a separate package without `background.scripts` (and `browser_specific_settings`), a Partner Center account, and its own listing.
+
 ## Branches
 
 - **`master`** — development branch. `.github/workflows/test.yml` runs the unit test suite and validates `docs/chrome-web-store/` on every push/PR. It never touches the Chrome Web Store and never needs Store credentials.
-- **`prod`** — the branch that *is* the current Chrome Web Store submission. A push to `prod` (normally a "release" PR merging `master` into `prod` with a bumped `manifest.json` version) runs `.github/workflows/release-chrome-web-store.yml`.
+- **`prod`** — the branch that *is* the current Chrome Web Store submission. A push to `prod` (normally merging a "release" PR from `master` into `prod` with a bumped `manifest.json` version) runs `.github/workflows/release-chrome-web-store.yml` end to end. A PR *into* `prod` (before it's merged) only runs the `validate` job, so its checks are visible on the PR itself — see below.
 
 ## Release workflow
 
-`.github/workflows/release-chrome-web-store.yml` runs these jobs in sequence:
+`.github/workflows/release-chrome-web-store.yml` runs these jobs in sequence. It triggers on a push to `prod`, on `workflow_dispatch` (also restricted to `prod`), and on a pull request targeting `prod` — but a PR run stops after `validate`: `build`, `upload`, `listing-sync-checkpoint`, and `publish` all require the event to be a push/`workflow_dispatch`, so opening or updating a PR never builds a package, never touches Store credentials, and never approaches the `production` environment. Its only purpose is to surface a failing test, an invalid docs file, or a missed version bump on the PR's Checks tab, before merge.
 
-1. **validate** — re-runs the unit tests and the Chrome Web Store docs validator (never trust that `master` already passed), fails the run if `manifest.json`'s version wasn't increased relative to the previous commit on `prod`, and checks whether `docs/chrome-web-store/` changed relative to the previous commit on `prod` (see "Listing sync checkpoint" below). No Store credentials involved.
+1. **validate** — re-runs the unit tests and the Chrome Web Store docs validator (never trust that `master` already passed), fails the run if `manifest.json`'s version wasn't increased relative to the previous commit on `prod`, and checks whether `docs/chrome-web-store/` changed relative to the previous commit on `prod` (see "Listing sync checkpoint" below). No Store credentials involved. Runs on both a PR into `prod` and an actual push to `prod`.
 2. **build** — copies the extension's actual runtime files (`manifest.json`, `index.html`, `assets/`, `libs/`, `src/`) into `release/`, checks the result doesn't contain anything it shouldn't (`node_modules`, `tests`, dev-only files, etc.), zips it, and uploads the zip as a workflow artifact. No Store credentials involved.
 3. **upload** — authenticates to the Chrome Web Store API and uploads the package, then polls the upload status until it resolves. Runs under the `production` GitHub Environment, so it requires manual approval.
 4. **listing-sync-checkpoint** — *only runs if `docs/chrome-web-store/` changed since the last release.* Runs under `production` too, so it requires its own manual approval, and makes no API calls itself — approving it is the developer's sign-off that they've already copied the changed listing text into the Chrome Web Store Developer Dashboard. Skipped entirely (no approval needed) when the listing docs didn't change.
@@ -20,6 +22,18 @@ How this extension gets from `master` to a published Chrome Web Store release, a
 Every job under `production` needs the same credential, and GitHub Environment approval gates a whole job rather than a step inside one, so there's no way to have upload run unattended while only publish is gated without either duplicating the secret across environments or accepting one approval click per gated job. This pipeline takes the multiple-click option: one secret location, and a human confirms each step before the irreversible `publish` call — normally two clicks (upload, publish), three when the listing docs changed (upload, listing sync, publish).
 
 Publishing submits the item for Google's review — it does **not** mean the extension is immediately live for users.
+
+## After merging a release PR — what to actually do
+
+Merging the PR into `prod` does **not** finish the release by itself, and GitHub does not notify you that anything is waiting — you have to go look:
+
+1. Go to the repo's **Actions** tab and open the new **Release to Chrome Web Store** run (or open it straight from the merge commit's status check).
+2. `validate` and `build` run immediately, no approval needed. Once `build` finishes, the run pauses — its job summary (visible right on the run page) says so and tells you what to do next.
+3. Click **Review deployments** (a banner near the top of the run page), check **production**, click **Approve and deploy**. This unblocks `upload`.
+4. Repeat step 3 for each subsequent paused job. Each job's summary says exactly what's next: usually `upload` → `publish` (two approvals), or `upload` → `listing-sync-checkpoint` → `publish` (three) if the Store listing docs changed — in which case that job's summary also tells you to update the Developer Dashboard *before* approving it.
+5. Once `publish` finishes, its summary confirms the submission and reminds you it's not live yet — Google's review still has to run. If the Chrome Web Store Developer Dashboard still shows a clickable **Submit for review** button right after, try a hard refresh before assuming anything went wrong — that's been a stale-UI quirk here before, not an actual failure.
+
+If you don't see a **Review deployments** banner and a job just looks stuck, you're probably not looking at the run itself — open it from the Actions tab, not the PR's checks list.
 
 ## Listing sync checkpoint
 

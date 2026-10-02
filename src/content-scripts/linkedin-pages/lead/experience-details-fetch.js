@@ -7,10 +7,7 @@
 
     try {
       const container = await waitForConditionWithTimeout(
-        () =>
-          document.querySelector(
-            '[data-testid^="profile_ExperienceDetailsSection_"]',
-          ),
+        window.leadGenerator.experienceData.findDetailsContainer,
         8000,
       );
 

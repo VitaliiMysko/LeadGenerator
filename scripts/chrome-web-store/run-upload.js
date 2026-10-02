@@ -30,7 +30,9 @@ async function main() {
 
   const zipBuffer = readFileSync(zipPath);
   const uploadResult = await uploadPackage(client, zipBuffer);
-  console.log(`✓ Package upload request completed (uploadState: ${uploadResult.uploadState ?? "not set"})`);
+  console.log(
+    `✓ Package upload request completed (uploadState: ${uploadResult.uploadState ?? "not set"}, crxVersion: ${uploadResult.crxVersion ?? "not set"})`
+  );
 
   // The :upload response's own uploadState is authoritative when it's
   // already terminal — a synchronous upload never populates fetchStatus's

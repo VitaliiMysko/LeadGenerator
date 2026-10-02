@@ -8,6 +8,10 @@ This extension is a straightforward tool for extracting data about individuals d
 
   The application features a simple, modern layout with intuitive functionality
 
+- **Floating Panel**:
+
+  On Sales Navigator lead and people-search pages, and on public profile pages, a round Lead Generator icon appears on the page itself. Click it to open the tool as a panel next to the icon, floating over the page; click it again (or the panel's **×** button) to close the panel, leaving just the icon. Drag the icon to move it anywhere on the page — the panel follows it, and the position is remembered. The panel stays open across tab switches until you close it. The extension has no browser toolbar button
+
 - **Dynamic Tab Navigation**:
 
   The right panel uses a dropdown-based tab selector to keep the UI clean and scalable
@@ -236,6 +240,8 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 | Firefox | Full | 128.0 |
 | Safari | Not supported | — |
 
+Microsoft Edge is built on Chromium and runs the extension exactly as Chrome does. It isn't published on the Microsoft Edge Add-ons store; Edge users install it from the Chrome Web Store (see below).
+
 ## Installation
 
 ### Chrome / Edge
@@ -243,16 +249,22 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 #### Option 1: Install from the Chrome Web Store
 
 1. Go to the [Lead Generator extension page on the Chrome Web Store](https://chromewebstore.google.com/detail/negmangnhbhanhajjpcjgecieghmdldm)
-2. Click **Add to Chrome**
-3. Confirm permissions
+2. **Edge only:** if a banner asks, click **Allow extensions from other stores**, then confirm
+3. Click **Add to Chrome**
+4. Confirm permissions
+
+> **Edge:** extensions from other stores keep working only while **Allow extensions from other stores** stays on (`edge://extensions/`). Updates still come from the Chrome Web Store.
 
 #### Option 2: Install Locally from Source
 
 1. Download or clone repository
 2. Unzip if needed
-3. Open `chrome://extensions/`
+3. Open `chrome://extensions/` (Edge: `edge://extensions/`)
 4. Enable **Developer mode**
 5. Click **Load unpacked**
+6. Reload any LinkedIn tabs that were already open, so the on-page icon appears
+
+> On a company-managed Chrome or Edge, IT policies can block **Developer mode**, extensions from other stores, or specific extensions. Company network filters can also block the extension's backend (`*.workers.dev`), which stops email validation, website checks and translation. In either case, contact your IT administrator.
 
 ### Firefox
 
@@ -263,8 +275,11 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 3. Click **This Firefox**
 4. Click **Load Temporary Add-on…**
 5. Select `manifest.json` from the repository root
+6. Reload any LinkedIn tabs that were already open, so the on-page icon appears
 
 > Temporary add-ons are removed when Firefox is closed.
+
+> If the on-page icon doesn't appear on LinkedIn, open `about:addons` → Lead generator → **Permissions** and make sure access to `www.linkedin.com` is allowed. Firefox lets users revoke site access, and the extension can't run on LinkedIn without it.
 
 #### Option 2: Install Permanently (signed package)
 
@@ -301,37 +316,39 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a public LinkedIn profile page (`linkedin.com/in/...`), or any other `linkedin.com` page (e.g. a Sales Navigator lead page) — the latter is extracted best-effort using the Sales Navigator logic
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`)
 
-2. Click **Extract**
+2. Click the round Lead Generator icon shown on the page (only on these page types) to open the panel next to it. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches. Drag the icon to reposition it
+
+3. Click **Extract**
    - Extracts available profile and company data
    - On a public profile page, if the visible Experience section may be hiding further current positions behind a "Show all" link, the full experience list is fetched automatically in the background before the fields are populated
+   - LinkedIn only loads a public profile's Experience section once it's scrolled into view, so if you haven't scrolled to it yet, the page scrolls down briefly while extracting and then returns to where you were
 
-3. Review and edit fields (optional)
+4. Review and edit fields (optional)
    - All fields are fully editable
 
-4. (Optional) Use Filters
+5. (Optional) Use Filters
    - Narrow down company data by location or size
 
-5. (Optional) Use additional features:
+6. (Optional) Use additional features:
    - Translate job title
    - Enable transliteration
    - Generate / validate email
 
-6. Click **Save**
+7. Click **Save**
    - Saves current lead data locally
 
-7. Click **Get**
+8. Click **Get**
    - Copies all saved leads in spreadsheet-ready format
 
-8. (Optional) Click **Clean**
+9. (Optional) Click **Clean**
    - Removes all saved leads from local storage
 
 ## Permissions
 
 The "Lead generator" extension requires certain permissions to function effectively and ensure smooth operation:
 
-- **activeTab** - access current page
 - **scripting** - inject scripts
 - **tabs** - tab interaction
 - **storage** - store user preferences, filter state, and user-saved lead data locally

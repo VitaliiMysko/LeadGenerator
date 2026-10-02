@@ -1,4 +1,5 @@
 import { getWorkerUrl } from "../../constants/config.js";
+import { fetchWorkerJson } from "./worker-client.js";
 
 export const emailDataByDefault = {
   email: "",
@@ -13,8 +14,7 @@ export async function verifyEmail(email) {
   const workerUrl = `${getWorkerUrl()}?email=${encodeURIComponent(email)}`;
 
   try {
-    const response = await fetch(workerUrl);
-    const result = await response.json();
+    const result = await fetchWorkerJson(workerUrl);
     return { state: result.state, reason: result.reason, error: "" };
   } catch (error) {
     console.error("Email verification failed:", error);
