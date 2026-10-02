@@ -51,7 +51,9 @@ getExtractBtnElement().addEventListener("click", async () => {
 
   const results = await sendMessageToTab(tab.id, { action: "extractData" });
 
-  getTabExperienceElement().innerHTML = "";
+  // "Loading" stays until the list is rendered - createCompanyList replaces
+  // it - so it also covers the wait for the full list from the details page.
+  if (!results) getTabExperienceElement().innerHTML = "";
 
   if (results) {
     let actualExperienceData = [];
@@ -72,7 +74,10 @@ getExtractBtnElement().addEventListener("click", async () => {
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
-      if (fullExperienceData) actualExperienceData = fullExperienceData;
+      // The full list is only requested when the short one found current
+      // positions, so an empty result means the fetch failed - keep the
+      // short list rather than wiping it.
+      if (fullExperienceData?.length) actualExperienceData = fullExperienceData;
     }
 
     createCompanyList(actualExperienceData);
