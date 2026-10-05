@@ -7,6 +7,7 @@ const TASK_KINDS = {
   company: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
+      "src/content-scripts/common/company-labels.js",
       "src/content-scripts/linkedin-pages/company.js",
     ],
     responseAction: "linkedinCompanyPageContent",
