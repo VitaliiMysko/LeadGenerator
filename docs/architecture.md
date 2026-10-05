@@ -46,6 +46,8 @@ The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in 
 
 The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render, so Firefox shows its native scrollbar there.
 
+The left-panel Country field is a searchable single-select restricted to the shared country list (the one the location filter uses). It wraps the existing text input rather than replacing it, so extraction, reset, and save code keep reading and writing the input's value directly.
+
 Each hidden-tab request is tracked per panel session (a random id generated once per iframe document). One iframe document exists per tab (created once, then only shown/hidden), so this gives per-tab independence. A two-stage timeout (a shorter one starting once the page reports load complete, a longer fallback from tab creation) accounts for LinkedIn's single-page-app needing time to render after the initial page load.
 
 ### 2.3 Filters (`src/scripts/containers/filters/`, `src/scripts/store/filter-store.js`)

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.1] - 2026-10-05
+
+### Changed
+
+- **The Country field now only accepts a country from the list**: focusing it opens a searchable dropdown of countries, the same list used by the Filters tab's location filter. Typing narrows the list, and clicking an option or pressing Enter picks it. A value that isn't an existing country is reverted when leaving the field, and Escape cancels the edit. Exact names in any letter case are accepted and corrected to the listed spelling, and the field can still be cleared
+
 ## [3.4.0] - 2026-09-29
 
 ### Changed

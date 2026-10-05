@@ -151,7 +151,7 @@ Available option:
 - **Link** - LinkedIn profile URL
 - **Email** - working email address
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
-- **Country** - company location
+- **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)
 - **Industry** - company indutry
 - **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
 
