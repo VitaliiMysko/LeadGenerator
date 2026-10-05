@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 
 - **The Country field now only accepts a country from the list**: focusing it opens a searchable dropdown of countries, the same list used by the Filters tab's location filter. Typing narrows the list, and clicking an option or pressing Enter picks it. A value that isn't an existing country is reverted when leaving the field, and Escape cancels the edit. Exact names in any letter case are accepted and corrected to the listed spelling, and the field can still be cleared
 
+### Removed
+
+- **The company-name link in the Actual Experience tab**: company names in the accordion headers no longer open the company's LinkedIn page, since the LinkedIn button next to the Company name field already does this. Clicking a company row still selects and expands it
+
 ## [3.4.0] - 2026-09-29
 
 ### Changed
