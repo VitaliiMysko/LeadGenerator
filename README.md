@@ -61,6 +61,7 @@ This extension is a straightforward tool for extracting data about individuals d
 Displays a list of companies associated with the profile as an interactive accordion
 
 - Each row always shows: company **name** and **job position**
+  - The company name is plain text; to open the company's LinkedIn page, select the row and use the LinkedIn button next to the **Company Name** field
 - Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
 - Expanded company details include:
