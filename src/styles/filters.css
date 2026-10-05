@@ -63,8 +63,16 @@
   background: transparent;
   box-sizing: border-box;
 }
-.single-select.open .dropdown {
+.single-select.open .dropdown,
+.single-select-field.open .dropdown {
   display: block;
+}
+.single-select-field {
+  position: relative;
+}
+.single-select-field.drop-up .dropdown {
+  top: auto;
+  bottom: 100%;
 }
 .option.selected {
   color: #0056b3;
