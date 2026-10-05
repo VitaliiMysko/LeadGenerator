@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file.
 
 - **The company-name link in the Actual Experience tab**: company names in the accordion headers no longer open the company's LinkedIn page, since the LinkedIn button next to the Company name field already does this. Clicking a company row still selects and expands it
 
+### Fixed
+
+- **Company details are now found in every LinkedIn interface language**: website, industry, company size and headquarters were previously only read when LinkedIn was in English or Ukrainian, and came back empty in any other language (e.g. Polish). The member count was only read in English and is now read in every language too
+
 ## [3.4.0] - 2026-09-29
 
 ### Changed
