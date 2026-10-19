@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - **The Country field now only accepts a country from the list**: focusing it opens a searchable dropdown of countries, the same list used by the Filters tab's location filter. Typing narrows the list, and clicking an option or pressing Enter picks it. A value that isn't an existing country is reverted when leaving the field, and Escape cancels the edit. Exact names in any letter case are accepted and corrected to the listed spelling, and the field can still be cleared
+- **The development-build marker is now detected automatically**: the greyscale on-page icon and "(dev)" after the version in the panel now appear whenever the extension is loaded unpacked (Chrome, Edge) or as a temporary add-on (Firefox), instead of depending on a manual setting in the manifest that had to be cleared before each release. This also removes the "unexpected property" warning Firefox showed when loading the extension, and the marker now works in Firefox too
 
 ### Removed
 
