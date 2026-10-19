@@ -228,6 +228,8 @@ Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and shoul
 
 Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test.
 
+Pure helpers shared by content scripts are classic scripts in `src/utils/` (content scripts can't import ES modules); they're tested by evaluating the file against a stub `window` with Node's `vm` module.
+
 ## Changelog
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
@@ -240,6 +242,8 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 | Microsoft Edge | Full | any current |
 | Firefox | Full | 128.0 |
 | Safari | Not supported | — |
+
+The extension works with LinkedIn and Sales Navigator in any of their interface languages.
 
 Microsoft Edge is built on Chromium and runs the extension exactly as Chrome does. It isn't published on the Microsoft Edge Add-ons store; Edge users install it from the Chrome Web Store (see below).
 

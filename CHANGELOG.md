@@ -12,6 +12,13 @@ All notable changes to this project will be documented in this file.
 
 - **The company-name link in the Actual Experience tab**: company names in the accordion headers no longer open the company's LinkedIn page, since the LinkedIn button next to the Company name field already does this. Clicking a company row still selects and expands it
 
+### Fixed
+
+- **Company details are now found in every LinkedIn interface language**: website, industry, company size and headquarters were previously only read when LinkedIn was in English or Ukrainian, and came back empty in any other language (e.g. Polish). The member count was only read in English and is now read in every language too
+- **Company size is now read correctly in every LinkedIn language**: sizes written with dots or spaces as thousands separators (e.g. `5.001–10.000`, `5 001 – 10 000`) were shown truncated as `001-10`, and sizes written with other range separators, local digits, or as "More than 10,001" showed as `unknown`
+- **Only current positions are listed when LinkedIn isn't in English**: on public profile pages, past positions were also listed, because the date range was recognized only in English
+- **Sales Navigator lead pages now work in every Sales Navigator language**: with an interface language other than English, Extract found no current positions and showed no results, and the lead's LinkedIn profile link was not retrieved
+
 ## [3.4.0] - 2026-09-29
 
 ### Changed

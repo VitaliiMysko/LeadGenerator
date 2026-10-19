@@ -7,6 +7,7 @@ const TASK_KINDS = {
   company: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
+      "src/content-scripts/common/company-labels.js",
       "src/content-scripts/linkedin-pages/company.js",
     ],
     responseAction: "linkedinCompanyPageContent",
@@ -14,6 +15,7 @@ const TASK_KINDS = {
   profileExperience: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
+      "src/utils/experience-period.js",
       "src/content-scripts/common/constants.js",
       "src/content-scripts/linkedin-pages/lead/lead-experience.js",
       "src/content-scripts/linkedin-pages/lead/experience-details-fetch.js",

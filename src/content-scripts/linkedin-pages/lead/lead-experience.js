@@ -6,21 +6,21 @@ if (!window.leadGenerator.experienceDataInit) {
     // LinkedIn's public profile page renders each experience item's job
     // title / company name / employment type / date range / location as
     // sibling <p>s with no distinguishing class (all hashed per-build) or
-    // attribute. Only the date range has a recognizable, stable *shape*
-    // ("Oct 2022 - Present · 4 yrs", "2014 – Jun 2015"), so it's found by
-    // content pattern rather than position, mirroring company.js's existing
-    // "match by visible content, not class" approach for this same page family.
-    const MONTH = "[A-Za-z]{3,9}\\.?\\s";
-    const DATE_RANGE_REGEX = new RegExp(
-      `^(?:${MONTH})?\\d{4}\\s*[-–]\\s*(?:Present|(?:${MONTH})?\\d{4})(?:\\s*·.*)?$`,
-      "i",
-    );
+    // attribute. Only the date range has a recognizable, stable *shape* in
+    // every interface language (see experience-period.js), so it's found by
+    // content pattern rather than position. The job title (first <p>) is
+    // skipped so a title containing a year can't be mistaken for it.
+    const parseExperiencePeriod = window.leadGenerator.parseExperiencePeriod;
+
     // Total-tenure line shown next to a multi-position company's name, e.g. "9 yrs 4 mos".
     const DURATION_ONLY_REGEX = /^\d+\s*yrs?(\s+\d+\s*mos?)?$|^\d+\s*mos?$/i;
 
+    function findPeriodText(ps) {
+      return ps.slice(1).find((text) => parseExperiencePeriod(text)) ?? "";
+    }
+
     function isCurrentPeriodText(text) {
-      const trimmed = text.trim();
-      return trimmed === "" || /\bpresent\b/i.test(trimmed);
+      return text === "" || parseExperiencePeriod(text).isCurrent;
     }
 
     function emptyExtraData() {
@@ -123,7 +123,7 @@ if (!window.leadGenerator.experienceDataInit) {
             const jobPosition = ps[0] || "";
             if (!jobPosition) continue;
 
-            const dateText = ps.find((text) => DATE_RANGE_REGEX.test(text)) ?? "";
+            const dateText = findPeriodText(ps);
 
             if (isCurrentPeriodText(dateText)) {
               hasCurrentPosition = true;
@@ -154,7 +154,7 @@ if (!window.leadGenerator.experienceDataInit) {
             break itemLoop;
           }
 
-          const dateText = ps.find((text) => DATE_RANGE_REGEX.test(text)) ?? "";
+          const dateText = findPeriodText(ps);
 
           if (isCurrentPeriodText(dateText)) {
             entries.push({
