@@ -88,7 +88,7 @@ if (!window.leadGenerator.companyLabelsInit) {
       website: ["אתר אינטרנט", "אתר"],
       industry: ["תעשייה", "ענף"],
       size: ["גודל החברה"],
-      headquarters: ["מטה", "המטה"],
+      headquarters: ["משרדים ראשיים", "מטה", "המטה"],
       members: ["חבר"],
     },
     hi: {
