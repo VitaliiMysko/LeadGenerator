@@ -95,6 +95,8 @@ flowchart LR
     Fetch -- failure --> Return
 ```
 
+Generated-email results are cached separately, in memory only for the panel's lifetime, keyed by website domain together with the lead's first name and surname — never by domain alone, since a result found for one person must not be offered for another at the same company.
+
 ### 2.7 Persistence Strategy
 
 - `chrome.storage.sync` — user preferences and UI settings, field order, filter state
