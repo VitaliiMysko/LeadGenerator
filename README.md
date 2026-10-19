@@ -361,7 +361,7 @@ The "Lead generator" extension requires certain permissions to function effectiv
 ### Host Permissions
 
 - `https://www.linkedin.com/*` – extract data
-- `https://lead-generator-backend-worker.vitalij-musko.workers.dev` – backend services
+- `https://lead-generator-backend-worker.vitalij-musko.workers.dev/*` – backend services
 
 ## Requirements
 

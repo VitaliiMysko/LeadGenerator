@@ -15,7 +15,7 @@
     "https://www.linkedin.com/sales/lead/*",
     "https://www.linkedin.com/company/*",
     "https://www.linkedin.com/in/*",
-    "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
+    "https://lead-generator-backend-worker.vitalij-musko.workers.dev/*"
   ],
   "icons": {
     "16": "assets/icons/logo-16.png",
