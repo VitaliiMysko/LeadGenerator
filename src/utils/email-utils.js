@@ -1,4 +1,15 @@
 import { emailTemplates } from "../constants/email-templates.js";
+import { trimAsciiWhitespace } from "./text-utils.js";
+
+// Generated emails depend on the person's name as well as the domain, so a
+// result cached for one person must not be reused for another at the same company.
+export function buildEmailCacheKey(domain, firstName, lastName) {
+  return JSON.stringify(
+    [domain, firstName, lastName].map((value) =>
+      trimAsciiWhitespace(value ?? "").toLowerCase(),
+    ),
+  );
+}
 
 export function prepareEmailName(fullName) {
   return fullName

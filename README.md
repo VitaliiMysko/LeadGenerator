@@ -189,7 +189,7 @@ All fields are editable before copying.
 
 Includes:
 
-- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise
+- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise. A found email is reused only for the same website, name and surname; changing the name or surname runs the search again. A matching found email is filled in automatically when a company is selected, including the first one after Extract
 - Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
 ## Network & Data Fetching Strategy

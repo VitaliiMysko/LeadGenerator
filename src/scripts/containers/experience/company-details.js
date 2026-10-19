@@ -61,7 +61,9 @@ function addCompanyDetailsListeners() {
 function initCompanyDetails() {
   getCompanyItemElements().forEach((item) => {
     if (item.classList.contains("active") && item.style.display !== "none") {
-      manageCompanyDetailsBlock(item);
+      manageCompanyDetailsBlock(item).then(() =>
+        fillEmailFromCache(getEmailElement().value),
+      );
     }
   });
 }
