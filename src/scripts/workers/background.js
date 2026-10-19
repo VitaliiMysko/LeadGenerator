@@ -170,9 +170,7 @@ async function handleTabBridgeRequest(message, sender) {
 // HTTP out of this file in Chrome doesn't apply. Chrome never sends this.
 // -----------------------------
 // Same value as WORKER_URL in src/constants/config.js (this classic script
-// can't import it; a test keeps both in sync with manifest.json). Not read
-// from getManifest(): Firefox drops the path-less Worker entry from
-// host_permissions there.
+// can't import it; a test keeps both in sync with manifest.json).
 const WORKER_ORIGIN = "https://lead-generator-backend-worker.vitalij-musko.workers.dev";
 
 async function handleWorkerFetch({ url, method, body }) {
