@@ -74,8 +74,14 @@
     return best;
   }
 
+  // Ignores letter case, apostrophe style and the bidirectional marks that
+  // Arabic, Hebrew and Persian pages wrap around words.
   function normalize(text) {
-    return text.trim().toLowerCase().replace(/[’`]/g, "'");
+    return text
+      .replace(/[‎‏؜‪-‮⁦-⁩]/g, "")
+      .trim()
+      .toLowerCase()
+      .replace(/[’`]/g, "'");
   }
 
   // LinkedIn's overview section no longer uses a <dl>/<dt>/<dd> list under a

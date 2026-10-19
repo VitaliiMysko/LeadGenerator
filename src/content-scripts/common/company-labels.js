@@ -9,7 +9,7 @@ if (!window.leadGenerator.companyLabelsInit) {
   window.leadGenerator.companyLabels = {
     ar: {
       website: ["الموقع الإلكتروني", "الموقع الالكتروني"],
-      industry: ["المجال", "الصناعة", "القطاع"],
+      industry: ["المجال المهني", "المجال", "الصناعة", "القطاع"],
       size: ["حجم الشركة"],
       headquarters: ["المقر الرئيسي", "المقر"],
       members: ["عضو", "أعضاء"],
@@ -59,7 +59,7 @@ if (!window.leadGenerator.companyLabelsInit) {
     es: {
       website: ["Sitio web"],
       industry: ["Sector"],
-      size: ["Tamaño de la empresa"],
+      size: ["Tamaño de empresa", "Tamaño de la empresa"],
       headquarters: ["Sede", "Sede central"],
       members: ["miembro"],
     },
@@ -67,11 +67,11 @@ if (!window.leadGenerator.companyLabelsInit) {
       website: ["وب‌سایت", "وبسایت", "وب سایت"],
       industry: ["صنعت"],
       size: ["اندازه شرکت", "اندازه‌ شرکت"],
-      headquarters: ["دفتر مرکزی", "مقر اصلی"],
+      headquarters: ["ستاد", "دفتر مرکزی", "مقر اصلی"],
       members: ["عضو"],
     },
     fi: {
-      website: ["Verkkosivusto", "Verkkosivut"],
+      website: ["Sivusto", "Verkkosivusto", "Verkkosivut"],
       industry: ["Toimiala"],
       size: ["Yrityksen koko"],
       headquarters: ["Pääkonttori", "Päätoimipaikka"],
@@ -93,9 +93,9 @@ if (!window.leadGenerator.companyLabelsInit) {
     },
     hi: {
       website: ["वेबसाइट"],
-      industry: ["उद्योग"],
-      size: ["कंपनी का आकार", "कंपनी आकार"],
-      headquarters: ["मुख्यालय"],
+      industry: ["इंडस्ट्री", "उद्योग"],
+      size: ["कंपनी का साइज़", "कंपनी का आकार", "कंपनी आकार"],
+      headquarters: ["हेडक्वार्टर", "मुख्यालय"],
       members: ["सदस्य"],
     },
     hu: {
@@ -103,10 +103,10 @@ if (!window.leadGenerator.companyLabelsInit) {
       industry: ["Iparág", "Ágazat"],
       size: ["Cégméret", "Vállalat mérete"],
       headquarters: ["Székhely", "Központ"],
-      members: ["tag"],
+      members: ["felhasználó"],
     },
     id: {
-      website: ["Situs web", "Situs Web"],
+      website: ["Website", "Situs web", "Situs Web"],
       industry: ["Industri"],
       size: ["Ukuran perusahaan"],
       headquarters: ["Kantor pusat", "Kantor Pusat"],
@@ -115,9 +115,9 @@ if (!window.leadGenerator.companyLabelsInit) {
     it: {
       website: ["Sito web", "Sito Web"],
       industry: ["Settore"],
-      size: ["Dimensioni dell'azienda", "Dimensione dell'azienda"],
+      size: ["Dimensioni azienda", "Dimensioni dell'azienda", "Dimensione dell'azienda"],
       headquarters: ["Sede principale", "Sede centrale", "Sede"],
-      members: ["membr"],
+      members: ["utent", "membr"],
     },
     ja: {
       website: ["ウェブサイト", "Webサイト"],
@@ -135,7 +135,7 @@ if (!window.leadGenerator.companyLabelsInit) {
     },
     mr: {
       website: ["वेबसाइट"],
-      industry: ["उद्योग"],
+      industry: ["इंडस्ट्री", "उद्योग"],
       size: ["कंपनीचा आकार", "कंपनी आकार"],
       headquarters: ["मुख्यालय"],
       members: ["सदस्य"],
@@ -173,18 +173,18 @@ if (!window.leadGenerator.companyLabelsInit) {
       industry: ["Branża"],
       size: ["Wielkość firmy", "Rozmiar firmy"],
       headquarters: ["Siedziba główna", "Siedziba"],
-      members: ["członk"],
+      members: ["człon"],
     },
     pt: {
       website: ["Site", "Website", "Sítio web"],
       industry: ["Setor"],
       size: ["Tamanho da empresa"],
       headquarters: ["Sede"],
-      members: ["membro"],
+      members: ["usuário", "membro"],
     },
     ro: {
       website: ["Site web", "Site"],
-      industry: ["Domeniu", "Industrie", "Sector"],
+      industry: ["Sector de activitate", "Domeniu", "Industrie", "Sector"],
       size: ["Dimensiunea companiei", "Mărimea companiei"],
       headquarters: ["Sediu central", "Sediul central", "Sediu"],
       members: ["membr"],
@@ -205,7 +205,7 @@ if (!window.leadGenerator.companyLabelsInit) {
     },
     te: {
       website: ["వెబ్‌సైట్", "వెబ్సైట్"],
-      industry: ["పరిశ్రమ"],
+      industry: ["ఇండస్ట్రీ", "పరిశ్రమ"],
       size: ["కంపెనీ పరిమాణం"],
       headquarters: ["ప్రధాన కార్యాలయం"],
       members: ["సభ్య"],
@@ -247,9 +247,9 @@ if (!window.leadGenerator.companyLabelsInit) {
     },
     "zh-CN": {
       website: ["网站"],
-      industry: ["行业", "领域"],
+      industry: ["所属行业", "行业", "领域"],
       size: ["公司规模"],
-      headquarters: ["总部"],
+      headquarters: ["公司总部", "总部"],
       members: ["成员", "会员"],
     },
     "zh-TW": {
