@@ -109,6 +109,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // chrome.management isn't exposed to content scripts, nor to the panel's
+  // framed page in Firefox. getSelf() needs no "management" permission.
+  if (message.action === "getInstallType") {
+    chrome.management.getSelf().then(
+      (info) => sendResponse(info.installType),
+      () => sendResponse(null)
+    );
+    return true;
+  }
+
   if (message.action === "fetchLinkedinCompanyPage") {
     handleTaskRequest("company", message, sendResponse);
     return true;
