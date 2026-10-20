@@ -1,8 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lead generator",
-  "version": "3.4.0",
-  "environment": "",
+  "version": "3.4.1",
   "browser_specific_settings": {
     "gecko": {
       "id": "lead-generator@future-processing.com",
@@ -15,7 +14,7 @@
     "https://www.linkedin.com/sales/lead/*",
     "https://www.linkedin.com/company/*",
     "https://www.linkedin.com/in/*",
-    "https://lead-generator-backend-worker.vitalij-musko.workers.dev"
+    "https://lead-generator-backend-worker.vitalij-musko.workers.dev/*"
   ],
   "icons": {
     "16": "assets/icons/logo-16.png",

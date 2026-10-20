@@ -14,6 +14,7 @@ import { getPanelTab, injectScripts, sendMessageToTab } from "../../services/tab
 const FILE_SETS = {
   salesNavigatorLead: [
     "src/utils/mutation-observer.js",
+    "src/utils/experience-period.js",
     "src/content-scripts/common/constants.js",
     "src/content-scripts/common/name-utils.js",
     "src/content-scripts/sales-navigator-pages/lead/lead.js",
@@ -22,6 +23,7 @@ const FILE_SETS = {
   ],
   linkedinProfile: [
     "src/utils/mutation-observer.js",
+    "src/utils/experience-period.js",
     "src/content-scripts/common/constants.js",
     "src/content-scripts/common/name-utils.js",
     "src/content-scripts/linkedin-pages/lead/lead.js",

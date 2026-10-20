@@ -61,6 +61,7 @@ This extension is a straightforward tool for extracting data about individuals d
 Displays a list of companies associated with the profile as an interactive accordion
 
 - Each row always shows: company **name** and **job position**
+  - The company name is plain text; to open the company's LinkedIn page, select the row and use the LinkedIn button next to the **Company Name** field
 - Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
 - Expanded company details include:
@@ -151,7 +152,7 @@ Available option:
 - **Link** - LinkedIn profile URL
 - **Email** - working email address
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
-- **Country** - company location
+- **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)
 - **Industry** - company indutry
 - **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
 
@@ -188,7 +189,7 @@ All fields are editable before copying.
 
 Includes:
 
-- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise
+- Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise. A found email is reused only for the same website, name and surname; changing the name or surname runs the search again. A matching found email is filled in automatically when a company is selected, including the first one after Extract
 - Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
 ## Network & Data Fetching Strategy
@@ -227,6 +228,8 @@ Pure logic (no DOM, no Chrome API, no `fetch`) belongs in `src/utils/` and shoul
 
 Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested by mocking the storage wrapper with `jest.unstable_mockModule` before dynamically importing the module under test.
 
+Pure helpers shared by content scripts are classic scripts in `src/utils/` (content scripts can't import ES modules); they're tested by evaluating the file against a stub `window` with Node's `vm` module.
+
 ## Changelog
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
@@ -239,6 +242,8 @@ For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md) file.
 | Microsoft Edge | Full | any current |
 | Firefox | Full | 128.0 |
 | Safari | Not supported | — |
+
+The extension works with LinkedIn and Sales Navigator in any of their interface languages.
 
 Microsoft Edge is built on Chromium and runs the extension exactly as Chrome does. It isn't published on the Microsoft Edge Add-ons store; Edge users install it from the Chrome Web Store (see below).
 
@@ -356,7 +361,7 @@ The "Lead generator" extension requires certain permissions to function effectiv
 ### Host Permissions
 
 - `https://www.linkedin.com/*` – extract data
-- `https://lead-generator-backend-worker.vitalij-musko.workers.dev` – backend services
+- `https://lead-generator-backend-worker.vitalij-musko.workers.dev/*` – backend services
 
 ## Requirements
 

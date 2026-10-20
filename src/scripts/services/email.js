@@ -3,6 +3,8 @@ import {
   getGenerateEmailsBtnElement,
   getValidateEmailsBtnElement,
   getCompanyDomainElement,
+  getFirstNameElement,
+  getSecondNameElement,
 } from "../helper/dom-helper.js";
 import {
   useTextChangeEffect,
@@ -15,22 +17,24 @@ import {
   emailDataByDefault,
 } from "./email-validator.js";
 import { generateEmails } from "./email-generator.js";
+import { buildEmailCacheKey } from "../../utils/email-utils.js";
 import { NO_WEBSITE_FOUND_TEXT } from "../../constants/config.js";
 
 const emailCache = new Map();
 let loadingInterval = null;
 
 export function fillEmailFromCache(pastedEmailWhileFindingWebsite) {
-  const domain = getWebsiteDomain();
-  const emailData = emailCache.get(domain) ?? { ...emailDataByDefault };
+  const cacheKey = getEmailCacheKey(getWebsiteDomain());
+  const emailData = emailCache.get(cacheKey) ?? { ...emailDataByDefault };
   showEmail(emailData.email || pastedEmailWhileFindingWebsite);
 }
 
 getGenerateEmailsBtnElement().addEventListener("click", async () => {
   const domain = getWebsiteDomain();
+  const cacheKey = getEmailCacheKey(domain);
 
-  if (emailCache.has(domain)) {
-    const cached = emailCache.get(domain);
+  if (emailCache.has(cacheKey)) {
+    const cached = emailCache.get(cacheKey);
     showEmail(cached.email);
     showMessage(cached.message, cached.ok);
     return;
@@ -39,7 +43,7 @@ getGenerateEmailsBtnElement().addEventListener("click", async () => {
   const emailData = { ...emailDataByDefault };
 
   if (domain === "") {
-    emailCache.set(domain, emailData);
+    emailCache.set(cacheKey, emailData);
     showEmail(emailData.email);
     showMessage(emailData.message, emailData.ok);
     return;
@@ -62,7 +66,7 @@ getGenerateEmailsBtnElement().addEventListener("click", async () => {
   }
 
   if (!(emailData.unknown || emailData.error)) {
-    emailCache.set(domain, emailData);
+    emailCache.set(cacheKey, emailData);
   }
 
   stopLoadingEffect();
@@ -148,6 +152,14 @@ function showEmail(email) {
 
 function showMessage(message, isEmailValid) {
   showAlert(message, isEmailValid ? "success" : "error");
+}
+
+function getEmailCacheKey(domain) {
+  return buildEmailCacheKey(
+    domain,
+    getFirstNameElement().value,
+    getSecondNameElement().value,
+  );
 }
 
 function getWebsiteDomain() {

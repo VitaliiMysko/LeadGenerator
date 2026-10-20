@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.4.1] - 2026-10-05
+
+### Changed
+
+- **The Country field now only accepts a country from the list**: focusing it opens a searchable dropdown of countries, the same list used by the Filters tab's location filter. Typing narrows the list, and clicking an option or pressing Enter picks it. A value that isn't an existing country is reverted when leaving the field, and Escape cancels the edit. Exact names in any letter case are accepted and corrected to the listed spelling, and the field can still be cleared
+- **The development-build marker is now detected automatically**: the greyscale on-page icon and "(dev)" after the version in the panel now appear whenever the extension is loaded unpacked (Chrome, Edge) or as a temporary add-on (Firefox), instead of depending on a manual setting in the manifest that had to be cleared before each release. This also removes the "unexpected property" warning Firefox showed when loading the extension, and the marker now works in Firefox too
+
+### Removed
+
+- **The company-name link in the Actual Experience tab**: company names in the accordion headers no longer open the company's LinkedIn page, since the LinkedIn button next to the Company name field already does this. Clicking a company row still selects and expands it
+
+### Fixed
+
+- **A generated email is no longer reused for a different person at the same company**: an email found earlier was filled in for any lead whose company had the same website. It is now reused only when the name and surname also match; after the name or surname changes, the email is not filled in automatically and **Generate** runs the search again. A matching email found earlier is now also filled in for the first company selected after **Extract**, not only when switching companies
+- **No more host permission warning when loading the extension in Firefox**: the backend's host access entry was written without a path, so Firefox ignored it and reported an error on load
+- **Company details are now found in every LinkedIn interface language**: website, industry, company size and headquarters were previously only read when LinkedIn was in English or Ukrainian, and came back empty in any other language (e.g. Polish). The member count was only read in English and is now read in every language too
+- **Company size is now read correctly in every LinkedIn language**: sizes written with dots or spaces as thousands separators (e.g. `5.001–10.000`, `5 001 – 10 000`) were shown truncated as `001-10`, and sizes written with other range separators, local digits, or as "More than 10,001" showed as `unknown`
+- **Only current positions are listed when LinkedIn isn't in English**: on public profile pages, past positions were also listed, because the date range was recognized only in English
+- **Sales Navigator lead pages now work in every Sales Navigator language**: with an interface language other than English, Extract found no current positions and showed no results, and the lead's LinkedIn profile link was not retrieved
+
 ## [3.4.0] - 2026-09-29
 
 ### Changed

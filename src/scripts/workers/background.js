@@ -7,6 +7,7 @@ const TASK_KINDS = {
   company: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
+      "src/content-scripts/common/company-labels.js",
       "src/content-scripts/linkedin-pages/company.js",
     ],
     responseAction: "linkedinCompanyPageContent",
@@ -14,6 +15,7 @@ const TASK_KINDS = {
   profileExperience: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
+      "src/utils/experience-period.js",
       "src/content-scripts/common/constants.js",
       "src/content-scripts/linkedin-pages/lead/lead-experience.js",
       "src/content-scripts/linkedin-pages/lead/experience-details-fetch.js",
@@ -107,6 +109,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  // chrome.management isn't exposed to content scripts, nor to the panel's
+  // framed page in Firefox. getSelf() needs no "management" permission.
+  if (message.action === "getInstallType") {
+    chrome.management.getSelf().then(
+      (info) => sendResponse(info.installType),
+      () => sendResponse(null)
+    );
+    return true;
+  }
+
   if (message.action === "fetchLinkedinCompanyPage") {
     handleTaskRequest("company", message, sendResponse);
     return true;
@@ -168,9 +180,7 @@ async function handleTabBridgeRequest(message, sender) {
 // HTTP out of this file in Chrome doesn't apply. Chrome never sends this.
 // -----------------------------
 // Same value as WORKER_URL in src/constants/config.js (this classic script
-// can't import it; a test keeps both in sync with manifest.json). Not read
-// from getManifest(): Firefox drops the path-less Worker entry from
-// host_permissions there.
+// can't import it; a test keeps both in sync with manifest.json).
 const WORKER_ORIGIN = "https://lead-generator-backend-worker.vitalij-musko.workers.dev";
 
 async function handleWorkerFetch({ url, method, body }) {

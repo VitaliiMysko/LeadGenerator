@@ -41,15 +41,6 @@ export function validatePackageContents(entries) {
   return errors;
 }
 
-function assertProductionManifest(manifest) {
-  if (manifest.environment === "local") {
-    throw new Error(
-      'manifest.json has "environment": "local" — this must be cleared before releasing to the Chrome Web Store (it visibly grey-tints the on-page icon and appends "(local)" to the version in the panel).'
-    );
-  }
-  assertManifestDescriptionWithinLimit(manifest.description);
-}
-
 function setDeterministicMtimes(path) {
   utimesSync(path, DETERMINISTIC_MTIME, DETERMINISTIC_MTIME);
   if (statSync(path).isDirectory()) {
@@ -84,7 +75,7 @@ function createZip(stagingDir, zipPath) {
 export function buildExtensionPackage({ root = ROOT } = {}) {
   const manifestJson = readFileSync(join(root, "manifest.json"), "utf8");
   const manifest = parseManifest(manifestJson);
-  assertProductionManifest(manifest);
+  assertManifestDescriptionWithinLimit(manifest.description);
 
   rmSync(RELEASE_DIR, { recursive: true, force: true });
   mkdirSync(STAGING_DIR, { recursive: true });

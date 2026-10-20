@@ -1,6 +1,7 @@
 import { getWorkerUrl } from "../../constants/config.js";
 import { extractCompanyId } from "../../utils/company-id.js";
 import { fetchWorkerJson } from "./worker-client.js";
+import { formatCompanySize } from "../../utils/company-size.js";
 import {
   getCachedCompany,
   setCachedCompany,
@@ -138,19 +139,4 @@ export function getHostName(url) {
   }
 }
 
-export function formatCompanySize(size) {
-  if (!size) return "unknown";
-  if (/myself only/i.test(size)) return "0-1";
-
-  const rangeMatch = size.match(/(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)/);
-  if (rangeMatch) {
-    return `${rangeMatch[1].replace(/,/g, "")}-${rangeMatch[2].replace(/,/g, "")}`;
-  }
-
-  const plusMatch = size.match(/(\d[\d,]*)\s*\+/);
-  if (plusMatch) {
-    return `${plusMatch[1].replace(/,/g, "")}+`;
-  }
-
-  return "unknown";
-}
+export { formatCompanySize };

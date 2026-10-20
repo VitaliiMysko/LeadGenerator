@@ -32,6 +32,10 @@ Tests live in `tests/` and import from `src/utils/` (pure utility modules with n
 
 Modules whose only browser dependency is `chrome.storage` (no DOM, no `chrome.tabs`/`scripting`/`runtime`) can also be tested: mock the `chrome-storage.js` wrapper with `jest.unstable_mockModule` before dynamically importing the module under test (see `tests/filter-store.test.js` as the reference pattern).
 
+A pure function needed by content scripts can't be an ES module (they're injected as classic scripts): put it in `src/utils/` as a classic script that attaches to `window.leadGenerator`, add it to the injected file lists, and test it by evaluating the file with Node's `vm` against a stub `window` (see `tests/experience-period.test.js`).
+
+Never match LinkedIn UI text in a single language (e.g. "Present", English `aria-label`s). Prefer a language-independent signal (attribute, URL, value shape); when label text is unavoidable, use the per-language dictionary in `src/content-scripts/common/company-labels.js`.
+
 **What not to test:** content scripts, DOM manipulation, and `fetch`-based services — these require a real browser environment and are verified manually.
 
 ### CI/CD
