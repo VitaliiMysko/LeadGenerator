@@ -134,9 +134,14 @@ if (!window.leadGenerator.experienceDataInit) {
       if (element) {
         const periodElement = element.querySelector("span");
 
+        // Decided by the period's shape, not the localized "Present" word
+        // (see experience-period.js).
         if (periodElement) {
           const period = periodElement.textContent.trim();
-          return period.includes("Present") || period === "";
+          return (
+            period === "" ||
+            window.leadGenerator.parseExperiencePeriod(period)?.isCurrent === true
+          );
         }
       }
     }

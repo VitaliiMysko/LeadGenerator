@@ -98,7 +98,7 @@ if (!window.leadGenerator.personalDataInit) {
 
     function getActionsMenuElement() {
       return document.querySelector(
-        'button[data-x--lead-actions-bar-overflow-menu][aria-label="Open actions overflow menu"]'
+        "button[data-x--lead-actions-bar-overflow-menu]"
       );
     }
 

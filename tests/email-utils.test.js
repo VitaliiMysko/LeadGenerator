@@ -1,4 +1,8 @@
-import { prepareEmailName, collectEmails } from "../src/utils/email-utils.js";
+import {
+  prepareEmailName,
+  collectEmails,
+  buildEmailCacheKey,
+} from "../src/utils/email-utils.js";
 
 describe("prepareEmailName", () => {
   test("standard two-part name", () => {
@@ -99,5 +103,55 @@ describe("collectEmails", () => {
     const emails = [];
     collectEmails(emails, "example.com", "Anna-Marie Weber");
     expect(emails).toContain("anna-marie.weber@example.com");
+  });
+});
+
+describe("buildEmailCacheKey", () => {
+  test("same domain and name give the same key", () => {
+    expect(buildEmailCacheKey("example.com", "John", "Smith")).toBe(
+      buildEmailCacheKey("example.com", "John", "Smith"),
+    );
+  });
+
+  test("ignores letter case and surrounding whitespace", () => {
+    expect(buildEmailCacheKey(" Example.com ", " JOHN", "smith ")).toBe(
+      buildEmailCacheKey("example.com", "John", "Smith"),
+    );
+  });
+
+  test("a different first name gives a different key", () => {
+    expect(buildEmailCacheKey("example.com", "Jane", "Smith")).not.toBe(
+      buildEmailCacheKey("example.com", "John", "Smith"),
+    );
+  });
+
+  test("a different surname gives a different key", () => {
+    expect(buildEmailCacheKey("example.com", "John", "Doe")).not.toBe(
+      buildEmailCacheKey("example.com", "John", "Smith"),
+    );
+  });
+
+  test("a different domain gives a different key", () => {
+    expect(buildEmailCacheKey("other.com", "John", "Smith")).not.toBe(
+      buildEmailCacheKey("example.com", "John", "Smith"),
+    );
+  });
+
+  test("name parts cannot run into each other", () => {
+    expect(buildEmailCacheKey("example.com", "Ann", "aSmith")).not.toBe(
+      buildEmailCacheKey("example.com", "Anna", "Smith"),
+    );
+  });
+
+  test("keeps non-ASCII letters", () => {
+    expect(buildEmailCacheKey("example.com", "Łukasz", "Nowak")).not.toBe(
+      buildEmailCacheKey("example.com", "Lukasz", "Nowak"),
+    );
+  });
+
+  test("treats missing values as empty", () => {
+    expect(buildEmailCacheKey("", undefined, null)).toBe(
+      buildEmailCacheKey("", "", ""),
+    );
   });
 });

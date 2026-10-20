@@ -116,10 +116,13 @@ if (!window.leadGenerator.floatingPanelInit) {
     icon.alt = "Lead generator";
     icon.draggable = false;
     Object.assign(icon.style, { width: "32px", height: "32px", pointerEvents: "none" });
-    // Greyscale marks a local development build.
-    if (chrome.runtime.getManifest().environment === "local") {
-      icon.style.filter = "grayscale(100%)";
-    }
+    // Greyscale marks a development build (loaded unpacked / as a temporary add-on).
+    chrome.runtime
+      .sendMessage({ action: "getInstallType" })
+      .then((installType) => {
+        if (installType === "development") icon.style.filter = "grayscale(100%)";
+      })
+      .catch(() => {});
     launcher.appendChild(icon);
 
     let dragStart = null;

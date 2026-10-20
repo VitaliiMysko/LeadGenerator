@@ -6,7 +6,8 @@ const manifest = JSON.parse(readRepoFile("manifest.json"));
 
 describe("WORKER_URL", () => {
   test("is one of the manifest's host_permissions", () => {
-    expect(manifest.host_permissions).toContain(WORKER_URL);
+    // Firefox rejects a match pattern without a path, so the entry needs "/*".
+    expect(manifest.host_permissions).toContain(`${WORKER_URL}/*`);
   });
 
   test("matches background.js's WORKER_ORIGIN", () => {

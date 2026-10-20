@@ -116,17 +116,7 @@ function getCompanyHeaderElement(company) {
 function createCompanyNameElement(company) {
   const nameEl = document.createElement("div");
   nameEl.classList.add("company-name");
-
-  if (company.companyLink !== "") {
-    const link = document.createElement("a");
-    link.href = company.companyLink;
-    link.target = "_blank";
-    link.rel = "noopener";
-    link.textContent = company.companyName;
-    nameEl.appendChild(link);
-  } else {
-    nameEl.textContent = company.companyName;
-  }
+  nameEl.textContent = company.companyName;
   return nameEl;
 }
 

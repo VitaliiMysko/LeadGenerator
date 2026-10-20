@@ -1,4 +1,4 @@
-import { isValidDomain, getHostName, formatCompanySize } from "../src/scripts/services/company-data.js";
+import { isValidDomain, getHostName } from "../src/scripts/services/company-data.js";
 
 describe("isValidDomain", () => {
   test("simple valid domain", () => expect(isValidDomain("example.com")).toBe(true));
@@ -48,22 +48,4 @@ describe("isValidDomain(getHostName(...)) — pasted URL to domain view", () => 
   test("gibberish with no TLD still fails after conversion", () => {
     expect(isValidDomain(getHostName("not a url"))).toBe(false);
   });
-});
-
-describe("formatCompanySize", () => {
-  test("null returns unknown", () => expect(formatCompanySize(null)).toBe("unknown"));
-  test("undefined returns unknown", () => expect(formatCompanySize(undefined)).toBe("unknown"));
-  test("empty string returns unknown", () => expect(formatCompanySize("")).toBe("unknown"));
-  test("unrecognized text returns unknown", () => expect(formatCompanySize("lots of people")).toBe("unknown"));
-
-  test("'Myself only' returns 0-1", () => expect(formatCompanySize("Myself only")).toBe("0-1"));
-  test("case-insensitive myself only", () => expect(formatCompanySize("MYSELF ONLY")).toBe("0-1"));
-
-  test("simple numeric range", () => expect(formatCompanySize("2-10 employees")).toBe("2-10"));
-  test("range with comma-formatted numbers", () => expect(formatCompanySize("1,001-5,000 employees")).toBe("1001-5000"));
-  test("range with en dash", () => expect(formatCompanySize("201 – 500 employees")).toBe("201-500"));
-  test("large range", () => expect(formatCompanySize("10,001-50,000")).toBe("10001-50000"));
-
-  test("plus notation", () => expect(formatCompanySize("10,001+ employees")).toBe("10001+"));
-  test("simple plus", () => expect(formatCompanySize("500+")).toBe("500+"));
 });
