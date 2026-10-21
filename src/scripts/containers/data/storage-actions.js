@@ -11,7 +11,7 @@ import {
   getCompanyCountryElement,
   getCompanyIndustryElement,
   getCompanyIdElement,
-  getCompanyHasOpenJobsElement,
+  getCompanyOpenJobTitlesElement,
   getDataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
@@ -19,6 +19,7 @@ import { showConfirm } from "../../output/confirm.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
+import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
 import { LEADS_EXPORT_FORMATS, DEFAULT_LEADS_EXPORT_FORMAT } from "../../../constants/config.js";
 import {
   getMaxSavedLeads,
@@ -140,7 +141,6 @@ export function updateSaveBtnState() {
 }
 
 async function collectCurrentData() {
-  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   return {
     firstName: getFirstNameElement().value,
     surname: getSecondNameElement().value,
@@ -151,8 +151,14 @@ async function collectCurrentData() {
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
-    hasOpenJobs: storeHasOpenJobs ? getCompanyHasOpenJobsElement().value : "",
+    hasOpenJobs: await getCurrentOpenJobsValue(),
   };
+}
+
+async function getCurrentOpenJobsValue() {
+  if (!(await syncGet("storeHasOpenJobsEnabled"))) return "";
+  const keywords = await syncGet("openJobsKeywords", []);
+  return getOpenJobsValue(parseOpenJobTitles(getCompanyOpenJobTitlesElement().value), keywords);
 }
 
 function getFieldOrder() {

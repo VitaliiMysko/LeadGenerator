@@ -114,7 +114,7 @@
           </div>
         </div>
         <input type="hidden" id="company-id" value="" />
-        <input type="hidden" id="company-has-open-jobs" value="" />
+        <input type="hidden" id="company-open-job-titles" value="" />
         <div id="alert" class="alert"></div>
         <div id="confirm-dialog" class="confirm-overlay" style="display:none">
           <div class="confirm-box">
@@ -223,6 +223,20 @@
                   type="checkbox"
                   title="Whether the company has open job positions (true / false)"
                 />Store has open jobs
+              </div>
+              <div class="tab-item-block" id="open-jobs-keywords-wrapper" style="display:none">
+                <div
+                  class="multi-select-tags"
+                  id="open-jobs-keywords"
+                  title="Only count open positions whose title contains one of these words (any position if empty)"
+                >
+                  <div class="tags-container"></div>
+                  <input
+                    type="text"
+                    class="multi-input"
+                    placeholder="Job title keyword, Enter to add..."
+                  />
+                </div>
               </div>
               <div class="tab-item-block">
                 <label for="max-saved-leads-settings">Max saved leads (1-999):</label>

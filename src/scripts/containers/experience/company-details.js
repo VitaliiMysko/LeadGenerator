@@ -4,9 +4,9 @@ import {
   getGenerateEmailsBtnElement,
   getCompanyIndustryElement,
   getCompanyCountryElement,
-  getCompanyHasOpenJobsElement,
+  getCompanyOpenJobTitlesElement,
 } from "../../helper/dom-helper.js";
-import { formatOpenJobs } from "../../../utils/open-jobs.js";
+import { serializeOpenJobTitles } from "../../../utils/open-jobs.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { fillEmailFromCache } from "../../services/email.js";
 import { getBasicEmail } from "../../services/email-generator.js";
@@ -46,7 +46,7 @@ export async function refreshCompanyDetails(item) {
   item.setAttribute("data-company-location", item.getAttribute("data-company-location-init"));
   item.setAttribute("data-company-industry", item.getAttribute("data-company-industry-init"));
   item.setAttribute("data-company-size", item.getAttribute("data-company-size-init"));
-  setOpenJobs(item, "");
+  setOpenJobTitles(item, "");
 
   await manageCompanyDetailsBlock(item);
   fillEmailFromCache(getEmailElement().value);
@@ -112,7 +112,7 @@ async function manageCompanyDetailsBlock(item) {
     industry = renderIndustry(industryBlock, item, companyDetails, industry);
     size = renderSize(sizeBlock, item, companyDetails, size);
     renderMembers(membersBlock, companyDetails);
-    setOpenJobs(item, formatOpenJobs(companyDetails.hasOpenJobs));
+    setOpenJobTitles(item, serializeOpenJobTitles(companyDetails.openJobTitles));
 
     websiteBlock.appendChild(createSpanElement(website));
     websiteBlock.appendChild(editDomainElement);
@@ -275,11 +275,12 @@ function renderMembers(membersBlock, companyDetails) {
   membersBlock.appendChild(createSpanElement(value));
 }
 
-// Not shown in the card; carried with the company and saved with the lead.
-function setOpenJobs(item, value) {
-  item.setAttribute("data-company-has-open-jobs", value);
+// Not shown in the card; kept with the company to work out the lead's
+// open-jobs value against the current keywords when it is saved.
+function setOpenJobTitles(item, value) {
+  item.setAttribute("data-company-open-job-titles", value);
   if (item.classList.contains("active")) {
-    getCompanyHasOpenJobsElement().value = value;
+    getCompanyOpenJobTitlesElement().value = value;
   }
 }
 

@@ -8,7 +8,7 @@ import {
   getCompanyCountryElement,
   getCompanyIndustryElement,
   getCompanyIdElement,
-  getCompanyHasOpenJobsElement,
+  getCompanyOpenJobTitlesElement,
   getTabExperienceElement,
 } from "../../helper/dom-helper.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
@@ -33,7 +33,7 @@ function resetExtractedData() {
     getCompanyCountryElement(),
     getCompanyIndustryElement(),
     getCompanyIdElement(),
-    getCompanyHasOpenJobsElement(),
+    getCompanyOpenJobTitlesElement(),
   ].forEach((element) => {
     element.value = "";
   });

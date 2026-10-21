@@ -4,7 +4,7 @@ import {
   getCompanyIndustryElement,
   getCompanyCountryElement,
   getCompanyIdElement,
-  getCompanyHasOpenJobsElement,
+  getCompanyOpenJobTitlesElement,
   getEmailElement,
   getTabExperienceElement,
   getOpenCompanyLinkedinBtnElement,
@@ -81,8 +81,8 @@ function getCompanyBlock(company) {
       "data-company-industry",
     );
     getCompanyIdElement().value = companyBlock.getAttribute("data-company-id");
-    getCompanyHasOpenJobsElement().value =
-      companyBlock.getAttribute("data-company-has-open-jobs") || "";
+    getCompanyOpenJobTitlesElement().value =
+      companyBlock.getAttribute("data-company-open-job-titles") || "";
     setLinkedInBtn(companyBlock.getAttribute("data-company-link"));
     updateSaveBtnState();
   });

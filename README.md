@@ -134,6 +134,8 @@ Available option:
   - State persisted via Chrome `storage`
 - **Store has open jobs Toggle**
   - When enabled, checks whether the lead's company currently has any open job positions on its LinkedIn Jobs tab (`true` / `false`)
+  - **Job title keywords** (shown under the toggle while it is on): tags typed and added with Enter or a comma, removed with × or Backspace. When set, only positions whose title contains one of the keywords (ignoring letter case) count; when empty, any open position counts. Only the positions listed on the company's Jobs tab are checked
+  - The result is worked out against the current keywords when a lead is saved, so changing them needs no new check of LinkedIn
   - Checked once per company and remembered with its other cached details; **Refresh company data** (↻) checks again
   - The **Get** button appends the result as an extra, last column (after the company id, if that is stored too)
   - State persisted via Chrome `storage`
@@ -160,7 +162,7 @@ Available option:
 - **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)
 - **Industry** - company indutry
 - **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
-- **Open jobs** - not shown as a visible field; `true` if the company has open job positions on its LinkedIn Jobs tab, `false` if not, empty string when **Store has open jobs** is disabled (or the check could not be completed). Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `hasOpenJobs` JSON field) only when **Store has open jobs** is enabled in Settings
+- **Open jobs** - not shown as a visible field; `true` if the company has open job positions on its LinkedIn Jobs tab (matching one of the **Job title keywords**, when any are set), `false` if not, empty string when **Store has open jobs** is disabled (or the check could not be completed). Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `hasOpenJobs` JSON field) only when **Store has open jobs** is enabled in Settings
 
 All fields are editable before copying.
 
@@ -313,7 +315,7 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
-   - Enable / disable checking and storing whether the company has open jobs (**Leads data** block)
+   - Enable / disable checking and storing whether the company has open jobs, optionally only ones matching job title keywords (**Leads data** block)
    - Set the maximum number of leads that can be stored locally, 1-999 (**Leads data** block)
    - Choose the Get button's clipboard export format: tab-separated or JSON (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
