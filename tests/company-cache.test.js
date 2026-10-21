@@ -3,6 +3,7 @@ import {
   findCompanyCacheEntry,
   removeCompanyCacheEntry,
   updateCompanyCacheEntryWebsite,
+  updateCompanyCacheEntryOpenJobs,
 } from "../src/utils/company-cache.js";
 
 describe("upsertCompanyCacheEntry", () => {
@@ -133,5 +134,29 @@ describe("updateCompanyCacheEntryWebsite", () => {
   test("returns the list unchanged when neither companyId nor companyName is provided", () => {
     const result = updateCompanyCacheEntryWebsite(entries, "", "", "updated.com");
     expect(result).toBe(entries);
+  });
+});
+
+describe("updateCompanyCacheEntryOpenJobs", () => {
+  const entries = [
+    { companyId: "111", companyName: "Acme", data: { website: "a.com", hasOpenJobs: "" } },
+    { companyId: "222", companyName: "Globex", data: { website: "b.com" } },
+  ];
+
+  test("sets the open-jobs flag for the matching entry, preserving other data fields and order", () => {
+    const result = updateCompanyCacheEntryOpenJobs(entries, "222", "", false);
+    expect(result).toEqual([
+      { companyId: "111", companyName: "Acme", data: { website: "a.com", hasOpenJobs: "" } },
+      { companyId: "222", companyName: "Globex", data: { website: "b.com", hasOpenJobs: false } },
+    ]);
+  });
+
+  test("falls back to matching by company name when companyId is empty", () => {
+    const result = updateCompanyCacheEntryOpenJobs(entries, "", "acme", true);
+    expect(result[0].data.hasOpenJobs).toBe(true);
+  });
+
+  test("returns the list unchanged when no entry matches", () => {
+    expect(updateCompanyCacheEntryOpenJobs(entries, "999", "", true)).toBe(entries);
   });
 });

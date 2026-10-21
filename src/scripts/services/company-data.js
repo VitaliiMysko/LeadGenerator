@@ -2,11 +2,14 @@ import { getWorkerUrl } from "../../constants/config.js";
 import { extractCompanyId } from "../../utils/company-id.js";
 import { fetchWorkerJson } from "./worker-client.js";
 import { formatCompanySize } from "../../utils/company-size.js";
+import { isOpenJobsKnown } from "../../utils/open-jobs.js";
+import { syncGet } from "../utils/chrome-storage.js";
 import {
   getCachedCompany,
   setCachedCompany,
   removeCachedCompany,
   updateCachedCompanyWebsite,
+  updateCachedCompanyOpenJobs,
 } from "../store/company-cache-store.js";
 
 const companyDetailsByDefault = {
@@ -15,6 +18,7 @@ const companyDetailsByDefault = {
   industry: "",
   size: "",
   members: "",
+  hasOpenJobs: "",
   status: 0,
   ok: false,
   completeRequest: true,
@@ -56,6 +60,57 @@ export async function updateCompanyWebsite(companyLink, companyName, website) {
 }
 
 export async function getCompanyData(companyLink, location, industry, size, companyName) {
+  const companyDetails = await getCompanyDetails(companyLink, location, industry, size, companyName);
+
+  if (
+    !companyLink ||
+    !companyDetails.completeRequest ||
+    isOpenJobsKnown(companyDetails.hasOpenJobs) ||
+    !(await syncGet("storeHasOpenJobsEnabled"))
+  ) {
+    return companyDetails;
+  }
+
+  return addOpenJobs(companyDetails, companyLink, companyName);
+}
+
+// Checked once per company and cached with its other details; the refresh
+// button clears the cache, so it's checked again then.
+async function addOpenJobs(companyDetails, companyLink, companyName) {
+  const requestId = ++currentRequestId;
+
+  const response = await chrome.runtime.sendMessage({
+    action: "fetchLinkedinCompanyJobs",
+    sessionId: panelSessionId,
+    url: `${toPublicCompanyUrl(companyLink)}/jobs`,
+  }).catch(() => null);
+
+  if (!isOpenJobsKnown(response?.hasOpenJobs)) {
+    // Superseded by a request for another company: report it as incomplete
+    // so the check runs again when this company is selected next time.
+    if (!response && requestId !== currentRequestId) {
+      return { ...companyDetails, completeRequest: false };
+    }
+    return companyDetails;
+  }
+
+  const updatedDetails = { ...companyDetails, hasOpenJobs: response.hasOpenJobs };
+  companyDetailsCache.set(companyLink, updatedDetails);
+
+  try {
+    await updateCachedCompanyOpenJobs(extractCompanyId(companyLink), companyName, response.hasOpenJobs);
+  } catch (error) {
+    console.error("Error updating cached company open jobs:", error);
+  }
+
+  return updatedDetails;
+}
+
+function toPublicCompanyUrl(companyLink) {
+  return companyLink.replace("/sales/", "/");
+}
+
+async function getCompanyDetails(companyLink, location, industry, size, companyName) {
   const cacheKey = companyLink || companyName;
 
   if (cacheKey && companyDetailsCache.has(cacheKey)) {
@@ -79,7 +134,7 @@ export async function getCompanyData(companyLink, location, industry, size, comp
 
   if (companyLink) {
     const requestId = ++currentRequestId;
-    const publicCompanyUrl = companyLink.replace("/sales/", "/");
+    const publicCompanyUrl = toPublicCompanyUrl(companyLink);
 
     try {
       const response = await chrome.runtime.sendMessage({

@@ -13,6 +13,7 @@ const {
   setCachedCompany,
   removeCachedCompany,
   updateCachedCompanyWebsite,
+  updateCachedCompanyOpenJobs,
 } = await import("../src/scripts/store/company-cache-store.js");
 
 beforeEach(() => {
@@ -131,6 +132,24 @@ describe("updateCachedCompanyWebsite", () => {
     await updateCachedCompanyWebsite("", "Acme", "updated.com");
     expect(mockLocalSet).toHaveBeenCalledWith("cachedCompanies", [
       { companyId: "111", companyName: "Acme", data: { website: "updated.com" } },
+    ]);
+  });
+});
+
+describe("updateCachedCompanyOpenJobs", () => {
+  test("does nothing when both companyId and companyName are empty", async () => {
+    await updateCachedCompanyOpenJobs("", "", true);
+    expect(mockLocalGet).not.toHaveBeenCalled();
+    expect(mockLocalSet).not.toHaveBeenCalled();
+  });
+
+  test("stores the open-jobs flag on the entry matching the company id", async () => {
+    mockLocalGet.mockResolvedValue([
+      { companyId: "111", companyName: "Acme", data: { website: "a.com" } },
+    ]);
+    await updateCachedCompanyOpenJobs("111", "Acme", true);
+    expect(mockLocalSet).toHaveBeenCalledWith("cachedCompanies", [
+      { companyId: "111", companyName: "Acme", data: { website: "a.com", hasOpenJobs: true } },
     ]);
   });
 });
