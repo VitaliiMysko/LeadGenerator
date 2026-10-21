@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Store has open jobs setting**: a new **Leads data** toggle that records whether a lead's company currently has any open job positions on its LinkedIn Jobs tab. When enabled, the check runs once per company alongside its other details and is remembered with them, so selecting the same company again reuses the result; **Refresh company data** (↻) checks again. The result is saved with the lead and added by **Get** as an extra last column (`true` / `false`, or a `hasOpenJobs` field in JSON). Leads saved while the setting is off have an empty value
+- **Store has open jobs setting**: a new **Leads data** toggle that records whether a lead's company currently has any open job positions on its LinkedIn Jobs tab. An optional list of job title keywords, entered as tags under the toggle, narrows this to positions whose title contains one of the words (ignoring letter case); with no keywords, any open position counts. Changing the keywords applies to leads saved afterwards without checking LinkedIn again. When enabled, the check runs once per company alongside its other details and is remembered with them, so selecting the same company again reuses the result; **Refresh company data** (↻) checks again. The result is saved with the lead and added by **Get** as an extra last column (`true` / `false`, or a `hasOpenJobs` field in JSON). Leads saved while the setting is off have an empty value
 
 ## [3.4.1] - 2026-10-05
 

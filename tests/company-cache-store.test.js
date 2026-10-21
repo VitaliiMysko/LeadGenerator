@@ -138,18 +138,18 @@ describe("updateCachedCompanyWebsite", () => {
 
 describe("updateCachedCompanyOpenJobs", () => {
   test("does nothing when both companyId and companyName are empty", async () => {
-    await updateCachedCompanyOpenJobs("", "", true);
+    await updateCachedCompanyOpenJobs("", "", ["Developer"]);
     expect(mockLocalGet).not.toHaveBeenCalled();
     expect(mockLocalSet).not.toHaveBeenCalled();
   });
 
-  test("stores the open-jobs flag on the entry matching the company id", async () => {
+  test("stores the open job titles on the entry matching the company id", async () => {
     mockLocalGet.mockResolvedValue([
       { companyId: "111", companyName: "Acme", data: { website: "a.com" } },
     ]);
-    await updateCachedCompanyOpenJobs("111", "Acme", true);
+    await updateCachedCompanyOpenJobs("111", "Acme", ["Developer"]);
     expect(mockLocalSet).toHaveBeenCalledWith("cachedCompanies", [
-      { companyId: "111", companyName: "Acme", data: { website: "a.com", hasOpenJobs: true } },
+      { companyId: "111", companyName: "Acme", data: { website: "a.com", openJobTitles: ["Developer"] } },
     ]);
   });
 });

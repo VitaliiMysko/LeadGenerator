@@ -29,8 +29,8 @@ export function updateCompanyCacheEntryWebsite(entries, companyId, companyName, 
   return updateCompanyCacheEntryData(entries, companyId, companyName, { website });
 }
 
-export function updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, hasOpenJobs) {
-  return updateCompanyCacheEntryData(entries, companyId, companyName, { hasOpenJobs });
+export function updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, openJobTitles) {
+  return updateCompanyCacheEntryData(entries, companyId, companyName, { openJobTitles });
 }
 
 function updateCompanyCacheEntryData(entries, companyId, companyName, changes) {

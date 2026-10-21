@@ -37,9 +37,9 @@ export async function updateCachedCompanyWebsite(companyId, companyName, website
   await localSet(STORAGE_KEY, updated);
 }
 
-export async function updateCachedCompanyOpenJobs(companyId, companyName, hasOpenJobs) {
+export async function updateCachedCompanyOpenJobs(companyId, companyName, openJobTitles) {
   if (!companyId && !companyName) return;
   const entries = await localGet(STORAGE_KEY, []);
-  const updated = updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, hasOpenJobs);
+  const updated = updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, openJobTitles);
   await localSet(STORAGE_KEY, updated);
 }

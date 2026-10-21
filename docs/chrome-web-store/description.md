@@ -5,7 +5,7 @@ On a supported page, click the Lead Generator icon shown on the page to open the
 **What it does**
 
 - Extracts a person's name, surname, job position, LinkedIn link, and their company's name, country, and industry with a single click.
-- Reads detailed company information — website, industry, location, size, and member count — directly from the company's LinkedIn page, and can optionally note whether the company currently has open job positions.
+- Reads detailed company information — website, industry, location, size, and member count — directly from the company's LinkedIn page, and can optionally note whether the company currently has open job positions, either any or only ones matching job title keywords you choose.
 - Generates and validates a likely work email address based on the company's website domain, using a secure backend service — no credentials or accounts required.
 - Optionally translates job titles into English.
 - Optionally transliterates names written in non-Latin scripts (e.g. Cyrillic) into Latin characters.

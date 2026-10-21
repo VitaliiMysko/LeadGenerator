@@ -18,7 +18,7 @@ const companyDetailsByDefault = {
   industry: "",
   size: "",
   members: "",
-  hasOpenJobs: "",
+  openJobTitles: null,
   status: 0,
   ok: false,
   completeRequest: true,
@@ -65,7 +65,7 @@ export async function getCompanyData(companyLink, location, industry, size, comp
   if (
     !companyLink ||
     !companyDetails.completeRequest ||
-    isOpenJobsKnown(companyDetails.hasOpenJobs) ||
+    isOpenJobsKnown(companyDetails.openJobTitles) ||
     !(await syncGet("storeHasOpenJobsEnabled"))
   ) {
     return companyDetails;
@@ -85,7 +85,7 @@ async function addOpenJobs(companyDetails, companyLink, companyName) {
     url: `${toPublicCompanyUrl(companyLink)}/jobs`,
   }).catch(() => null);
 
-  if (!isOpenJobsKnown(response?.hasOpenJobs)) {
+  if (!isOpenJobsKnown(response?.openJobTitles)) {
     // Superseded by a request for another company: report it as incomplete
     // so the check runs again when this company is selected next time.
     if (!response && requestId !== currentRequestId) {
@@ -94,11 +94,11 @@ async function addOpenJobs(companyDetails, companyLink, companyName) {
     return companyDetails;
   }
 
-  const updatedDetails = { ...companyDetails, hasOpenJobs: response.hasOpenJobs };
+  const updatedDetails = { ...companyDetails, openJobTitles: response.openJobTitles };
   companyDetailsCache.set(companyLink, updatedDetails);
 
   try {
-    await updateCachedCompanyOpenJobs(extractCompanyId(companyLink), companyName, response.hasOpenJobs);
+    await updateCachedCompanyOpenJobs(extractCompanyId(companyLink), companyName, response.openJobTitles);
   } catch (error) {
     console.error("Error updating cached company open jobs:", error);
   }
