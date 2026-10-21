@@ -84,7 +84,7 @@ The Actual Experience tab renders companies as an accordion (one expanded at a t
 1. An in-memory, panel-lifetime cache, keyed by company link (or name when no link is available).
 2. A **persistent cache** of the most recently fetched companies in `chrome.storage.local`, so results also survive across panel toggles. A company with no LinkedIn link falls back to a name-based lookup so previously-fetched details can still be reused. Manual edits to a company's website keep the cached entry in sync. The refresh button clears both cache levels — awaited, to avoid a race where a stale entry is read back before the removal completes — before forcing a live re-fetch.
 
-When the **Store jobs** setting is on, whether the company has open jobs is checked in a second hidden-tab task on the company's Jobs tab, detected by the presence of job-posting links rather than any label text. The flag is stored in the same cache entry, so it is checked once per company (or again after a refresh); an entry cached before the setting was turned on gets the check the next time it's requested.
+When the **Store has open jobs** setting is on, whether the company has open jobs is checked in a second hidden-tab task on the company's Jobs tab, detected by the presence of job-posting links rather than any label text. The flag is stored in the same cache entry, so it is checked once per company (or again after a refresh); an entry cached before the setting was turned on gets the check the next time it's requested.
 
 ```mermaid
 flowchart LR

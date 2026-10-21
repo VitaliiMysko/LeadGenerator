@@ -66,7 +66,7 @@ export async function getCompanyData(companyLink, location, industry, size, comp
     !companyLink ||
     !companyDetails.completeRequest ||
     isOpenJobsKnown(companyDetails.hasOpenJobs) ||
-    !(await syncGet("storeJobsEnabled"))
+    !(await syncGet("storeHasOpenJobsEnabled"))
   ) {
     return companyDetails;
   }

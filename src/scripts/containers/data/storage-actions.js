@@ -140,7 +140,7 @@ export function updateSaveBtnState() {
 }
 
 async function collectCurrentData() {
-  const storeJobs = !!(await syncGet("storeJobsEnabled"));
+  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   return {
     firstName: getFirstNameElement().value,
     surname: getSecondNameElement().value,
@@ -151,7 +151,7 @@ async function collectCurrentData() {
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
-    hasOpenJobs: storeJobs ? getCompanyHasOpenJobsElement().value : "",
+    hasOpenJobs: storeHasOpenJobs ? getCompanyHasOpenJobsElement().value : "",
   };
 }
 
@@ -164,13 +164,13 @@ function getFieldOrder() {
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
   const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
-  const storeJobs = !!(await syncGet("storeJobsEnabled"));
+  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
 
   const text =
     format === LEADS_EXPORT_FORMATS.JSON
-      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeJobs)
-      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeJobs);
+      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs)
+      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs);
 
   try {
     await navigator.clipboard.writeText(text);
