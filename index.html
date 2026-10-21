@@ -114,6 +114,7 @@
           </div>
         </div>
         <input type="hidden" id="company-id" value="" />
+        <input type="hidden" id="company-has-open-jobs" value="" />
         <div id="alert" class="alert"></div>
         <div id="confirm-dialog" class="confirm-overlay" style="display:none">
           <div class="confirm-box">
@@ -215,6 +216,13 @@
                   type="checkbox"
                   title="Include company id as the last column when copying saved leads to the clipboard"
                 />Store company id
+              </div>
+              <div class="tab-item-block">
+                <input
+                  id="store-jobs-settings"
+                  type="checkbox"
+                  title="Check whether the company currently has any open job positions (true / false) and include the result as an extra last column when copying saved leads to the clipboard"
+                />Store jobs
               </div>
               <div class="tab-item-block">
                 <label for="max-saved-leads-settings">Max saved leads (1-999):</label>

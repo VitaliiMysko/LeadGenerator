@@ -26,13 +26,21 @@ export function removeCompanyCacheEntry(entries, companyId) {
 }
 
 export function updateCompanyCacheEntryWebsite(entries, companyId, companyName, website) {
+  return updateCompanyCacheEntryData(entries, companyId, companyName, { website });
+}
+
+export function updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, hasOpenJobs) {
+  return updateCompanyCacheEntryData(entries, companyId, companyName, { hasOpenJobs });
+}
+
+function updateCompanyCacheEntryData(entries, companyId, companyName, changes) {
   if (!companyId && !companyName) return entries;
 
   let matched = false;
   const updated = entries.map((entry) => {
     if (!matched && matchesCompanyCacheEntry(entry, companyId, companyName)) {
       matched = true;
-      return { ...entry, data: { ...entry.data, website } };
+      return { ...entry, data: { ...entry.data, ...changes } };
     }
     return entry;
   });

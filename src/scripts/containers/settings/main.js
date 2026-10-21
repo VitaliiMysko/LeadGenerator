@@ -3,6 +3,7 @@ import { initTransliteration } from "./transliteration.js";
 import { initFieldOrder } from "./field-order.js";
 import { initCountryByDefault } from "./country-by-default.js";
 import { initStoreCompanyId } from "./store-company-id.js";
+import { initStoreJobs } from "./store-jobs.js";
 import { initMaxSavedLeads } from "./max-saved-leads.js";
 import { initExportFormat } from "./export-format.js";
 
@@ -12,6 +13,7 @@ export async function initSettings() {
   await initTransliteration();
   await initCountryByDefault();
   await initStoreCompanyId();
+  await initStoreJobs();
   await initMaxSavedLeads();
   await initExportFormat();
 }
