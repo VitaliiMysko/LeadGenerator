@@ -46,9 +46,15 @@
     return isCompanyPage() && !window.location.pathname.includes("/jobs");
   }
 
-  // Any heading counts: the company name isn't necessarily inside <main>.
+  // An empty Jobs tab ("No jobs right now") still renders the company's page:
+  // its heading, or its tab links (About, Posts, ...) back to /company/ pages.
+  // Neither depends on the interface language, and neither is on a sign-in
+  // page. The company name isn't necessarily inside <main>.
   function isCompanyPageLoaded() {
-    return isCompanyPage() && !!document.querySelector("h1");
+    return (
+      isCompanyPage() &&
+      !!(document.querySelector("h1") || document.querySelector('a[href*="/company/"]'))
+    );
   }
 
   // One title per posting: a posting's card can hold several links to it.
