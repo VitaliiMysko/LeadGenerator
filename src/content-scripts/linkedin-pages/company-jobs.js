@@ -17,11 +17,15 @@
   (async () => {
     try {
       await waitForConditionWithTimeout(
-        () => document.querySelector(JOB_LINK_SELECTOR),
+        () => document.querySelector(JOB_LINK_SELECTOR) || isRedirectedFromJobsTab(),
         7000,
       );
-      await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY));
-      data.openJobTitles = getJobTitles();
+      if (isRedirectedFromJobsTab()) {
+        data.openJobTitles = [];
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY));
+        data.openJobTitles = getJobTitles();
+      }
     } catch {
       // No posting appeared: the company has no open jobs, unless the page
       // itself didn't load (e.g. LinkedIn redirected to a sign-in page), in
@@ -32,11 +36,19 @@
     }
   })();
 
+  function isCompanyPage() {
+    return window.location.pathname.startsWith("/company/");
+  }
+
+  // A company with no open jobs has no Jobs tab: LinkedIn sends its /jobs URL
+  // to another page of the company (e.g. About) instead.
+  function isRedirectedFromJobsTab() {
+    return isCompanyPage() && !window.location.pathname.includes("/jobs");
+  }
+
+  // Any heading counts: the company name isn't necessarily inside <main>.
   function isCompanyPageLoaded() {
-    return (
-      window.location.pathname.startsWith("/company/") &&
-      !!document.querySelector("main h1")
-    );
+    return isCompanyPage() && !!document.querySelector("h1");
   }
 
   // One title per posting: a posting's card can hold several links to it.

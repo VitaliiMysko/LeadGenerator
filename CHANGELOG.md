@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - **Filters and company details no longer mix up people in people search**: company details still loading for the previously selected person could be filled into the next person's fields, so changed filters only seemed to apply after a second **Extract**
 - **Company details are no longer looked up twice for the same company**: selecting a company again while its details were still loading started a second lookup and discarded the first one's result
 - **Company details are reused for the next person at the same company in people search**: moving on to another person from the same company before its details (and open jobs) finished loading restarted the whole lookup from scratch, so nothing was remembered and every following person loaded it again. The lookup already in progress is now awaited and its result reused
+- **Companies without open jobs are no longer checked again for every lead**: when a company had no open jobs, LinkedIn showed another page of the company instead of its Jobs tab, and the result wasn't recognized. It was never remembered, so selecting any person from that company opened a background tab again and kept all its details in "Loading" until the check finished. Such companies are now recorded as having no open jobs, and the check also finishes sooner for them
 
 ## [3.4.1] - 2026-10-05
 
