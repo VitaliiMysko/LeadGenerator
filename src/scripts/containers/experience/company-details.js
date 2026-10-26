@@ -90,9 +90,6 @@ async function manageCompanyDetailsBlock(item) {
     );
     return;
   }
-  // Already being looked up: a second request would supersede the first and
-  // discard its result instead of reusing it.
-  if (websiteBlock.classList.contains("loading")) return;
 
   getGenerateEmailsBtnElement().disabled = true;
   showLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock, location, industry, size });

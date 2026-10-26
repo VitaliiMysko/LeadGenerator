@@ -1,5 +1,5 @@
 import { getWorkerUrl } from "../../constants/config.js";
-import { extractCompanyId, getCompanyCacheKey } from "../../utils/company-id.js";
+import { extractCompanyId } from "../../utils/company-id.js";
 import { fetchWorkerJson } from "./worker-client.js";
 import { formatCompanySize } from "../../utils/company-size.js";
 import { isOpenJobsKnown } from "../../utils/open-jobs.js";
@@ -28,13 +28,9 @@ const panelSessionId = crypto.randomUUID();
 
 let currentRequestId = 0;
 const companyDetailsCache = new Map();
-// Lookups in progress, by company: a request for a company already being
-// looked up (e.g. the next lead in people search works there too) waits for
-// that lookup instead of starting another one, which would cancel it.
-const pendingLookups = new Map();
 
 export async function clearCompanyCache(companyLink) {
-  companyDetailsCache.delete(getCompanyCacheKey(companyLink));
+  companyDetailsCache.delete(companyLink);
 
   const companyId = extractCompanyId(companyLink);
   if (companyId) {
@@ -47,7 +43,7 @@ export async function clearCompanyCache(companyLink) {
 }
 
 export async function updateCompanyWebsite(companyLink, companyName, website) {
-  const cacheKey = getCompanyCacheKey(companyLink, companyName);
+  const cacheKey = companyLink || companyName;
   const companyId = extractCompanyId(companyLink);
 
   if (cacheKey && companyDetailsCache.has(cacheKey)) {
@@ -63,18 +59,7 @@ export async function updateCompanyWebsite(companyLink, companyName, website) {
   }
 }
 
-export function getCompanyData(companyLink, location, industry, size, companyName) {
-  const cacheKey = getCompanyCacheKey(companyLink, companyName);
-  if (cacheKey && pendingLookups.has(cacheKey)) return pendingLookups.get(cacheKey);
-
-  const lookup = lookUpCompanyData(companyLink, location, industry, size, companyName);
-  if (!cacheKey) return lookup;
-
-  pendingLookups.set(cacheKey, lookup);
-  return lookup.finally(() => pendingLookups.delete(cacheKey));
-}
-
-async function lookUpCompanyData(companyLink, location, industry, size, companyName) {
+export async function getCompanyData(companyLink, location, industry, size, companyName) {
   const companyDetails = await getCompanyDetails(companyLink, location, industry, size, companyName);
 
   if (
@@ -110,7 +95,7 @@ async function addOpenJobs(companyDetails, companyLink, companyName) {
   }
 
   const updatedDetails = { ...companyDetails, openJobTitles: response.openJobTitles };
-  companyDetailsCache.set(getCompanyCacheKey(companyLink, companyName), updatedDetails);
+  companyDetailsCache.set(companyLink, updatedDetails);
 
   try {
     await updateCachedCompanyOpenJobs(extractCompanyId(companyLink), companyName, response.openJobTitles);
@@ -126,7 +111,7 @@ function toPublicCompanyUrl(companyLink) {
 }
 
 async function getCompanyDetails(companyLink, location, industry, size, companyName) {
-  const cacheKey = getCompanyCacheKey(companyLink, companyName);
+  const cacheKey = companyLink || companyName;
 
   if (cacheKey && companyDetailsCache.has(cacheKey)) {
     return companyDetailsCache.get(cacheKey);

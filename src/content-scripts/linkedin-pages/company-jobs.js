@@ -17,15 +17,11 @@
   (async () => {
     try {
       await waitForConditionWithTimeout(
-        () => document.querySelector(JOB_LINK_SELECTOR) || isRedirectedFromJobsTab(),
+        () => document.querySelector(JOB_LINK_SELECTOR),
         7000,
       );
-      if (isRedirectedFromJobsTab()) {
-        data.openJobTitles = [];
-      } else {
-        await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY));
-        data.openJobTitles = getJobTitles();
-      }
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_DELAY));
+      data.openJobTitles = getJobTitles();
     } catch {
       // No posting appeared: the company has no open jobs, unless the page
       // itself didn't load (e.g. LinkedIn redirected to a sign-in page), in
@@ -36,23 +32,12 @@
     }
   })();
 
-  function isCompanyPage() {
-    return window.location.pathname.startsWith("/company/");
-  }
-
-  // A company with no open jobs has no Jobs tab: LinkedIn sends its /jobs URL
-  // to another page of the company (e.g. About) instead.
-  function isRedirectedFromJobsTab() {
-    return isCompanyPage() && !window.location.pathname.includes("/jobs");
-  }
-
   // An empty Jobs tab ("No jobs right now") still renders the company's page:
-  // its heading, or its tab links (About, Posts, ...) back to /company/ pages.
-  // Neither depends on the interface language, and neither is on a sign-in
-  // page. The company name isn't necessarily inside <main>.
+  // its heading (not necessarily inside <main>) or its links to the company's
+  // other tabs. Neither depends on the interface language.
   function isCompanyPageLoaded() {
     return (
-      isCompanyPage() &&
+      window.location.pathname.startsWith("/company/") &&
       !!(document.querySelector("h1") || document.querySelector('a[href*="/company/"]'))
     );
   }
