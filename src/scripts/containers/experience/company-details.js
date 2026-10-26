@@ -117,7 +117,7 @@ async function manageCompanyDetailsBlock(item) {
     websiteBlock.appendChild(createSpanElement(website));
     websiteBlock.appendChild(editDomainElement);
 
-    const isActiveAndVisible = item.classList.contains("active") && item.style.display !== "none";
+    const isActiveAndVisible = isActiveCompany(item) && item.style.display !== "none";
 
     if (isActiveAndVisible) {
       getGenerateEmailsBtnElement().disabled = !isValidDomain(website);
@@ -279,9 +279,15 @@ function renderMembers(membersBlock, companyDetails) {
 // open-jobs value against the current keywords when it is saved.
 function setOpenJobTitles(item, value) {
   item.setAttribute("data-company-open-job-titles", value);
-  if (item.classList.contains("active")) {
+  if (isActiveCompany(item)) {
     getCompanyOpenJobTitlesElement().value = value;
   }
+}
+
+// A lookup can finish after the panel was reset for another lead; its card is
+// then detached and must not write into the current lead's fields.
+function isActiveCompany(item) {
+  return item.isConnected && item.classList.contains("active");
 }
 
 function showLoadingState({ websiteBlock, locationBlock, industryBlock, sizeBlock, membersBlock, location, industry, size }) {

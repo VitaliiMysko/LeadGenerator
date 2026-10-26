@@ -20,17 +20,24 @@ if (!window.leadGenerator.floatingPanelInit) {
     /^https:\/\/www\.linkedin\.com\/in\//,
   ];
 
+  const PEOPLE_SEARCH_PAGE_PATTERN = /^https:\/\/www\.linkedin\.com\/sales\/search\/people/;
+
   // Pages the launcher is shown on.
-  const SUPPORTED_PAGE_PATTERNS = [
-    ...EXTRACTABLE_PAGE_PATTERNS,
-    /^https:\/\/www\.linkedin\.com\/sales\/search\/people/,
-  ];
+  const SUPPORTED_PAGE_PATTERNS = [...EXTRACTABLE_PAGE_PATTERNS, PEOPLE_SEARCH_PAGE_PATTERN];
+
+  // The lead's name heading, shared by the lead page and the lead side panel
+  // that people search opens for a selected result.
+  const LEAD_NAME_SELECTOR = "h1[data-x--lead--name]";
+  const LEAD_CHECK_DELAY = 300;
 
   let launcher = null;
   let launcherPosition = null;
   let panelHost = null;
   let panelIframe = null;
   let lastKnownUrl = location.href;
+  let leadObserver = null;
+  let leadCheckTimer = null;
+  let shownLeadName = "";
 
   function isSupportedPageUrl(url) {
     return SUPPORTED_PAGE_PATTERNS.some((pattern) => pattern.test(url));
@@ -293,10 +300,49 @@ if (!window.leadGenerator.floatingPanelInit) {
     lastKnownUrl = currentUrl;
 
     updateLauncherVisibility();
+    updateLeadWatcher();
     // Not on every supported page: search result URLs change with every
     // filter/page change, which must not wipe what the user extracted.
     if (isExtractablePageUrl(currentUrl)) {
       notifyPanelOfNavigation();
+    }
+  }
+
+  function getShownLeadName() {
+    return document.querySelector(LEAD_NAME_SELECTOR)?.textContent.trim() || "";
+  }
+
+  // People search shows a selected result in a side panel without any
+  // navigation, so a different lead is detected by its name heading changing.
+  // Closing the side panel (no heading) keeps the panel's data.
+  function checkShownLead() {
+    leadCheckTimer = null;
+    const name = getShownLeadName();
+    if (!name || name === shownLeadName) return;
+    shownLeadName = name;
+    // Sent even while the panel is hidden, so reopening it never shows the
+    // previous lead.
+    panelIframe?.contentWindow?.postMessage({ type: RESET_MESSAGE_TYPE }, EXTENSION_ORIGIN);
+  }
+
+  // Throttled rather than debounced: the search page mutates continuously
+  // while results load, which would keep postponing a debounced check.
+  function scheduleLeadCheck() {
+    if (leadCheckTimer) return;
+    leadCheckTimer = setTimeout(checkShownLead, LEAD_CHECK_DELAY);
+  }
+
+  function updateLeadWatcher() {
+    const onSearchPage = PEOPLE_SEARCH_PAGE_PATTERN.test(location.href);
+    if (onSearchPage && !leadObserver) {
+      shownLeadName = getShownLeadName();
+      leadObserver = new MutationObserver(scheduleLeadCheck);
+      leadObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+    } else if (!onSearchPage && leadObserver) {
+      leadObserver.disconnect();
+      leadObserver = null;
+      clearTimeout(leadCheckTimer);
+      leadCheckTimer = null;
     }
   }
 
@@ -305,6 +351,7 @@ if (!window.leadGenerator.floatingPanelInit) {
     launcherPosition = stored[LAUNCHER_POSITION_KEY] || defaultLauncherPosition();
     createLauncher();
     updateLauncherVisibility();
+    updateLeadWatcher();
   }
 
   // LinkedIn is a single-page app: in-app navigation doesn't reload the tab.

@@ -32,10 +32,13 @@
     }
   })();
 
+  // An empty Jobs tab ("No jobs right now") still renders the company's page:
+  // its heading (not necessarily inside <main>) or its links to the company's
+  // other tabs. Neither depends on the interface language.
   function isCompanyPageLoaded() {
     return (
       window.location.pathname.startsWith("/company/") &&
-      !!document.querySelector("main h1")
+      !!(document.querySelector("h1") || document.querySelector('a[href*="/company/"]'))
     );
   }
 
