@@ -10,6 +10,7 @@ import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
 import { getPanelTab, injectScripts, sendMessageToTab } from "../../services/tab-bridge.js";
+import { resetLeadData, getLeadGeneration } from "../panel/lead-reset.js";
 
 const FILE_SETS = {
   salesNavigatorLead: [
@@ -44,6 +45,11 @@ getExtractBtnElement().addEventListener("click", async () => {
     return;
   }
 
+  // Every Extract starts from an empty panel, so nothing from the previously
+  // extracted lead (fields, companies, their pending lookups) carries over.
+  resetLeadData();
+  const generation = getLeadGeneration();
+
   await injectScripts(tab.id, FILE_SETS[pageType]);
 
   const loadingElement = document.createElement("div");
@@ -52,6 +58,8 @@ getExtractBtnElement().addEventListener("click", async () => {
   getTabExperienceElement().appendChild(loadingElement);
 
   const results = await sendMessageToTab(tab.id, { action: "extractData" });
+  // Superseded by a newer Extract, or another lead was selected meanwhile.
+  if (generation !== getLeadGeneration()) return;
 
   // "Loading" stays until the list is rendered - createCompanyList replaces
   // it - so it also covers the wait for the full list from the details page.
@@ -76,6 +84,7 @@ getExtractBtnElement().addEventListener("click", async () => {
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
+      if (generation !== getLeadGeneration()) return;
       // The full list is only requested when the short one found current
       // positions, so an empty result means the fetch failed - keep the
       // short list rather than wiping it.
