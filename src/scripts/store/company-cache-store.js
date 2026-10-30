@@ -5,6 +5,7 @@ import {
   findCompanyCacheEntry,
   removeCompanyCacheEntry,
   updateCompanyCacheEntryWebsite,
+  updateCompanyCacheEntryOpenJobs,
 } from "../../utils/company-cache.js";
 
 const STORAGE_KEY = "cachedCompanies";
@@ -33,5 +34,12 @@ export async function updateCachedCompanyWebsite(companyId, companyName, website
   if (!companyId && !companyName) return;
   const entries = await localGet(STORAGE_KEY, []);
   const updated = updateCompanyCacheEntryWebsite(entries, companyId, companyName, website);
+  await localSet(STORAGE_KEY, updated);
+}
+
+export async function updateCachedCompanyOpenJobs(companyId, companyName, openJobTitles) {
+  if (!companyId && !companyName) return;
+  const entries = await localGet(STORAGE_KEY, []);
+  const updated = updateCompanyCacheEntryOpenJobs(entries, companyId, companyName, openJobTitles);
   await localSet(STORAGE_KEY, updated);
 }
