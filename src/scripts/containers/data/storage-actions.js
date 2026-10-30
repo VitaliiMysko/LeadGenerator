@@ -66,15 +66,21 @@ subscribeMaxSavedLeads(async () => {
   getCompanyIndustryElement,
 ].forEach((getter) => getter().addEventListener("input", updateSaveBtnState));
 
-getSaveBtnElement().addEventListener("click", async () => {
-  if (isAllFieldsEmpty() || currentCount >= getMaxSavedLeads()) return;
+getSaveBtnElement().addEventListener("click", saveCurrentLead);
+
+// The Save button's action, also run by the companion API. Resolves with
+// the outcome: "saved", "duplicate" (already saved), "limit" (the saved
+// leads limit is reached) or "empty" (no data to save).
+export async function saveCurrentLead() {
+  if (isAllFieldsEmpty()) return "empty";
+  if (currentCount >= getMaxSavedLeads()) return "limit";
 
   const leads = await loadLeads();
   const newLead = await collectCurrentData();
 
   if (isDuplicate(leads, newLead)) {
     showAlert("Already saved", "error");
-    return;
+    return "duplicate";
   }
 
   leads.push(newLead);
@@ -83,7 +89,8 @@ getSaveBtnElement().addEventListener("click", async () => {
   currentCount = leads.length;
   updateUI(true);
   showAlert("Saved", "success");
-});
+  return "saved";
+}
 
 getStorageLeadsBtnElement().addEventListener("click", async () => {
   const leads = await loadLeads();

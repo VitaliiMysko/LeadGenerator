@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **Leads Automate can run Extract, Generate and Save**: the Leads Automate extension can now run the panel's **Extract**, **Generate** (email) and **Save** for the person it opened in Sales Navigator people search, exactly as if the buttons were clicked, and is told the outcome (the extracted person and website, the email found, saved or already saved). It works only with the panel opened on that tab, in Chrome and Edge, and only for Leads Automate: no other extension or web page can run these actions
+
 ## [3.5.0] - 2026-10-21
 
 ### Added

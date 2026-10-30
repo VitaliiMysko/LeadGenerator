@@ -200,6 +200,10 @@ Includes:
 - Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise. A found email is reused only for the same website, name and surname; changing the name or surname runs the search again. A matching found email is filled in automatically when a company is selected, including the first one after Extract
 - Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
+### Leads Automate
+
+The companion [Leads Automate](https://github.com/VitaliiMysko/LeadsAutomate) extension can run **Extract**, **Generate** and **Save** for the person it opens in Sales Navigator people search, with the same result as clicking the buttons. Open the panel on that tab first. Chrome and Edge only.
+
 ## Network & Data Fetching Strategy
 
 The extension runs only on `https://www.linkedin.com/*` and never talks to third-party services directly from the client. Sensitive operations (email validation via Emailable, website availability checks) are handled by a secure [Cloudflare Worker](https://developers.cloudflare.com/workers/) backend, so no API keys are ever exposed and no CORS issues arise.
