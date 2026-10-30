@@ -30,6 +30,10 @@ export function getCompanyIdElement() {
   return document.getElementById("company-id");
 }
 
+export function getCompanyOpenJobTitlesElement() {
+  return document.getElementById("company-open-job-titles");
+}
+
 export function getTranslateBtnElement() {
   return document.getElementById("translate-btn");
 }

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.5.0] - 2026-10-21
+
+### Added
+
+- **Store has open jobs setting**: a new **Leads data** toggle that records whether a lead's company currently has any open job positions on its LinkedIn Jobs tab. An optional list of job title keywords, entered as tags under the toggle, narrows this to positions whose title contains one of the words (ignoring letter case); with no keywords, any open position counts. Changing the keywords applies to leads saved afterwards without checking LinkedIn again. When enabled, the check runs once per company alongside its other details and is remembered with them, so selecting the same company again reuses the result; **Refresh company data** (↻) checks again. The result is saved with the lead and added by **Get** as an extra last column (`true` / `false`, or a `hasOpenJobs` field in JSON). Leads saved while the setting is off have an empty value
+
+### Changed
+
+- **Selecting a different person in Sales Navigator people search now clears the panel**: the previous person's fields and companies are removed as soon as another search result is opened, even while the panel is closed, ready for the next **Extract**. Closing the result's side panel keeps the data. **Extract** also always starts from an empty panel. Saved leads, filters and settings are unaffected
+- **In Sales Navigator people search, Extract now starts on the company the person was found under**: the company shown with the person in the search results (next to their job title), or above the results when they all belong to one company, is selected in the Actual Experience tab and its details load right away, even when it isn't the first one listed. If the company appears several times, the first is selected. When it isn't among the person's current positions, or is hidden by a filter, the first visible company is selected as before
+
+### Fixed
+
+- **Filters and company details no longer mix up people in people search**: company details still loading for the previously selected person could be filled into the next person's fields, so changed filters only seemed to apply after a second **Extract**
+- **Companies without open jobs are no longer checked again for every lead**: an empty Jobs tab ("No jobs right now") wasn't recognized as "no open jobs". The check was never remembered, so selecting any person from that company opened a background tab again and kept all its details in "Loading" until the check finished. Such companies are now recorded as having no open jobs (`false`)
+
 ## [3.4.1] - 2026-10-05
 
 ### Changed

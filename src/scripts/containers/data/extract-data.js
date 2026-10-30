@@ -5,11 +5,12 @@ import {
 import { showAlert } from "../../output/alert.js";
 import { transliterateElement } from "../../services/transliteration.js";
 import { getLinkedInPageType } from "../../../utils/linkedin-page.js";
-import { createCompanyList } from "../experience/actual-experience.js";
+import { createCompanyList, selectMatchingCompany } from "../experience/actual-experience.js";
 import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
 import { getPanelTab, injectScripts, sendMessageToTab } from "../../services/tab-bridge.js";
+import { resetLeadData, getLeadGeneration } from "../panel/lead-reset.js";
 
 const FILE_SETS = {
   salesNavigatorLead: [
@@ -19,6 +20,7 @@ const FILE_SETS = {
     "src/content-scripts/common/name-utils.js",
     "src/content-scripts/sales-navigator-pages/lead/lead.js",
     "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",
+    "src/content-scripts/sales-navigator-pages/search/selected-lead-company.js",
     "src/content-scripts/actions/extract-data.js",
   ],
   linkedinProfile: [
@@ -44,6 +46,11 @@ getExtractBtnElement().addEventListener("click", async () => {
     return;
   }
 
+  // Every Extract starts from an empty panel, so nothing from the previously
+  // extracted lead (fields, companies, their pending lookups) carries over.
+  resetLeadData();
+  const generation = getLeadGeneration();
+
   await injectScripts(tab.id, FILE_SETS[pageType]);
 
   const loadingElement = document.createElement("div");
@@ -52,6 +59,8 @@ getExtractBtnElement().addEventListener("click", async () => {
   getTabExperienceElement().appendChild(loadingElement);
 
   const results = await sendMessageToTab(tab.id, { action: "extractData" });
+  // Superseded by a newer Extract, or another lead was selected meanwhile.
+  if (generation !== getLeadGeneration()) return;
 
   // "Loading" stays until the list is rendered - createCompanyList replaces
   // it - so it also covers the wait for the full list from the details page.
@@ -60,6 +69,7 @@ getExtractBtnElement().addEventListener("click", async () => {
   if (results) {
     let actualExperienceData = [];
     let needsFullExperience = { needed: false, url: "" };
+    let selectedLeadCompany = null;
 
     for (const element of results.data) {
       if (element.category === "personalData") {
@@ -72,10 +82,14 @@ getExtractBtnElement().addEventListener("click", async () => {
       if (element.category === "needsFullExperience") {
         needsFullExperience = element.value;
       }
+      if (element.category === "selectedLeadCompany") {
+        selectedLeadCompany = element.value;
+      }
     }
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
+      if (generation !== getLeadGeneration()) return;
       // The full list is only requested when the short one found current
       // positions, so an empty result means the fetch failed - keep the
       // short list rather than wiping it.
@@ -83,6 +97,9 @@ getExtractBtnElement().addEventListener("click", async () => {
     }
 
     createCompanyList(actualExperienceData);
+    // On people search, start on the company the lead was found under, so
+    // its details load first; otherwise the first visible one is selected.
+    selectMatchingCompany(selectedLeadCompany);
   }
 
   applyFilters();

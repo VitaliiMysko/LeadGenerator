@@ -34,7 +34,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field; when **Store has open jobs** is enabled, the company's open-jobs flag follows as the last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -132,6 +132,13 @@ Available option:
 - **Store company id Toggle**
   - When enabled, the **Get** button appends the company id as an extra, last column when copying saved leads to the clipboard
   - State persisted via Chrome `storage`
+- **Store has open jobs Toggle**
+  - When enabled, checks whether the lead's company currently has any open job positions on its LinkedIn Jobs tab (`true` / `false`)
+  - **Job title keywords** (shown under the toggle while it is on): tags typed and added with Enter or a comma, removed with × or Backspace. When set, only positions whose title contains one of the keywords (ignoring letter case) count; when empty, any open position counts. Only the positions listed on the company's Jobs tab are checked
+  - The result is worked out against the current keywords when a lead is saved, so changing them needs no new check of LinkedIn
+  - Checked once per company and remembered with its other cached details; **Refresh company data** (↻) checks again
+  - The **Get** button appends the result as an extra, last column (after the company id, if that is stored too)
+  - State persisted via Chrome `storage`
 - **Max saved leads**
   - Numeric field controlling how many leads can be stored locally (1-999, default 99); only digits can be typed
   - Saved automatically when the field loses focus, if the value is valid
@@ -155,6 +162,7 @@ Available option:
 - **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)
 - **Industry** - company indutry
 - **Company id** - not shown as a visible field; derived from the numeric id in the company's LinkedIn link (e.g. `.../company/80894209` → `80894209`), empty string if it cannot be determined. Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `companyId` JSON field) only when **Store company id** is enabled in Settings
+- **Open jobs** - not shown as a visible field; `true` if the company has open job positions on its LinkedIn Jobs tab (matching one of the **Job title keywords**, when any are set), `false` if not, empty string when **Store has open jobs** is disabled (or the check could not be completed). Saved with the lead and included in the Get button's clipboard output (as a trailing column, or a `hasOpenJobs` JSON field) only when **Store has open jobs** is enabled in Settings
 
 All fields are editable before copying.
 
@@ -307,6 +315,7 @@ After installing the extension, configure it for optimal usage:
    - Enable / disable drag-and-drop
    - Enable / disable transliteration
    - Enable / disable storing the company id in the Get button's clipboard output (**Leads data** block)
+   - Enable / disable checking and storing whether the company has open jobs, optionally only ones matching job title keywords (**Leads data** block)
    - Set the maximum number of leads that can be stored locally, 1-999 (**Leads data** block)
    - Choose the Get button's clipboard export format: tab-separated or JSON (**Leads data** block)
    - Preferences are stored locally via Chrome `storage`
@@ -321,7 +330,7 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`)
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`), or select a person in Sales Navigator people search (`linkedin.com/sales/search/people`). In people search, selecting another person clears the panel, ready for the next **Extract**, and Extract starts on the company that person was found under (shown in their search result, or above the results)
 
 2. Click the round Lead Generator icon shown on the page (only on these page types) to open the panel next to it. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches. Drag the icon to reposition it
 

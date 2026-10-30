@@ -12,6 +12,13 @@ const TASK_KINDS = {
     ],
     responseAction: "linkedinCompanyPageContent",
   },
+  companyJobs: {
+    scriptFiles: [
+      "src/utils/mutation-observer.js",
+      "src/content-scripts/linkedin-pages/company-jobs.js",
+    ],
+    responseAction: "linkedinCompanyJobsContent",
+  },
   profileExperience: {
     scriptFiles: [
       "src/utils/mutation-observer.js",
@@ -121,6 +128,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === "fetchLinkedinCompanyPage") {
     handleTaskRequest("company", message, sendResponse);
+    return true;
+  }
+
+  if (message.action === "fetchLinkedinCompanyJobs") {
+    handleTaskRequest("companyJobs", message, sendResponse);
     return true;
   }
 

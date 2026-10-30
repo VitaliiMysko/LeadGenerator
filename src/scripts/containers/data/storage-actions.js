@@ -11,6 +11,7 @@ import {
   getCompanyCountryElement,
   getCompanyIndustryElement,
   getCompanyIdElement,
+  getCompanyOpenJobTitlesElement,
   getDataContainerElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
@@ -18,6 +19,7 @@ import { showConfirm } from "../../output/confirm.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
+import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
 import { LEADS_EXPORT_FORMATS, DEFAULT_LEADS_EXPORT_FORMAT } from "../../../constants/config.js";
 import {
   getMaxSavedLeads,
@@ -68,7 +70,7 @@ getSaveBtnElement().addEventListener("click", async () => {
   if (isAllFieldsEmpty() || currentCount >= getMaxSavedLeads()) return;
 
   const leads = await loadLeads();
-  const newLead = collectCurrentData();
+  const newLead = await collectCurrentData();
 
   if (isDuplicate(leads, newLead)) {
     showAlert("Already saved", "error");
@@ -138,7 +140,7 @@ export function updateSaveBtnState() {
   getSaveBtnElement().disabled = isAllFieldsEmpty() || currentCount >= getMaxSavedLeads();
 }
 
-function collectCurrentData() {
+async function collectCurrentData() {
   return {
     firstName: getFirstNameElement().value,
     surname: getSecondNameElement().value,
@@ -149,7 +151,14 @@ function collectCurrentData() {
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
+    hasOpenJobs: await getCurrentOpenJobsValue(),
   };
+}
+
+async function getCurrentOpenJobsValue() {
+  if (!(await syncGet("storeHasOpenJobsEnabled"))) return "";
+  const keywords = await syncGet("openJobsKeywords", []);
+  return getOpenJobsValue(parseOpenJobTitles(getCompanyOpenJobTitlesElement().value), keywords);
 }
 
 function getFieldOrder() {
@@ -161,12 +170,13 @@ function getFieldOrder() {
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
   const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
+  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
 
   const text =
     format === LEADS_EXPORT_FORMATS.JSON
-      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId)
-      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId);
+      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs)
+      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs);
 
   try {
     await navigator.clipboard.writeText(text);
