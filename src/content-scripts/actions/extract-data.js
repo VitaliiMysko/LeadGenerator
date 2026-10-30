@@ -35,5 +35,15 @@ async function extractData() {
   return [
     { category: "personalData", value: personalData },
     { category: "actualExperienceData", value: actualExperienceData },
+    { category: "selectedLeadCompany", value: getSelectedLeadCompany() },
   ];
+}
+
+function getSelectedLeadCompany() {
+  try {
+    return window.leadGenerator.getSelectedLeadCompany();
+  } catch (error) {
+    console.error("Problems with getting the selected lead's company", error.message);
+    return null;
+  }
 }

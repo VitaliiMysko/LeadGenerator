@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - **Selecting a different person in Sales Navigator people search now clears the panel**: the previous person's fields and companies are removed as soon as another search result is opened, even while the panel is closed, ready for the next **Extract**. Closing the result's side panel keeps the data. **Extract** also always starts from an empty panel. Saved leads, filters and settings are unaffected
+- **In Sales Navigator people search, Extract now starts on the company the person was found under**: the company shown with the person in the search results (next to their job title), or above the results when they all belong to one company, is selected in the Actual Experience tab and its details load right away, even when it isn't the first one listed. If the company appears several times, the first is selected. When it isn't among the person's current positions, or is hidden by a filter, the first visible company is selected as before
 
 ### Fixed
 

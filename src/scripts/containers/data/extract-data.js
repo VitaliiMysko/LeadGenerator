@@ -5,7 +5,7 @@ import {
 import { showAlert } from "../../output/alert.js";
 import { transliterateElement } from "../../services/transliteration.js";
 import { getLinkedInPageType } from "../../../utils/linkedin-page.js";
-import { createCompanyList } from "../experience/actual-experience.js";
+import { createCompanyList, selectMatchingCompany } from "../experience/actual-experience.js";
 import { setupCompanyDetails } from "../experience/company-details.js";
 import { applyFilters } from "../filters/filters-engine.js";
 import { updateSaveBtnState } from "./storage-actions.js";
@@ -20,6 +20,7 @@ const FILE_SETS = {
     "src/content-scripts/common/name-utils.js",
     "src/content-scripts/sales-navigator-pages/lead/lead.js",
     "src/content-scripts/sales-navigator-pages/lead/lead-experience.js",
+    "src/content-scripts/sales-navigator-pages/search/selected-lead-company.js",
     "src/content-scripts/actions/extract-data.js",
   ],
   linkedinProfile: [
@@ -68,6 +69,7 @@ getExtractBtnElement().addEventListener("click", async () => {
   if (results) {
     let actualExperienceData = [];
     let needsFullExperience = { needed: false, url: "" };
+    let selectedLeadCompany = null;
 
     for (const element of results.data) {
       if (element.category === "personalData") {
@@ -79,6 +81,9 @@ getExtractBtnElement().addEventListener("click", async () => {
       }
       if (element.category === "needsFullExperience") {
         needsFullExperience = element.value;
+      }
+      if (element.category === "selectedLeadCompany") {
+        selectedLeadCompany = element.value;
       }
     }
 
@@ -92,6 +97,9 @@ getExtractBtnElement().addEventListener("click", async () => {
     }
 
     createCompanyList(actualExperienceData);
+    // On people search, start on the company the lead was found under, so
+    // its details load first; otherwise the first visible one is selected.
+    selectMatchingCompany(selectedLeadCompany);
   }
 
   applyFilters();

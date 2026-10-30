@@ -17,6 +17,7 @@ import { updateSaveBtnState } from "../data/storage-actions.js";
 import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
 import { extractCompanyId } from "../../../utils/company-id.js";
+import { findSelectedCompanyIndex } from "../../../utils/selected-company.js";
 
 export function createCompanyList(experience) {
   getTabExperienceElement().innerHTML = "";
@@ -26,6 +27,20 @@ export function createCompanyList(experience) {
     const companyBlock = getCompanyBlock(company);
     getTabExperienceElement().appendChild(companyBlock);
   });
+}
+
+// Selects the first company matching the target ({ companyId, companyName });
+// nothing changes when none does.
+export function selectMatchingCompany(target) {
+  const items = [...getTabExperienceElement().querySelectorAll(".company-item")];
+  const index = findSelectedCompanyIndex(
+    items.map((item) => ({
+      companyId: item.getAttribute("data-company-id"),
+      companyName: item.getAttribute("data-company-name"),
+    })),
+    target,
+  );
+  if (index !== -1) items[index].querySelector(".company-header").click();
 }
 
 function getCompanyBlock(company) {

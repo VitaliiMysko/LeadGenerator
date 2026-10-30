@@ -330,7 +330,7 @@ After installing the extension, configure it for optimal usage:
 
 ## Usage
 
-1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`), or select a person in Sales Navigator people search (`linkedin.com/sales/search/people`). In people search, selecting another person clears the panel, ready for the next **Extract**
+1. Open a public LinkedIn profile page (`linkedin.com/in/...`) or a Sales Navigator lead page (`linkedin.com/sales/lead/...`), or select a person in Sales Navigator people search (`linkedin.com/sales/search/people`). In people search, selecting another person clears the panel, ready for the next **Extract**, and Extract starts on the company that person was found under (shown in their search result, or above the results)
 
 2. Click the round Lead Generator icon shown on the page (only on these page types) to open the panel next to it. Click the icon again, or the panel's **×** button, to close it; it otherwise stays open across tab switches. Drag the icon to reposition it
 
