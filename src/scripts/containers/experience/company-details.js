@@ -29,9 +29,11 @@ import {
 } from "../../features/website-domain-editor.js";
 import { NO_WEBSITE_FOUND_TEXT } from "../../../constants/config.js";
 
+// Resolves once the details of the selected company have loaded.
 export function setupCompanyDetails() {
-  initCompanyDetails();
+  const loading = initCompanyDetails();
   addCompanyDetailsListeners();
+  return loading;
 }
 
 export async function refreshCompanyDetails(item) {
@@ -62,13 +64,17 @@ function addCompanyDetailsListeners() {
 }
 
 function initCompanyDetails() {
+  const loads = [];
   getCompanyItemElements().forEach((item) => {
     if (item.classList.contains("active") && item.style.display !== "none") {
-      manageCompanyDetailsBlock(item).then(() =>
-        fillEmailFromCache(getEmailElement().value),
+      loads.push(
+        manageCompanyDetailsBlock(item).then(() =>
+          fillEmailFromCache(getEmailElement().value),
+        ),
       );
     }
   });
+  return Promise.all(loads);
 }
 
 async function manageCompanyDetailsBlock(item) {

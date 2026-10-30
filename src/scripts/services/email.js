@@ -29,7 +29,11 @@ export function fillEmailFromCache(pastedEmailWhileFindingWebsite) {
   showEmail(emailData.email || pastedEmailWhileFindingWebsite);
 }
 
-getGenerateEmailsBtnElement().addEventListener("click", async () => {
+getGenerateEmailsBtnElement().addEventListener("click", generateLeadEmail);
+
+// The Generate button's action, also run by the companion API. Resolves with
+// { email, message, ok }; email is empty when none was found.
+export async function generateLeadEmail() {
   const domain = getWebsiteDomain();
   const cacheKey = getEmailCacheKey(domain);
 
@@ -37,7 +41,7 @@ getGenerateEmailsBtnElement().addEventListener("click", async () => {
     const cached = emailCache.get(cacheKey);
     showEmail(cached.email);
     showMessage(cached.message, cached.ok);
-    return;
+    return { email: cached.email, message: cached.message, ok: cached.ok };
   }
 
   const emailData = { ...emailDataByDefault };
@@ -46,7 +50,7 @@ getGenerateEmailsBtnElement().addEventListener("click", async () => {
     emailCache.set(cacheKey, emailData);
     showEmail(emailData.email);
     showMessage(emailData.message, emailData.ok);
-    return;
+    return { email: emailData.email, message: emailData.message, ok: emailData.ok };
   }
 
   startLoadingEffect();
@@ -72,7 +76,8 @@ getGenerateEmailsBtnElement().addEventListener("click", async () => {
   stopLoadingEffect();
   showEmail(emailData.email);
   showMessage(emailData.message, emailData.ok);
-});
+  return { email: emailData.email, message: emailData.message, ok: emailData.ok };
+}
 
 getEmailElement().addEventListener("input", () => {
   const el = getEmailElement();

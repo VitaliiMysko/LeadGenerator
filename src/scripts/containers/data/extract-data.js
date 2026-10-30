@@ -37,13 +37,19 @@ const FILE_SETS = {
 // Stable for the lifetime of this panel document, mirroring company-data.js's panelSessionId.
 const profileExperienceSessionId = crypto.randomUUID();
 
-getExtractBtnElement().addEventListener("click", async () => {
+getExtractBtnElement().addEventListener("click", extractLead);
+
+// The Extract button's action, also run by the companion API. Resolves once
+// the lead's fields and the selected company's details have loaded, with
+// { ok, reason }: not ok when the page isn't a LinkedIn lead page, nothing
+// was extracted, or another lead was selected meanwhile.
+export async function extractLead() {
   const tab = await getPanelTab();
 
   const pageType = getLinkedInPageType(tab.url);
   if (!pageType) {
     showAlert("Open a LinkedIn page first.", "error");
-    return;
+    return { ok: false, reason: "not a LinkedIn lead page" };
   }
 
   // Every Extract starts from an empty panel, so nothing from the previously
@@ -60,7 +66,7 @@ getExtractBtnElement().addEventListener("click", async () => {
 
   const results = await sendMessageToTab(tab.id, { action: "extractData" });
   // Superseded by a newer Extract, or another lead was selected meanwhile.
-  if (generation !== getLeadGeneration()) return;
+  if (generation !== getLeadGeneration()) return { ok: false, reason: "superseded" };
 
   // "Loading" stays until the list is rendered - createCompanyList replaces
   // it - so it also covers the wait for the full list from the details page.
@@ -89,7 +95,7 @@ getExtractBtnElement().addEventListener("click", async () => {
 
     if (needsFullExperience.needed) {
       const fullExperienceData = await fetchFullProfileExperience(needsFullExperience.url);
-      if (generation !== getLeadGeneration()) return;
+      if (generation !== getLeadGeneration()) return { ok: false, reason: "superseded" };
       // The full list is only requested when the short one found current
       // positions, so an empty result means the fetch failed - keep the
       // short list rather than wiping it.
@@ -103,8 +109,11 @@ getExtractBtnElement().addEventListener("click", async () => {
   }
 
   applyFilters();
-  setupCompanyDetails();
-});
+  await setupCompanyDetails();
+  if (!results) return { ok: false, reason: "nothing extracted from the page" };
+  if (generation !== getLeadGeneration()) return { ok: false, reason: "superseded" };
+  return { ok: true };
+}
 
 async function fetchFullProfileExperience(url) {
   return chrome.runtime
