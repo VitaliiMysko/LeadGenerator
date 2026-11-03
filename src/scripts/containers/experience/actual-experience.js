@@ -18,12 +18,13 @@ import { extractCountry } from "../filters/company-location.js";
 import { getDefaultCountry } from "../settings/country-by-default.js";
 import { extractCompanyId } from "../../../utils/company-id.js";
 import { findSelectedCompanyIndex } from "../../../utils/selected-company.js";
+import { fillMissingCompanyLinks } from "../../../utils/company-link.js";
 
 export function createCompanyList(experience) {
   getTabExperienceElement().innerHTML = "";
   getGenerateEmailsBtnElement().disabled = true;
 
-  experience.forEach((company) => {
+  fillMissingCompanyLinks(experience).forEach((company) => {
     const companyBlock = getCompanyBlock(company);
     getTabExperienceElement().appendChild(companyBlock);
   });
