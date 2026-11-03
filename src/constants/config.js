@@ -11,7 +11,8 @@ export const WORKER_URL = "https://lead-generator-backend-worker.vitalij-musko.w
 
 // Extensions allowed to run the panel's Extract, Generate and Save through
 // the companion API (companion-api.js): Leads Automate, whose manifest key
-// fixes its id.
+// fixes its id. Kept in sync with background.js's COMPANION_EXTENSION_IDS
+// (which may open the panel) by a test.
 export const COMPANION_EXTENSION_IDS = ["ofbkinmakmfacepccjcbmjgecdppolki"];
 
 export function getWorkerUrl() {
