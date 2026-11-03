@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: October 31, 2026
+**Last Updated**: November 3, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -137,7 +137,7 @@ In such cases:
 
 Leads Automate is an optional companion extension by the same developer, which the user installs separately to work through Sales Navigator people search. When the user starts a search in it, it opens leads in the search results and asks Lead Generator to run **Extract**, email generation and **Save** for them, the same actions as the panel's buttons.
 
-- Lead Generator answers only when its panel is open on that tab, and only the Leads Automate extension, identified by its extension id; no other extension or website can request these actions
+- Lead Generator answers only the Leads Automate extension, identified by its extension id; no other extension or website can request these actions. When its panel isn't open on that tab, Leads Automate can ask Lead Generator to open it, as a click on its icon does
 - It returns to Leads Automate only the outcome of these actions: the person's name, surname and job position, the company name and website, the generated email, and whether the lead was saved
 - This exchange takes place entirely inside the user's browser, between the two extensions on the user's device; nothing is sent to any server as part of it
 - Leads saved this way are stored like any other saved lead (see section 3.1)
