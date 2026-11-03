@@ -11,7 +11,7 @@ import {
   getGenerateEmailsBtnElement,
 } from "../../helper/dom-helper.js";
 
-import { refreshCompanyDetails } from "./company-details.js";
+import { clearWebsiteStatus, refreshCompanyDetails } from "./company-details.js";
 import { formatCompanySize } from "../../services/company-data.js";
 import { updateSaveBtnState } from "../data/storage-actions.js";
 import { extractCountry } from "../filters/company-location.js";
@@ -74,8 +74,7 @@ function getCompanyBlock(company) {
     const websiteBlock = companyBlock.querySelector(".company-website");
     if (refreshBtn.classList.contains("loading") || websiteBlock.classList.contains("loading")) return;
     refreshBtn.classList.add("loading");
-    websiteBlock.classList.remove("valid");
-    websiteBlock.classList.remove("no-valid");
+    clearWebsiteStatus(websiteBlock);
     await refreshCompanyDetails(companyBlock);
     refreshBtn.classList.remove("loading");
   });

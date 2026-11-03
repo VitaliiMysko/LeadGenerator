@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **New website status icon**: the green or red dot next to a company's website is replaced by a small badge on the website icon: a green check means the website responds, a red exclamation mark means it doesn't or the domain is invalid. Hovering over the website icon shows a tooltip explaining the status
 - **Privacy policy updated**: it now describes the Leads Automate companion extension (what it can request and what Lead generator returns to it, only inside the browser), Extract on Sales Navigator people search, the optional company id and open jobs fields, the cache of recently fetched companies, the newer settings, and that the browser may sync preferences and filters across your own browsers when sync is on (saved leads never are)
 
 ### Fixed
