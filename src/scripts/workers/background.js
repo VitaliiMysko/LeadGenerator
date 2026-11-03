@@ -161,6 +161,30 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // -----------------------------
+// COMPANION: OPEN PANEL (Chrome and Edge)
+// Leads Automate asks to open the panel on its search tab, so the panel's
+// companion API (companion-api.js), which only an open panel answers, can
+// run there. The floating panel's content script opens it as the launcher
+// click does. Same ids as COMPANION_EXTENSION_IDS in src/constants/config.js
+// (this classic script can't import it; a test keeps both in sync).
+// -----------------------------
+const COMPANION_EXTENSION_IDS = ["ofbkinmakmfacepccjcbmjgecdppolki"];
+
+chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
+  // Other companion actions are the panel's to answer.
+  if (message?.action !== "openPanel" || !COMPANION_EXTENSION_IDS.includes(sender.id)) return;
+  if (!Number.isInteger(message.tabId)) {
+    sendResponse({ ok: false, error: "no tab given" });
+    return;
+  }
+  chrome.tabs.sendMessage(message.tabId, { action: "lead-generator:show-panel" }, { frameId: 0 }).then(
+    (result) => sendResponse({ ok: true, result }),
+    (error) => sendResponse({ ok: false, error: error?.message || String(error) })
+  );
+  return true;
+});
+
+// -----------------------------
 // TAB BRIDGE
 // Tab/scripting calls relayed from the panel where its framed page lacks
 // those APIs (Firefox) - see src/scripts/services/tab-bridge.js.

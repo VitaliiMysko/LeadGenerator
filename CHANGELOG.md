@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+## [3.6.0] - 2026-11-03
+
+### Added
+
+- **Leads Automate can run Extract, Generate and Save**: the Leads Automate extension can now run the panel's **Extract**, **Generate** (email) and **Save** for the person it opened in Sales Navigator people search, exactly as if the buttons were clicked, and is told the outcome (the extracted person and website, the email found, saved or already saved). When the panel isn't open on that tab, Leads Automate opens it, as a click on the Lead generator icon does. It works in Chrome and Edge, and only for Leads Automate: no other extension or web page can open the panel or run these actions
+
+### Changed
+
+- **New website status icon**: the green or red dot next to a company's website is replaced by a small badge on the website icon: a green check means the website responds, a red exclamation mark means it doesn't or the domain is invalid. Hovering over the website icon shows a tooltip explaining the status
+- **Privacy policy updated**: it now describes the Leads Automate companion extension (what it can request and what Lead generator returns to it, only inside the browser), Extract on Sales Navigator people search, the optional company id and open jobs fields, the cache of recently fetched companies, the newer settings, and that the browser may sync preferences and filters across your own browsers when sync is on (saved leads never are)
+
+### Fixed
+
+- **Company details now load for every position at the same company**: when a person holds several current positions at one company and LinkedIn links the company on only some of them, the positions without a link showed no website, industry, size or other details, even after another position had loaded them. Such a position now uses the link of a position with the same company name, so it gets the same details, company id and LinkedIn button. When positions with that name link to different companies, nothing changes
+
 ## [3.5.0] - 2026-10-21
 
 ### Added

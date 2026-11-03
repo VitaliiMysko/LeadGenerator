@@ -11,6 +11,7 @@ if (!window.leadGenerator.floatingPanelInit) {
   const LAUNCHER_POSITION_KEY = "floatingLauncherPosition";
   const RESET_MESSAGE_TYPE = "lead-generator:panel-reset";
   const INIT_MESSAGE_TYPE = "lead-generator:panel-init";
+  const SHOW_PANEL_ACTION = "lead-generator:show-panel";
   const EXTENSION_ORIGIN = new URL(chrome.runtime.getURL("index.html")).origin;
 
   // Pages a lead is extracted from; landing on a different one resets the
@@ -364,6 +365,14 @@ if (!window.leadGenerator.floatingPanelInit) {
 
   window.addEventListener("resize", () => {
     if (launcher) applyLauncherPosition();
+  });
+
+  // Leads Automate's openPanel request, relayed by the background: opens
+  // the panel as a launcher click does, only where the launcher is shown.
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message?.action !== SHOW_PANEL_ACTION) return;
+    if (launcher && isSupportedPageUrl(location.href)) showPanel();
+    sendResponse({ shown: isPanelVisible() });
   });
 
   init();

@@ -260,31 +260,24 @@
 .valid,
 .no-valid {
   position: relative;
-  padding-right: 12px;
-  box-sizing: border-box;
 }
+/* Status badge on the bottom-right corner of the www icon: ✓ = website responds, ! = it doesn't */
 .valid::before,
 .no-valid::before {
   content: "";
   position: absolute;
-  top: 50%;
-  right: 2px;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
+  top: calc(50% - 1.5px);
+  left: 9px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
+  box-shadow: 0 0 0 1px #fff;
+  background: var(--website-status-badge) center / contain no-repeat;
+  pointer-events: none;
 }
 .valid::before {
-  background: radial-gradient(circle at 35% 35%, #f8faf8, #8cca8e);
+  --website-status-badge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%234f9d55'/%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-4.9' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 .no-valid::before {
-  background: radial-gradient(circle at 35% 35%, #faefee, #ca8c89);
-}
-.valid:has(.editing-domain),
-.no-valid:has(.editing-domain) {
-  padding-right: 0;
-}
-.valid:has(.editing-domain)::before,
-.no-valid:has(.editing-domain)::before {
-  display: none;
+  --website-status-badge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8' fill='%23c4605a'/%3E%3Cpath d='M8 4.2v4.6M8 11.6v.2' fill='none' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
 }

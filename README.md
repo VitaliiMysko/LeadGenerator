@@ -65,7 +65,7 @@ Displays a list of companies associated with the profile as an interactive accor
 - Clicking a row expands it and collapses any previously open entry; an arrow indicator reflects the expand state
 - Shows **"No results"** if no data was extracted or all entries are hidden by active filters
 - Expanded company details include:
-  - Website (click to copy a basic email address; click the edit icon to correct it inline — if it currently shows "No website found", that placeholder is cleared automatically as soon as editing starts). Pasting a full URL (e.g. `https://www.example.com/about?ref=123`) and saving automatically converts it to its bare domain (`example.com`) when possible
+  - Website (a badge on the website icon shows whether the website responds — hover it for details; click to copy a basic email address; click the edit icon to correct it inline — if it currently shows "No website found", that placeholder is cleared automatically as soon as editing starts). Pasting a full URL (e.g. `https://www.example.com/about?ref=123`) and saving automatically converts it to its bare domain (`example.com`) when possible
   - Industry
   - Location
   - Company size
@@ -199,6 +199,10 @@ Includes:
 
 - Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise. A found email is reused only for the same website, name and surname; changing the name or surname runs the search again. A matching found email is filled in automatically when a company is selected, including the first one after Extract
 - Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
+
+### Leads Automate
+
+The companion [Leads Automate](https://github.com/VitaliiMysko/LeadsAutomate) extension can run **Extract**, **Generate** and **Save** for the person it opens in Sales Navigator people search, with the same result as clicking the buttons. It opens the panel on that tab itself when it's closed. Chrome and Edge only.
 
 ## Network & Data Fetching Strategy
 

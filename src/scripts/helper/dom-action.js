@@ -38,12 +38,13 @@ export const addCopyOnClickListener = (
   });
 };
 
-export const setValidationStyle = (element, value) => {
+export const setValidationStyle = (element, value, tooltip) => {
   if (value) {
     element.classList.add("valid");
   } else {
     element.classList.add("no-valid");
   }
+  if (tooltip) element.title = tooltip;
 };
 
 export const useTextChangeEffect = (element, duration = 1000) => {

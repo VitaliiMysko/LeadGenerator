@@ -29,9 +29,23 @@ import {
 } from "../../features/website-domain-editor.js";
 import { NO_WEBSITE_FOUND_TEXT } from "../../../constants/config.js";
 
+// Resolves once the details of the selected company have loaded.
 export function setupCompanyDetails() {
-  initCompanyDetails();
+  const loading = initCompanyDetails();
   addCompanyDetailsListeners();
+  return loading;
+}
+
+export function clearWebsiteStatus(websiteBlock) {
+  websiteBlock.classList.remove("valid", "no-valid");
+  websiteBlock.title = "website";
+}
+
+function setWebsiteStatus(websiteBlock, isOnline) {
+  const tooltip = isOnline
+    ? "Website is online"
+    : "Website is not responding or the domain is invalid";
+  setValidationStyle(websiteBlock, isOnline, tooltip);
 }
 
 export async function refreshCompanyDetails(item) {
@@ -62,13 +76,17 @@ function addCompanyDetailsListeners() {
 }
 
 function initCompanyDetails() {
+  const loads = [];
   getCompanyItemElements().forEach((item) => {
     if (item.classList.contains("active") && item.style.display !== "none") {
-      manageCompanyDetailsBlock(item).then(() =>
-        fillEmailFromCache(getEmailElement().value),
+      loads.push(
+        manageCompanyDetailsBlock(item).then(() =>
+          fillEmailFromCache(getEmailElement().value),
+        ),
       );
     }
   });
+  return Promise.all(loads);
 }
 
 async function manageCompanyDetailsBlock(item) {
@@ -183,14 +201,14 @@ async function handleDomainSave(newValue, websiteBlock, item) {
     getGenerateEmailsBtnElement().disabled = !valid;
   }
 
-  websiteBlock.classList.remove("valid", "no-valid");
+  clearWebsiteStatus(websiteBlock);
 
   if (!valid) {
     showAlert("Invalid domain format.", "error");
-    setValidationStyle(websiteBlock, false);
+    setWebsiteStatus(websiteBlock, false);
   } else {
     const state = await getWebsiteState(fullUrl);
-    setValidationStyle(websiteBlock, state.ok);
+    setWebsiteStatus(websiteBlock, state.ok);
 
     const companyLink = item.getAttribute("data-company-link");
     const companyName = item.getAttribute("data-company-name");
@@ -208,7 +226,7 @@ function renderWebsite(websiteBlock, websiteIconElement, companyDetails) {
     linkEl.appendChild(websiteIconElement);
     websiteBlock.appendChild(linkEl);
     addCopyOnClickListener(websiteBlock, "span", getBasicEmail.bind(null, hostname), "basic email");
-    setValidationStyle(websiteBlock, companyDetails.ok);
+    setWebsiteStatus(websiteBlock, companyDetails.ok);
     return hostname;
   }
 
