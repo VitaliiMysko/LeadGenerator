@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file.
 
 - **Privacy policy updated**: it now describes the Leads Automate companion extension (what it can request and what Lead generator returns to it, only inside the browser), Extract on Sales Navigator people search, the optional company id and open jobs fields, the cache of recently fetched companies, the newer settings, and that the browser may sync preferences and filters across your own browsers when sync is on (saved leads never are)
 
+### Fixed
+
+- **Company details now load for every position at the same company**: when a person holds several current positions at one company and LinkedIn links the company on only some of them, the positions without a link showed no website, industry, size or other details, even after another position had loaded them. Such a position now uses the link of a position with the same company name, so it gets the same details, company id and LinkedIn button. When positions with that name link to different companies, nothing changes
+
 ## [3.5.0] - 2026-10-21
 
 ### Added
