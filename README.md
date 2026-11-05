@@ -34,7 +34,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field; when **Store has open jobs** is enabled, the company's open-jobs flag follows as the last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows; the first row holds the column names, as the panel's fields are named) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field; when **Store has open jobs** is enabled, the company's open-jobs flag follows as the last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -51,7 +51,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ### Right Panel (Dynamic)
 
-- Controlled via dropdown tab selector
+- Controlled via dropdown tab selector; the tab content is blurred while the list is open
 - Content updates dynamically without reloading the UI
 
 ## Tabs
@@ -156,7 +156,7 @@ Available option:
 - **Name** - individual's first name
 - **Surname** - individual's last name
 - **Job Position** - current role
-- **Link** - LinkedIn profile URL
+- **Link** - the person's public LinkedIn profile URL (`linkedin.com/in/...`), also when extracted on Sales Navigator; left empty if it can't be found
 - **Email** - working email address
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)

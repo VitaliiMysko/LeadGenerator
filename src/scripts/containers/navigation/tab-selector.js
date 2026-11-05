@@ -8,28 +8,37 @@ import {
 const trigger = getTabSelectorTriggerElement();
 const dropdown = getTabDropdownElement();
 const options = getTabOptionElements();
+const tabsContainer = trigger.closest(".tabs-container");
 
-trigger.addEventListener("click", () => {
-  if (dropdown.style.display === "block") {
-    removeHandleDocumentClick();
-  } else {
-    trigger.classList.add("open");
-    dropdown.style.display = "block";
-    document.addEventListener("click", handleDocumentClick);
-  }
-});
+const isDropdownOpen = () => dropdown.style.display === "block";
 
-const handleDocumentClick = (e) => {
-  if (!trigger.contains(e.target)) {
-    removeHandleDocumentClick();
-  }
+const openDropdown = () => {
+  trigger.classList.add("open");
+  tabsContainer.classList.add("tab-dropdown-open");
+  dropdown.style.display = "block";
+  document.addEventListener("click", handleDocumentClick);
 };
 
-const removeHandleDocumentClick = () => {
+const closeDropdown = () => {
   trigger.classList.remove("open");
+  tabsContainer.classList.remove("tab-dropdown-open");
   dropdown.style.display = "none";
   document.removeEventListener("click", handleDocumentClick);
 };
+
+const handleDocumentClick = (e) => {
+  if (!trigger.contains(e.target)) {
+    closeDropdown();
+  }
+};
+
+trigger.addEventListener("click", () => {
+  if (isDropdownOpen()) {
+    closeDropdown();
+  } else {
+    openDropdown();
+  }
+});
 
 options.forEach((option) => {
   option.addEventListener("click", (event) => {
@@ -45,7 +54,7 @@ options.forEach((option) => {
 
     selectedTabBlock.appendChild(viewElement);
 
-    dropdown.style.display = "none";
+    closeDropdown();
 
     const selectedTabName = event.target.getAttribute("data-tab");
     const selectedTabElement = document.getElementById(
