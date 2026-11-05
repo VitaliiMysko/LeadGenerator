@@ -63,6 +63,16 @@
 
   scrollbar-gutter: stable;
   padding-left: 3px;
+  transition:
+    filter 0.2s ease,
+    opacity 0.2s ease;
+}
+/* Blur the tab content behind the open tab selector so its options stand out */
+.tab-dropdown-open .tabs-content {
+  filter: blur(1.2px);
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
 }
 .tab {
   display: none;
