@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ## [3.6.1] - 2026-11-05
 
+### Changed
+
+- **Column names in the tab-separated export**: the leads copied by **Get** in tab-separated format now start with a header row naming each column (Name, Surname, Job position, Link, Email, Company name, Country, Industry, and Company id / Has open jobs when those settings are on), in the same order as the columns. The JSON format is unchanged
+
 ### Fixed
 
 - **Link always holds the public LinkedIn profile**: on Sales Navigator, the **Link** field could be filled with the person's Sales Navigator page (`linkedin.com/sales/lead/...`) or another unrelated link instead of their public profile. It now only ever holds the public profile URL (`linkedin.com/in/...`), in one consistent form without extra parameters or sub-pages, and stays empty if the public profile can't be found

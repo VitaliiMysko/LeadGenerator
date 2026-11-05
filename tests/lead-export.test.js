@@ -64,22 +64,51 @@ describe("buildLeadRecord", () => {
 });
 
 describe("formatLeadsAsTsv", () => {
-  test("joins fields with tabs and leads with newlines", () => {
+  test("starts with a header line, then joins fields with tabs and leads with newlines", () => {
     const leads = [makeLead(), makeLead({ firstName: "Jane", surname: "Doe" })];
     expect(formatLeadsAsTsv(leads, FIELD_ORDER, KEY_MAP, false)).toBe(
-      "John\tSmith\tjohn@example.com\nJane\tDoe\tjohn@example.com",
+      "Name\tSurname\tEmail\nJohn\tSmith\tjohn@example.com\nJane\tDoe\tjohn@example.com",
     );
+  });
+
+  test("header follows the given field order", () => {
+    const order = ["email", "second-name", "first-name"];
+    const [header] = formatLeadsAsTsv([makeLead()], order, KEY_MAP, false).split("\n");
+    expect(header).toBe("Email\tSurname\tName");
+  });
+
+  test("names every panel field in the header", () => {
+    const keyMap = {
+      "first-name": "firstName",
+      "second-name": "surname",
+      "job-position": "jobPosition",
+      "link": "link",
+      "email": "email",
+      "company-name": "companyName",
+      "company-country": "country",
+      "company-industry": "industry",
+    };
+    const [header] = formatLeadsAsTsv([makeLead()], Object.keys(keyMap), keyMap, true, true).split("\n");
+    expect(header).toBe(
+      "Name\tSurname\tJob position\tLink\tEmail\tCompany name\tCountry\tIndustry\tCompany id\tHas open jobs",
+    );
+  });
+
+  test("falls back to the key for a column without a name", () => {
+    const keyMap = { ...KEY_MAP, extra: "extraField" };
+    const [header] = formatLeadsAsTsv([makeLead()], ["extra"], keyMap, false).split("\n");
+    expect(header).toBe("extraField");
   });
 
   test("appends companyId column when enabled", () => {
     expect(formatLeadsAsTsv([makeLead()], FIELD_ORDER, KEY_MAP, true)).toBe(
-      "John\tSmith\tjohn@example.com\tacme-123",
+      "Name\tSurname\tEmail\tCompany id\nJohn\tSmith\tjohn@example.com\tacme-123",
     );
   });
 
   test("appends the hasOpenJobs column when enabled", () => {
     expect(formatLeadsAsTsv([makeLead()], FIELD_ORDER, KEY_MAP, true, true)).toBe(
-      "John	Smith	john@example.com	acme-123	true",
+      "Name\tSurname\tEmail\tCompany id\tHas open jobs\nJohn\tSmith\tjohn@example.com\tacme-123\ttrue",
     );
   });
 
