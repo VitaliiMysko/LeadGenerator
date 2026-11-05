@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **New logo**: the white "L" on a blue tile is replaced by a person framed by viewfinder corners, showing that the extension captures a lead's details from the page. It appears on the on-page launcher, in the browser's extensions list and in the store listing
 - **Clearer tab selector**: while the Actual experience / Filters / Settings list is open, the content of the right section is blurred and dimmed, so the list no longer blends into the information under it. Clicking the blurred area just closes the list. The list itself now appears smoothly on a white card, and the current tab is highlighted in blue
 - **Column names in the tab-separated export**: the leads copied by **Get** in tab-separated format now start with a header row naming each column (Name, Surname, Job position, Link, Email, Company name, Country, Industry, and Company id / Has open jobs when those settings are on), in the same order as the columns. The JSON format is unchanged
 
