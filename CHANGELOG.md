@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.6.1] - 2026-11-05
+
+### Fixed
+
+- **Link always holds the public LinkedIn profile**: on Sales Navigator, the **Link** field could be filled with the person's Sales Navigator page (`linkedin.com/sales/lead/...`) or another unrelated link instead of their public profile. It now only ever holds the public profile URL (`linkedin.com/in/...`), in one consistent form without extra parameters or sub-pages, and stays empty if the public profile can't be found
+
 ## [3.6.0] - 2026-11-03
 
 ### Added

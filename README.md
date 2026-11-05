@@ -156,7 +156,7 @@ Available option:
 - **Name** - individual's first name
 - **Surname** - individual's last name
 - **Job Position** - current role
-- **Link** - LinkedIn profile URL
+- **Link** - the person's public LinkedIn profile URL (`linkedin.com/in/...`), also when extracted on Sales Navigator; left empty if it can't be found
 - **Email** - working email address
 - **Company Name** — current company; includes a LinkedIn button (🔗) that opens the company's LinkedIn page in a new tab; disabled and shown in gray when no link is available
 - **Country** - company location; can only be set to a country from the searchable dropdown (the same list as the Filters tab's location filter)

@@ -44,7 +44,7 @@ if (!window.leadGenerator.personalDataInit) {
     }
 
     function getLinkedInProfileUrl() {
-      return window.location.href.trim().split("?")[0];
+      return window.leadGenerator.toPublicProfileUrl(window.location.href);
     }
 
     // LinkedIn's public profile page has no stable class on the name heading,
