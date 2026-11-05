@@ -51,7 +51,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 ### Right Panel (Dynamic)
 
-- Controlled via dropdown tab selector
+- Controlled via dropdown tab selector; the tab content is blurred while the list is open
 - Content updates dynamically without reloading the UI
 
 ## Tabs
