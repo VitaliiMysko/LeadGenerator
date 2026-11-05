@@ -43,50 +43,50 @@ if (!window.leadGenerator.personalDataInit) {
       return "";
     }
 
+    const ACTIONS_MENU_TIMEOUT_MS = 3000;
+
+    // The "link" field only ever holds the person's public LinkedIn page
+    // ("linkedin.com/in/..."), never a Sales Navigator one; "" when the
+    // public page can't be found.
     async function getLinkedInProfileUrl() {
-      let linkProfileUrl = getLinkedInProfileUrlDirect();
-      if (linkProfileUrl === "") {
-        linkProfileUrl = await getLinkedInProfileUrlViaSalesNavigator();
-      }
-      return linkProfileUrl;
-    }
-
-    function getLinkedInProfileUrlDirect() {
-      const xpath = "//a[contains(@href, 'https://www.linkedin.com/in/')]"; // XPath
-      const result = document.evaluate(
-        xpath,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
+      return (
+        findPublicProfileUrl() ||
+        (await getLinkedInProfileUrlViaActionsMenu())
       );
-      const linkProfileUrlElement = result.singleNodeValue;
-      const linkProfileUrl = linkProfileUrlElement
-        ? linkProfileUrlElement.href
-        : "";
-      return linkProfileUrl.trim().split("?")[0];
     }
 
-    async function getLinkedInProfileUrlViaSalesNavigator() {
+    function findPublicProfileUrl() {
+      const links = document.querySelectorAll('a[href*="linkedin.com/in/"]');
+      for (const link of links) {
+        const url = window.leadGenerator.toPublicProfileUrl(link.href);
+        if (url) return url;
+      }
+      return "";
+    }
+
+    // The public page link is usually only rendered inside the lead's "..."
+    // actions menu. It wasn't in the page before the menu was opened, so a
+    // public profile link appearing after opening it is the menu's one.
+    async function getLinkedInProfileUrlViaActionsMenu() {
       const actionsMenuElement = getActionsMenuElement();
       if (!actionsMenuElement) return "";
       actionsMenuElement.click();
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
-
-      let linkProfileUrl = "";
-      const dropdownMenuElement =
-        findElementByCSSVariable("--x-hue-web-level", 10000) ??
-        getDropdownMenuElement();
-      if (dropdownMenuElement) {
-        const linkProfileUrlElement = dropdownMenuElement.querySelector("a");
-        linkProfileUrl = linkProfileUrlElement
-          ? linkProfileUrlElement.href
-          : "";
+      try {
+        return await window.leadGenerator.waitForConditionWithTimeout(
+          findPublicProfileUrl,
+          ACTIONS_MENU_TIMEOUT_MS
+        );
+      } catch {
+        return "";
+      } finally {
+        closeActionsMenu(actionsMenuElement);
       }
+    }
 
+    function closeActionsMenu(actionsMenuElement) {
+      if (actionsMenuElement.getAttribute("aria-expanded") === "false") return;
       actionsMenuElement.click();
-      return linkProfileUrl;
     }
 
     function getFullNameElement() {
@@ -99,18 +99,6 @@ if (!window.leadGenerator.personalDataInit) {
     function getActionsMenuElement() {
       return document.querySelector(
         "button[data-x--lead-actions-bar-overflow-menu]"
-      );
-    }
-
-    function getDropdownMenuElement() {
-      return document.getElementById("hue-menu-ember49");
-    }
-
-    function findElementByCSSVariable(varName, varValue) {
-      return [...document.querySelectorAll("*")].find(
-        (el) =>
-          getComputedStyle(el).getPropertyValue(varName).trim() ===
-          varValue.toString()
       );
     }
 
