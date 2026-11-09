@@ -167,9 +167,10 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 // run there. The floating panel's content script opens it as the launcher
 // click does. Same ids as COMPANION_EXTENSION_IDS in src/constants/config.js
 // (this classic script can't import it; a test keeps both in sync): Leads
-// Automate's Chrome id and its Firefox add-on id.
+// Automate's Chrome Web Store id, its unpacked Chrome id and its Firefox
+// add-on id.
 // -----------------------------
-const COMPANION_EXTENSION_IDS = ["ofbkinmakmfacepccjcbmjgecdppolki", "leads-automate@future-processing.com"];
+const COMPANION_EXTENSION_IDS = ["lfegeffagbapijjliibbjbcnihhcpkkp", "ofbkinmakmfacepccjcbmjgecdppolki", "leads-automate@future-processing.com"];
 
 chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
   if (!COMPANION_EXTENSION_IDS.includes(sender.id)) return;
