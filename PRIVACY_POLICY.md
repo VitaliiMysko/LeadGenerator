@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: November 3, 2026
+**Last Updated**: November 9, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -75,7 +75,7 @@ The extension uses the browser's `storage` permission to store:
   - Left-panel field order (when "Remember field order" is enabled)
   - Individual's names transliteration
   - Default country fallback (when "Country by default" is enabled)
-  - Maximum number of saved leads and the export format of copied leads
+  - Maximum number of saved leads, the export format of copied leads and whether they start with column names
   - "Store company id" and "Store has open jobs" settings, and the job title keywords entered for the latter
 - Selected filter values (e.g., company location, size)
 - The position of the on-page launcher icon

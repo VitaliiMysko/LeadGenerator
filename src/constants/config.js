@@ -4,6 +4,8 @@ export const MAX_CACHED_COMPANIES = 10;
 export const NO_WEBSITE_FOUND_TEXT = "No website found";
 export const LEADS_EXPORT_FORMATS = { TSV: "tsv", JSON: "json" };
 export const DEFAULT_LEADS_EXPORT_FORMAT = LEADS_EXPORT_FORMATS.TSV;
+// Whether the tab-separated export starts with a row of column names.
+export const DEFAULT_COPY_COLUMN_NAMES = true;
 
 // Kept in sync with manifest.json's host_permissions (as `${WORKER_URL}/*`)
 // and background.js's WORKER_ORIGIN by a test.

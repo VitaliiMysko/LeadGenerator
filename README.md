@@ -34,7 +34,7 @@ This extension is a straightforward tool for extracting data about individuals d
 
 - **Storage utility buttons**:
   - **"Save" Button** (primary): Saves the current left-panel lead to local storage. Disabled when all fields are empty or the configured limit is reached (99 by default, adjustable in Settings up to 999). When email is present it must be unique; when email is empty, all other fields must differ from every already-saved entry..
-  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows; the first row holds the column names, as the panel's fields are named) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field; when **Store has open jobs** is enabled, the company's open-jobs flag follows as the last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
+  - **"Get" Button** (progress bar): Copies all saved leads to the clipboard, in tab-separated format by default (paste directly into Excel or Google Sheets to populate rows; the first row holds the column names, as the panel's fields are named, unless **Copy column names** is turned off) or as a JSON array of lead objects, depending on the **Export format** setting. Column/field order matches the current left-panel field order. When **Store company id** is enabled in Settings, the company id is appended as an extra last field; when **Store has open jobs** is enabled, the company's open-jobs flag follows as the last field. Fill level shows storage usage relative to the configured limit; hover to see exact count.
   - **"Clean" Button**: Removes all saved leads from local storage and resets the counter. Disabled when there are no saved leads. Shows a confirmation dialog before clearing.
 
 ## UI Structure
@@ -147,6 +147,10 @@ Available option:
 - **Export format**
   - Segmented toggle controlling the format used by the **Get** button: **Tab-separated** (default) or **JSON**
   - Saved immediately on change
+  - State persisted via Chrome `storage`
+- **Copy column names Toggle**
+  - When enabled (default), the tab-separated export starts with a row of column names; turn it off to copy only the lead rows, e.g. to append them under existing rows in a spreadsheet
+  - Not used by the JSON format
   - State persisted via Chrome `storage`
 
 ## Data Fields
