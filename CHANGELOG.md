@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.7.0] - 2026-11-09
+
 ### Added
 
 - **Copy column names setting**: a new **Leads data** toggle that controls whether leads copied by **Get** in tab-separated format start with the row of column names. It is on by default, so nothing changes unless it is turned off; turn it off to paste leads under rows already in a spreadsheet. The JSON format is unaffected
