@@ -161,28 +161,105 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 
 // -----------------------------
-// COMPANION: OPEN PANEL (Chrome and Edge)
+// COMPANION: OPEN PANEL
 // Leads Automate asks to open the panel on its search tab, so the panel's
 // companion API (companion-api.js), which only an open panel answers, can
 // run there. The floating panel's content script opens it as the launcher
 // click does. Same ids as COMPANION_EXTENSION_IDS in src/constants/config.js
-// (this classic script can't import it; a test keeps both in sync).
+// (this classic script can't import it; a test keeps both in sync): Leads
+// Automate's Chrome id and its Firefox add-on id.
 // -----------------------------
-const COMPANION_EXTENSION_IDS = ["ofbkinmakmfacepccjcbmjgecdppolki"];
+const COMPANION_EXTENSION_IDS = ["ofbkinmakmfacepccjcbmjgecdppolki", "leads-automate@future-processing.com"];
 
 chrome.runtime.onMessageExternal?.addListener((message, sender, sendResponse) => {
-  // Other companion actions are the panel's to answer.
-  if (message?.action !== "openPanel" || !COMPANION_EXTENSION_IDS.includes(sender.id)) return;
-  if (!Number.isInteger(message.tabId)) {
-    sendResponse({ ok: false, error: "no tab given" });
-    return;
+  if (!COMPANION_EXTENSION_IDS.includes(sender.id)) return;
+  if (message?.action === "openPanel") {
+    if (!Number.isInteger(message.tabId)) {
+      sendResponse({ ok: false, error: "no tab given" });
+      return;
+    }
+    chrome.tabs.sendMessage(message.tabId, { action: "lead-generator:show-panel" }, { frameId: 0 }).then(
+      (result) => sendResponse({ ok: true, result }),
+      (error) => sendResponse({ ok: false, error: error?.message || String(error) })
+    );
+    return true;
   }
-  chrome.tabs.sendMessage(message.tabId, { action: "lead-generator:show-panel" }, { frameId: 0 }).then(
-    (result) => sendResponse({ ok: true, result }),
-    (error) => sendResponse({ ok: false, error: error?.message || String(error) })
-  );
+  // In Chrome and Edge the panel answers the other actions itself.
+  if (!RELAYS_COMPANION_REQUESTS || !Number.isInteger(message?.tabId)) return;
+  relayCompanionRequest(message, sender.id).then(sendResponse);
   return true;
 });
+
+// -----------------------------
+// COMPANION RELAY (Firefox only)
+// Firefox gives the panel's framed page no runtime.onMessageExternal, so the
+// panel connects a port here (companion-api.js) and Leads Automate's other
+// requests (ping, extract, generateEmails, save) are passed to the panel of
+// the tab they name; the panel checks them and runs them as in Chrome.
+// getBrowserInfo exists only in Firefox.
+// -----------------------------
+const RELAYS_COMPANION_REQUESTS = typeof globalThis.browser?.runtime?.getBrowserInfo === "function";
+// Same value as COMPANION_PORT_NAME in companion-api.js.
+const COMPANION_PORT_NAME = "lead-generator:companion";
+// How long a request waits for the tab's panel to connect: after this page
+// was unloaded, the panels connect again within about a second.
+const COMPANION_PANEL_WAIT_MS = 1500;
+const PANEL_PAGE_URL = chrome.runtime.getURL("index.html");
+
+// key: tabId, value: the port of that tab's panel
+const companionPanels = new Map();
+// key: requestId, value: { port, resolve }
+const companionRequests = new Map();
+let lastCompanionRequestId = 0;
+
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name !== COMPANION_PORT_NAME) return;
+  const tabId = port.sender?.tab?.id;
+  // Only the panel page itself, framed in a tab.
+  if (!Number.isInteger(tabId) || !port.sender.url?.startsWith(PANEL_PAGE_URL)) {
+    port.disconnect();
+    return;
+  }
+  companionPanels.set(tabId, port);
+
+  port.onMessage.addListener(({ requestId, response }) => {
+    const request = companionRequests.get(requestId);
+    if (request?.port !== port) return;
+    companionRequests.delete(requestId);
+    request.resolve(response);
+  });
+  port.onDisconnect.addListener(() => {
+    if (companionPanels.get(tabId) === port) companionPanels.delete(tabId);
+    for (const [requestId, request] of companionRequests) {
+      if (request.port !== port) continue;
+      companionRequests.delete(requestId);
+      request.resolve({ ok: false, error: "the Lead generator panel was closed" });
+    }
+  });
+});
+
+async function companionPanelPort(tabId) {
+  const deadline = Date.now() + COMPANION_PANEL_WAIT_MS;
+  while (!companionPanels.has(tabId) && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return companionPanels.get(tabId) ?? null;
+}
+
+async function relayCompanionRequest(message, senderId) {
+  const port = await companionPanelPort(message.tabId);
+  if (!port) return { ok: false, error: "the Lead generator panel isn't open on that tab" };
+  return new Promise((resolve) => {
+    const requestId = ++lastCompanionRequestId;
+    companionRequests.set(requestId, { port, resolve });
+    try {
+      port.postMessage({ requestId, senderId, message: { action: message.action, tabId: message.tabId } });
+    } catch {
+      companionRequests.delete(requestId);
+      resolve({ ok: false, error: "the Lead generator panel was closed" });
+    }
+  });
+}
 
 // -----------------------------
 // TAB BRIDGE
