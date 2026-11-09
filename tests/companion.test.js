@@ -27,9 +27,13 @@ describe("COMPANION_EXTENSION_IDS", () => {
     for (const id of COMPANION_EXTENSION_IDS) expect(id).toMatch(/^([a-p]{32}|[\w.-]+@[\w.-]+)$/);
   });
 
-  test("include Leads Automate in Chrome and in Firefox", () => {
+  test("include Leads Automate from the Chrome Web Store, unpacked, and in Firefox", () => {
     expect(COMPANION_EXTENSION_IDS).toEqual(
-      expect.arrayContaining(["ofbkinmakmfacepccjcbmjgecdppolki", "leads-automate@future-processing.com"])
+      expect.arrayContaining([
+        "lfegeffagbapijjliibbjbcnihhcpkkp",
+        "ofbkinmakmfacepccjcbmjgecdppolki",
+        "leads-automate@future-processing.com",
+      ])
     );
   });
 });

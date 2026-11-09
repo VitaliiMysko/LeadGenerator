@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.7.1] - 2026-11-09
+
+### Fixed
+
+- **Leads Automate from the Chrome Web Store**: Leads Automate installed from the Chrome Web Store can now run **Extract**, **Generate** and **Save** and open the panel, as its unpacked copy and its Firefox version already could. As before, only Leads Automate is answered
+
 ## [3.7.0] - 2026-11-09
 
 ### Added
