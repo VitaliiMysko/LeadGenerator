@@ -112,8 +112,16 @@ describe("formatLeadsAsTsv", () => {
     );
   });
 
+  test("omits the header line when includeHeader is false", () => {
+    const leads = [makeLead(), makeLead({ firstName: "Jane", surname: "Doe" })];
+    expect(formatLeadsAsTsv(leads, FIELD_ORDER, KEY_MAP, true, false, false)).toBe(
+      "John\tSmith\tjohn@example.com\tacme-123\nJane\tDoe\tjohn@example.com\tacme-123",
+    );
+  });
+
   test("returns an empty string for no leads", () => {
     expect(formatLeadsAsTsv([], FIELD_ORDER, KEY_MAP, false)).toBe("");
+    expect(formatLeadsAsTsv([], FIELD_ORDER, KEY_MAP, false, false, false)).toBe("");
   });
 });
 

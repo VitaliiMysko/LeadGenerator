@@ -22,3 +22,13 @@ describe("COMPANION_EXTENSION_IDS", () => {
     expect(JSON.parse(match?.[1] ?? "null")).toEqual(COMPANION_EXTENSION_IDS);
   });
 });
+
+describe("COMPANION_PORT_NAME", () => {
+  // Firefox: the panel connects to the background page by this name.
+  test("is the same in companion-api.js and background.js", () => {
+    const portName = (path) => readRepoFile(path).match(/const COMPANION_PORT_NAME = "([^"]+)";/)?.[1];
+    const panelName = portName("src/scripts/containers/data/companion-api.js");
+    expect(panelName).toBeTruthy();
+    expect(portName("src/scripts/workers/background.js")).toBe(panelName);
+  });
+});
