@@ -20,7 +20,11 @@ import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
 import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
-import { LEADS_EXPORT_FORMATS, DEFAULT_LEADS_EXPORT_FORMAT } from "../../../constants/config.js";
+import {
+  LEADS_EXPORT_FORMATS,
+  DEFAULT_LEADS_EXPORT_FORMAT,
+  DEFAULT_COPY_COLUMN_NAMES,
+} from "../../../constants/config.js";
 import {
   getMaxSavedLeads,
   loadMaxSavedLeads,
@@ -179,11 +183,19 @@ async function copyLeadsToClipboard(leads) {
   const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
   const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
+  const includeColumnNames = !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES));
 
   const text =
     format === LEADS_EXPORT_FORMATS.JSON
       ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs)
-      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs);
+      : formatLeadsAsTsv(
+          leads,
+          fieldOrder,
+          INPUT_ID_TO_LEAD_KEY,
+          storeCompanyId,
+          storeHasOpenJobs,
+          includeColumnNames,
+        );
 
   try {
     await navigator.clipboard.writeText(text);

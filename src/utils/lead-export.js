@@ -24,15 +24,23 @@ export function buildLeadRecord(lead, fieldOrder, keyMap, includeCompanyId, incl
   return record;
 }
 
-// One header line with the column names, then one line per lead;
-// "" when there are no leads.
-export function formatLeadsAsTsv(leads, fieldOrder, keyMap, includeCompanyId, includeOpenJobs = false) {
+// One line per lead, preceded by a header line with the column names
+// unless includeHeader is false; "" when there are no leads.
+export function formatLeadsAsTsv(
+  leads,
+  fieldOrder,
+  keyMap,
+  includeCompanyId,
+  includeOpenJobs = false,
+  includeHeader = true,
+) {
   if (!leads.length) return "";
   const records = leads.map((lead) =>
     buildLeadRecord(lead, fieldOrder, keyMap, includeCompanyId, includeOpenJobs),
   );
-  const header = Object.keys(records[0]).map((key) => LEAD_COLUMN_NAMES[key] || key);
-  return [header, ...records.map(Object.values)].map((row) => row.join("\t")).join("\n");
+  const rows = records.map(Object.values);
+  if (includeHeader) rows.unshift(Object.keys(records[0]).map((key) => LEAD_COLUMN_NAMES[key] || key));
+  return rows.map((row) => row.join("\t")).join("\n");
 }
 
 export function formatLeadsAsJson(leads, fieldOrder, keyMap, includeCompanyId, includeOpenJobs = false) {

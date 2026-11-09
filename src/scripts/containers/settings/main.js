@@ -6,6 +6,7 @@ import { initStoreCompanyId } from "./store-company-id.js";
 import { initStoreHasOpenJobs } from "./store-has-open-jobs.js";
 import { initMaxSavedLeads } from "./max-saved-leads.js";
 import { initExportFormat } from "./export-format.js";
+import { initCopyColumnNames } from "./copy-column-names.js";
 
 export async function initSettings() {
   await initFieldOrder();
@@ -16,4 +17,5 @@ export async function initSettings() {
   await initStoreHasOpenJobs();
   await initMaxSavedLeads();
   await initExportFormat();
+  await initCopyColumnNames();
 }
