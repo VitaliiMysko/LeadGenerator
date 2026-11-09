@@ -206,7 +206,7 @@ Includes:
 
 ### Leads Automate
 
-The companion [Leads Automate](https://github.com/VitaliiMysko/LeadsAutomate) extension can run **Extract**, **Generate** and **Save** for the person it opens in Sales Navigator people search, with the same result as clicking the buttons. It opens the panel on that tab itself when it's closed. Chrome and Edge only.
+The companion [Leads Automate](https://github.com/VitaliiMysko/LeadsAutomate) extension can run **Extract**, **Generate** and **Save** for the person it opens in Sales Navigator people search, with the same result as clicking the buttons. It opens the panel on that tab itself when it's closed. Works in Chrome, Edge and Firefox.
 
 ## Network & Data Fetching Strategy
 

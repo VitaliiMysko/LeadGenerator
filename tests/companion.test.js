@@ -22,8 +22,14 @@ describe("isCompanionRequest", () => {
 });
 
 describe("COMPANION_EXTENSION_IDS", () => {
-  test("are Chrome extension ids", () => {
+  test("are Chrome extension ids or Firefox add-on ids", () => {
     expect(COMPANION_EXTENSION_IDS.length).toBeGreaterThan(0);
-    for (const id of COMPANION_EXTENSION_IDS) expect(id).toMatch(/^[a-p]{32}$/);
+    for (const id of COMPANION_EXTENSION_IDS) expect(id).toMatch(/^([a-p]{32}|[\w.-]+@[\w.-]+)$/);
+  });
+
+  test("include Leads Automate in Chrome and in Firefox", () => {
+    expect(COMPANION_EXTENSION_IDS).toEqual(
+      expect.arrayContaining(["ofbkinmakmfacepccjcbmjgecdppolki", "leads-automate@future-processing.com"])
+    );
   });
 });
