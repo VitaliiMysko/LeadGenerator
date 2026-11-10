@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: November 9, 2026
+**Last Updated**: November 10, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -25,7 +25,7 @@ The data collected includes, but is not limited to:
 - Company name
 - Country
 - Industry
-- (Optional) Company id, when the "Store company id" setting is enabled
+- Company id, size, number of members and website (the "Get company id", "Get company size", "Get company members" and "Get company website" settings only control whether they are included when saved leads are copied)
 - (Optional) Whether the company has open jobs, when the "Store has open jobs" setting is enabled
 
 To show the selected company's details (website, location, industry, size, number of members and, when "Store has open jobs" is enabled, the titles of its open job postings), the extension opens the company's LinkedIn page in a background tab, reads them, and closes the tab.
@@ -76,7 +76,7 @@ The extension uses the browser's `storage` permission to store:
   - Individual's names transliteration
   - Default country fallback (when "Country by default" is enabled)
   - Maximum number of saved leads, the export format of copied leads and whether they start with column names
-  - "Store company id" and "Store has open jobs" settings, and the job title keywords entered for the latter
+  - "Get company id", "Get company size", "Get company members", "Get company website" and "Store has open jobs" settings, and the job title keywords entered for the latter
 - Selected filter values (e.g., company location, size)
 - The position of the on-page launcher icon
 - Details of the 10 most recently fetched companies (see section 3.2)
@@ -135,7 +135,7 @@ In such cases:
 
 ## 5.1 Companion extension (Leads Automate)
 
-Leads Automate is an optional companion extension by the same developer, which the user installs separately to work through Sales Navigator people search. When the user starts a search in it, it opens leads in the search results and asks Lead Generator to run **Extract**, email generation and **Save** for them, the same actions as the panel's buttons.
+Leads Automate is an optional companion extension by the same developer, which the user installs separately to work through Sales Navigator people search (see [Leads Automate's own privacy policy](https://vitaliimysko.github.io/LeadsAutomate/PRIVACY_POLICY.html)). When the user starts a search in it, it opens leads in the search results and asks Lead Generator to run **Extract**, email generation and **Save** for them, the same actions as the panel's buttons.
 
 - Lead Generator answers only the Leads Automate extension, identified by its extension id; no other extension or website can request these actions. When its panel isn't open on that tab, Leads Automate can ask Lead Generator to open it, as a click on its icon does
 - It returns to Leads Automate only the outcome of these actions: the person's name, surname and job position, the company name and website, the generated email, and whether the lead was saved
@@ -210,4 +210,4 @@ Any significant changes will be reflected:
 
 ## 12. Contact Us
 
-If you have any questions or concerns about this Privacy Policy, please contact us directly.
+If you have any questions or concerns about this Privacy Policy, please contact the developer at [vitalij.musko@gmail.com](mailto:vitalij.musko@gmail.com).

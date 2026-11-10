@@ -13,12 +13,17 @@ import {
   getCompanyIdElement,
   getCompanyOpenJobTitlesElement,
   getDataContainerElement,
+  getActiveCompanyItemElement,
+  getCompanyDomainElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
+import { normalizeCompanySize } from "../../../utils/company-size.js";
+import { normalizeCompanyMembers } from "../../../utils/company-members.js";
+import { normalizeCompanyWebsite } from "../../../utils/company-website.js";
 import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
 import {
   LEADS_EXPORT_FORMATS,
@@ -162,8 +167,32 @@ async function collectCurrentData() {
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
+    companySize: getCurrentCompanySizeValue(),
+    companyMembers: getCurrentCompanyMembersValue(),
+    companyWebsite: getCurrentCompanyWebsiteValue(),
     hasOpenJobs: await getCurrentOpenJobsValue(),
   };
+}
+
+// Company size, members and website are always saved with the lead, like
+// the company id; their settings only decide whether Get copies them.
+
+// The selected company's size as shown in its card ("51-200", "10001+"),
+// empty when it is unknown.
+function getCurrentCompanySizeValue() {
+  return normalizeCompanySize(getActiveCompanyItemElement()?.getAttribute("data-company-size"));
+}
+
+// The selected company's number of LinkedIn members ("75045"), empty when
+// it is unknown.
+function getCurrentCompanyMembersValue() {
+  return normalizeCompanyMembers(getActiveCompanyItemElement()?.getAttribute("data-company-members"));
+}
+
+// The selected company's website domain as shown in its card, including a
+// manual edit ("acme.com"); empty when there is none.
+function getCurrentCompanyWebsiteValue() {
+  return normalizeCompanyWebsite(getCompanyDomainElement()?.textContent);
 }
 
 async function getCurrentOpenJobsValue() {
@@ -180,22 +209,20 @@ function getFieldOrder() {
 
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
-  const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
-  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
-  const includeColumnNames = !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES));
+  const options = {
+    includeCompanyId: !!(await syncGet("getCompanyIdEnabled")),
+    includeCompanySize: !!(await syncGet("getCompanySizeEnabled")),
+    includeCompanyMembers: !!(await syncGet("getCompanyMembersEnabled")),
+    includeCompanyWebsite: !!(await syncGet("getCompanyWebsiteEnabled")),
+    includeOpenJobs: !!(await syncGet("storeHasOpenJobsEnabled")),
+    includeHeader: !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES)),
+  };
 
   const text =
     format === LEADS_EXPORT_FORMATS.JSON
-      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs)
-      : formatLeadsAsTsv(
-          leads,
-          fieldOrder,
-          INPUT_ID_TO_LEAD_KEY,
-          storeCompanyId,
-          storeHasOpenJobs,
-          includeColumnNames,
-        );
+      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, options)
+      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, options);
 
   try {
     await navigator.clipboard.writeText(text);

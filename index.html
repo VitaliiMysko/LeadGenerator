@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="src/styles/company-card.css" />
     <link rel="stylesheet" href="src/styles/tabs.css" />
     <link rel="stylesheet" href="src/styles/filters.css" />
+    <link rel="stylesheet" href="src/styles/release-notes.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap"
       rel="stylesheet"
@@ -15,7 +16,27 @@
   </head>
   <body style="display: none">
     <div id="version-container">
-      <span id="app-version"></span>
+      <span id="app-version" title="Version history"></span>
+      <button id="whats-new-btn" title="See what's new in this version" hidden>
+        &#10022; What's new
+      </button>
+    </div>
+    <div id="whats-new-dialog" class="whats-new-overlay" hidden>
+      <div
+        class="whats-new-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="whats-new-title"
+      >
+        <div class="whats-new-header">
+          <h4 id="whats-new-title">What's new</h4>
+          <button id="whats-new-close" aria-label="Close">&times;</button>
+        </div>
+        <div id="whats-new-list" class="whats-new-list"></div>
+        <div class="whats-new-footer">
+          <button id="whats-new-ok">Got it</button>
+        </div>
+      </div>
     </div>
     <div class="main-container">
       <div class="container">
@@ -212,10 +233,31 @@
               <div class="settings-section-title">Leads data</div>
               <div class="tab-item-block">
                 <input
-                  id="store-company-id-settings"
+                  id="get-company-id-settings"
                   type="checkbox"
                   title="Include company id as the last column when copying saved leads to the clipboard"
-                />Store company id
+                />Get company id
+              </div>
+              <div class="tab-item-block">
+                <input
+                  id="get-company-size-settings"
+                  type="checkbox"
+                  title="Include the company size (e.g. 51-200) as an extra column when copying saved leads to the clipboard"
+                />Get company size
+              </div>
+              <div class="tab-item-block">
+                <input
+                  id="get-company-members-settings"
+                  type="checkbox"
+                  title="Include the company's number of LinkedIn members as an extra column when copying saved leads to the clipboard"
+                />Get company members
+              </div>
+              <div class="tab-item-block">
+                <input
+                  id="get-company-website-settings"
+                  type="checkbox"
+                  title="Include the company's website domain as an extra column when copying saved leads to the clipboard"
+                />Get company website
               </div>
               <div class="tab-item-block">
                 <input

@@ -1,4 +1,4 @@
-import { formatCompanySize } from "../src/utils/company-size.js";
+import { formatCompanySize, normalizeCompanySize } from "../src/utils/company-size.js";
 
 describe("formatCompanySize", () => {
   test("null returns unknown", () => expect(formatCompanySize(null)).toBe("unknown"));
@@ -52,5 +52,15 @@ describe("formatCompanySize in other LinkedIn languages", () => {
 
   test("members line right after an open-ended size is not taken as a range end", () => {
     expect(formatCompanySize("Fler än 10 001 anställda75 045 associerade medlemmar")).toBe("10001+");
+  });
+});
+
+describe("normalizeCompanySize", () => {
+  test.each(["0-1", "51-200", "10001+"])("keeps a formatted size %s", (size) => {
+    expect(normalizeCompanySize(size)).toBe(size);
+  });
+
+  test.each(["unknown", "", "Loading", null, undefined])("returns an empty string for %p", (size) => {
+    expect(normalizeCompanySize(size)).toBe("");
   });
 });

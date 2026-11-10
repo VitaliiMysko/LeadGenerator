@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.8.0] - 2026-11-10
+
+### Added
+
+- **Company size, members and website saved with leads**: each saved lead now also keeps the selected company's size (e.g. `51-200`, `10001+`), number of LinkedIn members (e.g. `75045`) and website domain (e.g. `acme.com`, including a manually edited one), like the company id. A value that isn't known when the lead is saved stays empty
+- **Get company size, Get company members and Get company website settings**: new **Leads data** toggles, off by default, that make **Get** copy these values as extra columns after the company id, in that order (`companySize`, `companyMembers` and `companyWebsite` fields in JSON)
+- **What's new**: after an update, the on-page icon shows a blue dot and the panel a **What's new** button next to the version. It opens a short list of the changes in every version, with the ones not seen yet expanded and marked **New**; closing it hides the dot and the button on every tab. Clicking the version number shows the same history at any time. A fresh install shows no marker
+
+### Changed
+
+- **Store company id renamed to Get company id**: the toggle only decides whether **Get** copies the company id, which is always saved with the lead, so it is now named after the button. It starts off again after the update; turn it back on if it was on
+- **Privacy policy**: the privacy policy is now published as a standalone web page, links to Leads Automate's privacy policy, and gives a contact email for privacy questions
+
+### Fixed
+
+- **Console error on repeated Extract**: running **Extract** again on the same LinkedIn page no longer logs an "Identifier 'waitForElementWithTimeout' has already been declared" error to the browser console
+
 ## [3.7.1] - 2026-11-09
 
 ### Fixed

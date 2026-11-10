@@ -60,6 +60,7 @@ export async function refreshCompanyDetails(item) {
   item.setAttribute("data-company-location", item.getAttribute("data-company-location-init"));
   item.setAttribute("data-company-industry", item.getAttribute("data-company-industry-init"));
   item.setAttribute("data-company-size", item.getAttribute("data-company-size-init"));
+  item.removeAttribute("data-company-members");
   setOpenJobTitles(item, "");
 
   await manageCompanyDetailsBlock(item);
@@ -129,7 +130,7 @@ async function manageCompanyDetailsBlock(item) {
     location = renderLocation(locationBlock, item, companyDetails, location);
     industry = renderIndustry(industryBlock, item, companyDetails, industry);
     size = renderSize(sizeBlock, item, companyDetails, size);
-    renderMembers(membersBlock, companyDetails);
+    renderMembers(membersBlock, item, companyDetails);
     setOpenJobTitles(item, serializeOpenJobTitles(companyDetails.openJobTitles));
 
     websiteBlock.appendChild(createSpanElement(website));
@@ -286,7 +287,8 @@ function renderSize(sizeBlock, item, companyDetails, prevSize) {
   return size;
 }
 
-function renderMembers(membersBlock, companyDetails) {
+function renderMembers(membersBlock, item, companyDetails) {
+  item.setAttribute("data-company-members", companyDetails.members || "");
   const value = companyDetails.members
     ? Number(companyDetails.members).toLocaleString()
     : "unknown";
