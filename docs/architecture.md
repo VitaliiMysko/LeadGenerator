@@ -51,6 +51,8 @@ The panel (`index.html` + `src/scripts/`, loaded inside the iframe described in 
 
 The panel's CSS avoids relying on browser defaults that differ: the base font size (Chrome gives extension pages 75%, Firefox 16px) and input line-height are set explicitly. The right-hand scroll area's styled scrollbar uses `::-webkit-scrollbar`, which Firefox doesn't render, so Firefox shows its native scrollbar there.
 
+**What's new:** release notes are a static list in `src/constants/release-notes.js`, separate from `CHANGELOG.md`, which isn't packaged and is written in more detail. `chrome.storage.local` records the version whose notes were last closed. Any other value marks both the launcher (read by the floating-panel content script, which can't import the panel's modules, so it repeats the key) and the panel, and `storage.onChanged` clears the mark on every tab at once. Only `runtime.onInstalled` can tell a fresh install from an update, so on install the background records the installed version as seen. A test requires an entry for the manifest version, which makes a release PR without notes fail.
+
 The left-panel Country field is a searchable single-select restricted to the shared country list (the one the location filter uses). It wraps the existing text input rather than replacing it, so extraction, reset, and save code keep reading and writing the input's value directly.
 
 Each hidden-tab request is tracked per panel session (a random id generated once per iframe document). One iframe document exists per tab (created once, then only shown/hidden), so this gives per-tab independence. A two-stage timeout (a shorter one starting once the page reports load complete, a longer fallback from tab creation) accounts for LinkedIn's single-page-app needing time to render after the initial page load.
@@ -106,7 +108,7 @@ Generated-email results are cached separately, in memory only for the panel's li
 ### 2.7 Persistence Strategy
 
 - `chrome.storage.sync` — user preferences and UI settings, field order, filter state
-- `chrome.storage.local` — saved leads and the persistent company-details cache
+- `chrome.storage.local` — saved leads, the persistent company-details cache, and the last version whose release notes were seen
 
 No server-side persistence; all stored data stays on the user's device.
 
@@ -236,7 +238,7 @@ There is no toolbar `action`: the extension is opened only from the on-page laun
 
 ## 11. Background Script Usage Strategy
 
-The background service worker is used only when a Chrome API (`tabs`, `scripting`) is actually required — never as a general-purpose network proxy. Direct `fetch` from the panel UI is preferred for external requests because `chrome.runtime.sendMessage` has implicit timeout/lifecycle constraints, and an MV3 service worker can be terminated mid-request — both of which can surface as a silent `null` response. The only exception is Firefox's Worker-request relay (§2.2), limited to the Worker's own origin.
+The background service worker is used only when a Chrome API that needs background context (`tabs`, `scripting`, `runtime.onInstalled`) is actually required — never as a general-purpose network proxy. Direct `fetch` from the panel UI is preferred for external requests because `chrome.runtime.sendMessage` has implicit timeout/lifecycle constraints, and an MV3 service worker can be terminated mid-request — both of which can surface as a silent `null` response. The only exception is Firefox's Worker-request relay (§2.2), limited to the Worker's own origin.
 
 Hidden-tab tasks (company-page scraping, profile-experience fetching) share one per-session tracking model, keyed by a random id generated once per panel iframe document, so parallel tabs don't interfere with each other and a new request for the same session cancels a stale in-flight tab. A two-tier timeout (a shorter one from page-load-complete, a longer fallback from tab creation) accounts for the LinkedIn SPA's post-load rendering time.
 ## 12. Related Documents
