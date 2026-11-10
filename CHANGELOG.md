@@ -6,11 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Store company size setting**: a new **Leads data** toggle that saves the selected company's size (e.g. `51-200`, `10001+`) with each lead. **Get** adds it as an extra column after the company id (a `companySize` field in JSON). It is off by default; leads saved while it is off, or before the company's size was known, have an empty value
-- **Store company members setting**: a new **Leads data** toggle that saves the selected company's number of LinkedIn members (e.g. `75045`) with each lead. **Get** adds it as an extra column after the company size (a `companyMembers` field in JSON). It is off by default; leads saved while it is off, or before the number was known, have an empty value
+- **Company size, members and website saved with leads**: each saved lead now also keeps the selected company's size (e.g. `51-200`, `10001+`), number of LinkedIn members (e.g. `75045`) and website domain (e.g. `acme.com`, including a manually edited one), like the company id. A value that isn't known when the lead is saved stays empty
+- **Get company size, Get company members and Get company website settings**: new **Leads data** toggles, off by default, that make **Get** copy these values as extra columns after the company id, in that order (`companySize`, `companyMembers` and `companyWebsite` fields in JSON)
 
 ### Changed
 
+- **Store company id renamed to Get company id**: the toggle only decides whether **Get** copies the company id, which is always saved with the lead, so it is now named after the button. It starts off again after the update; turn it back on if it was on
 - **Privacy policy**: the privacy policy is now published as a standalone web page, links to Leads Automate's privacy policy, and gives a contact email for privacy questions
 
 ## [3.7.1] - 2026-11-09

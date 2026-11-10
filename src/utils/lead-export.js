@@ -12,6 +12,7 @@ export const LEAD_COLUMN_NAMES = {
   companyId: "Company id",
   companySize: "Company size",
   companyMembers: "Company members",
+  companyWebsite: "Company website",
   hasOpenJobs: "Has open jobs",
 };
 
@@ -21,6 +22,7 @@ const OPTIONAL_COLUMNS = [
   ["includeCompanyId", "companyId"],
   ["includeCompanySize", "companySize"],
   ["includeCompanyMembers", "companyMembers"],
+  ["includeCompanyWebsite", "companyWebsite"],
   ["includeOpenJobs", "hasOpenJobs"],
 ];
 
