@@ -1,7 +1,7 @@
 # Privacy Policy for Lead Generator Extension
 
 **Effective Date**: November 12, 2024  
-**Last Updated**: November 9, 2026
+**Last Updated**: November 10, 2026
 
 Thank you for using the **Lead Generator** extension. This privacy policy explains how we collect, use, and protect information obtained through your use of this extension.
 
@@ -135,7 +135,7 @@ In such cases:
 
 ## 5.1 Companion extension (Leads Automate)
 
-Leads Automate is an optional companion extension by the same developer, which the user installs separately to work through Sales Navigator people search. When the user starts a search in it, it opens leads in the search results and asks Lead Generator to run **Extract**, email generation and **Save** for them, the same actions as the panel's buttons.
+Leads Automate is an optional companion extension by the same developer, which the user installs separately to work through Sales Navigator people search (see [Leads Automate's own privacy policy](https://vitaliimysko.github.io/LeadsAutomate/PRIVACY_POLICY.html)). When the user starts a search in it, it opens leads in the search results and asks Lead Generator to run **Extract**, email generation and **Save** for them, the same actions as the panel's buttons.
 
 - Lead Generator answers only the Leads Automate extension, identified by its extension id; no other extension or website can request these actions. When its panel isn't open on that tab, Leads Automate can ask Lead Generator to open it, as a click on its icon does
 - It returns to Leads Automate only the outcome of these actions: the person's name, surname and job position, the company name and website, the generated email, and whether the lead was saved
@@ -210,4 +210,4 @@ Any significant changes will be reflected:
 
 ## 12. Contact Us
 
-If you have any questions or concerns about this Privacy Policy, please contact us directly.
+If you have any questions or concerns about this Privacy Policy, please contact the developer at [vitalij.musko@gmail.com](mailto:vitalij.musko@gmail.com).
