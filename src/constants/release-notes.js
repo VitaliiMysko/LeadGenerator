@@ -5,6 +5,18 @@
 // Item types: "added", "changed", "fixed", "removed".
 export const RELEASE_NOTES = [
   {
+    version: "3.8.0",
+    date: "2026-11-10",
+    items: [
+      { type: "added", text: "What's new: see what changed after an update, or click the version number for the full history" },
+      { type: "added", text: "Company size, members and website are saved with every lead" },
+      { type: "added", text: "Get company size, Get company members and Get company website settings add them as extra columns to Get" },
+      { type: "changed", text: "Store company id is now called Get company id. It starts off after the update: turn it back on if you used it" },
+      { type: "changed", text: "The privacy policy is published as a web page, with a contact email for privacy questions" },
+      { type: "fixed", text: "No console error when Extract runs again on the same page" },
+    ],
+  },
+  {
     version: "3.7.1",
     date: "2026-11-09",
     items: [

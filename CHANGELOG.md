@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.8.0] - 2026-11-10
+
 ### Added
 
 - **Company size, members and website saved with leads**: each saved lead now also keeps the selected company's size (e.g. `51-200`, `10001+`), number of LinkedIn members (e.g. `75045`) and website domain (e.g. `acme.com`, including a manually edited one), like the company id. A value that isn't known when the lead is saved stays empty
