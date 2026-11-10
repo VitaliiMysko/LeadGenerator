@@ -21,6 +21,7 @@ import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
 import { normalizeCompanySize } from "../../../utils/company-size.js";
+import { normalizeCompanyMembers } from "../../../utils/company-members.js";
 import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
 import {
   LEADS_EXPORT_FORMATS,
@@ -165,6 +166,7 @@ async function collectCurrentData() {
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
     companySize: await getCurrentCompanySizeValue(),
+    companyMembers: await getCurrentCompanyMembersValue(),
     hasOpenJobs: await getCurrentOpenJobsValue(),
   };
 }
@@ -174,6 +176,13 @@ async function collectCurrentData() {
 async function getCurrentCompanySizeValue() {
   if (!(await syncGet("storeCompanySizeEnabled"))) return "";
   return normalizeCompanySize(getActiveCompanyItemElement()?.getAttribute("data-company-size"));
+}
+
+// The selected company's number of LinkedIn members ("75045"), empty when
+// the setting is off or the number is unknown.
+async function getCurrentCompanyMembersValue() {
+  if (!(await syncGet("storeCompanyMembersEnabled"))) return "";
+  return normalizeCompanyMembers(getActiveCompanyItemElement()?.getAttribute("data-company-members"));
 }
 
 async function getCurrentOpenJobsValue() {
@@ -194,6 +203,7 @@ async function copyLeadsToClipboard(leads) {
   const options = {
     includeCompanyId: !!(await syncGet("storeCompanyIdEnabled")),
     includeCompanySize: !!(await syncGet("storeCompanySizeEnabled")),
+    includeCompanyMembers: !!(await syncGet("storeCompanyMembersEnabled")),
     includeOpenJobs: !!(await syncGet("storeHasOpenJobsEnabled")),
     includeHeader: !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES)),
   };
