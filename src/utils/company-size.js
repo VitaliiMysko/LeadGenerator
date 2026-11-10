@@ -81,3 +81,9 @@ function isRangeSeparator(gap) {
   const visible = gap.match(/\S/g) || [];
   return visible.length > 0 && visible.length <= MAX_RANGE_SEPARATOR_LENGTH;
 }
+
+// A company size as saved with a lead: the formatted range ("51-200",
+// "10001+"), or "" when it is missing, unknown or not loaded yet.
+export function normalizeCompanySize(size) {
+  return typeof size === "string" && /^\d+(-\d+|\+)$/.test(size) ? size : "";
+}

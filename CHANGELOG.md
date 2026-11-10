@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Store company size setting**: a new **Leads data** toggle that saves the selected company's size (e.g. `51-200`, `10001+`) with each lead. **Get** adds it as an extra column after the company id (a `companySize` field in JSON). It is off by default; leads saved while it is off, or before the company's size was known, have an empty value
+
 ### Changed
 
 - **Privacy policy**: the privacy policy is now published as a standalone web page, links to Leads Automate's privacy policy, and gives a contact email for privacy questions
