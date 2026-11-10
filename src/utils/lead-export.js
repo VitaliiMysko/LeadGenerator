@@ -11,6 +11,7 @@ export const LEAD_COLUMN_NAMES = {
   industry: "Industry",
   companyId: "Company id",
   companySize: "Company size",
+  companyMembers: "Company members",
   hasOpenJobs: "Has open jobs",
 };
 
@@ -19,6 +20,7 @@ export const LEAD_COLUMN_NAMES = {
 const OPTIONAL_COLUMNS = [
   ["includeCompanyId", "companyId"],
   ["includeCompanySize", "companySize"],
+  ["includeCompanyMembers", "companyMembers"],
   ["includeOpenJobs", "hasOpenJobs"],
 ];
 
