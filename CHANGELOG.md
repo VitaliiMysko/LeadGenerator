@@ -14,6 +14,10 @@ All notable changes to this project will be documented in this file.
 - **Store company id renamed to Get company id**: the toggle only decides whether **Get** copies the company id, which is always saved with the lead, so it is now named after the button. It starts off again after the update; turn it back on if it was on
 - **Privacy policy**: the privacy policy is now published as a standalone web page, links to Leads Automate's privacy policy, and gives a contact email for privacy questions
 
+### Fixed
+
+- **Console error on repeated Extract**: running **Extract** again on the same LinkedIn page no longer logs an "Identifier 'waitForElementWithTimeout' has already been declared" error to the browser console
+
 ## [3.7.1] - 2026-11-09
 
 ### Fixed
