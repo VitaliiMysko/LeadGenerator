@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Privacy policy**: the privacy policy is now published as a standalone web page, links to Leads Automate's privacy policy, and gives a contact email for privacy questions
+
 ## [3.7.1] - 2026-11-09
 
 ### Fixed
