@@ -13,12 +13,14 @@ import {
   getCompanyIdElement,
   getCompanyOpenJobTitlesElement,
   getDataContainerElement,
+  getActiveCompanyItemElement,
 } from "../../helper/dom-helper.js";
 import { showAlert } from "../../output/alert.js";
 import { showConfirm } from "../../output/confirm.js";
 import { localGet, localSet, syncGet } from "../../utils/chrome-storage.js";
 import { isDuplicate } from "../../../utils/lead-utils.js";
 import { formatLeadsAsTsv, formatLeadsAsJson } from "../../../utils/lead-export.js";
+import { normalizeCompanySize } from "../../../utils/company-size.js";
 import { getOpenJobsValue, parseOpenJobTitles } from "../../../utils/open-jobs.js";
 import {
   LEADS_EXPORT_FORMATS,
@@ -162,8 +164,16 @@ async function collectCurrentData() {
     country: getCompanyCountryElement().value,
     industry: getCompanyIndustryElement().value,
     companyId: getCompanyIdElement().value,
+    companySize: await getCurrentCompanySizeValue(),
     hasOpenJobs: await getCurrentOpenJobsValue(),
   };
+}
+
+// The selected company's size as shown in its card ("51-200", "10001+"),
+// empty when the setting is off or the size is unknown.
+async function getCurrentCompanySizeValue() {
+  if (!(await syncGet("storeCompanySizeEnabled"))) return "";
+  return normalizeCompanySize(getActiveCompanyItemElement()?.getAttribute("data-company-size"));
 }
 
 async function getCurrentOpenJobsValue() {
@@ -180,22 +190,18 @@ function getFieldOrder() {
 
 async function copyLeadsToClipboard(leads) {
   const fieldOrder = getFieldOrder();
-  const storeCompanyId = !!(await syncGet("storeCompanyIdEnabled"));
-  const storeHasOpenJobs = !!(await syncGet("storeHasOpenJobsEnabled"));
   const format = (await syncGet("leadsExportFormat")) || DEFAULT_LEADS_EXPORT_FORMAT;
-  const includeColumnNames = !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES));
+  const options = {
+    includeCompanyId: !!(await syncGet("storeCompanyIdEnabled")),
+    includeCompanySize: !!(await syncGet("storeCompanySizeEnabled")),
+    includeOpenJobs: !!(await syncGet("storeHasOpenJobsEnabled")),
+    includeHeader: !!(await syncGet("copyColumnNamesEnabled", DEFAULT_COPY_COLUMN_NAMES)),
+  };
 
   const text =
     format === LEADS_EXPORT_FORMATS.JSON
-      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, storeCompanyId, storeHasOpenJobs)
-      : formatLeadsAsTsv(
-          leads,
-          fieldOrder,
-          INPUT_ID_TO_LEAD_KEY,
-          storeCompanyId,
-          storeHasOpenJobs,
-          includeColumnNames,
-        );
+      ? formatLeadsAsJson(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, options)
+      : formatLeadsAsTsv(leads, fieldOrder, INPUT_ID_TO_LEAD_KEY, options);
 
   try {
     await navigator.clipboard.writeText(text);

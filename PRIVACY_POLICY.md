@@ -26,6 +26,7 @@ The data collected includes, but is not limited to:
 - Country
 - Industry
 - (Optional) Company id, when the "Store company id" setting is enabled
+- (Optional) Company size, when the "Store company size" setting is enabled
 - (Optional) Whether the company has open jobs, when the "Store has open jobs" setting is enabled
 
 To show the selected company's details (website, location, industry, size, number of members and, when "Store has open jobs" is enabled, the titles of its open job postings), the extension opens the company's LinkedIn page in a background tab, reads them, and closes the tab.
@@ -76,7 +77,7 @@ The extension uses the browser's `storage` permission to store:
   - Individual's names transliteration
   - Default country fallback (when "Country by default" is enabled)
   - Maximum number of saved leads, the export format of copied leads and whether they start with column names
-  - "Store company id" and "Store has open jobs" settings, and the job title keywords entered for the latter
+  - "Store company id", "Store company size" and "Store has open jobs" settings, and the job title keywords entered for the latter
 - Selected filter values (e.g., company location, size)
 - The position of the on-page launcher icon
 - Details of the 10 most recently fetched companies (see section 3.2)
