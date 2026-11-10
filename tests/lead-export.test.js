@@ -15,6 +15,7 @@ const makeLead = (overrides = {}) => ({
   companyId: "acme-123",
   companySize: "51-200",
   companyMembers: "75045",
+  companyWebsite: "acme.com",
   hasOpenJobs: "true",
   ...overrides,
 });
@@ -91,6 +92,22 @@ describe("buildLeadRecord", () => {
     expect(buildLeadRecord(lead, FIELD_ORDER, KEY_MAP, { includeCompanyMembers: true }).companyMembers).toBe("");
   });
 
+  test("appends companyWebsite between companyMembers and hasOpenJobs", () => {
+    const record = buildLeadRecord(makeLead(), FIELD_ORDER, KEY_MAP, {
+      includeCompanyMembers: true,
+      includeCompanyWebsite: true,
+      includeOpenJobs: true,
+    });
+    expect(Object.keys(record)).toEqual(["firstName", "surname", "email", "companyMembers", "companyWebsite", "hasOpenJobs"]);
+    expect(record.companyWebsite).toBe("acme.com");
+  });
+
+  test("omits companyWebsite by default and defaults it to an empty string for leads saved without it", () => {
+    expect(buildLeadRecord(makeLead(), FIELD_ORDER, KEY_MAP)).not.toHaveProperty("companyWebsite");
+    const lead = makeLead({ companyWebsite: undefined });
+    expect(buildLeadRecord(lead, FIELD_ORDER, KEY_MAP, { includeCompanyWebsite: true }).companyWebsite).toBe("");
+  });
+
   test("omits companyId when includeCompanyId is false", () => {
     const record = buildLeadRecord(makeLead(), FIELD_ORDER, KEY_MAP);
     expect(record).not.toHaveProperty("companyId");
@@ -122,10 +139,16 @@ describe("formatLeadsAsTsv", () => {
       "company-country": "country",
       "company-industry": "industry",
     };
-    const options = { includeCompanyId: true, includeCompanySize: true, includeCompanyMembers: true, includeOpenJobs: true };
+    const options = {
+      includeCompanyId: true,
+      includeCompanySize: true,
+      includeCompanyMembers: true,
+      includeCompanyWebsite: true,
+      includeOpenJobs: true,
+    };
     const [header] = formatLeadsAsTsv([makeLead()], Object.keys(keyMap), keyMap, options).split("\n");
     expect(header).toBe(
-      "Name\tSurname\tJob position\tLink\tEmail\tCompany name\tCountry\tIndustry\tCompany id\tCompany size\tCompany members\tHas open jobs",
+      "Name\tSurname\tJob position\tLink\tEmail\tCompany name\tCountry\tIndustry\tCompany id\tCompany size\tCompany members\tCompany website\tHas open jobs",
     );
   });
 
@@ -150,6 +173,12 @@ describe("formatLeadsAsTsv", () => {
   test("appends the companySize column when enabled", () => {
     expect(formatLeadsAsTsv([makeLead()], FIELD_ORDER, KEY_MAP, { includeCompanySize: true })).toBe(
       "Name\tSurname\tEmail\tCompany size\nJohn\tSmith\tjohn@example.com\t51-200",
+    );
+  });
+
+  test("appends the companyWebsite column when enabled", () => {
+    expect(formatLeadsAsTsv([makeLead()], FIELD_ORDER, KEY_MAP, { includeCompanyWebsite: true })).toBe(
+      "Name\tSurname\tEmail\tCompany website\nJohn\tSmith\tjohn@example.com\tacme.com",
     );
   });
 
@@ -193,6 +222,11 @@ describe("formatLeadsAsJson", () => {
   test("includes companySize when enabled", () => {
     const result = formatLeadsAsJson([makeLead()], FIELD_ORDER, KEY_MAP, { includeCompanySize: true });
     expect(JSON.parse(result)[0].companySize).toBe("51-200");
+  });
+
+  test("includes companyWebsite when enabled", () => {
+    const result = formatLeadsAsJson([makeLead()], FIELD_ORDER, KEY_MAP, { includeCompanyWebsite: true });
+    expect(JSON.parse(result)[0].companyWebsite).toBe("acme.com");
   });
 
   test("includes companyMembers when enabled", () => {
