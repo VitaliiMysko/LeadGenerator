@@ -216,6 +216,10 @@ Includes:
 - Auto-generation + validation — button is enabled only when the active company has a detected website; disabled otherwise. A found email is reused only for the same website, name and surname; changing the name or surname runs the search again. A matching found email is filled in automatically when a company is selected, including the first one after Extract
 - Manual validation via icon — button is enabled only when the email field contains a valid email address; disabled otherwise
 
+### What's new
+
+After an update, the on-page icon shows a blue dot and the panel shows a **What's new** button next to the version. It opens a short list of what changed in each version; closing it removes the dot and the button. Click the version number to browse the history at any time.
+
 ### Leads Automate
 
 The companion [Leads Automate](https://github.com/VitaliiMysko/LeadsAutomate) extension can run **Extract**, **Generate** and **Save** for the person it opens in Sales Navigator people search, with the same result as clicking the buttons. It opens the panel on that tab itself when it's closed. Works in Chrome, Edge and Firefox.

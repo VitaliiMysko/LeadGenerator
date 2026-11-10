@@ -99,6 +99,15 @@ chrome.tabs.onUpdated.addListener((tabId, info) => {
   }
 });
 
+// A fresh install has no release notes to point out: record its version as
+// already seen, so the panel's "What's new" marker only shows after updates.
+const RELEASE_NOTES_SEEN_KEY = "releaseNotesSeenVersion";
+
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason !== "install") return;
+  chrome.storage.local.set({ [RELEASE_NOTES_SEEN_KEY]: chrome.runtime.getManifest().version });
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "workerFetch") {
     handleWorkerFetch(message).then(

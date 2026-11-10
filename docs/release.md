@@ -75,6 +75,8 @@ This pipeline uses `chromewebstore.googleapis.com/v2` (`upload`, `fetchStatus`, 
 
 The Chrome Web Store API v2 has no "get currently published version" call. Instead, the `validate` job compares `manifest.json`'s `version` field on the new `prod` commit against `manifest.json` on the commit `prod` pointed to before this push, and fails if it wasn't strictly increased. `manifest.json` version bumps are made manually as part of the release PR, following the project's existing convention — this pipeline doesn't bump versions automatically.
 
+The same release PR adds the version's entry at the top of `src/constants/release-notes.js`: one short line per user-facing change, shown in the panel's **What's new** dialog, with the same date as its `CHANGELOG.md` heading. The unit tests fail without it.
+
 ## Running it locally
 
 ```bash

@@ -9,6 +9,10 @@ if (!window.leadGenerator.floatingPanelInit) {
   const EDGE_GAP = 8;
   const DRAG_THRESHOLD = 4;
   const LAUNCHER_POSITION_KEY = "floatingLauncherPosition";
+  // Version whose "What's new" notes were last closed in the panel; any
+  // other value marks the launcher until they're seen.
+  const RELEASE_NOTES_SEEN_KEY = "releaseNotesSeenVersion";
+  const CURRENT_VERSION = chrome.runtime.getManifest().version;
   const RESET_MESSAGE_TYPE = "lead-generator:panel-reset";
   const INIT_MESSAGE_TYPE = "lead-generator:panel-init";
   const SHOW_PANEL_ACTION = "lead-generator:show-panel";
@@ -32,6 +36,7 @@ if (!window.leadGenerator.floatingPanelInit) {
   const LEAD_CHECK_DELAY = 300;
 
   let launcher = null;
+  let whatsNewDot = null;
   let launcherPosition = null;
   let panelHost = null;
   let panelIframe = null;
@@ -132,6 +137,21 @@ if (!window.leadGenerator.floatingPanelInit) {
       })
       .catch(() => {});
     launcher.appendChild(icon);
+
+    whatsNewDot = document.createElement("div");
+    Object.assign(whatsNewDot.style, {
+      position: "absolute",
+      top: "2px",
+      right: "2px",
+      width: "10px",
+      height: "10px",
+      borderRadius: "50%",
+      background: "#007bff",
+      border: "2px solid #fff",
+      pointerEvents: "none",
+      display: "none",
+    });
+    launcher.appendChild(whatsNewDot);
 
     let dragStart = null;
 
@@ -290,6 +310,13 @@ if (!window.leadGenerator.floatingPanelInit) {
     }
   }
 
+  function updateWhatsNewDot(seenVersion) {
+    if (!whatsNewDot) return;
+    const unseen = seenVersion !== CURRENT_VERSION;
+    whatsNewDot.style.display = unseen ? "block" : "none";
+    launcher.title = unseen ? "Lead generator: see what's new" : "Lead generator";
+  }
+
   function notifyPanelOfNavigation() {
     if (!isPanelVisible() || !panelIframe?.contentWindow) return;
     panelIframe.contentWindow.postMessage({ type: RESET_MESSAGE_TYPE }, EXTENSION_ORIGIN);
@@ -348,9 +375,10 @@ if (!window.leadGenerator.floatingPanelInit) {
   }
 
   async function init() {
-    const stored = await chrome.storage.local.get(LAUNCHER_POSITION_KEY);
+    const stored = await chrome.storage.local.get([LAUNCHER_POSITION_KEY, RELEASE_NOTES_SEEN_KEY]);
     launcherPosition = stored[LAUNCHER_POSITION_KEY] || defaultLauncherPosition();
     createLauncher();
+    updateWhatsNewDot(stored[RELEASE_NOTES_SEEN_KEY]);
     updateLauncherVisibility();
     updateLeadWatcher();
   }
@@ -373,6 +401,13 @@ if (!window.leadGenerator.floatingPanelInit) {
     if (message?.action !== SHOW_PANEL_ACTION) return;
     if (launcher && isSupportedPageUrl(location.href)) showPanel();
     sendResponse({ shown: isPanelVisible() });
+  });
+
+  // Closing "What's new" in any panel clears the marker on every tab.
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && RELEASE_NOTES_SEEN_KEY in changes) {
+      updateWhatsNewDot(changes[RELEASE_NOTES_SEEN_KEY].newValue);
+    }
   });
 
   init();
