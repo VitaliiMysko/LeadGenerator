@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Company size pasted into Excel**: in the tab-separated **Get** output, the company size is now written as text (`="2-10"`), so Excel and Google Sheets show it as is instead of turning ranges like `2-10` and `11-50` into dates
+
 ## [3.8.0] - 2026-11-10
 
 ### Added
