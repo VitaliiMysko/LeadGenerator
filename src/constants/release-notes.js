@@ -5,6 +5,13 @@
 // Item types: "added", "changed", "fixed", "removed".
 export const RELEASE_NOTES = [
   {
+    version: "3.8.1",
+    date: "2026-11-19",
+    items: [
+      { type: "fixed", text: "Company size pasted from Get into Excel or Google Sheets is no longer turned into a date" },
+    ],
+  },
+  {
     version: "3.8.0",
     date: "2026-11-10",
     items: [
