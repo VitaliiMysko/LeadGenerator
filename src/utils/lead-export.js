@@ -38,12 +38,25 @@ export function buildLeadRecord(lead, fieldOrder, keyMap, options = {}) {
   return record;
 }
 
+// Columns whose values a spreadsheet would misread when pasted as plain text
+// (Excel turns the size range "2-10" into 10 February and "11-50" into
+// November 1950).
+const TEXT_COLUMNS = new Set(["companySize"]);
+
+// A non-empty value as a text formula (="2-10"), which Excel and Google
+// Sheets show as is instead of converting it.
+export function asSpreadsheetText(value) {
+  return value ? `="${String(value).replaceAll('"', '""')}"` : "";
+}
+
 // One line per lead, preceded by a header line with the column names
 // unless options.includeHeader is false; "" when there are no leads.
 export function formatLeadsAsTsv(leads, fieldOrder, keyMap, options = {}) {
   if (!leads.length) return "";
   const records = leads.map((lead) => buildLeadRecord(lead, fieldOrder, keyMap, options));
-  const rows = records.map(Object.values);
+  const rows = records.map((record) =>
+    Object.entries(record).map(([key, value]) => (TEXT_COLUMNS.has(key) ? asSpreadsheetText(value) : value)),
+  );
   if (options.includeHeader !== false) {
     rows.unshift(Object.keys(records[0]).map((key) => LEAD_COLUMN_NAMES[key] || key));
   }

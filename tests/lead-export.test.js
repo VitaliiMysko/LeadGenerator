@@ -1,4 +1,4 @@
-import { buildLeadRecord, formatLeadsAsTsv, formatLeadsAsJson } from "../src/utils/lead-export.js";
+import { buildLeadRecord, formatLeadsAsTsv, formatLeadsAsJson, asSpreadsheetText } from "../src/utils/lead-export.js";
 
 const KEY_MAP = {
   "first-name": "firstName",
@@ -172,8 +172,14 @@ describe("formatLeadsAsTsv", () => {
 
   test("appends the companySize column when enabled", () => {
     expect(formatLeadsAsTsv([makeLead()], FIELD_ORDER, KEY_MAP, { includeCompanySize: true })).toBe(
-      "Name\tSurname\tEmail\tCompany size\nJohn\tSmith\tjohn@example.com\t51-200",
+      'Name\tSurname\tEmail\tCompany size\nJohn\tSmith\tjohn@example.com\t="51-200"',
     );
+  });
+
+  test("writes company size ranges as text so spreadsheets don't turn them into dates", () => {
+    const leads = [makeLead({ companySize: "2-10" }), makeLead({ companySize: "11-50" }), makeLead({ companySize: "" })];
+    const rows = formatLeadsAsTsv(leads, [], KEY_MAP, { includeCompanySize: true, includeHeader: false }).split("\n");
+    expect(rows).toEqual(['="2-10"', '="11-50"', ""]);
   });
 
   test("appends the companyWebsite column when enabled", () => {
@@ -198,6 +204,21 @@ describe("formatLeadsAsTsv", () => {
   test("returns an empty string for no leads", () => {
     expect(formatLeadsAsTsv([], FIELD_ORDER, KEY_MAP)).toBe("");
     expect(formatLeadsAsTsv([], FIELD_ORDER, KEY_MAP, { includeHeader: false })).toBe("");
+  });
+});
+
+describe("asSpreadsheetText", () => {
+  test("wraps a value in a text formula", () => {
+    expect(asSpreadsheetText("10001+")).toBe('="10001+"');
+  });
+
+  test("doubles quotes inside the value", () => {
+    expect(asSpreadsheetText('a"b')).toBe('="a""b"');
+  });
+
+  test("leaves an empty value empty", () => {
+    expect(asSpreadsheetText("")).toBe("");
+    expect(asSpreadsheetText(undefined)).toBe("");
   });
 });
 
