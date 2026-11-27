@@ -85,6 +85,8 @@ npm run release:chrome:validate-version # manifest version-bump check (compares 
 npm run release:chrome -- --dry-run    # both of the above, plus build + package + package validation
 ```
 
+Packaging writes `release/lead-generator-v<version>.zip` (git-ignored). Zips of earlier versions are kept there; delete them by hand when no longer needed.
+
 `release:chrome` never authenticates, uploads, or publishes — those calls only happen from the `upload`/`publish` jobs above, under the `production` environment, in CI.
 
 ## After `publish`

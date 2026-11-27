@@ -77,7 +77,10 @@ export function buildExtensionPackage({ root = ROOT } = {}) {
   const manifest = parseManifest(manifestJson);
   assertManifestDescriptionWithinLimit(manifest.description);
 
-  rmSync(RELEASE_DIR, { recursive: true, force: true });
+  // Only the staging directory is rebuilt: zips of earlier versions stay in
+  // release/ as a local history (removed by hand when no longer needed). CI
+  // always starts from a fresh checkout, so there it holds just one zip.
+  rmSync(STAGING_DIR, { recursive: true, force: true });
   mkdirSync(STAGING_DIR, { recursive: true });
 
   for (const entry of PACKAGE_ENTRIES) {
