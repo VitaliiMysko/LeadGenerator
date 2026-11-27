@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.8.2] - 2026-11-27
+
+### Fixed
+
+- **Emoji in names**: **Extract** no longer copies emoji from a LinkedIn name into the **Name** and **Surname** fields (e.g. `Schimmel 🔥` becomes `Schimmel`), whether or not transliteration is on
+
 ## [3.8.1] - 2026-11-19
 
 ### Fixed

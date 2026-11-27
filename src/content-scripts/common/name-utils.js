@@ -5,6 +5,7 @@ if (!window.leadGenerator.nameUtilsInit) {
 
   (() => {
     function handleFullName(str) {
+      str = window.leadGenerator.stripEmoji(str);
       const hasCyrillic = /\p{Script=Cyrillic}/u.test(str);
       if (hasCyrillic) {
         return str
