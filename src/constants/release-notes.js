@@ -5,6 +5,13 @@
 // Item types: "added", "changed", "fixed", "removed".
 export const RELEASE_NOTES = [
   {
+    version: "3.8.2",
+    date: "2026-11-27",
+    items: [
+      { type: "fixed", text: "Extract no longer copies emoji from a LinkedIn name into Name and Surname" },
+    ],
+  },
+  {
     version: "3.8.1",
     date: "2026-11-19",
     items: [
